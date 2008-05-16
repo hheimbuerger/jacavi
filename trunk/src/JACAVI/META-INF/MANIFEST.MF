@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: JACAVI Plug-in
+Bundle-SymbolicName: JACAVI; singleton:=true
+Bundle-Version: 1.0.0
+Bundle-Activator: de.jacavi.Activator
+Require-Bundle: org.eclipse.ui,
+ org.eclipse.core.runtime
+Eclipse-LazyStart: true
