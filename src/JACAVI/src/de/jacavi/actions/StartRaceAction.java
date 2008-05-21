@@ -1,4 +1,4 @@
-package de.jacavi.actions;
+package de.jacavi.rcp.actions;
 
 
 import org.eclipse.jface.action.IAction;
