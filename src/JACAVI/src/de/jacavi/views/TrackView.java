@@ -1,9 +1,9 @@
-package de.jacavi.views;
+package de.jacavi.rcp.views;
 
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
-import de.jacavi.Activator;
+import de.jacavi.rcp.Activator;
 
 /**
  * @author Fabian Rohn
