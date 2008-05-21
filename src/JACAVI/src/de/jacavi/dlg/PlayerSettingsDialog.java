@@ -1,4 +1,4 @@
-package de.jacavi.dlg;
+package de.jacavi.rcp.dlg;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
