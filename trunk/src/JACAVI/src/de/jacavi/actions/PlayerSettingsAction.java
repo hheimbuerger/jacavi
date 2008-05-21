@@ -1,4 +1,4 @@
-package de.jacavi.actions;
+package de.jacavi.rcp.actions;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import de.jacavi.dlg.PlayerSettingsDialog;
+import de.jacavi.rcp.dlg.PlayerSettingsDialog;
 
 /**
  * @author Fabian Rohn
