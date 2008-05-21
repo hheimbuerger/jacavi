@@ -1,13 +1,13 @@
-package de.jacavi.perspectives;
+package de.jacavi.rcp.perspectives;
 
 
 
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveFactory;
 
-import de.jacavi.views.LapView;
-import de.jacavi.views.PlayerSettingsView;
-import de.jacavi.views.TrackView;
+import de.jacavi.rcp.views.LapView;
+import de.jacavi.rcp.views.PlayerSettingsView;
+import de.jacavi.rcp.views.TrackView;
 
 public class Perspective implements IPerspectiveFactory {
 
