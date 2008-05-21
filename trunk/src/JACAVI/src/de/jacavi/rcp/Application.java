@@ -29,7 +29,7 @@ public class Application implements IApplication {
             return IApplication.EXIT_OK;
         } finally {
             display.dispose();
-            log.info("JACAVI Application shut down.");
+            log.info("JACAVI Application shut down!");
         }
     }
 
