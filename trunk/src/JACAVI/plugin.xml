@@ -7,7 +7,7 @@
          point="org.eclipse.core.runtime.applications">
       <application>
          <run
-               class="de.jacavi.Application">
+               class="de.jacavi.rcp.Application">
          </run>
       </application>
    </extension>
@@ -15,26 +15,26 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             name="Perspective"
-            class="de.jacavi.perspectives.Perspective"
+            class="de.jacavi.rcp.perspectives.Perspective"
             id="JACAVI.perspective">
       </perspective>
    </extension>
    <extension
          point="org.eclipse.ui.views">
       <view
-            class="de.jacavi.views.LapView"
+            class="de.jacavi.rcp.views.LapView"
             icon="icons/clock-16x16.png"
             id="JACAVI.lapView"
             name="Lap View">
       </view>
       <view
-            class="de.jacavi.views.PlayerSettingsView"
+            class="de.jacavi.rcp.views.PlayerSettingsView"
             icon="icons/Sony-Playstation-Dual-Shock-16x16.png"
             id="JACAVI.playerSettingsView"
             name="Player Settings View">
       </view>
       <view
-            class="de.jacavi.views.TrackView"
+            class="de.jacavi.rcp.views.TrackView"
             icon="icons/cars-16x16.png"
             id="JACAVI.trackView"
             name="Track View">
@@ -54,7 +54,7 @@
             </groupMarker>
          </menu>
          <action
-               class="de.jacavi.actions.StartRaceAction"
+               class="de.jacavi.rcp.actions.StartRaceAction"
                icon="icons/checkered-flag-icon.gif"
                id="JACAVI.StartRaceAction"
                label="&amp;Start Race"
@@ -70,7 +70,7 @@
             </groupMarker>
          </menu>
          <action
-               class="de.jacavi.actions.PlayerSettingsAction"
+               class="de.jacavi.rcp.actions.PlayerSettingsAction"
                icon="icons/Sony-Playstation-Dual-Shock-16x16.png"
                id="JACAVI.PlayerSettingsAction"
                label="Player Settings"

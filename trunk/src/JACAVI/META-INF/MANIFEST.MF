@@ -3,9 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: JACAVI Plug-in
 Bundle-SymbolicName: JACAVI; singleton:=true
 Bundle-Version: 1.0.0
-Bundle-Activator: de.jacavi.Activator
+Bundle-Activator: de.jacavi.rcp.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime
 Eclipse-LazyStart: true
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: libs/spring-2.0.jar,
+ .,
+ libs/commons-logging-1.1.1.jar,
+ libs/log4j-1.2.15.jar
