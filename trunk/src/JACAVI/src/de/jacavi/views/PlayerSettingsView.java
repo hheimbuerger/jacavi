@@ -1,4 +1,4 @@
-package de.jacavi.views;
+package de.jacavi.rcp.views;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
