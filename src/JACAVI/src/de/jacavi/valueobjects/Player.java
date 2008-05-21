@@ -1,69 +1,68 @@
-package de.jacavi.valueobjects;
+package de.jacavi.appl.valueobjects;
 
 import java.io.Serializable;
 
+import de.jacavi.appl.controller.CarController;
+
+
+
 public class Player implements Serializable {
 
-	/**
+    /**
 	 * 
 	 */
-	private static final long serialVersionUID = 7275413800602182772L;
+    private static final long serialVersionUID = 7275413800602182772L;
 
-	private String id;
-	private String name;
-	private String input;
-	private String device;
-	private String protocol;
+    private String id;
 
+    private String name;
 
-	public Player(String id, String name, String input, String device,
-			String protocol) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.input = input;
-		this.device = device;
-		this.protocol = protocol;
-	}
+    private CarController controller;
 
-	public String getId() {
-		return id;
-	}
+    private String protocol;
 
-	public void setId(String id) {
-		this.id = id;
-	}
+    public Player() {
+    // TODO Auto-generated constructor stub
+    }
 
-	public String getName() {
-		return name;
-	}
+    public Player(String id, String name, CarController controller, String protocol) {
+        super();
+        this.id = id;
+        this.name = name;
+        this.controller = controller;
+        this.protocol = protocol;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public String getProtocol() {
-		return protocol;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setProtocol(String protocol) {
-		this.protocol = protocol;
-	}
+    public void setController(CarController controller) {
+        this.controller = controller;
+    }
 
-	public String getDevice() {
-		return device;
-	}
+    public CarController getController() {
+        return controller;
+    }
 
-	public void setDevice(String device) {
-		this.device = device;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public String getInput() {
-		return input;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setInput(String input) {
-		this.input = input;
-	}
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
 
 }
