@@ -5,22 +5,23 @@
 
 Henrik
 ################
-->Eclipse 3.4 Change Notes
-->Track einrichten
+->Trac einrichten
 ->JaCaVi Spezifikations Dokument anlegen
+
 
 Fabi
 ################
-->Klassen Struktur anlegen
+->Klassen-Struktur anlegen
+
 
 Stefo
 ################
-->checken wie man mit SWT Tack zeichnen kann
+->checken, wie man mit SWT Track zeichnen kann
 
 
 Flo
 ################
 -> Infos über die/den Treiber und die Architektur einholen und rausfinden wie diese angesprochen werden.
--> Code und Docu von Marko einholen
+-> Code und Doku von Marko einholen
 -> UML
--> Werbe Flyer
+-> Werbe-Flyer
