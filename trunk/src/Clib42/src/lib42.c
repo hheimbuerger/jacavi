@@ -3,7 +3,7 @@
 ** 	author : Benjamin Kleinhens
 ** 	project : Carrera
 ** 	team : 42
-** 
+**
 */
 
 /*/ Include system libraries.
@@ -56,7 +56,7 @@ static Sensor* createSensor( int carId, int sens );
 static void freeQueue();
 
 
-/*/ Global data definitions 
+/*/ Global data definitions
 */
 Car** cars;
 byte isCritical[MAXCARS];
@@ -76,14 +76,14 @@ static byte pc_pitstop = 0;
 
 
 
-// Mode Flags 
+// Mode Flags
 static int COLLISION_DETECTION = 0;
 static int LAP_COUNT = 0;
 static int SENSOR_QUEUEING = 0;
 static int SENSOR_LOGGING = 0;
 
 
-pthread_mutex_t LOCK;	
+pthread_mutex_t LOCK;
 pthread_mutex_t QLOCK;
 
 // Variables for queue handling
@@ -99,7 +99,7 @@ FILE* ostream;
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-**	Following methods are defined in carrera.h 
+**	Following methods are defined in carrera.h
 **
 */
 
@@ -114,10 +114,10 @@ void sendPowerMsg( int power ) {
 }
 
 
-void writeProgrammingMsg( int param, int value ) 
+void writeProgrammingMsg( int param, int value )
 {
 
-	int i = 0; 
+	int i = 0;
 	for ( i = 0; i < 8; i++ ) {
 
 		byte carId = i;
@@ -127,7 +127,7 @@ void writeProgrammingMsg( int param, int value )
 		data[2] |= (param << 4);
 
 
-	
+
 		write( fd, &data[0], 4 );
 
 
@@ -142,7 +142,7 @@ void sendPacecarMsg(  ) {
 	byte freigabe = 1;
 	unsigned char data[4] = {'g',7,pc_fuel,0};
 
-	
+
 	data[2] |= ( pc_active ) ? BIT02 : BIT00;
 	data[2] |= ( pc_back2box ) ? BIT00 : BIT03;
 	data[2] |= ( freigabe ) ? BIT04 : BIT00;
@@ -157,7 +157,7 @@ void sendPacecarMsg(  ) {
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /*
-**	The following section contains some usefull local methods 
+**	The following section contains some usefull local methods
 **
 */
 
@@ -165,7 +165,7 @@ void sendPacecarMsg(  ) {
 ** - This method adds a sensor struct to the end of the queue
 ** - It chould only be called when lib42  was initialized with LIB42_SENSOR_QUEUEING
 ** - when queue gets longer then MAX_QUEUE_LEN the head element will be removed.
-*/ 
+*/
 static void addSensor2Queue( Sensor* sens ) {
 
 
@@ -215,11 +215,11 @@ static void freeQueue() {
 
 /* createSensor
 ** - create a new sensor struct and initializes it with the
-** - given values. 
+** - given values.
 */
 static Sensor* createSensor( int carId, int sens ) {
 
-	
+
 
 	Sensor* s = (Sensor*) malloc( sizeof( Sensor ) );
 	if( s == NULL ) {
@@ -242,13 +242,13 @@ static Sensor* createSensor( int carId, int sens ) {
 ** - with LIB42_LAP_COUNT to make use of this.
 */
 static void doLapCount( int carId, int sens ) {
-	
+
 	int* p = lapmarker;
 	while( *p != 0 ) {
 		if( *p == sens ) {
 			cars[carId]->lapCount++;
 		}
-	
+
 	}
 
 }
@@ -266,7 +266,7 @@ static void logSensor( int carId, int sens ){
 }
 
 /* add2Queue
-** - Create a new sensor struct for the spcified data and 
+** - Create a new sensor struct for the spcified data and
 ** - adds it to the queue.
 */
 static void add2Queue( int carId, int sens ) {
@@ -277,9 +277,9 @@ static void add2Queue( int carId, int sens ) {
 /* checkCriticalSection
 ** Checks if the car enteres a the specified critical section and
 ** react on the current situation in this section.
-*/ 
-static void checkCriticalSection( CriticalSection* cs, int carId, int sens ) 
-{ 
+*/
+static void checkCriticalSection( CriticalSection* cs, int carId, int sens )
+{
 
 	if( sens == cs->critical_in_start ){
 		isCritical[carId] = CRITICAL;
@@ -294,7 +294,7 @@ static void checkCriticalSection( CriticalSection* cs, int carId, int sens )
 			cars[i]->oldSpeed = cars[carId]->speed;
 			cars[carId]->speed = 0 ;
 			writeCar( cars[carId] );
-		} 
+		}
 
 		cs->critical_out++;
 
@@ -335,9 +335,9 @@ static void checkCriticalSection( CriticalSection* cs, int carId, int sens )
 	} else if ( sens == ( (cs->critical_in_end + 2)%(MAX_SENSOR+1) ) ) {
 		isCritical[carId] = SAVE;
 		if( cars[carId]->sensor == cs->critical_in_start ) {
-			
+
 			cs->critical_out--;
-		
+
 		} else if ( cars[carId]->sensor == cs->critical_out_start ) {
 			cs->critical_in--;
 		}
@@ -353,7 +353,7 @@ static void checkCriticalSection( CriticalSection* cs, int carId, int sens )
 /* writeCar
 ** - sends the car data to the scheduler.
 */
-static void writeCar( Car* car ) 
+static void writeCar( Car* car )
 {
 
 	unsigned char data[4] = {'s',car->carId,car->speed,0};
@@ -365,11 +365,11 @@ static void writeCar( Car* car )
 	data[2] |= switcher;
 	data[2] |= fuel;
 	data[2] |= pitstop;
-	
+
 	write( fd, &data[0], 4 );
 
 
-	/* When no delay is created after write, 
+	/* When no delay is created after write,
 	** directly following write calls will fail.
 	** It seems to suffice waiting 0 ms.
 	** Probably the delay created by the syscall is enough.
@@ -396,7 +396,7 @@ static void setAllFuel( byte fuel ) {
 ** Checks wheter a carid is valid and wheter changes are allowed
 ** in the current state. Returns 1 if everything is okay otherwise 0.
 */
-int validatecarId(int carId) 
+int validatecarId(int carId)
 {
 	if(carId >= 0 && carId <= MAXCARS-1 && !isCritical[carId] )
 		return 1;
@@ -410,13 +410,13 @@ int validatecarId(int carId)
 
 
 /* initialCars
-** Initializes the car array 
+** Initializes the car array
 */
-static void initialCars() 
+static void initialCars()
 {
 	cars = (Car**) malloc(sizeof(Car*) * MAXCARS);
 	int i;
-		
+
 	for( i=0; i<MAXCARS; ++i ) {
 		cars[i] = (Car*) malloc(sizeof(Car));
 		cars[i]->carId = i;
@@ -434,7 +434,7 @@ static void initialCars()
 
 /* handleSensorDetection
 ** Handles the sensor detection depending on the specified
-** initialization mode flags. 
+** initialization mode flags.
 */
 static void handleSensorDetection( int carId, int sens ) {
 
@@ -451,7 +451,7 @@ static void handleSensorDetection( int carId, int sens ) {
 		printw( "WARNIG illeagle car\n" );
 		refresh();
 		return;
-	
+
 	}
 
 
@@ -462,22 +462,22 @@ static void handleSensorDetection( int carId, int sens ) {
 				if( NULL == critical[i] ) continue;
 				checkCriticalSection( critical[i], carId, sens );
 			}
-	
+
 		}
-	
+
 		if( LAP_COUNT ) {
 			doLapCount( carId, sens );
 		}
-	
+
 		if( SENSOR_QUEUEING ) {
 			add2Queue( carId, sens );
 		}
-	
+
 		if( SENSOR_LOGGING ) {
 			logSensor( carId, sens );
 		}
-		
-	
+
+
 		cars[carId]->sensor = sens;
 
 	pthread_mutex_unlock( &LOCK );
@@ -516,6 +516,7 @@ int initLib42( int mode  ) {
 		printf( "could not open device \n" );
 		return -1;
 	}
+/* fro: i commented this out because we (jacavi) use an extra compiled lib for sensor detection.
 
 	int csd = initializeSensorDetection( handleSensorDetection );
 	if( csd ) {
@@ -541,28 +542,28 @@ int initLib42( int mode  ) {
 		isCritical[i] = SAVE;
 	}
 
-	
-	COLLISION_DETECTION = ( mode & LIB42_COLLISION_DETECTION ); 
-	SENSOR_QUEUEING = ( mode & LIB42_SENSOR_QUEUEING );	
+
+	COLLISION_DETECTION = ( mode & LIB42_COLLISION_DETECTION );
+	SENSOR_QUEUEING = ( mode & LIB42_SENSOR_QUEUEING );
 	SENSOR_LOGGING = ( mode & LIB42_SENSOR_LOGGING );
 	LAP_COUNT = ( mode & LIB42_LAP_COUNT );
-	
+
 
 	for( i = 0; i< MAXCRITICAL; i++ ) {
 		critical[i] = NULL;
 	}
 
-
+*/
 	return 0;
 }
 
-void releaseLib42() 
+void releaseLib42()
 {
-	
+
 	int i;
 	resetCars();
-	
-	
+
+
 	releaseSensonrDetection();
 	freeQueue();
 	pthread_mutex_destroy( &LOCK );
@@ -601,7 +602,7 @@ int setSpeedUp( int carId ) {
 		}
 		return cars[carId]->speed;
 	}
-	
+
 	return -1;
 }
 
@@ -615,11 +616,11 @@ int setSpeedDown(int carId)
 		}
 		return cars[carId]->speed;
 	}
-	
+
 	return -1;
 }
 
-void setSwitch(int carId, int value) 
+void setSwitch(int carId, int value)
 {
 	if(validatecarId(carId)){
 		cars[carId]->switcher = value;
@@ -627,7 +628,7 @@ void setSwitch(int carId, int value)
 	}
 }
 
-int toggleSwitch(int carId) 
+int toggleSwitch(int carId)
 {
 	if(validatecarId(carId)) {
 		if(cars[carId]->switcher) {
@@ -635,15 +636,15 @@ int toggleSwitch(int carId)
 		} else {
 			cars[carId]->switcher = 1;
 		}
-		writeCar( cars[carId] );	
+		writeCar( cars[carId] );
 		return cars[carId]->switcher;
 	}
-	
+
 	return 0;
 }
 
 
-int togglePitstop(int carId) 
+int togglePitstop(int carId)
 {
 	if(validatecarId(carId)) {
 		if(cars[carId]->pitstop) {
@@ -651,10 +652,10 @@ int togglePitstop(int carId)
 		} else {
 			cars[carId]->pitstop = 1;
 		}
-		writeCar( cars[carId] );	
+		writeCar( cars[carId] );
 		return cars[carId]->pitstop;
 	}
-	
+
 	return 0;
 }
 
@@ -662,41 +663,41 @@ int togglePitstop(int carId)
 int getPitstop( int carId )
 {
 	if(validatecarId(carId))
-		return cars[carId]->pitstop;	
+		return cars[carId]->pitstop;
 	return 0;
 }
 
-int getSensor( int carId ) 
+int getSensor( int carId )
 {
 
 	int sens = -1;
 
 	sens = cars[carId]->sensor;
-	
+
 	return sens;
-	
+
 }
 
-int getSpeed(int carId) 
+int getSpeed(int carId)
 {
 	if(validatecarId(carId))
 		return cars[carId]->speed;
 	return -1;
 }
 
-int getSwitch(int carId) 
+int getSwitch(int carId)
 {
 	if(validatecarId(carId))
 		return cars[carId]->switcher;
-		
+
 	return 0;
 }
 
-Car* getCar(int carId) 
+Car* getCar(int carId)
 {
 	if(validatecarId(carId))
 		return cars[carId];
-		
+
 	return NULL;
 }
 
@@ -712,7 +713,7 @@ void activatePacecar() {
 
 
 void pacecar2box() {
-	
+
 	pc_back2box = 1;
 	sendPacecarMsg();
 
@@ -762,7 +763,7 @@ void deactivateFuel() {
 
 
 
-void resetCars() 
+void resetCars()
 {
 	int i;
 	for(i=0; i<MAXCARS; ++i) {
@@ -770,7 +771,7 @@ void resetCars()
 		cars[i]->speed = 0;
 		cars[i]->switcher = 0;
 		cars[i]->fuel = 0;
-		writeCar( cars[i] );	
+		writeCar( cars[i] );
 		usleep( 1000 );
 		printf("Reseting Car %d!\n", i);
 	}
@@ -787,10 +788,10 @@ void initCriticalSection( CriticalSection* cs, int cin_start, int cin_end, int c
 	for( i = 0; i < MAXCARS; i++ ) {
 		cs->restricted[i] = NULL;
 	}
-	
+
 	cs->critical_in = 0;
 	cs->critical_out = 0;
-	
+
 	cs->critical_in_start  = cin_start;
 	cs->critical_in_end    = cin_end;
 	cs->critical_out_start = cout_start;
@@ -842,7 +843,7 @@ int pollSensorQueue( Sensor* sens ) {
 
 	free( t->data );
 	free( t );
-	
+
 	qlen--;
 	pthread_mutex_unlock( &QLOCK );
 	return 1;
@@ -891,7 +892,7 @@ void programmCar( carId ) {
 	writeCar( &car );
 	usleep(200000);
 
-	// Turn off the power supply to simulate that the 
+	// Turn off the power supply to simulate that the
 	// car has left the race-track
 	powerOff();
 	usleep(500000);
