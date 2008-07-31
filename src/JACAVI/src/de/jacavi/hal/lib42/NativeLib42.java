@@ -9,15 +9,6 @@ public class NativeLib42 {
 	}
 	
 	
-	
-	
-	/*initialization
-	    //TODO: what about this
-	    #define LIB42_COLLISION_DETECTION   0x00000001
-	    #define LIB42_LAP_COUNT         0x00000002
-	    #define LIB42_SENSOR_QUEUEING       0x00000004
-	    #define LIB42_SENSOR_LOGGING        0x00000008
-	 */
 	public native int initLib42( int mode );
 	public native void releaseLib42();
 	/*
