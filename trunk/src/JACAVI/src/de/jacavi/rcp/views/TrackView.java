@@ -14,15 +14,13 @@ public class TrackView extends ViewPart {
 
     public static final String ID = "JACAVI.trackView";
 
-    private TrackWidget trackWidget;
-
     public TrackView() {
     // TODO Auto-generated constructor stub
     }
 
     @Override
     public void createPartControl(Composite parent) {
-        trackWidget = new TrackWidget(parent);
+        new TrackWidget(parent);
         // parent.setBackgroundImage(Activator.getImageDescriptor("/icons/strecke.jpg").createImage());
     }
 
