@@ -10,20 +10,16 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
 import de.jacavi.appl.valueobjects.Track;
 import de.jacavi.appl.valueobjects.TrackSection;
-import de.jacavi.rcp.Activator;
 
 
 
 public class TrackWidget extends Canvas {
-
-    private Image image;
 
     private Point panPosition = new Point(200, 200);
 
@@ -38,8 +34,6 @@ public class TrackWidget extends Canvas {
 
         final Color white = new Color(null, 255, 255, 255);
         setBackground(white);
-
-        image = Activator.getImageDescriptor("/icons/strecke.jpg").createImage();
 
         // HACK: hardcoded track for testing
         int index = 1;
@@ -102,7 +96,6 @@ public class TrackWidget extends Canvas {
     }
 
     protected void handleMouseDown(MouseEvent e) {
-        System.out.println("mousedown");
         if(e.button == 3 && !isPanningActive) {
             isPanningActive = true;
             panningStartPosition = new Point(e.x, e.y);
@@ -110,9 +103,7 @@ public class TrackWidget extends Canvas {
     }
 
     protected void handleMouseMove(MouseEvent e) {
-        System.out.println("mousemove");
         if(isPanningActive) {
-            System.out.println("pan");
             panPosition.x += e.x - panningStartPosition.x;
             panPosition.y += e.y - panningStartPosition.y;
             panningStartPosition = new Point(e.x, e.y);
