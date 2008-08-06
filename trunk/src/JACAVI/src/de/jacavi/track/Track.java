@@ -1,4 +1,4 @@
-package de.jacavi.appl.valueobjects;
+package de.jacavi.track;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,7 +17,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.jacavi.appl.ContextLoader;
-import de.jacavi.appl.valueobjects.TilesetRepository.TileSet;
+import de.jacavi.track.TilesetRepository.TileSet;
 
 
 

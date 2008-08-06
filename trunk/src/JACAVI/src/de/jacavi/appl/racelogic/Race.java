@@ -3,7 +3,7 @@ package de.jacavi.appl.racelogic;
 import java.util.Collection;
 
 import de.jacavi.appl.valueobjects.Player;
-import de.jacavi.appl.valueobjects.Track;
+import de.jacavi.track.Track;
 
 
 
