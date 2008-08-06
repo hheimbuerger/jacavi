@@ -8,14 +8,16 @@
 	</bean>
 	
 	<bean id="raceBean" class="de.jacavi.appl.racelogic.Race">
-		<property name="track" ref="track1Bean"></property>
-		<property name="players" ref="playersBean"></property>
+		<property name="track" ref="track1Bean"/>
+		<property name="players" ref="playersBean"/>
 	</bean>
 	
 	<bean id="track1Bean" class="de.jacavi.appl.valueobjects.Track" />
 	
-    <bean id="tilesetRepository" class="de.jacavi.appl.valueobjects.TilesetRepository" />
-  
+    <bean id="tilesetRepository" class="de.jacavi.appl.valueobjects.TilesetRepository">
+        <constructor-arg type="java.lang.String" value="/tiles/tiles.xml" />
+    </bean>
+
 	<bean id="playersBean" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>

@@ -21,19 +21,12 @@ public class Tile {
 
     private final Angle entryToExitAngle;
 
-    public Tile(String filename, Point entryPoint, Point exitPoint, Angle entryToExitAngle) {
-        // HACK: these images are not properly disposed yet
-        // sectionImage = Activator.getImageDescriptor("/tracksections/" + filename).createImage();
-        try {
-            // sectionImage = ImageIO.read(new File("tracksections/" + filename));
-            sectionImage = ImageIO.read(Activator.getResourceAsStream("/tracksections/" + filename));
-        } catch(IOException e) {
-            throw new RuntimeException(e);
-        }
+    public Tile(String filename, Point entryPoint, Point exitPoint, int entryToExitAngle) throws IOException {
+        sectionImage = ImageIO.read(Activator.getResourceAsStream(filename));
 
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
-        this.entryToExitAngle = entryToExitAngle;
+        this.entryToExitAngle = new Angle(entryToExitAngle);
     }
 
     public BufferedImage getSectionImage() {
