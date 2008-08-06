@@ -22,12 +22,7 @@ public class TilesetRepository {
                 new Point(+53, +6), new Angle(0)));
         digitalTiles.put("straight", new Tile("straight.png", new Point(-26, 0), new Point(+26, 0), new Angle(0)));
         digitalTiles.put("turn90deg", new Tile("turn_90deg.png", new Point(-12, 0), new Point(0, -12), new Angle(-90)));
-        // digitalTiles.put("finishingStraight", new Tile("finishing_straight.png", new Point(0, 24), new Point(106,
-        // 24),
-        // new Angle(0)));
-        // digitalTiles.put("straight", new Tile("straight.png", new Point(0, 12), new Point(53, 12), new Angle(0)));
-        // digitalTiles.put("turn90deg", new Tile("turn_90deg.png", new Point(25, 12), new Point(25, 12), new
-        // Angle(-90)));
+        digitalTiles.put("turn30deg", new Tile("turn_30deg.png", new Point(-8, 0), new Point(-2, -2), new Angle(-30)));
         tiles.put(TileSet.digital, digitalTiles);
     }
 

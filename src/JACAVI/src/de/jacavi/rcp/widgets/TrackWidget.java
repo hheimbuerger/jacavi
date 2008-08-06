@@ -58,16 +58,20 @@ public class TrackWidget extends Canvas {
         currentTrack = new Track();
         // currentTrack.insertSection(new TrackSection("straight.png", new Point(5, 0), 0), index++);
         currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn30deg"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn90deg"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn30deg"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn30deg"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
+        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
         currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn90deg"));
         currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
         currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn90deg"));
         currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn90deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "turn90deg"));
         currentTrack.appendSection(tilesetRepository.getTile(TileSet.digital, "straight"));
         createTrackImage();
 
