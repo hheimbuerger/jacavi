@@ -1,37 +1,55 @@
 package de.jacavi.appl.valueobjects;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Display;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-import de.jacavi.rcp.Activator;
+import org.eclipse.swt.graphics.Point;
 
 
 
 public class TrackSection {
 
-    private Image sectionImage;
+    private final Tile tile;
 
-    private Point nextSectionOffset;
-
-    private int entryToExitAngle;
-
-    public TrackSection(String filename, Point nextSectionOffset, int entryToExitAngle) {
-        // HACK: these images are not properly disposed yet
-        sectionImage = Activator.getImageDescriptor("/tracksections/" + filename).createImage();
-
-        this.nextSectionOffset = nextSectionOffset;
-        this.entryToExitAngle = entryToExitAngle;
+    public TrackSection(Tile tile) {
+        this.tile = tile;
     }
 
-    public Image getRotatedImage(int rotationAngle) {
-        Display display = Display.getCurrent();
+    public Angle getEntryToExitAngle() {
+        return tile.getEntryToExitAngle();
+    }
+
+    public Point getEntryPoint() {
+        return tile.getEntryPoint();
+    }
+
+    public Point getExitPoint() {
+        return tile.getExitPoint();
+    }
+
+    public java.awt.Image getRotatedImage(Angle currentAngle) throws IOException {
+        int maxDimension = Math.max(tile.getSectionImage().getWidth(), tile.getSectionImage().getHeight());
+        BufferedImage targetBI = new BufferedImage(maxDimension * 2, maxDimension * 2, BufferedImage.TYPE_INT_ARGB);
+
+        AffineTransform at = new AffineTransform();
+        at.rotate(Math.toRadians(currentAngle.angle), (targetBI.getWidth() / 2), (targetBI.getHeight() / 2));
+        Graphics2D g = (Graphics2D) targetBI.getGraphics();
+        g.setBackground(Color.WHITE);
+        g.setTransform(at);
+
+        g.drawImage(tile.getSectionImage(), (targetBI.getWidth() / 2 - tile.getSectionImage().getWidth() / 2),
+                (targetBI.getHeight() / 2 - tile.getSectionImage().getHeight() / 2), null);
+        // return convertToTransparent(targetBI, transparentColor);
+        return targetBI;
+
+        // Display display = Display.getCurrent();
 
         // HACK: rotation by arbitrary angles is required here!
-        ImageData newData;
-        switch(rotationAngle) {
+        // ImageData newData;
+        /*switch(rotationAngle) {
             case 0:
                 newData = sectionImage.getImageData();
                 break;
@@ -46,22 +64,40 @@ public class TrackSection {
                 break;
             default:
                 throw new RuntimeException("Rotating by arbitrary angles is not yet supported!");
-        }
-
+        }*/
+        // newData = rotate(null, 45);
         // TODO: maybe there's a way to enforce proper disposing of these images. Right now, it's up to the caller.
-        return new Image(display, newData);
+        // return new Image(display, newData);
     }
 
-    public Point getNextSectionOffset() {
-        return nextSectionOffset;
-    }
-
-    public int getEntryToExitAngle() {
-        return entryToExitAngle;
-    }
-
+    /*    private BufferedImage convertToTransparent(BufferedImage src, Color transparentColor) {
+            int w = src.getWidth();
+            int h = src.getHeight();
+            GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            GraphicsConfiguration gc = ge.getDefaultScreenDevice().getDefaultConfiguration();
+            BufferedImage dest = gc.createCompatibleImage(w, h, Transparency.BITMASK);
+            int trgb;
+            if(transparentColor != null) {
+                trgb = transparentColor.getRGB() | 0xff000000;
+            } else {
+                trgb = 0xffff00ff;
+            }
+            // Copy pixels a scan line at a time
+            int buf[] = new int[w];
+            for(int y = 0; y < h; y++) {
+                src.getRGB(0, y, w, 1, buf, 0, w);
+                for(int x = 0; x < w; x++) {
+                    if(buf[x] == trgb) {
+                        buf[x] = 0;
+                    }
+                }
+                dest.setRGB(0, y, w, 1, buf, 0, w);
+            }
+            return dest;
+        }
+    */
     // TODO: this helper method doesn't really belong here
-    private static ImageData rotate(ImageData srcData, int direction) {
+    /*private static ImageData rotate(ImageData srcData, int direction) {
         int bytesPerPixel = srcData.bytesPerLine / srcData.width;
         int destBytesPerLine = (direction == SWT.DOWN) ? srcData.width * bytesPerPixel : srcData.height * bytesPerPixel;
         byte[] newData = new byte[srcData.data.length];
@@ -97,6 +133,6 @@ public class TrackSection {
         // destBytesPerLine is used as scanlinePad to ensure that no padding is
         // required
         return new ImageData(width, height, srcData.depth, srcData.palette, destBytesPerLine, newData);
-    }
+    }*/
 
 }

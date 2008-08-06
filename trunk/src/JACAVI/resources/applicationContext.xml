@@ -14,6 +14,8 @@
 	
 	<bean id="track1Bean" class="de.jacavi.appl.valueobjects.Track" />
 	
+    <bean id="tilesetRepository" class="de.jacavi.appl.valueobjects.TilesetRepository" />
+  
 	<bean id="playersBean" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
