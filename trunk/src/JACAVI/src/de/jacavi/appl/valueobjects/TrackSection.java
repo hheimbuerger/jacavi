@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -30,7 +29,7 @@ public class TrackSection {
         return tile.getExitPoint();
     }
 
-    public java.awt.Image getRotatedImage(Angle currentAngle) throws IOException {
+    public java.awt.Image getRotatedImage(Angle currentAngle) {
         int maxDimension = Math.max(tile.getSectionImage().getWidth(), tile.getSectionImage().getHeight());
         BufferedImage targetBI = new BufferedImage(maxDimension * 2, maxDimension * 2, BufferedImage.TYPE_INT_ARGB);
 

@@ -5,7 +5,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DirectColorModel;
 import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
-import java.io.IOException;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -26,12 +25,11 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
-import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.valueobjects.Angle;
-import de.jacavi.appl.valueobjects.TilesetRepository;
 import de.jacavi.appl.valueobjects.Track;
 import de.jacavi.appl.valueobjects.TrackSection;
-import de.jacavi.appl.valueobjects.TilesetRepository.TileSet;
+import de.jacavi.appl.valueobjects.Track.TrackLoadingException;
+import de.jacavi.rcp.Activator;
 
 
 
@@ -47,32 +45,14 @@ public class TrackWidget extends Canvas {
 
     private Image trackImage = null;
 
-    public TrackWidget(Composite parent) throws IOException {
+    public TrackWidget(Composite parent) throws TrackLoadingException {
         super(parent, SWT.DOUBLE_BUFFERED);
 
         final Color white = new Color(null, 255, 255, 255);
         setBackground(white);
 
         // HACK: hardcoded track for testing
-        TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
-        currentTrack = new Track();
-        // currentTrack.insertSection(new TrackSection("straight.png", new Point(5, 0), 0), index++);
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "turn30deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "turn90deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "turn30deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "turn30deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "turn90deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "turn90deg"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
-        currentTrack.appendSection(tilesetRepository.getTile(TileSet.DEBUG, "straight"));
+        currentTrack = new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml"));
         createTrackImage();
 
         // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
@@ -156,25 +136,12 @@ public class TrackWidget extends Canvas {
         g.drawImage(rotatedImage, drawingPosition.x, drawingPosition.y, null);
     }
 
-    /*private void drawByEntryPoint(Graphics2D g, java.awt.Image rotatedImage, Point trackPoint, Point entryPoint) {
-        Point preRotationDrawingPosition = new Point(trackPoint.x - entryPoint.x, trackPoint.y - entryPoint.y);
-        Point postRotationDrawingPosition = new Point(preRotationDrawingPosition.x - rotatedImage.getWidth(null) / 4,
-                preRotationDrawingPosition.y - rotatedImage.getHeight(null) / 4);
-        System.out.println("Rotated image size: " + rotatedImage.getWidth(null) + "/" + rotatedImage.getHeight(null));
-        g.drawImage(rotatedImage, postRotationDrawingPosition.x, postRotationDrawingPosition.y, null);
-
-        // DEBUG: draw
-        g.setColor(java.awt.Color.RED);
-        g.drawRect(postRotationDrawingPosition.x, postRotationDrawingPosition.y, rotatedImage.getWidth(null),
-                rotatedImage.getHeight(null));
-    }*/
-
     private void markPoint(Graphics2D g, Point point, java.awt.Color color) {
         g.setColor(color);
         g.drawRect(point.x - 1, point.y - 1, 3, 3);
     }
 
-    private void createTrackImage() throws IOException {
+    private void createTrackImage() {
         // FIXME: size should be dynamic or at least boundaries checked
         BufferedImage bi = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = bi.createGraphics();
