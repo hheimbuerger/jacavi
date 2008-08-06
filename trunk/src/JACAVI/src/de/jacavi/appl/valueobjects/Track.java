@@ -14,7 +14,7 @@ public class Track {
 
     public Track() {
         TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
-        sections.add(new TrackSection(tilesetRepository.getTile(TileSet.digital, "finishingStraight")));
+        sections.add(new TrackSection(tilesetRepository.getTile(TileSet.DEBUG, "finishingStraight")));
     }
 
     public void insertSection(Tile tile, int position) {
