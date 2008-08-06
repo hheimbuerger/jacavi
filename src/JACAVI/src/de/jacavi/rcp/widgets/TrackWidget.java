@@ -26,10 +26,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 
 import de.jacavi.appl.valueobjects.Angle;
-import de.jacavi.appl.valueobjects.Track;
-import de.jacavi.appl.valueobjects.TrackSection;
-import de.jacavi.appl.valueobjects.Track.TrackLoadingException;
 import de.jacavi.rcp.Activator;
+import de.jacavi.track.Track;
+import de.jacavi.track.TrackSection;
+import de.jacavi.track.Track.TrackLoadingException;
 
 
 

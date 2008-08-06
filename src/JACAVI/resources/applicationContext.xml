@@ -14,7 +14,7 @@
 	
 	<!-- <bean id="track1Bean" class="de.jacavi.appl.valueobjects.Track" /> -->
 	
-    <bean id="tilesetRepository" class="de.jacavi.appl.valueobjects.TilesetRepository">
+    <bean id="tilesetRepository" class="de.jacavi.track.TilesetRepository">
         <constructor-arg type="java.lang.String" value="/tiles/tiles.xml" />
     </bean>
 

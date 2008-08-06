@@ -1,4 +1,4 @@
-package de.jacavi.appl.valueobjects;
+package de.jacavi.track;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -6,6 +6,8 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import org.eclipse.swt.graphics.Point;
+
+import de.jacavi.appl.valueobjects.Angle;
 
 
 

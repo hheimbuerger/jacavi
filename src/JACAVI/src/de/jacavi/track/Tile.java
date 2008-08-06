@@ -1,4 +1,4 @@
-package de.jacavi.appl.valueobjects;
+package de.jacavi.track;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import javax.imageio.ImageIO;
 
 import org.eclipse.swt.graphics.Point;
 
+import de.jacavi.appl.valueobjects.Angle;
 import de.jacavi.rcp.Activator;
 
 
