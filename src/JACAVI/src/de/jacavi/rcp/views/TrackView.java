@@ -1,5 +1,7 @@
 package de.jacavi.rcp.views;
 
+import java.io.IOException;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
@@ -20,7 +22,11 @@ public class TrackView extends ViewPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        new TrackWidget(parent);
+        try {
+            new TrackWidget(parent);
+        } catch(IOException e) {
+            throw new RuntimeException("Error while creating TrackWidget.");
+        }
         // parent.setBackgroundImage(Activator.getImageDescriptor("/icons/strecke.jpg").createImage());
     }
 

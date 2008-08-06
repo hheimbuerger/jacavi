@@ -3,7 +3,8 @@ package de.jacavi.appl.valueobjects;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.swt.graphics.Point;
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.valueobjects.TilesetRepository.TileSet;
 
 
 
@@ -12,11 +13,16 @@ public class Track {
     private List<TrackSection> sections = new LinkedList<TrackSection>();
 
     public Track() {
-        sections.add(new TrackSection("finishing_straight.png", new Point(106, 0), 0));
+        TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
+        sections.add(new TrackSection(tilesetRepository.getTile(TileSet.digital, "finishingStraight")));
     }
 
-    public void insertSection(TrackSection section, int position) {
-        sections.add(position, section);
+    public void insertSection(Tile tile, int position) {
+        sections.add(position, new TrackSection(tile));
+    }
+
+    public void appendSection(Tile tile) {
+        sections.add(new TrackSection(tile));
     }
 
     public void removeSection(int position) {
