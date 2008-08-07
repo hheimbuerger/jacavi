@@ -6,7 +6,6 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
-import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 
