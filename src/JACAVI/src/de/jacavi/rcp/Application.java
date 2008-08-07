@@ -14,7 +14,7 @@ import org.eclipse.ui.PlatformUI;
  * This class controls all aspects of the application's execution
  */
 public class Application implements IApplication {
-
+	
     private static Log log = LogFactory.getLog(Application.class);
 
     public Object start(IApplicationContext context) {
