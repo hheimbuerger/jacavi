@@ -25,7 +25,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		newTrackAction.setText("New");
 		register(newTrackAction);
 
-		loadTrackAction = ActionFactory.SHOW_EDITOR.create(window);
+		loadTrackAction = ActionFactory.SAVE.create(window);
 		loadTrackAction.setText("Load");
 		register(loadTrackAction);
 		

@@ -56,7 +56,7 @@ public class TrackWidget extends Canvas {
         // setBackground(white);
 
         // HACK: hardcoded track for testing
-        currentTrack = new Track(Activator.getResourceAsStream("/tracks/demo_crossing.track.xml"));
+        currentTrack = new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml"));
         createTrackImage();
 
         // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
