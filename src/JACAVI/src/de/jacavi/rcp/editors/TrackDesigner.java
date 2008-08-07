@@ -11,7 +11,7 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
-import de.jacavi.rcp.test.SafeSaveDialog;
+import de.jacavi.rcp.dlg.SafeSaveDialog;
 import de.jacavi.rcp.widgets.TrackWidget;
 import de.jacavi.track.Track.TrackLoadingException;
 
