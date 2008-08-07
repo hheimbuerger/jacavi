@@ -7,15 +7,15 @@ public class Angle {
     public int angle;
 
     public Angle(int angle) {
-        this.angle = angle;
+        this.angle = angle % 360;
     }
 
     public void turn(Angle angle) {
-        this.angle += angle.angle;
-        if(this.angle < 0)
-            this.angle += 360;
-        if(this.angle >= 360)
-            this.angle -= 360;
+        turn(angle.angle);
+    }
+
+    public void turn(int angle) {
+        this.angle = (this.angle + angle) % 360;
     }
 
     public double getRadians() {

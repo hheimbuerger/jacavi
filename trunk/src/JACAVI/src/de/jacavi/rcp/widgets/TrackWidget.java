@@ -1,10 +1,8 @@
 package de.jacavi.rcp.widgets;
 
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.image.DirectColorModel;
-import java.awt.image.IndexColorModel;
-import java.awt.image.WritableRaster;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -16,17 +14,13 @@ import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 
 import de.jacavi.appl.valueobjects.Angle;
 import de.jacavi.rcp.Activator;
+import de.jacavi.rcp.util.Graphics2DRenderer;
 import de.jacavi.track.Track;
 import de.jacavi.track.TrackSection;
 import de.jacavi.track.Track.TrackLoadingException;
@@ -37,22 +31,32 @@ public class TrackWidget extends Canvas {
 
     private Point panPosition = new Point(-300, -300);
 
-    private boolean isPanningActive = false;
+    private boolean isCurrentlyPanning = false;
+
+    private boolean isCurrentlyRotating = false;
 
     private Point panningStartPosition = null;
 
     private Track currentTrack = null;
 
-    private Image trackImage = null;
+    private BufferedImage trackImage = null;
+
+    final Graphics2DRenderer renderer = new Graphics2DRenderer();
+
+    private double zoomLevel = 1.0;
+
+    private Angle rotationAngle = new Angle(0);
+
+    private Point rotationStartPosition = null;
 
     public TrackWidget(Composite parent) throws TrackLoadingException {
-        super(parent, SWT.DOUBLE_BUFFERED);
+        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
 
         final Color white = new Color(null, 255, 255, 255);
-        setBackground(white);
+        // setBackground(white);
 
         // HACK: hardcoded track for testing
-        currentTrack = new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml"));
+        currentTrack = new Track(Activator.getResourceAsStream("/tracks/demo_crossing.track.xml"));
         createTrackImage();
 
         // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
@@ -96,38 +100,65 @@ public class TrackWidget extends Canvas {
 
     protected void handleMouseUp(MouseEvent e) {
         if(e.button == 3) {
-            isPanningActive = false;
+            isCurrentlyPanning = false;
             panningStartPosition = null;
+        } else if(e.button == 2) {
+            isCurrentlyRotating = false;
+            rotationStartPosition = null;
         }
     }
 
     protected void handleMouseDown(MouseEvent e) {
-        if(e.button == 3 && !isPanningActive) {
-            isPanningActive = true;
+        if(e.button == 3 && !isCurrentlyPanning) {
+            isCurrentlyPanning = true;
             panningStartPosition = new Point(e.x, e.y);
+        } else if(e.button == 2 && !isCurrentlyRotating) {
+            isCurrentlyRotating = true;
+            rotationStartPosition = new Point(e.x, e.y);
         }
     }
 
     protected void handleMouseMove(MouseEvent e) {
-        if(isPanningActive) {
+        boolean doesNeedRedraw = false;
+        if(isCurrentlyPanning) {
             panPosition.x += e.x - panningStartPosition.x;
             panPosition.y += e.y - panningStartPosition.y;
             panningStartPosition = new Point(e.x, e.y);
-            redraw();
+            doesNeedRedraw = true;
         }
+        if(isCurrentlyRotating) {
+            rotationAngle.turn((e.x - rotationStartPosition.x) / 3);
+            zoomLevel += -(e.y - rotationStartPosition.y) * 0.01;
+            rotationStartPosition = new Point(e.x, e.y);
+            doesNeedRedraw = true;
+        }
+
+        if(doesNeedRedraw)
+            redraw();
     }
 
-    protected void handleMouseDoubleClick(MouseEvent e) {
-    // x += 5;
-    // redraw();
-    }
+    protected void handleMouseDoubleClick(MouseEvent e) {}
 
     protected void paintControl(PaintEvent e) {
+        // get the SWT graphics context from the event and prepare the Graphics2D renderer
         GC gc = e.gc;
+        renderer.prepareRendering(gc);
+        // Point controlSize = ((Control) e.getSource()).getSize();
 
-        gc.drawImage(trackImage, panPosition.x, panPosition.y);
+        // gets the Graphics2D context and switch on the antialiasing
+        Graphics2D g2d = renderer.getGraphics2D();
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 
-        // gc.drawString("text", x, 1);
+        // add the rotation and zooming transformations
+        g2d.rotate(rotationAngle.getRadians(), 500, 500);
+        g2d.scale(zoomLevel, zoomLevel);
+
+        // do the actual drawing of the widget
+        g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
+
+        // now that we are done with Java 2D, renders Graphics2D operation
+        // on the SWT graphics context
+        renderer.render(gc);
     }
 
     private void drawByCenter(Graphics2D g, java.awt.Image rotatedImage, Point destination) {
@@ -143,17 +174,17 @@ public class TrackWidget extends Canvas {
 
     private void createTrackImage() {
         // FIXME: size should be dynamic or at least boundaries checked
-        BufferedImage bi = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = bi.createGraphics();
+        trackImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = trackImage.createGraphics();
         g.setBackground(java.awt.Color.WHITE);
-        g.clearRect(0, 0, bi.getWidth(), bi.getHeight());
+        g.clearRect(0, 0, trackImage.getWidth(), trackImage.getHeight());
 
         Angle currentAngle = new Angle(0);
-        Point currentTrackPos = new Point(bi.getWidth() / 2, bi.getHeight() / 2);
+        Point currentTrackPos = new Point(trackImage.getWidth() / 2, trackImage.getHeight() / 2);
         for(TrackSection s: currentTrack.getSections()) {
             Double x, y;
 
-            System.out.println("Track position:          " + currentTrackPos.x + "/" + currentTrackPos.y);
+            // System.out.println("Track position:          " + currentTrackPos.x + "/" + currentTrackPos.y);
 
             // step #1: rotate tile as necessary
             java.awt.Image rotatedImage = s.getRotatedImage(currentAngle);
@@ -171,7 +202,7 @@ public class TrackWidget extends Canvas {
             // step #3: calculate center drawing point and draw the image
             Point centerDrawingPoint = new Point(currentTrackPos.x + (-relativeEntryPoint.x), currentTrackPos.y
                     + (-relativeEntryPoint.y));
-            System.out.println("Center drawing position: " + centerDrawingPoint.x + "/" + centerDrawingPoint.y);
+            // System.out.println("Center drawing position: " + centerDrawingPoint.x + "/" + centerDrawingPoint.y);
             drawByCenter(g, rotatedImage, centerDrawingPoint);
             markPoint(g, centerDrawingPoint, java.awt.Color.GREEN);
 
@@ -187,59 +218,11 @@ public class TrackWidget extends Canvas {
             currentTrackPos = new Point(currentTrackPos.x + (relativeExitPoint.x - relativeEntryPoint.x),
                     currentTrackPos.y + (relativeExitPoint.y - relativeEntryPoint.y));
             currentAngle.turn(s.getEntryToExitAngle());
-            System.out.println("New angle: " + currentAngle.angle);
+            // System.out.println("New angle: " + currentAngle.angle);
         }
         markPoint(g, currentTrackPos, java.awt.Color.CYAN);
 
-        Display display = Display.getCurrent();
-        trackImage = new Image(display, convertToSWT(bi));
+        // Display display = Display.getCurrent();
+        // trackImage = new Image(display, convertToSWT(bi));
     }
-
-    static ImageData convertToSWT(BufferedImage bufferedImage) {
-        if(bufferedImage.getColorModel() instanceof DirectColorModel) {
-            DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
-            PaletteData palette = new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel
-                    .getBlueMask());
-            ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel
-                    .getPixelSize(), palette);
-            WritableRaster raster = bufferedImage.getRaster();
-            int[] pixelArray = new int[3];
-            for(int y = 0; y < data.height; y++) {
-                for(int x = 0; x < data.width; x++) {
-                    raster.getPixel(x, y, pixelArray);
-                    int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
-                    data.setPixel(x, y, pixel);
-                }
-            }
-            return data;
-        } else if(bufferedImage.getColorModel() instanceof IndexColorModel) {
-            IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
-            int size = colorModel.getMapSize();
-            byte[] reds = new byte[size];
-            byte[] greens = new byte[size];
-            byte[] blues = new byte[size];
-            colorModel.getReds(reds);
-            colorModel.getGreens(greens);
-            colorModel.getBlues(blues);
-            RGB[] rgbs = new RGB[size];
-            for(int i = 0; i < rgbs.length; i++) {
-                rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
-            }
-            PaletteData palette = new PaletteData(rgbs);
-            ImageData data = new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel
-                    .getPixelSize(), palette);
-            data.transparentPixel = colorModel.getTransparentPixel();
-            WritableRaster raster = bufferedImage.getRaster();
-            int[] pixelArray = new int[1];
-            for(int y = 0; y < data.height; y++) {
-                for(int x = 0; x < data.width; x++) {
-                    raster.getPixel(x, y, pixelArray);
-                    data.setPixel(x, y, pixelArray[0]);
-                }
-            }
-            return data;
-        }
-        return null;
-    }
-
 }
