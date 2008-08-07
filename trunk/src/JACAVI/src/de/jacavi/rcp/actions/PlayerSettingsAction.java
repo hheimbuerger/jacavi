@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import de.jacavi.rcp.dlg.PlayerSettingsDialog;
+import de.jacavi.rcp.dlg.PlayerOverviewDialog;
 
 /**
  * @author Fabian Rohn
@@ -28,7 +28,7 @@ public class PlayerSettingsAction implements IWorkbenchWindowActionDelegate {
 	}
 
 	public void run(IAction action) {
-		PlayerSettingsDialog setting = new PlayerSettingsDialog(window.getShell());
+		PlayerOverviewDialog setting = new PlayerOverviewDialog(window.getShell());
 		if (setting.open() == Dialog.OK) {
 			System.out.println("Alles OK");
 		}

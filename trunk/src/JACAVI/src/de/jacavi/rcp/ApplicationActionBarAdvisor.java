@@ -40,6 +40,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		MenuManager fileMenu = new MenuManager("&File",
 				IWorkbenchActionConstants.M_FILE);
 		menuBar.add(fileMenu);
+		fileMenu.add(newTrackAction);
 		fileMenu.add(exitAction);
 
 		MenuManager trackMenu = new MenuManager("&Track");
