@@ -1,5 +1,7 @@
 package de.jacavi.rcp.dlg;
 
+import java.util.ArrayList;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -163,5 +165,9 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
 	@Override
 	protected Point getInitialSize() {
 		return new Point(500, 400);
+	}
+
+	public ArrayList<Player> getPlayer() {
+		return model.getPlayer();
 	}
 }

@@ -5,7 +5,6 @@ import java.io.Serializable;
 import org.eclipse.swt.graphics.Color;
 
 import de.jacavi.appl.controller.CarController;
-import de.jacavi.appl.controller.script.impl.Script;
 
 
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -21,9 +22,14 @@ import de.jacavi.track.TilesetRepository.TileSet;
 
 
 
-public class Track {
+public class Track implements Serializable{
 
-    public class TrackLoadingException extends Exception {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public class TrackLoadingException extends Exception {
         public TrackLoadingException(Exception e) {
             super(e);
         }
@@ -32,6 +38,10 @@ public class Track {
     private List<TrackSection> sections = new LinkedList<TrackSection>();
 
     private String trackName;
+    
+    public Track() {
+		// TODO Auto-generated constructor stub
+	}
 
     public Track(TileSet tileset) {
         TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
