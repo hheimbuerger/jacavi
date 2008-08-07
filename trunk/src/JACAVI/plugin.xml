@@ -80,33 +80,23 @@
       </actionSet>
    </extension>
    <extension
-         id="product"
-         point="org.eclipse.core.runtime.products">
-      <product
-            application="JACAVI.application"
-            name="JACAVI">
-         <property
-               name="appName"
-               value="JACAVI">
-         </property>
-      </product>
-   </extension>
-   <extension
          point="org.eclipse.ui.editors">
       <editor
-            class="de.jacavi.rcp.editors.TrackEditor"
-            default="false"
-            id="JACAVI.TrackEditor"
-            name="TrackEditor">
+            class="de.jacavi.rcp.editors.TrackDesigner"
+            default="true"
+            icon="icons/cars-16x16.png"
+            id="JACAVI.TrackDesigner"
+            name="TrackDesigner">
       </editor>
    </extension>
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
             class="de.jacavi.rcp.wizards.NewTrackWizard"
+            descriptionImage="icons/strecke.jpg"
+            icon="icons/cars-16x16.png"
             id="JACAVI.NewTrackWizard"
             name="New Track">
       </wizard>
    </extension>
-
 </plugin>
