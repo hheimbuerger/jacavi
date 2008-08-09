@@ -46,9 +46,27 @@
             id="JACAVI.actionSet"
             label="Sample Action Set"
             visible="true">
+         <action
+               class="de.jacavi.rcp.actions.OpenTrackFileAction"
+               icon="icons/EclipseIcons/import_wiz.gif"
+               id="JACAVI.loadTrackAction"
+               label="Open Track..."
+               menubarPath="trackMenu/trackGroup"
+               style="push"
+               tooltip="Open Track">
+         </action>
+         <menu
+               id="settingsMenu"
+               label="Settings"
+               path="other">
+            <groupMarker
+                  name="settingsGroup">
+            </groupMarker>
+         </menu>
          <menu
                id="raceMenu"
-               label="Race">
+               label="Race"
+               path="other">
             <groupMarker
                   name="raceGroup">
             </groupMarker>
@@ -62,13 +80,6 @@
                toolbarPath="raceGroup"
                tooltip="Start Race">
          </action>
-         <menu
-               id="settingsMenu"
-               label="Settings">
-            <groupMarker
-                  name="settingsGroup">
-            </groupMarker>
-         </menu>
          <action
                class="de.jacavi.rcp.actions.PlayerSettingsAction"
                icon="icons/Sony-Playstation-Dual-Shock-16x16.png"
