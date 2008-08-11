@@ -1,10 +1,10 @@
 package de.jacavi.hal.lib42;
 
-import de.jacavi.hal.CarreraControler;
+import de.jacavi.hal.TechnologyController;
 
 /* This interface has extra Clib42 functionality for example to program a cars id
  */
-public interface Clib42CarreraController extends CarreraControler{
+public interface Clib42CarreraController extends TechnologyController{
     // HANDLE PIT STOP
     void setPitstop( int carId, int pitstop);
     int togglePitstop( int carId ); 

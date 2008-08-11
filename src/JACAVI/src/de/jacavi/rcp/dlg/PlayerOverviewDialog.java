@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
-import de.jacavi.appl.valueobjects.Player;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.rcp.dlg.provider.PlayerContentProvider;
 import de.jacavi.rcp.dlg.provider.PlayerLabelProvider;
 
