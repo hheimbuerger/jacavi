@@ -2,21 +2,20 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
-	
 	<bean id="applicationManager" class="de.jacavi.appl.ApplicationManager">
-		<property name="race" ref="raceBean"/>
+		<property name="race" ref="raceBean" />
 	</bean>
-	
 	<bean id="raceBean" class="de.jacavi.appl.racelogic.Race">
 		<!-- <property name="track" ref="track1Bean"/> -->
-		<property name="players" ref="playersBean"/>
+		<property name="players" ref="playersBean" />
 	</bean>
 	
 	<!-- <bean id="track1Bean" class="de.jacavi.appl.valueobjects.Track" /> -->
+	<bean id="tilesetRepository" class="de.jacavi.track.TilesetRepository">
+		<constructor-arg type="java.lang.String" value="/tiles/tiles.xml" />
+	</bean>
 	
-    <bean id="tilesetRepository" class="de.jacavi.track.TilesetRepository">
-        <constructor-arg type="java.lang.String" value="/tiles/tiles.xml" />
-    </bean>
+	<!--<bean id="lib42technologyBean" class="de.jacavi.hal.lib42.NativeLib42Adapter" />-->
 
 	<bean id="playersBean" class="java.util.ArrayList">
 		<constructor-arg>
@@ -26,19 +25,18 @@
 					<property name="name" value="Player 1" />
 					<property name="controller">
 						<bean id="mouseControlBean" class="de.jacavi.appl.controller.device.impl.Mouse" />
-					</property>
-					<property name="protocol" value="Bluetooth" />
-				</bean>
+					</property><!--
+					<property name="technologyController" ref="lib42technologyBean"/>
+				--></bean>
 				<bean id="player2" class="de.jacavi.appl.racelogic.Player">
 					<property name="id" value="2" />
-					<property name="name" value="Player 2" />
-					<property name="protocol" value="Carrera" />
-					<property name="controller">
-						<bean id="wiimoteControlBean" class="de.jacavi.appl.controller.device.impl.Wiimote"/>
+					<property name="name" value="Player 2" /><!--
+					<property name="technologyController" ref="lib42technologyBean" />
+					--><property name="controller">
+						<bean id="wiimoteControlBean" class="de.jacavi.appl.controller.device.impl.Wiimote" />
 					</property>
 				</bean>
 			</list>
 		</constructor-arg>
-	
 	</bean>
 </beans>
