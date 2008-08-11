@@ -21,7 +21,7 @@
 	<bean id="playersBean" class="java.util.ArrayList">
 		<constructor-arg>
 			<list>
-				<bean id="player1" class="de.jacavi.appl.valueobjects.Player">
+				<bean id="player1" class="de.jacavi.appl.racelogic.Player">
 					<property name="id" value="1" />
 					<property name="name" value="Player 1" />
 					<property name="controller">
@@ -29,7 +29,7 @@
 					</property>
 					<property name="protocol" value="Bluetooth" />
 				</bean>
-				<bean id="player2" class="de.jacavi.appl.valueobjects.Player">
+				<bean id="player2" class="de.jacavi.appl.racelogic.Player">
 					<property name="id" value="2" />
 					<property name="name" value="Player 2" />
 					<property name="protocol" value="Carrera" />
