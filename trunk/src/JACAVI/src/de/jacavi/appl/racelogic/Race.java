@@ -1,6 +1,5 @@
 package de.jacavi.appl.racelogic;
 
-import java.util.Collection;
 import java.util.List;
 
 import de.jacavi.track.Track;
@@ -17,7 +16,7 @@ public class Race {
         this.players = players;
     }
 
-    public Collection<Player> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
