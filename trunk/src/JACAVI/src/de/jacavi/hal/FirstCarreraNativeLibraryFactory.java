@@ -6,9 +6,9 @@ import de.jacavi.hal.lib42.NativeLib42Adapter;
 public class FirstCarreraNativeLibraryFactory implements CarreraNativeLibraryFactory {
 
 	@Override
-	public CarreraControler initialiseCarreraLib(CarreraLibraryType type) {		
+	public TechnologyController initialiseCarreraLib(CarreraLibraryType type) {		
 		
-		CarreraControler halController=null;
+		TechnologyController halController=null;
 		
 		switch(type)
 		{

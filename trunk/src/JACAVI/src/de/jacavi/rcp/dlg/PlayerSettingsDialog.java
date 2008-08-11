@@ -30,190 +30,197 @@ import de.jacavi.appl.controller.device.impl.Mouse;
 import de.jacavi.appl.controller.device.impl.Wiimote;
 import de.jacavi.appl.controller.script.ScriptController;
 import de.jacavi.appl.controller.script.impl.Script;
-import de.jacavi.appl.valueobjects.Player;
+import de.jacavi.appl.racelogic.Player;
+
+
 
 /**
  * @author Fabian Rohn
- * 
  */
 public class PlayerSettingsDialog extends TitleAreaDialog {
 
-	private static final String[] inputs = new String[] { "Device", "Script" };
-	private static final String[] devices = new String[] { "Keyboard", "Mouse",
-			"Joystick", "Wiimote" };
-	private static final String[] protocols = new String[] { "41",
-			"Blue Rider", "Simulation" };
+    private static final String[] inputs = new String[] { "Device", "Script" };
 
-	private Player player;
+    private static final String[] devices = new String[] { "Keyboard", "Mouse", "Joystick", "Wiimote" };
 
-	private Text playerName;
-	private Combo comboInput;
-	private Combo comboDevices;
-	private Combo comboProtocols;
-	private Shell parentShell;
-	private Color c;
+    private static final String[] protocols = new String[] { "41", "Blue Rider", "Simulation" };
 
-	public PlayerSettingsDialog(Shell parentShell, Player player) {
-		super(parentShell);
-		this.player = player;
-		this.parentShell = parentShell;
-	}
+    private Player player;
 
-	protected Control createContents(Composite parent) {
-		Control contents = super.createContents(parent);
-		setTitle("Player Settings");
-		setMessage("Please set Player specific options",
-				IMessageProvider.INFORMATION);
-		return contents;
-	}
+    private Text playerName;
 
-	@Override
-	protected Control createDialogArea(Composite parent) {
-		parent.getShell().setText("Player Settings");
+    private Combo comboInput;
 
-		GridData gdInputs = new GridData();
-		gdInputs.widthHint = 150;
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 20;
-		layout.numColumns = 2;
-		layout.verticalSpacing = 10;
-		layout.horizontalSpacing = 10;
+    private Combo comboDevices;
 
-		GridLayout parentlayout = new GridLayout();
-		// parentlayout.numColumns = 2;
-		parent.setLayout(parentlayout);
+    private Combo comboProtocols;
 
-		// Player 1
-		Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		group.setLayout(layout);
-		group.setText("Player Settings");
-		group.setLayoutData(new GridData(GridData.FILL_BOTH));
+    private Shell parentShell;
 
-		CLabel lPlayer1 = new CLabel(group, SWT.NONE);
-		lPlayer1.setText("Name:");
+    private Color c;
 
-		playerName = new Text(group, SWT.BORDER);
-		playerName.setLayoutData(gdInputs);
-		playerName.setText(player.getName());
+    public PlayerSettingsDialog(Shell parentShell, Player player) {
+        super(parentShell);
+        this.player = player;
+        this.parentShell = parentShell;
+    }
 
-		CLabel labelInput1 = new CLabel(group, SWT.NONE);
-		labelInput1.setText("Input:");
+    @Override
+    protected Control createContents(Composite parent) {
+        Control contents = super.createContents(parent);
+        setTitle("Player Settings");
+        setMessage("Please set Player specific options", IMessageProvider.INFORMATION);
+        return contents;
+    }
 
-		comboInput = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-		comboInput.addSelectionListener(new SelectionAdapter() {
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        parent.getShell().setText("Player Settings");
 
-			public void widgetSelected(SelectionEvent event) {
-				String value = ((Combo) event.getSource()).getText();
-				if (!value.equals("")) {
-					if (((Combo) event.getSource()).getText().equals(inputs[1])) {
-						comboDevices.setEnabled(false);
-						player.setController(new Script());
-					} else {
-						comboDevices.setEnabled(true);
-					}
-				}
+        GridData gdInputs = new GridData();
+        gdInputs.widthHint = 150;
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 20;
+        layout.numColumns = 2;
+        layout.verticalSpacing = 10;
+        layout.horizontalSpacing = 10;
 
-			}
-		});
-		comboInput.setLayoutData(gdInputs);
-		comboInput.setItems(inputs);
-		CarController controller = player.getController();
-		if (controller instanceof DeviceController) {
-			comboInput.select(0);
-		} else if (controller instanceof ScriptController) {
-			comboInput.select(1);
-		}
+        GridLayout parentlayout = new GridLayout();
+        // parentlayout.numColumns = 2;
+        parent.setLayout(parentlayout);
 
-		CLabel labelDevice1 = new CLabel(group, SWT.NONE);
-		labelDevice1.setText("Devices:");
+        // Player 1
+        Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
+        group.setLayout(layout);
+        group.setText("Player Settings");
+        group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN
-				| SWT.READ_ONLY);
-		comboDevices.setEnabled(comboInput.getSelectionIndex()!=1);
-		comboDevices.setLayoutData(gdInputs);
-		comboDevices.setItems(devices);
-		for (int i = 0; i < devices.length; i++) {
-			if (controller instanceof DeviceController) {
-				DeviceController devController = (DeviceController) controller;
-				if (devController.getClass().getSimpleName().equals(devices[i]))
-					comboDevices.select(i);
-			}
-		}
+        CLabel lPlayer1 = new CLabel(group, SWT.NONE);
+        lPlayer1.setText("Name:");
 
-		CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
-		labelProtocol1.setText("Protocol:");
+        playerName = new Text(group, SWT.BORDER);
+        playerName.setLayoutData(gdInputs);
+        playerName.setText(player.getName());
 
-		comboProtocols = new Combo(group, SWT.BORDER | SWT.DROP_DOWN
-				| SWT.READ_ONLY);
-		comboProtocols.setLayoutData(gdInputs);
-		comboProtocols.setItems(protocols);
-		if (player.getProtocol() != null) {
-			for (int i = 0; i < protocols.length; i++) {
-				if (player.getProtocol().equals(protocols[i])) {
-					comboProtocols.select(i);
-				}
-			}
-		}
+        CLabel labelInput1 = new CLabel(group, SWT.NONE);
+        labelInput1.setText("Input:");
 
-		CLabel labelColor = new CLabel(group, SWT.NONE);
-		labelColor.setText("Color:");
+        comboInput = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        comboInput.addSelectionListener(new SelectionAdapter() {
 
-		final Button colorButton = new Button(group, SWT.NONE);
-		colorButton.setText("Select Color...");
-		colorButton.setLayoutData(gdInputs);
-		colorButton.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event) {
-				ColorDialog dialog = new ColorDialog(parentShell, SWT.BORDER);
-				if (player.getColor() != null)
-					dialog.setRGB(player.getColor().getRGB());
-				RGB rgb = dialog.open();
-				if (rgb != null) {
-					c = new Color(parentShell.getDisplay(), rgb);
-					System.out.println(c);
-					Image image = new Image(parentShell.getDisplay(), 10, 10);
-					GC gc = new GC(image);
-					gc.setBackground(c);
-					gc.fillRectangle(0, 0, 10, 10);
-					gc.dispose();
-					colorButton.setImage(image);
-				}
-			}
-		});
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                String value = ((Combo) event.getSource()).getText();
+                if(!value.equals("")) {
+                    if(((Combo) event.getSource()).getText().equals(inputs[1])) {
+                        comboDevices.setEnabled(false);
+                        player.setController(new Script());
+                    } else {
+                        comboDevices.setEnabled(true);
+                    }
+                }
 
-		return parent;
-	}
+            }
+        });
+        comboInput.setLayoutData(gdInputs);
+        comboInput.setItems(inputs);
+        CarController controller = player.getController();
+        if(controller instanceof DeviceController) {
+            comboInput.select(0);
+        } else if(controller instanceof ScriptController) {
+            comboInput.select(1);
+        }
 
-	@Override
-	protected void okPressed() {
-		player.setName(playerName.getText());
-		if (inputs[1].equals(comboInput.getText()))
-			player.setController(new Script());
-		else
-			switch (Devices.valueOf(comboDevices.getText().toUpperCase())) {
-			case JOYSTICK:
-				player.setController(new Joystick());
-				break;
+        CLabel labelDevice1 = new CLabel(group, SWT.NONE);
+        labelDevice1.setText("Devices:");
 
-			case KEYBOARD:
-				player.setController(new Keyboard());
-				break;
+        comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+        comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
+        comboDevices.setLayoutData(gdInputs);
+        comboDevices.setItems(devices);
+        for(int i = 0; i < devices.length; i++) {
+            if(controller instanceof DeviceController) {
+                DeviceController devController = (DeviceController) controller;
+                if(devController.getClass().getSimpleName().equals(devices[i]))
+                    comboDevices.select(i);
+            }
+        }
 
-			case MOUSE:
-				player.setController(new Mouse());
-				break;
+        CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
+        labelProtocol1.setText("Protocol:");
 
-			case WIIMOTE:
-				player.setController(new Wiimote());
-				break;
-			default:
-				throw new IllegalArgumentException("No Device selected");
-			}
-		;
-		player.setProtocol(comboProtocols.getText());
-		player.setColor(c);
-		super.okPressed();
-		comboInput.dispose();
+        comboProtocols = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+        comboProtocols.setLayoutData(gdInputs);
+        comboProtocols.setItems(protocols);
+        // FIXME: commented out because protocol member was removed
+        /*if (player.getProtocol() != null) {
+        	for (int i = 0; i < protocols.length; i++) {
+        		if (player.getProtocol().equals(protocols[i])) {
+        			comboProtocols.select(i);
+        		}
+        	}
+        }*/
 
-	}
+        CLabel labelColor = new CLabel(group, SWT.NONE);
+        labelColor.setText("Color:");
+
+        final Button colorButton = new Button(group, SWT.NONE);
+        colorButton.setText("Select Color...");
+        colorButton.setLayoutData(gdInputs);
+        colorButton.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                ColorDialog dialog = new ColorDialog(parentShell, SWT.BORDER);
+                if(player.getColor() != null)
+                    dialog.setRGB(player.getColor().getRGB());
+                RGB rgb = dialog.open();
+                if(rgb != null) {
+                    c = new Color(parentShell.getDisplay(), rgb);
+                    System.out.println(c);
+                    Image image = new Image(parentShell.getDisplay(), 10, 10);
+                    GC gc = new GC(image);
+                    gc.setBackground(c);
+                    gc.fillRectangle(0, 0, 10, 10);
+                    gc.dispose();
+                    colorButton.setImage(image);
+                }
+            }
+        });
+
+        return parent;
+    }
+
+    @Override
+    protected void okPressed() {
+        player.setName(playerName.getText());
+        if(inputs[1].equals(comboInput.getText()))
+            player.setController(new Script());
+        else
+            switch(Devices.valueOf(comboDevices.getText().toUpperCase())) {
+                case JOYSTICK:
+                    player.setController(new Joystick());
+                    break;
+
+                case KEYBOARD:
+                    player.setController(new Keyboard());
+                    break;
+
+                case MOUSE:
+                    player.setController(new Mouse());
+                    break;
+
+                case WIIMOTE:
+                    player.setController(new Wiimote());
+                    break;
+                default:
+                    throw new IllegalArgumentException("No Device selected");
+            }
+        ;
+        // FIXME: removed: player.setProtocol(comboProtocols.getText());
+        player.setColor(c);
+        super.okPressed();
+        comboInput.dispose();
+
+    }
 
 }

@@ -2,7 +2,7 @@ package de.jacavi.rcp.dlg;
 
 import java.util.ArrayList;
 
-import de.jacavi.appl.valueobjects.Player;
+import de.jacavi.appl.racelogic.Player;
 
 /**
  * This class contains the data model for the PlayerTable

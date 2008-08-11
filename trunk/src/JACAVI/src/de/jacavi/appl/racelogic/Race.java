@@ -1,19 +1,19 @@
 package de.jacavi.appl.racelogic;
 
 import java.util.Collection;
+import java.util.List;
 
-import de.jacavi.appl.valueobjects.Player;
 import de.jacavi.track.Track;
 
 
 
 public class Race {
 
-    private Collection<Player> players;
+    private List<Player> players;
 
     private Track track;
 
-    public void setPlayers(Collection<Player> players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 
