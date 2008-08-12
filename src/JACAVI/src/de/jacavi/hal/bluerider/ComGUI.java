@@ -1,4 +1,4 @@
-package com_port;
+package de.jacavi.hal.bluerider;
 
 import java.awt.BasicStroke;
 import java.awt.BorderLayout;

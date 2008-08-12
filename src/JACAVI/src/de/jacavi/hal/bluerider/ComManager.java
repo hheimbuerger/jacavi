@@ -1,4 +1,4 @@
-package com_port;
+package de.jacavi.hal.bluerider;
 
 import gnu.io.CommPort;
 import gnu.io.CommPortIdentifier;

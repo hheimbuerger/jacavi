@@ -1,4 +1,4 @@
-package com_port;
+package de.jacavi.hal.bluerider;
 
 public class ComException extends Exception 
 {
