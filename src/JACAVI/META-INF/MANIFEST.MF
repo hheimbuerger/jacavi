@@ -13,6 +13,7 @@ Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: libs/spring-2.0.jar,
  .,
  libs/commons-logging-1.1.1.jar,
- libs/log4j-1.2.15.jar
+ libs/log4j-1.2.15.jar,
+ libs/j2d4swt-2.3.0.jar
 Bundle-Vendor: JaCaVi - Team
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
