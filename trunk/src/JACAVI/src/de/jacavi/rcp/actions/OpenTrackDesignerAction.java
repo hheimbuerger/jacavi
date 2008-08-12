@@ -6,15 +6,16 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 
+import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 
 public class OpenTrackDesignerAction extends Action {
 
-	private final String trackName;
+	private final Track track;
 
-	public OpenTrackDesignerAction(String trackName) {
-		this.trackName = trackName;
+	public OpenTrackDesignerAction(Track track) {
+		this.track = track;
 	}
 
 	public void run() {
@@ -25,7 +26,7 @@ public class OpenTrackDesignerAction extends Action {
 		// return;
 		// }
 
-		TrackDesignerInput editorInput = new TrackDesignerInput(trackName);
+		TrackDesignerInput editorInput = new TrackDesignerInput(track);
 
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();

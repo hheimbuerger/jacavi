@@ -33,6 +33,8 @@ import de.jacavi.appl.track.Track.TrackModificationListener;
 
 
 
+
+
 public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificationListener {
 
     /**

@@ -5,6 +5,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
+import de.jacavi.appl.track.Track;
+import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.rcp.actions.OpenTrackDesignerAction;
 import de.jacavi.rcp.wizards.pages.CreateTrackPageOne;
 
@@ -34,7 +36,9 @@ public class NewTrackWizard extends Wizard implements INewWizard {
     @Override
     public boolean performFinish() {
         System.out.println(one.getText1());
-        new OpenTrackDesignerAction(one.getText1()).run();
+        Track track = new Track(TileSet.DEBUG);
+        track.setTrackName(one.getText1());
+        new OpenTrackDesignerAction(track).run();
         return true;
     }
 

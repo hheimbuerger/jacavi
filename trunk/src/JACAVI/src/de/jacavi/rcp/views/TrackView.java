@@ -10,6 +10,7 @@ import de.jacavi.rcp.widgets.TrackWidget;
 
 
 
+
 /**
  * @author Fabian Rohn View that is used to show realtime Carrera cars on the track
  */
