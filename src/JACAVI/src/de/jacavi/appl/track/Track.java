@@ -41,6 +41,11 @@ public class Track {
             super(e);
         }
     }
+    
+    /**
+     * File Extension that is used for every track in the filesystem.
+     */
+    public static String FILE_EXTENSION = ".track.xml"; 
 
     /**
      * Interface to implement for receiving modification notifications.

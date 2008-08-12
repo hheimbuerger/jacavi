@@ -19,12 +19,6 @@ public class OpenTrackDesignerAction extends Action {
 	}
 
 	public void run() {
-		// ISelection selection = viewer.getSelection();
-		// Object obj = ((IStructuredSelection) selection).getFirstElement();
-		// TreeObject treeObj = (TreeObject) obj;
-		// if (treeObj instanceof TreeParent) {
-		// return;
-		// }
 
 		TrackDesignerInput editorInput = new TrackDesignerInput(track);
 
