@@ -1,7 +1,7 @@
 /*
  * Copyright (C) Skillworks AG 2008. All Rights Reserved Confidential
  */
-package de.jacavi.appl.valueobjects;
+package de.jacavi.appl.track;
 
 public class Angle {
     public int angle;

@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 
 import org.eclipse.swt.graphics.Point;
 
-import de.jacavi.appl.valueobjects.Angle;
 
 
 
