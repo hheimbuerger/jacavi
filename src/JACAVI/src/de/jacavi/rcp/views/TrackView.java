@@ -3,8 +3,8 @@ package de.jacavi.rcp.views;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.widgets.TrackWidget;
-import de.jacavi.track.Track.TrackLoadingException;
 
 
 
