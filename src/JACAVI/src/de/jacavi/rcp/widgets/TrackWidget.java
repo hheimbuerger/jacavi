@@ -18,10 +18,10 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 
+import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.Track.TrackLoadingException;
-import de.jacavi.appl.valueobjects.Angle;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.Graphics2DRenderer;
 

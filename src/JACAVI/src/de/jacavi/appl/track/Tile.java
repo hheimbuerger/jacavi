@@ -7,7 +7,6 @@ import javax.imageio.ImageIO;
 
 import org.eclipse.swt.graphics.Point;
 
-import de.jacavi.appl.valueobjects.Angle;
 import de.jacavi.rcp.Activator;
 
 
