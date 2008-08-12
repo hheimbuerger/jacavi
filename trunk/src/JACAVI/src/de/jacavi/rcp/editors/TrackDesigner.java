@@ -5,7 +5,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
@@ -106,9 +111,31 @@ public class TrackDesigner extends EditorPart {
     @Override
     public void createPartControl(Composite parent) {
         try {
+			parent.setLayout(new GridLayout());
+
+			ToolBar toolbar0 = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
+			for (int i = 0; i < 10; i++) {
+
+				ToolItem toolItem = new ToolItem(toolbar0, SWT.NONE);
+				toolItem.setText("Item");
+				toolItem.setImage(Activator.getImageDescriptor(
+						"tiles/debug/straight.png").createImage());
+
+				toolItem = new ToolItem(toolbar0, SWT.NONE);
+				toolItem.setImage(Activator.getImageDescriptor(
+						"tiles/debug/turn_30deg.png").createImage());
+				toolItem.setText("Item");
+				
+				toolItem = new ToolItem(toolbar0, SWT.NONE);
+				toolItem.setImage(Activator.getImageDescriptor(
+						"tiles/debug/turn_90deg.png").createImage());
+				toolItem.setText("Item");
+			}
+
+			toolbar0.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
             // TODO: track needs to be stored locally and Track(TileSet) constructor should be used (but GUI doesn't
             // allow choosing a TileSet yet)
-            new TrackWidget(parent, new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml")));
+            new TrackWidget(parent, new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml"))).setLayoutData(new GridData(GridData.FILL_BOTH));
         } catch(TrackLoadingException e) {
             throw new RuntimeException("Error while creating TrackWidget.");
         }

@@ -4,14 +4,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 
+import de.jacavi.appl.track.Track;
+
 public class TrackDesignerInput implements IEditorInput {
 
-	private final String trackName;
-	
-	public TrackDesignerInput(String trackName) {
-		this.trackName = trackName;
+	private Track track;
+
+	public TrackDesignerInput(Track track) {
+		this.track = track;
 	}
-	
+
 	public boolean exists() {
 		// TODO Auto-generated method stub
 		return false;
@@ -24,7 +26,7 @@ public class TrackDesignerInput implements IEditorInput {
 
 	public String getName() {
 		// TODO Auto-generated method stub
-		return trackName;
+		return track.getTrackName();
 	}
 
 	public IPersistableElement getPersistable() {
@@ -41,7 +43,7 @@ public class TrackDesignerInput implements IEditorInput {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (super.equals(obj)) {
@@ -49,17 +51,24 @@ public class TrackDesignerInput implements IEditorInput {
 		}
 
 		if (obj instanceof TrackDesignerInput) {
-			return trackName.equals(((TrackDesignerInput) obj).getName());
+			return track.getTrackName().equals(
+					((TrackDesignerInput) obj).getName());
 		}
 		return false;
 
 	}
 
-
-
 	@Override
 	public int hashCode() {
-		return trackName.hashCode();
+		return track.getTrackName().hashCode();
+	}
+
+	public void setTrack(Track track) {
+		this.track = track;
+	}
+
+	public Track getTrack() {
+		return track;
 	}
 
 }
