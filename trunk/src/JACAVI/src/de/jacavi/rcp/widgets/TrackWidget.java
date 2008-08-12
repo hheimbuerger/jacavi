@@ -2,31 +2,43 @@ package de.jacavi.rcp.widgets;
 
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.holongate.j2d.IPaintable;
+import org.holongate.j2d.J2DCanvas;
+import org.holongate.j2d.J2DRegistry;
+import org.holongate.j2d.J2DSamplePaintable;
+import org.holongate.j2d.J2DUtilities;
 
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.appl.track.Track.TrackModificationListener;
-import de.jacavi.rcp.util.Graphics2DRenderer;
 
 
 
-public class TrackWidget extends Canvas implements TrackModificationListener {
+public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificationListener {
+
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = Logger.getLogger(TrackWidget.class);
 
     private Point panPosition = new Point(-300, -300);
 
@@ -40,8 +52,6 @@ public class TrackWidget extends Canvas implements TrackModificationListener {
 
     private BufferedImage trackImage = null;
 
-    final Graphics2DRenderer renderer = new Graphics2DRenderer();
-
     private double zoomLevel = 1.0;
 
     private Angle rotationAngle = new Angle(0);
@@ -49,17 +59,55 @@ public class TrackWidget extends Canvas implements TrackModificationListener {
     private Point rotationStartPosition = null;
 
     public TrackWidget(Composite parent, Track track) throws TrackLoadingException {
-        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
+        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND, /*new J2DSamplePaintable("message")*/
+        null);
+        setPaintable(this);
+
+        setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+
+        Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(1);
+        hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        J2DRegistry.setHints(hints);
+
+        // System.out.println("java.library.path = " + System.getProperty("java.library.path"));
+
+        // check if we're accelerated
+        String graphics2DFactory = getGraphics2DFactory().getClass().getName();
+        logger.debug("Current Graphics2DFactory: " + graphics2DFactory);
+        if(graphics2DFactory.equals("org.holongate.j2d.SWTGraphics2DFactory"))
+            logger
+                    .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
 
         setTrack(track);
 
-        // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
+        /*final Display display = Display.getCurrent();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(true) {
+                    display.asyncExec(new Runnable() {
+                        @Override
+                        public void run() {
+                            ((J2DSamplePaintable) getPaintable()).angle++;
+                            TrackWidget.this.repaint();
+                        }
+                    });
+                    try {
+                        Thread.sleep(10);
+                    } catch(InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();*/
 
-        addPaintListener(new PaintListener() {
+        // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
+        /*addPaintListener(new PaintListener() {
             public void paintControl(PaintEvent e) {
                 TrackWidget.this.paintControl(e);
             }
-        });
+        });*/
 
         addMouseListener(new MouseListener() {
             @Override
@@ -166,12 +214,16 @@ public class TrackWidget extends Canvas implements TrackModificationListener {
         }
 
         if(doesNeedRedraw)
-            redraw();
+            repaint();
     }
 
-    protected void handleMouseDoubleClick(MouseEvent e) {}
+    protected void handleMouseDoubleClick(MouseEvent e) {
+        System.out.println("Triggering repaint");
+        ((J2DSamplePaintable) getPaintable()).angle++;
+        this.repaint();
+    }
 
-    protected void paintControl(PaintEvent e) {
+    /*protected void paintControl(PaintEvent e) {
         // TODO: track can be null!
 
         // get the SWT graphics context from the event and prepare the Graphics2D renderer
@@ -193,7 +245,7 @@ public class TrackWidget extends Canvas implements TrackModificationListener {
         // now that we are done with Java 2D, renders Graphics2D operation
         // on the SWT graphics context
         renderer.render(gc);
-    }
+    }*/
 
     private void drawByCenter(Graphics2D g, java.awt.Image rotatedImage, Point destination) {
         Point drawingPosition = new Point(destination.x - rotatedImage.getWidth(null) / 2, destination.y
@@ -265,4 +317,25 @@ public class TrackWidget extends Canvas implements TrackModificationListener {
         createTrackImage();
         redraw();
     }
+
+    @Override
+    public void paint(Control control, Graphics2D g2d) {
+        // Point size = control.getSize();
+
+        // add the rotation and zooming transformations
+        g2d.rotate(rotationAngle.getRadians(), 500, 500);
+        g2d.scale(zoomLevel, zoomLevel);
+
+        // do the actual drawing of the widget
+        g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
+    }
+
+    @Override
+    public void redraw(Control control, GC gc) {}
+
+    @Override
+    public Rectangle2D getBounds(Control control) {
+        return J2DUtilities.toRectangle2D(control.getBounds());
+    }
+
 }
