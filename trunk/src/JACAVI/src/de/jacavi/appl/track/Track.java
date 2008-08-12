@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -41,6 +42,13 @@ public class Track {
         }
     }
 
+    /**
+     * Interface to implement for receiving modification notifications.
+     */
+    public interface TrackModificationListener {
+        void trackModified();
+    }
+
     /** The tile set used for this track. */
     private TileSet tileset;
 
@@ -49,6 +57,16 @@ public class Track {
 
     /** The visible name of the track. */
     private String trackName;
+
+    /** The listeners receiving modification events. */
+    private List<TrackModificationListener> listeners;
+
+    /**
+     * Private constructor that is only called internally with common initializations.
+     */
+    private Track() {
+        listeners = new ArrayList<TrackModificationListener>();
+    }
 
     /**
      * Constructor
@@ -59,6 +77,7 @@ public class Track {
      *            the tileset to be used for the track
      */
     public Track(TileSet tileset) {
+        this();
         this.tileset = tileset;
         TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
         sections.add(new TrackSection(tilesetRepository.getTile(tileset, "finishingStraight")));
@@ -75,6 +94,7 @@ public class Track {
      *             raised when loading the track fails
      */
     public Track(InputStream inputStream) throws TrackLoadingException {
+        this();
         try {
             loadFromXml(inputStream);
         } catch(Exception e) {
@@ -98,6 +118,19 @@ public class Track {
         this(new FileInputStream(file));
     }
 
+    public void addListener(TrackModificationListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removeListener(TrackModificationListener listener) {
+        listeners.remove(listener);
+    }
+
+    private void invokeListeners() {
+        for(TrackModificationListener l: listeners)
+            l.trackModified();
+    }
+
     public TileSet getTileset() {
         return tileset;
     }
@@ -114,6 +147,7 @@ public class Track {
      */
     public void insertSection(Tile tile, int position) throws IndexOutOfBoundsException {
         sections.add(position, new TrackSection(tile));
+        invokeListeners();
     }
 
     /**
@@ -124,10 +158,12 @@ public class Track {
      */
     public void appendSection(Tile tile) {
         sections.add(new TrackSection(tile));
+        invokeListeners();
     }
 
     public void removeSection(int position) {
         throw new RuntimeException("Not yet implemented.");
+        // invokeListeners();
     }
 
     public List<TrackSection> getSections() {
