@@ -12,7 +12,6 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
@@ -22,12 +21,12 @@ import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.Track.TrackLoadingException;
-import de.jacavi.rcp.Activator;
+import de.jacavi.appl.track.Track.TrackModificationListener;
 import de.jacavi.rcp.util.Graphics2DRenderer;
 
 
 
-public class TrackWidget extends Canvas {
+public class TrackWidget extends Canvas implements TrackModificationListener {
 
     private Point panPosition = new Point(-300, -300);
 
@@ -37,7 +36,7 @@ public class TrackWidget extends Canvas {
 
     private Point panningStartPosition = null;
 
-    private Track currentTrack = null;
+    private Track track = null;
 
     private BufferedImage trackImage = null;
 
@@ -49,15 +48,10 @@ public class TrackWidget extends Canvas {
 
     private Point rotationStartPosition = null;
 
-    public TrackWidget(Composite parent) throws TrackLoadingException {
+    public TrackWidget(Composite parent, Track track) throws TrackLoadingException {
         super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND);
 
-        final Color white = new Color(null, 255, 255, 255);
-        // setBackground(white);
-
-        // HACK: hardcoded track for testing
-        currentTrack = new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml"));
-        createTrackImage();
+        setTrack(track);
 
         // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
 
@@ -93,9 +87,47 @@ public class TrackWidget extends Canvas {
 
         addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
-                white.dispose();
+                TrackWidget.this.handleDisposeEvent(e);
             }
         });
+    }
+
+    private void handleDisposeEvent(DisposeEvent e) {
+        if(this.track != null)
+            this.track.removeListener(this);
+    }
+
+    public Track getTrack() {
+        return track;
+    }
+
+    /**
+     * Change the widget to a new track.
+     * <p>
+     * The widget will register itself as a modification notification listener on the track and will automatically
+     * update as soon as the track changes!
+     * 
+     * @param track
+     *            the new to display or null to not show a track anymore
+     */
+    public void setTrack(Track track) {
+        // unregister listener from a previously used track
+        if(this.track != null)
+            this.track.removeListener(this);
+
+        if(track != null) {
+            // change the current track
+            this.track = track;
+
+            // register listener on the new track
+            this.track.addListener(this);
+
+            // create a new track image
+            createTrackImage();
+        }
+
+        // redraw the widget
+        redraw();
     }
 
     protected void handleMouseUp(MouseEvent e) {
@@ -140,6 +172,8 @@ public class TrackWidget extends Canvas {
     protected void handleMouseDoubleClick(MouseEvent e) {}
 
     protected void paintControl(PaintEvent e) {
+        // TODO: track can be null!
+
         // get the SWT graphics context from the event and prepare the Graphics2D renderer
         GC gc = e.gc;
         renderer.prepareRendering(gc);
@@ -181,7 +215,7 @@ public class TrackWidget extends Canvas {
 
         Angle currentAngle = new Angle(0);
         Point currentTrackPos = new Point(trackImage.getWidth() / 2, trackImage.getHeight() / 2);
-        for(TrackSection s: currentTrack.getSections()) {
+        for(TrackSection s: track.getSections()) {
             Double x, y;
 
             // System.out.println("Track position:          " + currentTrackPos.x + "/" + currentTrackPos.y);
@@ -224,5 +258,11 @@ public class TrackWidget extends Canvas {
 
         // Display display = Display.getCurrent();
         // trackImage = new Image(display, convertToSWT(bi));
+    }
+
+    @Override
+    public void trackModified() {
+        createTrackImage();
+        redraw();
     }
 }
