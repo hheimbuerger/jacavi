@@ -3,11 +3,15 @@ package de.jacavi.rcp.editors;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -18,130 +22,145 @@ import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
 
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.track.Tile;
+import de.jacavi.appl.track.TilesetRepository;
 import de.jacavi.appl.track.Track;
+import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
 import de.jacavi.rcp.widgets.TrackWidget;
 
+
+
 public class TrackDesigner extends EditorPart {
 
-	private static Log log = LogFactory.getLog(TrackDesigner.class);
+    private static Log log = LogFactory.getLog(TrackDesigner.class);
 
-	public static String ID = "JACAVI.TrackDesigner";
+    public static String ID = "JACAVI.TrackDesigner";
 
-	boolean isDirty = true;
+    boolean isDirty = true;
 
-	private Track currentTrack;
+    private Track currentTrack;
 
-	public TrackDesigner() {
-	}
+    private List<Image> usedImages = new ArrayList<Image>();
 
-	@Override
-	protected void setInput(IEditorInput input) {
+    public TrackDesigner() {}
 
-		super.setInput(input);
-		currentTrack = ((TrackDesignerInput) input).getTrack();
-	}
+    /**
+     * Dispose handler that is invoked when the editor is closed.
+     * <p>
+     * Used to dispose the loaded images, because each of them is managing an operating system resource.
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        for(Image image: usedImages)
+            image.dispose();
+    }
 
-	@Override
-	public void doSave(IProgressMonitor monitor) {
-		monitor.beginTask("Save", IProgressMonitor.UNKNOWN);
-		SafeSaveDialog dlg = new SafeSaveDialog(getSite().getShell());
+    @Override
+    protected void setInput(IEditorInput input) {
 
-		dlg.setText("Save");
-		dlg.setFilterPath("C:/");
-		String[] filterExt = { "*" + Track.FILE_EXTENSION };
-		dlg.setFilterExtensions(filterExt);
-		String selected = dlg.open();
-		try {
+        super.setInput(input);
+        currentTrack = ((TrackDesignerInput) input).getTrack();
+    }
 
-			// TODO: currentTrack.saveToXml(filename);
+    @Override
+    public void doSave(IProgressMonitor monitor) {
+        monitor.beginTask("Save", IProgressMonitor.UNKNOWN);
+        SafeSaveDialog dlg = new SafeSaveDialog(getSite().getShell());
 
-			FileOutputStream fo = new FileOutputStream(selected);
-			fo.write(10);
-			fo.flush();
-			fo.close();
+        dlg.setText("Save");
+        dlg.setFilterPath("C:/");
+        String[] filterExt = { "*" + Track.FILE_EXTENSION };
+        dlg.setFilterExtensions(filterExt);
+        String selected = dlg.open();
+        try {
 
-			log.info("Track saved to " + selected);
-		} catch (FileNotFoundException e) {
-			handleException(e);
-		} catch (IOException e) {
-			handleException(e);
-		}
-		
+            // TODO: currentTrack.saveToXml(filename);
 
-		monitor.done();
-		isDirty = false;
-		firePropertyChange(EditorPart.PROP_DIRTY);
+            FileOutputStream fo = new FileOutputStream(selected);
+            fo.write(10);
+            fo.flush();
+            fo.close();
 
-	}
+            log.info("Track saved to " + selected);
+        } catch(FileNotFoundException e) {
+            handleException(e);
+        } catch(IOException e) {
+            handleException(e);
+        }
 
-	@Override
-	public void doSaveAs() {
-		// TODO Auto-generated method stub
+        monitor.done();
+        isDirty = false;
+        firePropertyChange(EditorPart.PROP_DIRTY);
 
-	}
+    }
 
-	@Override
-	public void init(IEditorSite site, IEditorInput input)
-			throws PartInitException {
-		setSite(site);
-		setInput(input);
-		setPartName(input.getName());
-	}
+    @Override
+    public void doSaveAs() {
+    // TODO Auto-generated method stub
 
-	@Override
-	public boolean isDirty() {
-		// TODO Auto-generated method stub
-		return isDirty;
-	}
+    }
 
-	@Override
-	public boolean isSaveAsAllowed() {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public void init(IEditorSite site, IEditorInput input) throws PartInitException {
+        setSite(site);
+        setInput(input);
+        setPartName(input.getName());
+    }
 
-	@Override
-	public void createPartControl(Composite parent) {
-		try {
-			parent.setLayout(new GridLayout());
+    @Override
+    public boolean isDirty() {
+        // TODO Auto-generated method stub
+        return isDirty;
+    }
 
-			// TODO: Get all track items from TileSetRepository
-			ToolBar toolbar0 = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
-			ToolItem toolItem = new ToolItem(toolbar0, SWT.NONE);
-			toolItem.setText("Item");
-			toolItem.setImage(Activator.getImageDescriptor(
-					"tiles/debug/straight.png").createImage());
+    @Override
+    public boolean isSaveAsAllowed() {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-			toolItem = new ToolItem(toolbar0, SWT.NONE);
-			toolItem.setImage(Activator.getImageDescriptor(
-					"tiles/debug/turn_30deg.png").createImage());
-			toolItem.setText("Item");
+    @Override
+    public void createPartControl(Composite parent) {
+        try {
+            parent.setLayout(new GridLayout());
 
-			toolItem = new ToolItem(toolbar0, SWT.NONE);
-			toolItem.setImage(Activator.getImageDescriptor(
-					"tiles/debug/turn_90deg.png").createImage());
-			toolItem.setText("Item");
+            // TODO: ask the user for the TileSet before opening this editor!
+            TileSet tileset = TileSet.DEBUG;
 
-			toolbar0.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-			// TODO: track needs to be stored locally and Track(TileSet)
-			// constructor should be used (but GUI doesn't
-			// allow choosing a TileSet yet)
-			new TrackWidget(parent, currentTrack).setLayoutData(new GridData(
-					GridData.FILL_BOTH));
-		} catch (TrackLoadingException e) {
-			throw new RuntimeException("Error while creating TrackWidget.");
-		}
-	}
+            // fill the toolbar with all available tiles
+            ToolBar toolbar = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
+            TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
+            Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(tileset);
+            for(String tileID: tileMap.keySet()) {
+                Tile tile = tileMap.get(tileID);
+                Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
+                usedImages.add(image);
 
-	@Override
-	public void setFocus() {
-	}
+                ToolItem toolItem = new ToolItem(toolbar, SWT.NONE);
+                toolItem.setText(tile.getName());
+                toolItem.setImage(image);
+            }
 
-	private void handleException(Exception e) {
-		log.error("Save failed", e);
-	}
+            toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            // TODO: track needs to be stored locally and Track(TileSet)
+            // constructor should be used (but GUI doesn't
+            // allow choosing a TileSet yet)
+            new TrackWidget(parent, currentTrack).setLayoutData(new GridData(GridData.FILL_BOTH));
+        } catch(TrackLoadingException e) {
+            throw new RuntimeException("Error while creating TrackWidget.");
+        }
+    }
+
+    @Override
+    public void setFocus() {}
+
+    private void handleException(Exception e) {
+        log.error("Save failed", e);
+    }
 
 }

@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <tiles>
     <tileset id="debug">
-        <tile id="finishingStraight" isInitial="true">
+        <tile id="finishingStraight" name="finishing straight" isInitial="true">
             <filename>finishing_straight.png</filename>
             <entryPoint x="-53" y="6" />
             <exitPoint x="53" y="6" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
-        <tile id="straight">
+        <tile id="straight" name="straight">
             <filename>straight.png</filename>
             <entryPoint x="-26" y="0" />
             <exitPoint x="26" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
-        <tile id="turn90deg">
+        <tile id="turn90deg" name="90º turn">
             <filename>turn_90deg.png</filename>
             <entryPoint x="-12" y="0" />
             <exitPoint x="0" y="-12" />
             <entryToExitAngle>-90</entryToExitAngle>
         </tile>
-        <tile id="turn30deg">
+        <tile id="turn30deg" name="30º turn">
             <filename>turn_30deg.png</filename>
             <entryPoint x="-8" y="0" />
             <exitPoint x="-2" y="-2" />
