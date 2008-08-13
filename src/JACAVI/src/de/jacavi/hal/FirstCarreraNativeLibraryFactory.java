@@ -1,6 +1,6 @@
 package de.jacavi.hal;
 
-import de.jacavi.appl.ContextLoader;
+import de.jacavi.hal.lib42.NativeLib42Adapter;
 
 
 
@@ -14,8 +14,7 @@ public class FirstCarreraNativeLibraryFactory implements CarreraNativeLibraryFac
         switch(type) {
             case lib42:
 
-                halController = (TechnologyController) ContextLoader.getBean("lib42technologyBean");
-
+                halController = new NativeLib42Adapter();
                 break;
 
             case bluerider:
