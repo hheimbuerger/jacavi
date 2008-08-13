@@ -10,5 +10,6 @@
 	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar" sourcepath="JACAVIsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="libs/log4j-1.2.15.jar" sourcepath="JACAVIsrc.zip"/>
 	<classpathentry kind="lib" path="libs/RXTXcomm.jar"/>
+	<classpathentry kind="lib" path="libs/wiiusej.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
