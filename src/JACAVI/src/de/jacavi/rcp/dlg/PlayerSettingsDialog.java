@@ -1,5 +1,10 @@
 package de.jacavi.rcp.dlg;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -21,6 +26,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.constants.Devices;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.device.DeviceController;
@@ -31,6 +37,10 @@ import de.jacavi.appl.controller.device.impl.Wiimote;
 import de.jacavi.appl.controller.script.ScriptController;
 import de.jacavi.appl.controller.script.impl.Script;
 import de.jacavi.appl.racelogic.Player;
+import de.jacavi.hal.CarreraLibraryType;
+import de.jacavi.hal.FirstCarreraNativeLibraryFactory;
+import de.jacavi.hal.TechnologyController;
+import de.jacavi.hal.lib42.NativeLib42Adapter;
 
 
 
@@ -39,11 +49,13 @@ import de.jacavi.appl.racelogic.Player;
  */
 public class PlayerSettingsDialog extends TitleAreaDialog {
 
-    private static final String[] inputs = new String[] { "Device", "Script" };
+    private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
 
-    private static final String[] devices = new String[] { "Keyboard", "Mouse", "Joystick", "Wiimote" };
+    private String[] inputs = new String[] { "Device", "Script" };
 
-    private static final String[] protocols = new String[] { "41", "Blue Rider", "Simulation" };
+    private List<String> devices;
+
+    private List<String> technologies;
 
     private Player player;
 
@@ -53,7 +65,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Combo comboDevices;
 
-    private Combo comboProtocols;
+    private Combo comboTechnologies;
 
     private Shell parentShell;
 
@@ -63,6 +75,16 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         super(parentShell);
         this.player = player;
         this.parentShell = parentShell;
+        this.devices = new ArrayList<String>();
+        for(Devices d: Devices.values()) {
+            String dev = d.toString().substring(0, 1).toUpperCase() + d.toString().substring(1).toLowerCase();
+            devices.add(dev);
+        }
+        this.technologies = new ArrayList<String>();
+        for(CarreraLibraryType clt: CarreraLibraryType.values()) {
+            String dev = clt.toString().substring(0, 1).toUpperCase() + clt.toString().substring(1).toLowerCase();
+            technologies.add(dev);
+        }
     }
 
     @Override
@@ -137,29 +159,31 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
-        comboDevices.setItems(devices);
-        for(int i = 0; i < devices.length; i++) {
+        comboDevices.setItems((String[]) devices.toArray(new String[devices.size()]));
+        for(int i = 0; i < devices.size(); i++) {
             if(controller instanceof DeviceController) {
                 DeviceController devController = (DeviceController) controller;
-                if(devController.getClass().getSimpleName().equals(devices[i]))
+                if(devController.getClass().getSimpleName().equals(devices.get(i)))
                     comboDevices.select(i);
             }
         }
 
         CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
-        labelProtocol1.setText("Protocol:");
+        labelProtocol1.setText("Technology:");
 
-        comboProtocols = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-        comboProtocols.setLayoutData(gdInputs);
-        comboProtocols.setItems(protocols);
-        // FIXME: commented out because protocol member was removed
-        /*if (player.getProtocol() != null) {
-        	for (int i = 0; i < protocols.length; i++) {
-        		if (player.getProtocol().equals(protocols[i])) {
-        			comboProtocols.select(i);
-        		}
-        	}
-        }*/
+        comboTechnologies = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+        comboTechnologies.setLayoutData(gdInputs);
+        comboTechnologies.setItems((String[]) technologies.toArray(new String[technologies.size()]));
+
+        // TODO: this is only a HACK
+        TechnologyController techController = player.getTechnologyController();
+        if(techController != null) {
+            if(techController instanceof NativeLib42Adapter) {
+                comboTechnologies.select(0);
+            } else {
+                comboTechnologies.select(1);
+            }
+        }
 
         CLabel labelColor = new CLabel(group, SWT.NONE);
         labelColor.setText("Color:");
@@ -216,11 +240,23 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                     throw new IllegalArgumentException("No Device selected");
             }
         ;
-        // FIXME: removed: player.setProtocol(comboProtocols.getText());
+
+        FirstCarreraNativeLibraryFactory factory = (FirstCarreraNativeLibraryFactory) ContextLoader
+                .getBean("nativeLibraryFactoryBean");
+        switch(CarreraLibraryType.valueOf(comboTechnologies.getText().toLowerCase())) {
+            case lib42:
+                // TODO: here is an Exception thrown...please DEBUG inside init method
+                player.setTechnologyController(factory.initialiseCarreraLib(CarreraLibraryType.lib42));
+                break;
+            case bluerider:
+                player.setTechnologyController(factory.initialiseCarreraLib(CarreraLibraryType.bluerider));
+                break;
+            default:
+                break;
+        }
         player.setColor(c);
         super.okPressed();
         comboInput.dispose();
 
     }
-
 }
