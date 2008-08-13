@@ -41,9 +41,9 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                     result = p.getController().getClass().getSimpleName();
                 break;
             case 2:
-                result = "[FIXME]";
-                /*if (p.getProtocol() != null)
-                	result = p.getProtocol();*/
+                // result = "[FIXME]";
+                if(p.getTechnologyController() != null)
+                    result = p.getTechnologyController().getClass().getSimpleName();
                 break;
             case 3:
                 // if (p.getColor() != null)

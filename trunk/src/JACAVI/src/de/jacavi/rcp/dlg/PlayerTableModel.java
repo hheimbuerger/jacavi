@@ -2,6 +2,7 @@ package de.jacavi.rcp.dlg;
 
 import java.util.ArrayList;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.racelogic.Player;
 
 /**
@@ -16,11 +17,9 @@ public class PlayerTableModel {
 	/**
 	 * Constructs a PlayerTableModel Fills the model with data
 	 */
-	public PlayerTableModel() {
-		player = new ArrayList<Player>();
-
-		addPlayer(new Player());
-		addPlayer(new Player());
+	@SuppressWarnings("unchecked")
+    public PlayerTableModel() {
+		player = (ArrayList<Player>) ContextLoader.getBean("playersBean");
 	}
 
 	public void addPlayer(Player newPlayer) {
