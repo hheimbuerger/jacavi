@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -36,7 +38,7 @@ public class TilesetRepository {
         }
     }
 
-    private Map<TileSet, Map<String, Tile>> tiles = new HashMap<TileSet, Map<String, Tile>>();
+    private Map<TileSet, SortedMap<String, Tile>> tiles = new HashMap<TileSet, SortedMap<String, Tile>>();
 
     public TilesetRepository(String configurationFile) throws TilesetRepositoryInitializationFailedException {
         try {
@@ -45,7 +47,7 @@ public class TilesetRepository {
 
             // prepare the tileset maps
             for(TileSet tileset: TileSet.values())
-                tiles.put(tileset, new HashMap<String, Tile>());
+                tiles.put(tileset, new TreeMap<String, Tile>());
 
             // iterate over all tilesets
             NodeList tilesets = document.getElementsByTagName("tileset");
@@ -82,6 +84,7 @@ public class TilesetRepository {
     private void importTile(TileSet tileset, Element tileElement) throws IOException {
         // read the data for this tile from the XML
         String tileID = tileElement.getAttribute("id");
+        String tileName = tileElement.getAttribute("name");
         String filename = null;
         Point entryPoint = null;
         Point exitPoint = null;
@@ -105,11 +108,22 @@ public class TilesetRepository {
             }
         }
 
-        tiles.get(tileset).put(tileID, new Tile(filename, entryPoint, exitPoint, entryToExitAngle));
+        tiles.get(tileset).put(tileID, new Tile(filename, tileName, entryPoint, exitPoint, entryToExitAngle));
     }
 
     public Tile getTile(TileSet tileSet, String id) {
         return tiles.get(tileSet).get(id);
+    }
+
+    /**
+     * Returns a list of all available tiles of a specific tileset.
+     * <p>
+     * Note that the list returned by this method returns some tiles multiple times in case they can be used from
+     * different directions.
+     */
+    public Map<String, Tile> getAvailableTiles(TileSet tileset) {
+        // TODO: implement returning inverted tiles
+        return tiles.get(tileset);
     }
 
 }

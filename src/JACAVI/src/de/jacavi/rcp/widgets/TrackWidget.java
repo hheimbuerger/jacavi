@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Display;
 import org.holongate.j2d.IPaintable;
 import org.holongate.j2d.J2DCanvas;
 import org.holongate.j2d.J2DRegistry;
-import org.holongate.j2d.J2DSamplePaintable;
 import org.holongate.j2d.J2DUtilities;
 
 import de.jacavi.appl.track.Angle;
@@ -67,8 +66,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
 
-        Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(1);
+        Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(3);
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         J2DRegistry.setHints(hints);
 
         // System.out.println("java.library.path = " + System.getProperty("java.library.path"));
@@ -177,7 +178,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         }
 
         // redraw the widget
-        redraw();
+        repaint();
     }
 
     protected void handleMouseUp(MouseEvent e) {
@@ -220,9 +221,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     protected void handleMouseDoubleClick(MouseEvent e) {
-        System.out.println("Triggering repaint");
-        ((J2DSamplePaintable) getPaintable()).angle++;
-        this.repaint();
+    /*System.out.println("Triggering repaint");
+    ((J2DSamplePaintable) getPaintable()).angle++;
+    this.repaint();*/
     }
 
     /*protected void paintControl(PaintEvent e) {
@@ -269,6 +270,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         Angle currentAngle = new Angle(0);
         Point currentTrackPos = new Point(trackImage.getWidth() / 2, trackImage.getHeight() / 2);
+        int ulx = currentTrackPos.x, uly = currentTrackPos.y, lrx = currentTrackPos.x, lry = currentTrackPos.y;
         for(TrackSection s: track.getSections()) {
             Double x, y;
 
@@ -292,7 +294,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     + (-relativeEntryPoint.y));
             // System.out.println("Center drawing position: " + centerDrawingPoint.x + "/" + centerDrawingPoint.y);
             drawByCenter(g, rotatedImage, centerDrawingPoint);
+            g.setColor(java.awt.Color.YELLOW);
+            g.drawRect(centerDrawingPoint.x - rotatedImage.getWidth(null) / 2, centerDrawingPoint.y
+                    - rotatedImage.getHeight(null) / 2, rotatedImage.getWidth(null), rotatedImage.getHeight(null));
             markPoint(g, centerDrawingPoint, java.awt.Color.GREEN);
+
+            ulx = Math.min(ulx, centerDrawingPoint.x - rotatedImage.getWidth(null) / 2);
+            uly = Math.min(uly, centerDrawingPoint.y - rotatedImage.getHeight(null) / 2);
+            lrx = Math.max(lrx, centerDrawingPoint.x + rotatedImage.getWidth(null) / 2);
+            lry = Math.max(lry, centerDrawingPoint.y + rotatedImage.getHeight(null) / 2);
 
             // step #4: calculate the new track position, by taking the rotated entry point and moving it to the exit
             // point, and calculate the new angle
@@ -307,8 +317,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     currentTrackPos.y + (relativeExitPoint.y - relativeEntryPoint.y));
             currentAngle.turn(s.getEntryToExitAngle());
             // System.out.println("New angle: " + currentAngle.angle);
+
         }
         markPoint(g, currentTrackPos, java.awt.Color.CYAN);
+
+        g.setColor(java.awt.Color.RED);
+        g.drawRect(ulx, uly, lrx - ulx, lry - uly);
 
         // Display display = Display.getCurrent();
         // trackImage = new Image(display, convertToSWT(bi));
@@ -317,7 +331,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     @Override
     public void trackModified() {
         createTrackImage();
-        redraw();
+        repaint();
     }
 
     @Override

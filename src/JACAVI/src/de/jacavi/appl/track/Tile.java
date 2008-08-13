@@ -13,6 +13,10 @@ import de.jacavi.rcp.Activator;
 
 public class Tile {
 
+    private final String filename;
+
+    private final String name;
+
     private final BufferedImage sectionImage;
 
     private final Point entryPoint;
@@ -21,12 +25,19 @@ public class Tile {
 
     private final Angle entryToExitAngle;
 
-    public Tile(String filename, Point entryPoint, Point exitPoint, int entryToExitAngle) throws IOException {
+    public Tile(String filename, String name, Point entryPoint, Point exitPoint, int entryToExitAngle)
+            throws IOException {
         sectionImage = ImageIO.read(Activator.getResourceAsStream(filename));
 
+        this.filename = filename;
+        this.name = name;
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
         this.entryToExitAngle = new Angle(entryToExitAngle);
+    }
+
+    public String getFilename() {
+        return filename;
     }
 
     public BufferedImage getSectionImage() {
@@ -43,6 +54,10 @@ public class Tile {
 
     public Angle getEntryToExitAngle() {
         return entryToExitAngle;
+    }
+
+    public String getName() {
+        return name;
     }
 
 }
