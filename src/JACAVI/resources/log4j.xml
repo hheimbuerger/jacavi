@@ -12,7 +12,7 @@
 	
 	<appender name="file" class="org.apache.log4j.FileAppender">
 		<param name="Append" value="true" />
-		<param name="File" value="C:/jacavi.log" />
+		<param name="File" value="jacavi.log" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %5p [%t] (%F:%L) - %m%n" />
 		</layout>
