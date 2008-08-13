@@ -5,6 +5,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="resources"/>
+	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-2.0.jar" sourcepath="JACAVIsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar" sourcepath="JACAVIsrc.zip"/>
 	<classpathentry exported="true" kind="lib" path="libs/log4j-1.2.15.jar" sourcepath="JACAVIsrc.zip"/>

@@ -2,7 +2,7 @@ package de.jacavi.appl.controller;
 
 public class ControllerSignal {
     // 0-100
-    int speed;
+    public int speed;
 
-    boolean trigger;
+    public boolean trigger;
 }
