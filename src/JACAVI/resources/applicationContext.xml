@@ -25,7 +25,9 @@
 	<bean id="nativeLibraryFactoryBean" class="de.jacavi.hal.FirstCarreraNativeLibraryFactory">
 	</bean> 
 	
-	<!--<bean id="lib42technologyBean" class="de.jacavi.hal.lib42.NativeLib42Adapter" />-->
+	<bean id="lib42technologyBean" class="de.jacavi.hal.lib42.NativeLib42Adapter" />
+	
+
 
 	<bean id="playersBean" class="java.util.ArrayList">
 		<constructor-arg>
