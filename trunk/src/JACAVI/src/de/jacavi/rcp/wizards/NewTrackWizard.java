@@ -36,7 +36,7 @@ public class NewTrackWizard extends Wizard implements INewWizard {
     @Override
     public boolean performFinish() {
         System.out.println(one.getText1());
-        Track track = new Track(TileSet.DEBUG);
+        Track track = new Track(one.getTileSet());
         track.setTrackName(one.getText1());
         new OpenTrackDesignerAction(track).run();
         return true;
