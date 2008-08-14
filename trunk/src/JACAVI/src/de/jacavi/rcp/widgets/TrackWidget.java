@@ -1,10 +1,17 @@
 package de.jacavi.rcp.widgets;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
@@ -32,16 +39,60 @@ import de.jacavi.appl.track.Track.TrackModificationListener;
 
 
 
-
-
 public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificationListener {
 
-    /**
-     * Logger for this class
-     */
+    /** Logger for this class */
     private static final Logger logger = Logger.getLogger(TrackWidget.class);
 
-    private Point panPosition = new Point(-300, -300);
+    private class Vector2D {
+        public Double deltax, deltay;
+
+        /**
+         * Creates a new vector that points from point a to point b.
+         */
+        public Vector2D(Point2D a, Point2D b) {
+            deltax = b.getX() - a.getX();
+            deltay = b.getY() - a.getY();
+        }
+
+        /**
+         * Creates a new vector that points from the origin to point a.
+         */
+        public Vector2D(Point2D a) {
+            deltax = a.getX();
+            deltay = a.getY();
+        }
+
+        private Vector2D(double deltax, double deltay) {
+            this.deltax = deltax;
+            this.deltay = deltay;
+        }
+
+        @Override
+        public String toString() {
+            return "Vector2D[" + deltax + ", " + deltay + "]";
+        }
+
+        public Vector2D add(Vector2D a) {
+            return new Vector2D(deltax + a.deltax, deltay + a.deltay);
+        }
+
+        /**
+         * Returns an affine transform that translates by the vector.
+         */
+        public AffineTransform getTransform() {
+            return AffineTransform.getTranslateInstance(deltax, deltay);
+        }
+
+        /**
+         * Returns an affine transform that translates by the inverse vector.
+         */
+        public AffineTransform getInvertedTransform() {
+            return AffineTransform.getTranslateInstance(-deltax, -deltay);
+        }
+    }
+
+    private Point panPosition = new Point(0, 0);
 
     private boolean isCurrentlyPanning = false;
 
@@ -51,7 +102,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private Track track = null;
 
-    private BufferedImage trackImage = null;
+    // private BufferedImage trackImage = null;
 
     private double zoomLevel = 1.0;
 
@@ -59,12 +110,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private Point rotationStartPosition = null;
 
+    private List<Shape> currentShapeList;
+
+    private AffineTransform currentTransform;
+
+    private int selectedTile = -1;
+
     public TrackWidget(Composite parent, Track track) throws TrackLoadingException {
-        super(parent, SWT.DOUBLE_BUFFERED | SWT.NO_BACKGROUND, /*new J2DSamplePaintable("message")*/
-        null);
+        super(parent, SWT.NONE, null);
         setPaintable(this);
 
-        setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));
+        setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 
         Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(3);
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -172,12 +228,21 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
             // register listener on the new track
             this.track.addListener(this);
-
-            // create a new track image
-            createTrackImage();
         }
 
+        // remove the current selection
+        selectedTile = -1;
+
         // redraw the widget
+        repaint();
+    }
+
+    public int getSelectedTile() {
+        return selectedTile;
+    }
+
+    public void setSelectedTile(int selectedTile) {
+        this.selectedTile = selectedTile;
         repaint();
     }
 
@@ -221,9 +286,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     protected void handleMouseDoubleClick(MouseEvent e) {
-    /*System.out.println("Triggering repaint");
-    ((J2DSamplePaintable) getPaintable()).angle++;
-    this.repaint();*/
+        // System.out.println("doubleclick: " + e.x + "/" + e.y);
+        for(int i = currentShapeList.size() - 1; i >= 0; i--) {
+            // System.out.println("shape " + i + ": " + currentShapeList.get(i).getBounds2D().getX() + ", "
+            // + currentShapeList.get(i).getBounds2D().getY());
+            if(currentShapeList.get(i).contains(e.x, e.y)) {
+                // System.out.println("detected hit: " + i);
+                selectedTile = i;
+                repaint();
+                break;
+            }
+        }
     }
 
     /*protected void paintControl(PaintEvent e) {
@@ -250,79 +323,156 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         renderer.render(gc);
     }*/
 
-    private void drawByCenter(Graphics2D g, java.awt.Image rotatedImage, Point destination) {
-        Point drawingPosition = new Point(destination.x - rotatedImage.getWidth(null) / 2, destination.y
-                - rotatedImage.getHeight(null) / 2);
-        g.drawImage(rotatedImage, drawingPosition.x, drawingPosition.y, null);
-    }
+    /*private Rectangle2D drawByCenter(Graphics2D g, BufferedImage image, Point destination, Angle rotation) {
 
-    private void markPoint(Graphics2D g, Point point, java.awt.Color color) {
+        return boundingBoxAfterRotation;
+    }*/
+
+    private void markPoint(Graphics2D g, Point2D currentTrackPos, Color color) {
         g.setColor(color);
-        g.drawRect(point.x - 1, point.y - 1, 3, 3);
+        g.drawRect(new Double(currentTrackPos.getX() - 1).intValue(),
+                new Double(currentTrackPos.getY() - 1).intValue(), 3, 3);
     }
 
-    private void createTrackImage() {
-        // FIXME: size should be dynamic or at least boundaries checked
-        trackImage = new BufferedImage(1000, 1000, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = trackImage.createGraphics();
-        g.setBackground(java.awt.Color.WHITE);
-        g.clearRect(0, 0, trackImage.getWidth(), trackImage.getHeight());
+    private void drawTrack(Graphics2D g, Point size) {
+        // g.setBackground(Color.WHITE);
+        // g.clearRect(0, 0, size.x, size.y);
 
         Angle currentAngle = new Angle(0);
-        Point currentTrackPos = new Point(trackImage.getWidth() / 2, trackImage.getHeight() / 2);
-        int ulx = currentTrackPos.x, uly = currentTrackPos.y, lrx = currentTrackPos.x, lry = currentTrackPos.y;
+        Point2D currentTrackPos = new Point2D.Double(0.0, 0.0);
+        currentShapeList = new ArrayList<Shape>();
+        // int ulx = currentTrackPos.x, uly = currentTrackPos.y, lrx = currentTrackPos.x, lry = currentTrackPos.y;
+        Rectangle2D trackBoundingBox = new Rectangle2D.Double();
+        int counter = 0;
         for(TrackSection s: track.getSections()) {
-            Double x, y;
+            // Double deltax, deltay;
 
             // System.out.println("Track position:          " + currentTrackPos.x + "/" + currentTrackPos.y);
 
             // step #1: rotate tile as necessary
-            java.awt.Image rotatedImage = s.getRotatedImage(currentAngle);
+            // Image rotatedImage = s.getRotatedImage(currentAngle);
+            BufferedImage image = (BufferedImage) s.getImage();
 
             // step #2: calculate entry point relative to the center after rotation
-            // <juckto> xnew = x*cos(0) - y*sin(0)
-            // <juckto> ynew = x*sin(0) + y*cos(0)
-            x = new Double(s.getEntryPoint().x * Math.cos(currentAngle.getRadians()) - s.getEntryPoint().y
+            // <juckto> xnew = deltax*cos(0) - deltay*sin(0)
+            // <juckto> ynew = deltax*sin(0) + deltay*cos(0)
+            /*deltax = new Double(s.getEntryPoint().x * Math.cos(currentAngle.getRadians()) - s.getEntryPoint().y
                     * Math.sin(currentAngle.getRadians()));
-            y = new Double(s.getEntryPoint().x * Math.sin(currentAngle.getRadians()) + s.getEntryPoint().y
+            deltay = new Double(s.getEntryPoint().x * Math.sin(currentAngle.getRadians()) + s.getEntryPoint().y
                     * Math.cos(currentAngle.getRadians()));
-            Point relativeEntryPoint = new Point(x.intValue(), y.intValue());
+            Point relativeEntryPoint = new Point(deltax.intValue(), deltay.intValue());*/
             // System.out.println("relativeEntryPoint:      " + relativeEntryPoint.x + "/" + relativeEntryPoint.y);
-
             // step #3: calculate center drawing point and draw the image
-            Point centerDrawingPoint = new Point(currentTrackPos.x + (-relativeEntryPoint.x), currentTrackPos.y
-                    + (-relativeEntryPoint.y));
+            /*Point centerDrawingPoint = new Point(currentTrackPos.x + (-relativeEntryPoint.x), currentTrackPos.y
+                    + (-relativeEntryPoint.y));*/
             // System.out.println("Center drawing position: " + centerDrawingPoint.x + "/" + centerDrawingPoint.y);
-            drawByCenter(g, rotatedImage, centerDrawingPoint);
-            g.setColor(java.awt.Color.YELLOW);
-            g.drawRect(centerDrawingPoint.x - rotatedImage.getWidth(null) / 2, centerDrawingPoint.y
-                    - rotatedImage.getHeight(null) / 2, rotatedImage.getWidth(null), rotatedImage.getHeight(null));
-            markPoint(g, centerDrawingPoint, java.awt.Color.GREEN);
+            AffineTransform rotationTransform = AffineTransform.getRotateInstance(currentAngle.getRadians());
+            AffineTransformOp rotationTransformOperation = new AffineTransformOp(rotationTransform,
+                    AffineTransformOp.TYPE_BICUBIC);
+            // Rectangle2D boundingBoxAfterRotation = rotationTransformOperation.getBounds2D(image);
 
-            ulx = Math.min(ulx, centerDrawingPoint.x - rotatedImage.getWidth(null) / 2);
-            uly = Math.min(uly, centerDrawingPoint.y - rotatedImage.getHeight(null) / 2);
-            lrx = Math.max(lrx, centerDrawingPoint.x + rotatedImage.getWidth(null) / 2);
-            lry = Math.max(lry, centerDrawingPoint.y + rotatedImage.getHeight(null) / 2);
+            // step #2: calculate entry point relative to the center after rotation
+            Point2D relativeEntryPoint = new Point2D.Double(s.getEntryPoint().x, s.getEntryPoint().y);
+            Point2D relativeExitPoint = new Point2D.Double(s.getExitPoint().x, s.getExitPoint().y);
+            Point2D rotatedRelativeEntryPoint = rotationTransformOperation.getPoint2D(relativeEntryPoint, null);
+            Point2D rotatedRelativeExitPoint = rotationTransformOperation.getPoint2D(relativeExitPoint, null);
+            Vector2D centerToEntryPointVector = new Vector2D(relativeEntryPoint);
+            Vector2D imageBaseToCenterVector = new Vector2D(new Point2D.Double(image.getWidth() / 2,
+                    image.getHeight() / 2));
+            Vector2D imageBaseToEntryPointVector = imageBaseToCenterVector.add(centerToEntryPointVector);
+            Vector2D rotatedEntryToExitPointVector = new Vector2D(rotatedRelativeEntryPoint, rotatedRelativeExitPoint);
+            // System.out.println("centerToEntryPointVector: " + centerToEntryPointVector);
+            // System.out.println("imageBaseToCenterVector: " + imageBaseToCenterVector);
+            // System.out.println(rotatedRelativeEntryPoint);
+
+            // AffineTransform imagePlacementTransform = new AffineTransform();
+            // imagePlacementTransform.rotate(currentAngle.getRadians());
+            // imagePlacementTransform.translate(zoomLevel, zoomLevel);
+
+            /*rotationTransform.concatenate(AffineTransform.getTranslateInstance(boundingBoxAfterRotation.getX(),
+                    boundingBoxAfterRotation.getY()));
+            rotationTransform.concatenate(AffineTransform.getTranslateInstance(boundingBoxAfterRotation.getWidth() / 2,
+                    boundingBoxAfterRotation.getHeight() / 2));*/
+
+            // System.out.println(boundingBoxAfterRotation);
+            /*Point drawingPosition = new Point(centerDrawingPoint.x
+                    - new Double(boundingBoxAfterRotation.getX()).intValue()
+                    - new Double(boundingBoxAfterRotation.getWidth() / 2).intValue(), centerDrawingPoint.y
+                    - new Double(boundingBoxAfterRotation.getY()).intValue()
+                    - new Double(boundingBoxAfterRotation.getHeight() / 2).intValue());*/
+            AffineTransform imagePlacementTransform = new AffineTransform();
+            imagePlacementTransform.translate(currentTrackPos.getX(), currentTrackPos.getY());
+            imagePlacementTransform.rotate(currentAngle.getRadians());
+            imagePlacementTransform.concatenate(imageBaseToEntryPointVector.getInvertedTransform());
+            AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransform,
+                    AffineTransformOp.TYPE_BICUBIC);
+            // Shape s2 = imagePlacementTransform.createTransformedShape(\c)
+            // g.drawImage(image, imagePlacementOperation, new Double(currentTrackPos.getX()).intValue(), new
+            // Double(currentTrackPos.getY()).intValue());
+            g.drawImage(image, imagePlacementOperation, 0, 0);
+
+            markPoint(g, currentTrackPos, Color.GREEN);
+
+            // AffineTransform translateTransform = AffineTransform.getTranslateInstance(currentTrackPos.getX(),
+            // currentTrackPos.getY());
+            // Shape s3 = imagePlacementTransform.createTransformedShape(imagePlacementOperation.getBounds2D(image));
+            Rectangle2D finalImageBoundingBox = imagePlacementOperation.getBounds2D(image);
+            Rectangle2D.union(trackBoundingBox, finalImageBoundingBox, trackBoundingBox);
+
+            // g.setColor(Color.YELLOW);
+            // g.draw(finalImageBoundingBox);
+
+            g.setColor(Color.YELLOW);
+            Rectangle2D r = new Rectangle2D.Double(0.0, 0.0, image.getWidth(), image.getHeight());
+            Shape tileShape = imagePlacementTransform.createTransformedShape(r);
+            if(counter++ == selectedTile)
+                g.draw(tileShape);
+
+            currentShapeList.add(currentTransform.createTransformedShape(tileShape));
+
+            /*g.setColor(Color.YELLOW);
+            g.drawRect(centerDrawingPoint.x - new Double(boundingBoxAfterRotation.getWidth() / 2).intValue(),
+                    centerDrawingPoint.y - new Double(boundingBoxAfterRotation.getHeight() / 2).intValue(), new Double(
+                            boundingBoxAfterRotation.getWidth()).intValue(), new Double(boundingBoxAfterRotation
+                            .getHeight()).intValue());*/
+
+            // markPoint(g, centerDrawingPoint, Color.GREEN);
+            /*ulx = Math.min(ulx, centerDrawingPoint.x - image.getWidth(null) / 2);
+            uly = Math.min(uly, centerDrawingPoint.y - image.getHeight(null) / 2);
+            lrx = Math.max(lrx, centerDrawingPoint.x + image.getWidth(null) / 2);
+            lry = Math.max(lry, centerDrawingPoint.y + image.getHeight(null) / 2);*/
+            /*AffineTransform translationTransform = AffineTransform.getTranslateInstance(centerDrawingPoint.x,
+                    centerDrawingPoint.y);
+            Rectangle2D translatedBoundingBox = translationTransform.createTransformedShape(boundingBoxAfterRotation)
+                    .getBounds2D();*/
+            // System.out.println(translatedBoundingBox);
+            /*if(trackBoundingBox == null)
+                trackBoundingBox = translatedBoundingBox;
+            else
+                Rectangle2D.union(trackBoundingBox, translatedBoundingBox, trackBoundingBox);*/
 
             // step #4: calculate the new track position, by taking the rotated entry point and moving it to the exit
             // point, and calculate the new angle
-            x = new Double(s.getExitPoint().x * Math.cos(currentAngle.getRadians()) - s.getExitPoint().y
+            /*deltax = new Double(s.getExitPoint().x * Math.cos(currentAngle.getRadians()) - s.getExitPoint().y
                     * Math.sin(currentAngle.getRadians()));
-            y = new Double(s.getExitPoint().x * Math.sin(currentAngle.getRadians()) + s.getExitPoint().y
+            deltay = new Double(s.getExitPoint().x * Math.sin(currentAngle.getRadians()) + s.getExitPoint().y
                     * Math.cos(currentAngle.getRadians()));
-            Point relativeExitPoint = new Point(x.intValue(), y.intValue());
+            Point relativeExitPoint = new Point(deltax.intValue(), deltay.intValue());
             // System.out.println("relativeExitPoint:       " + relativeExitPoint.x + "/" + relativeExitPoint.y);
-            markPoint(g, currentTrackPos, java.awt.Color.CYAN);
+            markPoint(g, currentTrackPos, Color.CYAN);
             currentTrackPos = new Point(currentTrackPos.x + (relativeExitPoint.x - relativeEntryPoint.x),
-                    currentTrackPos.y + (relativeExitPoint.y - relativeEntryPoint.y));
+                    currentTrackPos.y + (relativeExitPoint.y - relativeEntryPoint.y));*/
+
+            AffineTransform entryToExitPointTransformation = rotatedEntryToExitPointVector.getTransform();
+            currentTrackPos = entryToExitPointTransformation.transform(currentTrackPos, null);
             currentAngle.turn(s.getEntryToExitAngle());
-            // System.out.println("New angle: " + currentAngle.angle);
+            // System.out.println("currentTrackPos: " + currentTrackPos);
 
         }
-        markPoint(g, currentTrackPos, java.awt.Color.CYAN);
+        // markPoint(g, currentTrackPos, Color.CYAN);
 
-        g.setColor(java.awt.Color.RED);
-        g.drawRect(ulx, uly, lrx - ulx, lry - uly);
+        g.setColor(Color.RED);
+        g.draw(trackBoundingBox);
 
         // Display display = Display.getCurrent();
         // trackImage = new Image(display, convertToSWT(bi));
@@ -330,20 +480,49 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     @Override
     public void trackModified() {
-        createTrackImage();
         repaint();
     }
 
+    /*private void drawScrollers(Graphics2D g2d, Point size) {
+        GeneralPath scroller = new GeneralPath();
+
+        scroller.moveTo(15, 30);
+        scroller.lineTo(15, size.y - 30);
+        scroller.lineTo(15 + 3, size.y - 30 - 3);
+        scroller.lineTo(15 + 3, 33);
+        scroller.lineTo(15, 30);
+
+        g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+        g2d.setColor(Color.LIGHT_GRAY);
+        g2d.draw(scroller);
+        g2d.setPaint(Color.LIGHT_GRAY);
+        g2d.fill(scroller);
+    }*/
+
     @Override
     public void paint(Control control, Graphics2D g2d) {
-        // Point size = control.getSize();
+        Point size = control.getSize();
 
-        // add the rotation and zooming transformations
-        g2d.rotate(rotationAngle.getRadians(), 500, 500);
-        g2d.scale(zoomLevel, zoomLevel);
+        currentTransform = new AffineTransform();
+        currentTransform.translate(size.x / 2, size.y / 2);
+        currentTransform.translate(panPosition.x, panPosition.y);
+        currentTransform.scale(zoomLevel, zoomLevel);
+        currentTransform.rotate(rotationAngle.getRadians(), 0, 0);
 
+        // store the current...
+        AffineTransform originalTransform = g2d.getTransform();
+        g2d.setTransform(currentTransform);
+        drawTrack(g2d, size);
+        g2d.setTransform(originalTransform);
+
+        /*g2d.setColor(Color.YELLOW);
+        for(Shape s: currentShapeList)
+            g2d.draw(s);*/
+
+        // drawScrollers(g2d, size);
+        // g2d.setTransform(null);
         // do the actual drawing of the widget
-        g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
+        // g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
     }
 
     @Override
