@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <track name="demo_crossing" tileset="digital">
-	<section id="straight" />
-	<section id="straightChange1" />
-	<section id="turn30deg" />
-	<section id="straightShort" />
-	<section id="turn30deg" />
-	<section id="straightChange2" />
-	<section id="turn30deg" />
-	
-	
-	
-		
-	
-</track>
 
+    <section id="finishingStraight" />
+    <section id="straight" />
+    <section id="straightChange1" />
+    <section id="turn30deg" />
+    <section id="straightShort" />
+    <section id="turn30deg" />
+    <section id="straightChange2" />
+    <section id="turn30deg" />
+
+</track>
