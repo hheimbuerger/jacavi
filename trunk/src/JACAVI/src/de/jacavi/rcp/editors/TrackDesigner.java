@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -26,7 +28,6 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.TilesetRepository;
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
@@ -42,11 +43,15 @@ public class TrackDesigner extends EditorPart {
 
     boolean isDirty = true;
 
+    private TilesetRepository tilesetRepository;
+
     private Track currentTrack;
 
-    private List<Image> usedImages = new ArrayList<Image>();
+    private final List<Image> usedImages = new ArrayList<Image>();
 
-    public TrackDesigner() {}
+    public TrackDesigner() {
+        tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
+    }
 
     /**
      * Dispose handler that is invoked when the editor is closed.
@@ -110,6 +115,7 @@ public class TrackDesigner extends EditorPart {
         setSite(site);
         setInput(input);
         setPartName(input.getName());
+
     }
 
     @Override
@@ -129,21 +135,30 @@ public class TrackDesigner extends EditorPart {
         try {
             parent.setLayout(new GridLayout());
 
-            // TODO: ask the user for the TileSet before opening this editor!
-            TileSet tileset = TileSet.DEBUG;
-
             // fill the toolbar with all available tiles
             ToolBar toolbar = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
-            TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
-            Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(tileset);
+            final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
             for(String tileID: tileMap.keySet()) {
                 Tile tile = tileMap.get(tileID);
                 Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
                 usedImages.add(image);
 
-                ToolItem toolItem = new ToolItem(toolbar, SWT.NONE);
+                ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
                 toolItem.setText(tile.getName());
                 toolItem.setImage(image);
+                toolItem.addSelectionListener(new SelectionAdapter() {
+                    // Append a tile
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        ToolItem selected = (ToolItem) e.widget;
+                        for(String tileID: tileMap.keySet()) {
+                            Tile tile = tileMap.get(tileID);
+                            if(selected.getText().equals(tile.getName()))
+                                currentTrack.appendSection(tile);
+
+                        }
+                    }
+                });
             }
 
             toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -151,6 +166,12 @@ public class TrackDesigner extends EditorPart {
             // constructor should be used (but GUI doesn't
             // allow choosing a TileSet yet)
             new TrackWidget(parent, currentTrack).setLayoutData(new GridData(GridData.FILL_BOTH));
+            // currentTrack.appendSection(tileMap.get("straight"));
+            // currentTrack.appendSection(tileMap.get("straight"));
+            // currentTrack.appendSection(tileMap.get("straight"));
+            // currentTrack.appendSection(tileMap.get("straight"));
+            // currentTrack.appendSection(tileMap.get("straight"));
+            // currentTrack.insertSection(tileMap.get("turn90deg"), 3);
         } catch(TrackLoadingException e) {
             throw new RuntimeException("Error while creating TrackWidget.");
         }
@@ -161,6 +182,14 @@ public class TrackDesigner extends EditorPart {
 
     private void handleException(Exception e) {
         log.error("Save failed", e);
+    }
+
+    public void setTilesetRepository(TilesetRepository tilesetRepository) {
+        this.tilesetRepository = tilesetRepository;
+    }
+
+    public TilesetRepository getTilesetRepository() {
+        return tilesetRepository;
     }
 
 }
