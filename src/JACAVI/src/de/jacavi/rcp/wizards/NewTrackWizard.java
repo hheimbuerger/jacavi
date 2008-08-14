@@ -6,7 +6,6 @@ import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.rcp.actions.OpenTrackDesignerAction;
 import de.jacavi.rcp.wizards.pages.CreateTrackPageOne;
 
