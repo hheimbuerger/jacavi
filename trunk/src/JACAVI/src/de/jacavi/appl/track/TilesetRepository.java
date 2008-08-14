@@ -80,12 +80,27 @@ public class TilesetRepository {
         NodeList tileNodes = tilesetElement.getElementsByTagName("tile");
         for(int i = 0; i < tileNodes.getLength(); i++)
             importTile(tilesetType, (Element) tileNodes.item(i));
+
+        // make sure exactly one of the tiles is marked as the initial tile
+        boolean initialTileFound = false;
+        for(Tile t: tiles.get(tilesetType).values())
+            if(t.isInitial())
+                if(initialTileFound)
+                    throw new TilesetRepositoryInitializationFailedException("The tileset " + tilesetID
+                            + " contains at least two different tiles marked as initial.");
+                else
+                    initialTileFound = true;
+        if(!initialTileFound)
+            throw new TilesetRepositoryInitializationFailedException("The tileset " + tilesetID
+                    + " is missing a tile marked as initial");
     }
 
     private void importTile(TileSet tileset, Element tileElement) throws IOException {
         // read the data for this tile from the XML
         String tileID = tileElement.getAttribute("id");
         String tileName = tileElement.getAttribute("name");
+        boolean isInitial = tileElement.hasAttribute("isInitial")
+                && tileElement.getAttribute("isInitial").equals("true");
         String filename = null;
         Point entryPoint = null;
         Point exitPoint = null;
@@ -109,7 +124,8 @@ public class TilesetRepository {
             }
         }
 
-        tiles.get(tileset).put(tileID, new Tile(filename, tileName, entryPoint, exitPoint, entryToExitAngle));
+        tiles.get(tileset)
+                .put(tileID, new Tile(filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle));
     }
 
     public Tile getTile(TileSet tileSet, String id) {
@@ -124,7 +140,24 @@ public class TilesetRepository {
      */
     public Map<String, Tile> getAvailableTiles(TileSet tileset) {
         // TODO: implement returning inverted tiles
-        return tiles.get(tileset);
+        SortedMap<String, Tile> result = new TreeMap<String, Tile>(tiles.get(tileset));
+
+        // remove the initial tile
+        for(String tileID: result.keySet())
+            if(result.get(tileID).isInitial()) {
+                result.remove(tileID);
+                break;
+            }
+
+        return result;
+    }
+
+    public Tile getInitialTile(TileSet tileset) {
+        for(Tile t: tiles.get(tileset).values())
+            if(t.isInitial())
+                return t;
+        throw new RuntimeException(
+                "Unexpected point in code reached: no initial tile was found in a tileset in TilesetRepository.getInitialTile()");
     }
 
 }

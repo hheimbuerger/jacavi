@@ -31,6 +31,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.TilesetRepository;
 import de.jacavi.appl.track.Track;
+import de.jacavi.appl.track.Track.InitialTileMayNotBeRemoved;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
 import de.jacavi.rcp.widgets.TrackWidget;
@@ -192,10 +193,15 @@ public class TrackDesigner extends EditorPart {
     }
 
     private void handleDeletion(final TrackWidget trackWidget, int selectedPosition) {
-        // TODO: currentTrack.removeSection(selectedPosition);
-        currentTrack.getSections().remove(selectedPosition);
-        trackWidget.handleTrackModified();
-        log.debug("Delete Tile on Position " + selectedPosition);
+        // TODO: do proper error handling here
+        try {
+            log.debug("Delete Tile on Position " + selectedPosition);
+            currentTrack.removeSection(selectedPosition);
+        } catch(IndexOutOfBoundsException e) {
+            log.error("IndexOutOfBoundsException caught in handleDeletion()", e);
+        } catch(InitialTileMayNotBeRemoved e) {
+            log.error("InitialTileMayNotBeRemoved caught in handleDeletion()", e);
+        }
     }
 
     private void handleAppendage(final Map<String, Tile> tileMap, SelectionEvent e) {

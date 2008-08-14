@@ -44,6 +44,12 @@ public class Track {
     }
 
     /**
+     * Thrown when an attempt to delete the finishing straight from the track is detected.
+     */
+    @SuppressWarnings("serial")
+    public class InitialTileMayNotBeRemoved extends Exception {}
+
+    /**
      * File Extension that is used for every track in the filesystem.
      */
     public static String FILE_EXTENSION = ".track.xml";
@@ -86,7 +92,7 @@ public class Track {
         this();
         this.tileset = tileset;
         TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
-        sections.add(new TrackSection(tilesetRepository.getTile(tileset, "finishingStraight")));
+        sections.add(new TrackSection(tilesetRepository.getInitialTile(tileset)));
     }
 
     /**
@@ -167,9 +173,28 @@ public class Track {
         invokeListeners();
     }
 
-    public void removeSection(int position) {
-        throw new RuntimeException("Not yet implemented.");
-        // invokeListeners();
+    /**
+     * Removes a section from the track.
+     * <p>
+     * All modification listeners are notified.
+     * 
+     * @param position
+     *            index of the section to remove
+     * @throws InitialTileMayNotBeRemoved
+     *             if the tile at the given index is the initial tile
+     * @throws IndexOutOfBoundsException
+     *             if the position is invalid (valid: 0 <= position < sections.size())
+     */
+    public void removeSection(int position) throws InitialTileMayNotBeRemoved, IndexOutOfBoundsException {
+        // precondition: throw an exception if position indicates the initial tile
+        if(sections.get(position).isInitial())
+            throw new InitialTileMayNotBeRemoved();
+
+        // remove the tile at the given position (will throw IndexOutOfBoundsException if the position is invalid)
+        sections.remove(position);
+
+        // notify all listeners
+        invokeListeners();
     }
 
     public List<TrackSection> getSections() {
