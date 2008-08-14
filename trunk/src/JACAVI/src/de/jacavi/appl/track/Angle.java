@@ -10,12 +10,12 @@ public class Angle {
         this.angle = angle % 360;
     }
 
-    public void turn(Angle angle) {
-        turn(angle.angle);
+    public void turn(Angle turningAngle) {
+        turn(turningAngle.angle);
     }
 
-    public void turn(int angle) {
-        this.angle = (this.angle + angle) % 360;
+    public void turn(int turningAngle) {
+        this.angle = (this.angle + turningAngle) % 360;
     }
 
     public double getRadians() {

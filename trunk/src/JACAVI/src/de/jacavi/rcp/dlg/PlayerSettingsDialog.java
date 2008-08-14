@@ -3,8 +3,6 @@ package de.jacavi.rcp.dlg;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -49,7 +47,7 @@ import de.jacavi.hal.lib42.NativeLib42Adapter;
  */
 public class PlayerSettingsDialog extends TitleAreaDialog {
 
-    private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
+    // private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
 
     private String[] inputs = new String[] { "Device", "Script" };
 
@@ -159,7 +157,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
-        comboDevices.setItems((String[]) devices.toArray(new String[devices.size()]));
+        comboDevices.setItems(devices.toArray(new String[devices.size()]));
         for(int i = 0; i < devices.size(); i++) {
             if(controller instanceof DeviceController) {
                 DeviceController devController = (DeviceController) controller;
@@ -173,7 +171,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         comboTechnologies = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         comboTechnologies.setLayoutData(gdInputs);
-        comboTechnologies.setItems((String[]) technologies.toArray(new String[technologies.size()]));
+        comboTechnologies.setItems(technologies.toArray(new String[technologies.size()]));
 
         // TODO: this is only a HACK
         TechnologyController techController = player.getTechnologyController();

@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.EditorPart;
@@ -102,7 +103,7 @@ public class TrackDesigner extends EditorPart {
 
         monitor.done();
         isDirty = false;
-        firePropertyChange(EditorPart.PROP_DIRTY);
+        firePropertyChange(IEditorPart.PROP_DIRTY);
 
     }
 
