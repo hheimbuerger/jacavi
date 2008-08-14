@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <tiles>
-    <tileset id="debug">
-        <tile id="finishingStraight" name="finishing straight" isInitial="true">
+    <tileset id="digital">
+    	        <tile id="finishingStraight" name="finishing straight" isInitial="true">
             <filename>finishing_straight.png</filename>
             <entryPoint x="-53" y="6" />
             <exitPoint x="53" y="6" />
@@ -9,25 +10,52 @@
         </tile>
         <tile id="straight" name="straight">
             <filename>straight.png</filename>
-            <entryPoint x="-26" y="0" />
-            <exitPoint x="26" y="0" />
+            <entryPoint x="50" y="0" />
+            <exitPoint x="-50" y="0" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
+        <tile id="straightShort" name="straightShort">
+            <filename>straightShort.png</filename>
+            <entryPoint x="17" y="0" />
+            <exitPoint x="-17" y="0" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
+        <tile id="pitstopIn" name="pitstopIn">
+            <filename>pitstopIn.png</filename>
+            <entryPoint x="48" y="-13" />
+            <exitPoint x="-48" y="-13" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
+        <tile id="pitstopOut" name="pitstopOut">
+            <filename>pitstopOut.png</filename>
+            <entryPoint x="48" y="-13" />
+            <exitPoint x="-48" y="-13" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
+        <tile id="pitstopMiddle" name="pitstopMiddle">
+            <filename>pitstopMiddle.png</filename>
+            <entryPoint x="48" y="-13" />
+            <exitPoint x="-48" y="-13" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
         <tile id="turn90deg" name="90º turn">
-            <filename>turn_90deg.png</filename>
+            <filename>turn60deg.png</filename>
             <entryPoint x="-12" y="0" />
             <exitPoint x="0" y="-12" />
             <entryToExitAngle>-90</entryToExitAngle>
         </tile>
+        <tile id="turn60deg" name="60° turn">
+            <filename>turn60deg.png</filename>
+            <entryPoint x="44" y="-13" />
+            <exitPoint x="-21" y="-24" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
         <tile id="turn30deg" name="30º turn">
-            <filename>turn_30deg.png</filename>
-            <entryPoint x="-8" y="0" />
-            <exitPoint x="-2" y="-2" />
+            <filename>turn30deg.png</filename>
+            <entryPoint x="23" y="-4" />
+            <exitPoint x="-12" y="6" />
             <entryToExitAngle>-30</entryToExitAngle>
         </tile>
-    </tileset>
-
-    <tileset id="digital">
     </tileset>
 
     <tileset id="analogue">
