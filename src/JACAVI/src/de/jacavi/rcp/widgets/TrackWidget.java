@@ -402,6 +402,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 setSelectedTile(Math.min(selectedTile, track.getSections().size() - 1));
             else
                 setSelectedTile(-1);
+        else
+            repaint();
     }
 
     /**

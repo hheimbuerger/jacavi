@@ -25,12 +25,15 @@ public class Tile {
 
     private final Angle entryToExitAngle;
 
-    public Tile(String filename, String name, Point entryPoint, Point exitPoint, int entryToExitAngle)
+    private final boolean isInitial;
+
+    public Tile(String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint, int entryToExitAngle)
             throws IOException {
         sectionImage = ImageIO.read(Activator.getResourceAsStream(filename));
 
         this.filename = filename;
         this.name = name;
+        this.isInitial = isInitial;
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
         this.entryToExitAngle = new Angle(entryToExitAngle);
@@ -58,6 +61,10 @@ public class Tile {
 
     public String getName() {
         return name;
+    }
+
+    public boolean isInitial() {
+        return isInitial;
     }
 
 }
