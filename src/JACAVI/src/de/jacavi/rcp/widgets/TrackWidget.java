@@ -8,7 +8,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -34,16 +33,46 @@ import org.holongate.j2d.J2DUtilities;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
-import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.appl.track.Track.TrackModificationListener;
 
 
 
+/**
+ * A widget that displays a track.
+ * <p>
+ * The view can be panned, zoomed and rotated. Tiles from the track can be selected.
+ * <p>
+ * The widgets automatically updates when the track changes.
+ */
 public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificationListener {
+
+    /** The background color of the widget. */
+    private static final int BACKGROUND_COLOR = SWT.COLOR_WHITE;
+
+    /** The button used to select a tile on the widget. */
+    private static final int SELECTION_BUTTON = 1;
+
+    /** The button used to rotate and zoom the view. */
+    private static final int ROTATE_ZOOM_BUTTON = 2;
+
+    /** The button used to pan (scroll) the view. */
+    private static final int PAN_BUTTON = 3;
+
+    /** The divisor used to slow down rotation. */
+    private static final int ROTATION_SPEED_DIVISOR = 3;
+
+    /** The factor used to slow down zooming. */
+    private static final double ZOOM_SPEED_FACTOR = 0.01;
 
     /** Logger for this class */
     private static final Logger logger = Logger.getLogger(TrackWidget.class);
 
+    /**
+     * A helper class that represents a vector of double precision. (To be used with Point2D.Doubles.)
+     * <p>
+     * Supports adding vectors and creating translation transforms (and inverse translation transforms) corresponding to
+     * the vector.
+     */
     private class Vector2D {
         public Double deltax, deltay;
 
@@ -73,6 +102,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             return "Vector2D[" + deltax + ", " + deltay + "]";
         }
 
+        /**
+         * Returns a new Vector2D that represents the vector sum of this vector and the given vector.
+         */
         public Vector2D add(Vector2D a) {
             return new Vector2D(deltax + a.deltax, deltay + a.deltay);
         }
@@ -92,82 +124,76 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         }
     }
 
-    private Point panPosition = new Point(0, 0);
-
-    private boolean isCurrentlyPanning = false;
-
-    private boolean isCurrentlyRotating = false;
-
-    private Point panningStartPosition = null;
-
+    /** The currently displayed track (or null if no track is being displayed). */
     private Track track = null;
 
-    // private BufferedImage trackImage = null;
+    /** Indicates whether the user is currently holding the pan button down. */
+    private boolean isCurrentlyPanning = false;
 
+    /** Indicates whether the user is currently holding the rotation/zooming button down. */
+    private boolean isCurrentlyRotatingOrZooming = false;
+
+    /** The current viewport pan position. */
+    private Point panPosition = new Point(0, 0);
+
+    /** The current viewport zoom. */
     private double zoomLevel = 1.0;
 
+    /** The current viewport rotation. */
     private Angle rotationAngle = new Angle(0);
 
-    private Point rotationStartPosition = null;
+    /** Used to determine the mouse movement between events during panning. */
+    private Point panningStartPosition = null;
 
-    private List<Shape> currentShapeList;
+    /** Used to determine the mouse movement between events during rotation/zooming. */
+    private Point rotationZoomingStartPosition = null;
 
-    private AffineTransform currentTransform;
-
+    /** The currently selected tile, or -1 if no tile is selected */
     private int selectedTile = -1;
 
-    public TrackWidget(Composite parent, Track track) throws TrackLoadingException {
+    /** The list of tile shapes of the last rendering (used to do hit detection). */
+    private List<Shape> lastTileShapeList;
+
+    /** The bounding box of the whole track of the last rendering (used to determine scrolling limits). */
+    private Rectangle2D lastTrackBoundingBox;
+
+    /**
+     * Constructor
+     * <p>
+     * Creates a new widget for displaying a track inside the parent Composite, initially displaying the given track.
+     * 
+     * @param parent
+     *            the parent SWT component to add this widget to
+     * @param track
+     *            the track to load initially (or null to load none)
+     */
+    public TrackWidget(Composite parent, Track track) {
+        // call the J2DCanvas constructor, then register us as the IPaintable
         super(parent, SWT.NONE, null);
         setPaintable(this);
 
-        setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+        // set the background color of the widget
+        setBackground(Display.getCurrent().getSystemColor(BACKGROUND_COLOR));
 
+        // configure the rendering hints (currently maximized on quality)
         Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(3);
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         J2DRegistry.setHints(hints);
 
-        // System.out.println("java.library.path = " + System.getProperty("java.library.path"));
-
-        // check if we're accelerated
+        // check if we're accelerated, log a warning if we're not
         String graphics2DFactoryClassName = getGraphics2DFactory().getClass().getName();
         logger.debug("Current Graphics2DFactory: " + graphics2DFactoryClassName);
         if(graphics2DFactoryClassName.equals("org.holongate.j2d.SWTGraphics2DFactory"))
             logger
                     .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
 
+        // we're done with the initialization of the renderer and can initialize the track (this will also trigger the
+        // first repaint)
         setTrack(track);
 
-        /*final Display display = Display.getCurrent();
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while(true) {
-                    display.asyncExec(new Runnable() {
-                        @Override
-                        public void run() {
-                            ((J2DSamplePaintable) getPaintable()).angle++;
-                            TrackWidget.this.repaint();
-                        }
-                    });
-                    try {
-                        Thread.sleep(10);
-                    } catch(InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();*/
-
-        // panPosition = new Point(-500 - this.getSize().x / 2, -500 - this.getSize().y / 2);
-        /*addPaintListener(new PaintListener() {
-            public void paintControl(PaintEvent e) {
-                TrackWidget.this.paintControl(e);
-            }
-        });*/
-
+        // add various listeners, all just redirecting the calls to class methods
         addMouseListener(new MouseListener() {
             @Override
             public void mouseDoubleClick(MouseEvent e) {
@@ -199,11 +225,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         });
     }
 
-    private void handleDisposeEvent(DisposeEvent e) {
-        if(this.track != null)
-            this.track.removeListener(this);
-    }
-
+    /**
+     * Returns the currently displayed track.
+     */
     public Track getTrack() {
         return track;
     }
@@ -213,9 +237,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      * <p>
      * The widget will register itself as a modification notification listener on the track and will automatically
      * update as soon as the track changes!
+     * <p>
+     * NOTE: This method may only be called from the GUI thread!
      * 
      * @param track
-     *            the new to display or null to not show a track anymore
+     *            the new track to display or null to not show a track anymore
      */
     public void setTrack(Track track) {
         // unregister listener from a previously used track
@@ -230,257 +256,266 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             this.track.addListener(this);
         }
 
-        // remove the current selection
-        selectedTile = -1;
-
-        // redraw the widget
-        repaint();
+        // remove the current selection (will also trigger a repaint!)
+        setSelectedTile(-1);
     }
 
+    /**
+     * Returns the index of the currently selected tile in the thread.
+     * 
+     * @return the index of the currently selected tile, or -1 if no there is no active selection
+     */
     public int getSelectedTile() {
         return selectedTile;
     }
 
+    /**
+     * Changes the current selection to the tile with the given index.
+     * <p>
+     * Use -1 to remove the current selection. Specifying an invalid index will not raise an exception but simply remove
+     * any selection.
+     * <p>
+     * NOTE: This method may only be called from the GUI thread!
+     * 
+     * @param selectedTile
+     *            the index of the tile to select, or -1 to remove the selection
+     */
     public void setSelectedTile(int selectedTile) {
         this.selectedTile = selectedTile;
         repaint();
     }
 
-    protected void handleMouseUp(MouseEvent e) {
-        if(e.button == 3) {
-            isCurrentlyPanning = false;
-            panningStartPosition = null;
-        } else if(e.button == 2) {
-            isCurrentlyRotating = false;
-            rotationStartPosition = null;
-        }
+    /**
+     * Handles the widget dispose event.
+     * <p>
+     * Unregisters the listener from the currently displayed track if there is one.
+     */
+    private void handleDisposeEvent(DisposeEvent e) {
+        if(this.track != null)
+            this.track.removeListener(this);
     }
 
+    /**
+     * Event handler for mouse up events.
+     * <p>
+     * Handles clicks (selections) and starts pans, zooms or rotations.
+     */
     protected void handleMouseDown(MouseEvent e) {
-        if(e.button == 3 && !isCurrentlyPanning) {
-            isCurrentlyPanning = true;
-            panningStartPosition = new Point(e.x, e.y);
-        } else if(e.button == 2 && !isCurrentlyRotating) {
-            isCurrentlyRotating = true;
-            rotationStartPosition = new Point(e.x, e.y);
+        switch(e.button) {
+            // if the selection button has been pressed down, do a hit detection and chance the current selection
+            case SELECTION_BUTTON:
+                boolean wasHitDetected = false;
+                for(int i = lastTileShapeList.size() - 1; i >= 0; i--) {
+                    if(lastTileShapeList.get(i).contains(e.x, e.y)) {
+                        setSelectedTile(i);
+                        wasHitDetected = true;
+                        break;
+                    }
+                }
+                // if no hit was detected, remove the selection
+                if(!wasHitDetected)
+                    setSelectedTile(-1);
+                break;
+
+            // if the pan button has been pressed down, start the panning
+            case PAN_BUTTON:
+                if(!isCurrentlyPanning) {
+                    isCurrentlyPanning = true;
+                    panningStartPosition = new Point(e.x, e.y);
+                }
+                break;
+
+            // if the rotation/zoom button has been pressed down, start the rotation/zooming
+            case ROTATE_ZOOM_BUTTON:
+                if(!isCurrentlyRotatingOrZooming) {
+                    isCurrentlyRotatingOrZooming = true;
+                    rotationZoomingStartPosition = new Point(e.x, e.y);
+                }
+                break;
         }
     }
 
+    /**
+     * Event handler for mouse up events.
+     * <p>
+     * Deactivates any currently active pans, zooms or rotations.
+     */
+    protected void handleMouseUp(MouseEvent e) {
+        switch(e.button) {
+            case PAN_BUTTON:
+                isCurrentlyPanning = false;
+                panningStartPosition = null;
+                break;
+            case ROTATE_ZOOM_BUTTON:
+                isCurrentlyRotatingOrZooming = false;
+                rotationZoomingStartPosition = null;
+                break;
+        }
+    }
+
+    /**
+     * Event handler for mouse move events.
+     * <p>
+     * Handles panning, zooming and rotating.
+     */
     protected void handleMouseMove(MouseEvent e) {
-        boolean doesNeedRedraw = false;
+        boolean doesRequireRepaint = false;
+
+        // if panning is active, pan by the movement since the last event, reset the panning base point and trigger a
+        // repaint
         if(isCurrentlyPanning) {
             panPosition.x += e.x - panningStartPosition.x;
             panPosition.y += e.y - panningStartPosition.y;
             panningStartPosition = new Point(e.x, e.y);
-            doesNeedRedraw = true;
-        }
-        if(isCurrentlyRotating) {
-            rotationAngle.turn((e.x - rotationStartPosition.x) / 3);
-            zoomLevel += -(e.y - rotationStartPosition.y) * 0.01;
-            rotationStartPosition = new Point(e.x, e.y);
-            doesNeedRedraw = true;
+            doesRequireRepaint = true;
         }
 
-        if(doesNeedRedraw)
+        // if rotation/zooming is active, rotate/zoom by the movement since the last event, reset the base point and
+        // trigger a repaint
+        if(isCurrentlyRotatingOrZooming) {
+            rotationAngle.turn((e.x - rotationZoomingStartPosition.x) / ROTATION_SPEED_DIVISOR);
+            zoomLevel += -(e.y - rotationZoomingStartPosition.y) * ZOOM_SPEED_FACTOR;
+            rotationZoomingStartPosition = new Point(e.x, e.y);
+            doesRequireRepaint = true;
+        }
+
+        if(doesRequireRepaint)
             repaint();
     }
 
-    protected void handleMouseDoubleClick(MouseEvent e) {
-        // System.out.println("doubleclick: " + e.x + "/" + e.y);
-        for(int i = currentShapeList.size() - 1; i >= 0; i--) {
-            // System.out.println("shape " + i + ": " + currentShapeList.get(i).getBounds2D().getX() + ", "
-            // + currentShapeList.get(i).getBounds2D().getY());
-            if(currentShapeList.get(i).contains(e.x, e.y)) {
-                // System.out.println("detected hit: " + i);
-                selectedTile = i;
-                repaint();
-                break;
-            }
-        }
+    /**
+     * Event handler for mouse double click events.
+     * <p>
+     * (Currently unused.)
+     */
+    protected void handleMouseDoubleClick(MouseEvent e) {}
+
+    /**
+     * Event handler for modification notifications from the track.
+     * <p>
+     * Removes the current selection and triggers a repaint, everything else in handled while doing the rendering.
+     */
+    @Override
+    public void handleTrackModified() {
+        if(selectedTile != -1)
+            if(track.getSections().size() > 0)
+                setSelectedTile(Math.min(selectedTile, track.getSections().size() - 1));
+            else
+                setSelectedTile(-1);
     }
 
-    /*protected void paintControl(PaintEvent e) {
-        // TODO: track can be null!
-
-        // get the SWT graphics context from the event and prepare the Graphics2D renderer
-        GC gc = e.gc;
-        renderer.prepareRendering(gc);
-        // Point controlSize = ((Control) e.getSource()).getSize();
-
-        // gets the Graphics2D context and switch on the antialiasing
-        Graphics2D g2d = renderer.getGraphics2D();
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-
-        // add the rotation and zooming transformations
-        g2d.rotate(rotationAngle.getRadians(), 500, 500);
-        g2d.scale(zoomLevel, zoomLevel);
-
-        // do the actual drawing of the widget
-        g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
-
-        // now that we are done with Java 2D, renders Graphics2D operation
-        // on the SWT graphics context
-        renderer.render(gc);
-    }*/
-
-    /*private Rectangle2D drawByCenter(Graphics2D g, BufferedImage image, Point destination, Angle rotation) {
-
-        return boundingBoxAfterRotation;
-    }*/
-
+    /**
+     * Helper method for drawing a point on the screen. Mostly used for debugging purposes.
+     */
     private void markPoint(Graphics2D g, Point2D currentTrackPos, Color color) {
         g.setColor(color);
         g.drawRect(new Double(currentTrackPos.getX() - 1).intValue(),
                 new Double(currentTrackPos.getY() - 1).intValue(), 3, 3);
     }
 
-    private void drawTrack(Graphics2D g, Point size) {
-        // g.setBackground(Color.WHITE);
-        // g.clearRect(0, 0, size.x, size.y);
+    /**
+     * Renders the currently displayed track.
+     * <p>
+     * This method assumes that the viewport transformations are already activated on the given Graphics2D object.
+     * 
+     * @param g
+     *            the Graphics2D object to draw on
+     * @param viewportTransformation
+     *            the current viewport transformation
+     */
+    private void drawTrack(Graphics2D g, AffineTransform viewportTransformation) {
+        // back up the current transformation of the graphics context, so we can restore it later on
+        AffineTransform originalTransformation = g.getTransform();
 
+        // active the viewport transformation
+        g.setTransform(viewportTransformation);
+
+        // initialise the drawing angle and track pos of the next tile
         Angle currentAngle = new Angle(0);
         Point2D currentTrackPos = new Point2D.Double(0.0, 0.0);
-        currentShapeList = new ArrayList<Shape>();
-        // int ulx = currentTrackPos.x, uly = currentTrackPos.y, lrx = currentTrackPos.x, lry = currentTrackPos.y;
-        Rectangle2D trackBoundingBox = new Rectangle2D.Double();
+
+        // recreate the shape list (used for doing hit detections) and the track bounding box (used for determining the
+        // scrolling bounds)
+        lastTileShapeList = new ArrayList<Shape>();
+        lastTrackBoundingBox = new Rectangle2D.Double();
+
+        // initialize a counter (used for detected the selected tile)
         int counter = 0;
+
+        // iterate over all track sections of the currently displayed track
         for(TrackSection s: track.getSections()) {
-            // Double deltax, deltay;
 
-            // System.out.println("Track position:          " + currentTrackPos.x + "/" + currentTrackPos.y);
-
-            // step #1: rotate tile as necessary
-            // Image rotatedImage = s.getRotatedImage(currentAngle);
-            BufferedImage image = (BufferedImage) s.getImage();
-
-            // step #2: calculate entry point relative to the center after rotation
-            // <juckto> xnew = deltax*cos(0) - deltay*sin(0)
-            // <juckto> ynew = deltax*sin(0) + deltay*cos(0)
-            /*deltax = new Double(s.getEntryPoint().x * Math.cos(currentAngle.getRadians()) - s.getEntryPoint().y
-                    * Math.sin(currentAngle.getRadians()));
-            deltay = new Double(s.getEntryPoint().x * Math.sin(currentAngle.getRadians()) + s.getEntryPoint().y
-                    * Math.cos(currentAngle.getRadians()));
-            Point relativeEntryPoint = new Point(deltax.intValue(), deltay.intValue());*/
-            // System.out.println("relativeEntryPoint:      " + relativeEntryPoint.x + "/" + relativeEntryPoint.y);
-            // step #3: calculate center drawing point and draw the image
-            /*Point centerDrawingPoint = new Point(currentTrackPos.x + (-relativeEntryPoint.x), currentTrackPos.y
-                    + (-relativeEntryPoint.y));*/
-            // System.out.println("Center drawing position: " + centerDrawingPoint.x + "/" + centerDrawingPoint.y);
-            AffineTransform rotationTransform = AffineTransform.getRotateInstance(currentAngle.getRadians());
-            AffineTransformOp rotationTransformOperation = new AffineTransformOp(rotationTransform,
-                    AffineTransformOp.TYPE_BICUBIC);
-            // Rectangle2D boundingBoxAfterRotation = rotationTransformOperation.getBounds2D(image);
-
-            // step #2: calculate entry point relative to the center after rotation
+            // create points for the entry and exit points (relative to the tile's center)
             Point2D relativeEntryPoint = new Point2D.Double(s.getEntryPoint().x, s.getEntryPoint().y);
             Point2D relativeExitPoint = new Point2D.Double(s.getExitPoint().x, s.getExitPoint().y);
-            Point2D rotatedRelativeEntryPoint = rotationTransformOperation.getPoint2D(relativeEntryPoint, null);
-            Point2D rotatedRelativeExitPoint = rotationTransformOperation.getPoint2D(relativeExitPoint, null);
-            Vector2D centerToEntryPointVector = new Vector2D(relativeEntryPoint);
-            Vector2D imageBaseToCenterVector = new Vector2D(new Point2D.Double(image.getWidth() / 2,
-                    image.getHeight() / 2));
-            Vector2D imageBaseToEntryPointVector = imageBaseToCenterVector.add(centerToEntryPointVector);
-            Vector2D rotatedEntryToExitPointVector = new Vector2D(rotatedRelativeEntryPoint, rotatedRelativeExitPoint);
-            // System.out.println("centerToEntryPointVector: " + centerToEntryPointVector);
-            // System.out.println("imageBaseToCenterVector: " + imageBaseToCenterVector);
-            // System.out.println(rotatedRelativeEntryPoint);
 
-            // AffineTransform imagePlacementTransform = new AffineTransform();
-            // imagePlacementTransform.rotate(currentAngle.getRadians());
-            // imagePlacementTransform.translate(zoomLevel, zoomLevel);
-
-            /*rotationTransform.concatenate(AffineTransform.getTranslateInstance(boundingBoxAfterRotation.getX(),
-                    boundingBoxAfterRotation.getY()));
-            rotationTransform.concatenate(AffineTransform.getTranslateInstance(boundingBoxAfterRotation.getWidth() / 2,
-                    boundingBoxAfterRotation.getHeight() / 2));*/
-
-            // System.out.println(boundingBoxAfterRotation);
-            /*Point drawingPosition = new Point(centerDrawingPoint.x
-                    - new Double(boundingBoxAfterRotation.getX()).intValue()
-                    - new Double(boundingBoxAfterRotation.getWidth() / 2).intValue(), centerDrawingPoint.y
-                    - new Double(boundingBoxAfterRotation.getY()).intValue()
-                    - new Double(boundingBoxAfterRotation.getHeight() / 2).intValue());*/
-            AffineTransform imagePlacementTransform = new AffineTransform();
-            imagePlacementTransform.translate(currentTrackPos.getX(), currentTrackPos.getY());
-            imagePlacementTransform.rotate(currentAngle.getRadians());
-            imagePlacementTransform.concatenate(imageBaseToEntryPointVector.getInvertedTransform());
-            AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransform,
+            // determine the entry and exit points after applying the current rotation (required for the next step)
+            AffineTransform rotationTransformation = AffineTransform.getRotateInstance(currentAngle.getRadians());
+            AffineTransformOp rotationOperation = new AffineTransformOp(rotationTransformation,
                     AffineTransformOp.TYPE_BICUBIC);
-            // Shape s2 = imagePlacementTransform.createTransformedShape(\c)
-            // g.drawImage(image, imagePlacementOperation, new Double(currentTrackPos.getX()).intValue(), new
-            // Double(currentTrackPos.getY()).intValue());
-            g.drawImage(image, imagePlacementOperation, 0, 0);
+            Point2D rotatedRelativeEntryPoint = rotationOperation.getPoint2D(relativeEntryPoint, null);
+            Point2D rotatedRelativeExitPoint = rotationOperation.getPoint2D(relativeExitPoint, null);
 
+            // determine two vectors:
+            // a) imageBaseToEntryPointVector: a vector pointing from the upper left corner of the image to the entry
+            // point after applying the rotation (used for placing the tile at the correct position)
+            // b) entryToExitPointVector: a vector pointing from the entry to the exit point after applying the rotation
+            // (used to determine the exit point of this tile and therefore the entry point of the next one)
+            Vector2D centerToEntryPointVector = new Vector2D(relativeEntryPoint);
+            Vector2D imageBaseToCenterVector = new Vector2D(new Point2D.Double(s.getImage().getWidth() / 2, s
+                    .getImage().getHeight() / 2));
+            Vector2D imageBaseToEntryPointVector = imageBaseToCenterVector.add(centerToEntryPointVector);
+            Vector2D entryToExitPointVector = new Vector2D(rotatedRelativeEntryPoint, rotatedRelativeExitPoint);
+
+            // create a transformation to be used for placing the image -- the transformation includes the rotation, the
+            // translation to the entry point and the translation from the entry to the exit point
+            AffineTransform imagePlacementTransformation = new AffineTransform();
+            imagePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
+            imagePlacementTransformation.rotate(currentAngle.getRadians());
+            imagePlacementTransformation.concatenate(imageBaseToEntryPointVector.getInvertedTransform());
+            AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransformation,
+                    AffineTransformOp.TYPE_BICUBIC);
+
+            // now we can draw the image -- the placement is already included in the transformation operation, so the
+            // coordinates used here are simple the origin coordinates
+            g.drawImage(s.getImage(), imagePlacementOperation, 0, 0);
+
+            // DEBUG: draw the current track position
             markPoint(g, currentTrackPos, Color.GREEN);
 
-            // AffineTransform translateTransform = AffineTransform.getTranslateInstance(currentTrackPos.getX(),
-            // currentTrackPos.getY());
-            // Shape s3 = imagePlacementTransform.createTransformedShape(imagePlacementOperation.getBounds2D(image));
-            Rectangle2D finalImageBoundingBox = imagePlacementOperation.getBounds2D(image);
-            Rectangle2D.union(trackBoundingBox, finalImageBoundingBox, trackBoundingBox);
+            // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
+            // bounding box -- that way we'll get a bounding box for the whole track in the end
+            Rectangle2D finalImageBoundingBox = imagePlacementOperation.getBounds2D(s.getImage());
+            Rectangle2D.union(lastTrackBoundingBox, finalImageBoundingBox, lastTrackBoundingBox);
 
-            // g.setColor(Color.YELLOW);
-            // g.draw(finalImageBoundingBox);
+            // create a shape of the exact box of the image (not parallel to the viewport!) by transforming a rectangle
+            // corresponding to the image with the viewport transformation
+            Rectangle2D r = new Rectangle2D.Double(0.0, 0.0, s.getImage().getWidth(), s.getImage().getHeight());
+            Shape tileShape = imagePlacementTransformation.createTransformedShape(r);
 
+            // store that shape, we'll need it later on to do hit detection
+            lastTileShapeList.add(viewportTransformation.createTransformedShape(tileShape));
+
+            // if the current image is selected, draw its shape to indicate the selection to the user
             g.setColor(Color.YELLOW);
-            Rectangle2D r = new Rectangle2D.Double(0.0, 0.0, image.getWidth(), image.getHeight());
-            Shape tileShape = imagePlacementTransform.createTransformedShape(r);
             if(counter++ == selectedTile)
                 g.draw(tileShape);
 
-            currentShapeList.add(currentTransform.createTransformedShape(tileShape));
-
-            /*g.setColor(Color.YELLOW);
-            g.drawRect(centerDrawingPoint.x - new Double(boundingBoxAfterRotation.getWidth() / 2).intValue(),
-                    centerDrawingPoint.y - new Double(boundingBoxAfterRotation.getHeight() / 2).intValue(), new Double(
-                            boundingBoxAfterRotation.getWidth()).intValue(), new Double(boundingBoxAfterRotation
-                            .getHeight()).intValue());*/
-
-            // markPoint(g, centerDrawingPoint, Color.GREEN);
-            /*ulx = Math.min(ulx, centerDrawingPoint.x - image.getWidth(null) / 2);
-            uly = Math.min(uly, centerDrawingPoint.y - image.getHeight(null) / 2);
-            lrx = Math.max(lrx, centerDrawingPoint.x + image.getWidth(null) / 2);
-            lry = Math.max(lry, centerDrawingPoint.y + image.getHeight(null) / 2);*/
-            /*AffineTransform translationTransform = AffineTransform.getTranslateInstance(centerDrawingPoint.x,
-                    centerDrawingPoint.y);
-            Rectangle2D translatedBoundingBox = translationTransform.createTransformedShape(boundingBoxAfterRotation)
-                    .getBounds2D();*/
-            // System.out.println(translatedBoundingBox);
-            /*if(trackBoundingBox == null)
-                trackBoundingBox = translatedBoundingBox;
-            else
-                Rectangle2D.union(trackBoundingBox, translatedBoundingBox, trackBoundingBox);*/
-
-            // step #4: calculate the new track position, by taking the rotated entry point and moving it to the exit
-            // point, and calculate the new angle
-            /*deltax = new Double(s.getExitPoint().x * Math.cos(currentAngle.getRadians()) - s.getExitPoint().y
-                    * Math.sin(currentAngle.getRadians()));
-            deltay = new Double(s.getExitPoint().x * Math.sin(currentAngle.getRadians()) + s.getExitPoint().y
-                    * Math.cos(currentAngle.getRadians()));
-            Point relativeExitPoint = new Point(deltax.intValue(), deltay.intValue());
-            // System.out.println("relativeExitPoint:       " + relativeExitPoint.x + "/" + relativeExitPoint.y);
-            markPoint(g, currentTrackPos, Color.CYAN);
-            currentTrackPos = new Point(currentTrackPos.x + (relativeExitPoint.x - relativeEntryPoint.x),
-                    currentTrackPos.y + (relativeExitPoint.y - relativeEntryPoint.y));*/
-
-            AffineTransform entryToExitPointTransformation = rotatedEntryToExitPointVector.getTransform();
+            // calculate the new track position by taking current track position and applying the
+            // entryToExitPointTransformation
+            AffineTransform entryToExitPointTransformation = entryToExitPointVector.getTransform();
             currentTrackPos = entryToExitPointTransformation.transform(currentTrackPos, null);
+
+            // calculate the new angle by turning it by the angle this tile is supposedly changing the track direction
             currentAngle.turn(s.getEntryToExitAngle());
-            // System.out.println("currentTrackPos: " + currentTrackPos);
-
         }
-        // markPoint(g, currentTrackPos, Color.CYAN);
 
+        // DEBUG: draw the track bounding box in red
         g.setColor(Color.RED);
-        g.draw(trackBoundingBox);
+        g.draw(lastTrackBoundingBox);
 
-        // Display display = Display.getCurrent();
-        // trackImage = new Image(display, convertToSWT(bi));
-    }
-
-    @Override
-    public void trackModified() {
-        repaint();
+        // restore the old transformation
+        g.setTransform(originalTransformation);
     }
 
     /*private void drawScrollers(Graphics2D g2d, Point size) {
@@ -499,25 +534,22 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         g2d.fill(scroller);
     }*/
 
+    /**
+     * Invoked by base class methods to trigger an actual repaint. Not to be called directly!
+     */
     @Override
     public void paint(Control control, Graphics2D g2d) {
         Point size = control.getSize();
 
-        currentTransform = new AffineTransform();
-        currentTransform.translate(size.x / 2, size.y / 2);
-        currentTransform.translate(panPosition.x, panPosition.y);
-        currentTransform.scale(zoomLevel, zoomLevel);
-        currentTransform.rotate(rotationAngle.getRadians(), 0, 0);
+        // update the current viewpoint transformation
+        AffineTransform viewportTransformation = new AffineTransform();
+        viewportTransformation.translate(size.x / 2, size.y / 2);
+        viewportTransformation.translate(panPosition.x, panPosition.y);
+        viewportTransformation.scale(zoomLevel, zoomLevel);
+        viewportTransformation.rotate(rotationAngle.getRadians(), 0, 0);
 
-        // store the current...
-        AffineTransform originalTransform = g2d.getTransform();
-        g2d.setTransform(currentTransform);
-        drawTrack(g2d, size);
-        g2d.setTransform(originalTransform);
-
-        /*g2d.setColor(Color.YELLOW);
-        for(Shape s: currentShapeList)
-            g2d.draw(s);*/
+        // back up the current transformation, apply the viewport translation and draw the track
+        drawTrack(g2d, viewportTransformation);
 
         // drawScrollers(g2d, size);
         // g2d.setTransform(null);
@@ -525,9 +557,16 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
     }
 
+    /**
+     * Invoked by base class methods to do SWT specific redrawing after the Java2D based redraw has finished. Not to be
+     * called directly!
+     */
     @Override
     public void redraw(Control control, GC gc) {}
 
+    /**
+     * Invoked by base class methods to determine the size of the control. Not to be called directly!
+     */
     @Override
     public Rectangle2D getBounds(Control control) {
         return J2DUtilities.toRectangle2D(control.getBounds());

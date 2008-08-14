@@ -31,7 +31,6 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.TilesetRepository;
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
 import de.jacavi.rcp.widgets.TrackWidget;
@@ -135,51 +134,46 @@ public class TrackDesigner extends EditorPart {
 
     @Override
     public void createPartControl(Composite parent) {
-        try {
-            parent.setLayout(new GridLayout());
+        parent.setLayout(new GridLayout());
 
-            ToolBar toolbar = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
-            ToolItem toolItem1 = new ToolItem(toolbar, SWT.PUSH);
-            toolItem1.setText("bla");
-            // fill the toolbar with all available tiles
-            ToolBar tilesToolbar = new ToolBar(parent, SWT.WRAP);
-            final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
-            for(String tileID: tileMap.keySet()) {
-                Tile tile = tileMap.get(tileID);
-                Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
-                usedImages.add(image);
+        ToolBar toolbar = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
+        ToolItem toolItem1 = new ToolItem(toolbar, SWT.PUSH);
+        toolItem1.setText("bla");
+        // fill the toolbar with all available tiles
+        ToolBar tilesToolbar = new ToolBar(parent, SWT.WRAP);
+        final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
+        for(String tileID: tileMap.keySet()) {
+            Tile tile = tileMap.get(tileID);
+            Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
+            usedImages.add(image);
 
-                ToolItem toolItem = new ToolItem(tilesToolbar, SWT.PUSH);
-                toolItem.setText(tile.getName());
-                toolItem.setImage(image);
-                toolItem.addSelectionListener(new SelectionAdapter() {
-                    // Append a tile
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        handleAppendage(tileMap, e);
-                    }
-
-                });
-            }
-
-            tilesToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-            final TrackWidget trackWidget = new TrackWidget(parent, currentTrack);
-            trackWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
-            trackWidget.addKeyListener(new KeyAdapter() {
+            ToolItem toolItem = new ToolItem(tilesToolbar, SWT.PUSH);
+            toolItem.setText(tile.getName());
+            toolItem.setImage(image);
+            toolItem.addSelectionListener(new SelectionAdapter() {
+                // Append a tile
                 @Override
-                public void keyReleased(KeyEvent e) {
-                    int selectedPosition = trackWidget.getSelectedTile();
-                    if(e.keyCode == SWT.DEL && selectedPosition != -1) {
-                        handleDeletion(trackWidget, selectedPosition);
-                    }
+                public void widgetSelected(SelectionEvent e) {
+                    handleAppendage(tileMap, e);
                 }
 
             });
-
-        } catch(TrackLoadingException e) {
-            throw new RuntimeException("Error while creating TrackWidget.");
         }
+
+        tilesToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+        final TrackWidget trackWidget = new TrackWidget(parent, currentTrack);
+        trackWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
+        trackWidget.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                int selectedPosition = trackWidget.getSelectedTile();
+                if(e.keyCode == SWT.DEL && selectedPosition != -1) {
+                    handleDeletion(trackWidget, selectedPosition);
+                }
+            }
+
+        });
     }
 
     @Override
@@ -200,7 +194,7 @@ public class TrackDesigner extends EditorPart {
     private void handleDeletion(final TrackWidget trackWidget, int selectedPosition) {
         // TODO: currentTrack.removeSection(selectedPosition);
         currentTrack.getSections().remove(selectedPosition);
-        trackWidget.trackModified();
+        trackWidget.handleTrackModified();
         log.debug("Delete Tile on Position " + selectedPosition);
     }
 

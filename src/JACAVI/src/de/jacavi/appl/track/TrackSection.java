@@ -1,6 +1,6 @@
 package de.jacavi.appl.track;
 
-import java.awt.Image;
+import java.awt.image.BufferedImage;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -26,7 +26,7 @@ public class TrackSection {
         return tile.getExitPoint();
     }
 
-    public Image getImage() {
+    public BufferedImage getImage() {
         return tile.getSectionImage();
     }
 
