@@ -1,12 +1,8 @@
 package de.jacavi.appl.track;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+import java.awt.Image;
 
 import org.eclipse.swt.graphics.Point;
-
 
 
 
@@ -30,7 +26,11 @@ public class TrackSection {
         return tile.getExitPoint();
     }
 
-    public java.awt.Image getRotatedImage(Angle currentAngle) {
+    public Image getImage() {
+        return tile.getSectionImage();
+    }
+
+    /*public java.awt.Image getRotatedImage(Angle currentAngle) {
         int maxDimension = Math.max(tile.getSectionImage().getWidth(), tile.getSectionImage().getHeight());
         BufferedImage targetBI = new BufferedImage(maxDimension * 2, maxDimension * 2, BufferedImage.TYPE_INT_ARGB);
 
@@ -44,7 +44,7 @@ public class TrackSection {
                 (targetBI.getHeight() / 2 - tile.getSectionImage().getHeight() / 2), null);
         // return convertToTransparent(targetBI, transparentColor);
         return targetBI;
-    }
+    }*/
 
     /*    private BufferedImage convertToTransparent(BufferedImage src, Color transparentColor) {
             int w = src.getWidth();
