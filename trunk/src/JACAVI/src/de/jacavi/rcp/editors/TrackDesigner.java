@@ -11,6 +11,8 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -41,7 +43,7 @@ public class TrackDesigner extends EditorPart {
 
     public static String ID = "JACAVI.TrackDesigner";
 
-    boolean isDirty = true;
+    boolean isDirty = false;
 
     private TilesetRepository tilesetRepository;
 
@@ -135,43 +137,45 @@ public class TrackDesigner extends EditorPart {
         try {
             parent.setLayout(new GridLayout());
 
-            // fill the toolbar with all available tiles
             ToolBar toolbar = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
+            ToolItem toolItem1 = new ToolItem(toolbar, SWT.PUSH);
+            toolItem1.setText("bla");
+            // fill the toolbar with all available tiles
+            ToolBar tilesToolbar = new ToolBar(parent, SWT.WRAP);
             final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
             for(String tileID: tileMap.keySet()) {
                 Tile tile = tileMap.get(tileID);
                 Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
                 usedImages.add(image);
 
-                ToolItem toolItem = new ToolItem(toolbar, SWT.PUSH);
+                ToolItem toolItem = new ToolItem(tilesToolbar, SWT.PUSH);
                 toolItem.setText(tile.getName());
                 toolItem.setImage(image);
                 toolItem.addSelectionListener(new SelectionAdapter() {
                     // Append a tile
                     @Override
                     public void widgetSelected(SelectionEvent e) {
-                        ToolItem selected = (ToolItem) e.widget;
-                        for(String tileID: tileMap.keySet()) {
-                            Tile tile = tileMap.get(tileID);
-                            if(selected.getText().equals(tile.getName()))
-                                currentTrack.appendSection(tile);
-
-                        }
+                        handleAppendage(tileMap, e);
                     }
+
                 });
             }
 
-            toolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            // TODO: track needs to be stored locally and Track(TileSet)
-            // constructor should be used (but GUI doesn't
-            // allow choosing a TileSet yet)
-            new TrackWidget(parent, currentTrack).setLayoutData(new GridData(GridData.FILL_BOTH));
-            // currentTrack.appendSection(tileMap.get("straight"));
-            // currentTrack.appendSection(tileMap.get("straight"));
-            // currentTrack.appendSection(tileMap.get("straight"));
-            // currentTrack.appendSection(tileMap.get("straight"));
-            // currentTrack.appendSection(tileMap.get("straight"));
-            // currentTrack.insertSection(tileMap.get("turn90deg"), 3);
+            tilesToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+
+            final TrackWidget trackWidget = new TrackWidget(parent, currentTrack);
+            trackWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
+            trackWidget.addKeyListener(new KeyAdapter() {
+                @Override
+                public void keyReleased(KeyEvent e) {
+                    int selectedPosition = trackWidget.getSelectedTile();
+                    if(e.keyCode == SWT.DEL && selectedPosition != -1) {
+                        handleDeletion(trackWidget, selectedPosition);
+                    }
+                }
+
+            });
+
         } catch(TrackLoadingException e) {
             throw new RuntimeException("Error while creating TrackWidget.");
         }
@@ -192,4 +196,23 @@ public class TrackDesigner extends EditorPart {
         return tilesetRepository;
     }
 
+    private void handleDeletion(final TrackWidget trackWidget, int selectedPosition) {
+        // TODO: currentTrack.removeSection(selectedPosition);
+        currentTrack.getSections().remove(selectedPosition);
+        trackWidget.trackModified();
+        log.debug("Delete Tile on Position " + selectedPosition);
+    }
+
+    private void handleAppendage(final Map<String, Tile> tileMap, SelectionEvent e) {
+        ToolItem selected = (ToolItem) e.widget;
+        for(String tileID: tileMap.keySet()) {
+            Tile tile = tileMap.get(tileID);
+            if(selected.getText().equals(tile.getName())) {
+                currentTrack.appendSection(tile);
+                log.debug(tile.getName() + "inserted into track");
+                isDirty = true;
+                firePropertyChange(PROP_DIRTY);
+            }
+        }
+    }
 }
