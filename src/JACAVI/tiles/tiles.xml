@@ -10,32 +10,44 @@
         </tile>
         <tile id="straight" name="straight">
             <filename>straight.png</filename>
-            <entryPoint x="50" y="0" />
-            <exitPoint x="-50" y="0" />
+            <entryPoint x="50" y="-1" />
+            <exitPoint x="-50" y="-1" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
         <tile id="straightShort" name="straightShort">
             <filename>straightShort.png</filename>
-            <entryPoint x="17" y="0" />
-            <exitPoint x="-17" y="0" />
+            <entryPoint x="17" y="-1" />
+            <exitPoint x="-17" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
+        <tile id="straightChange1" name="straightChange1">
+            <filename>straightChange1.png</filename>
+            <entryPoint x="100" y="-1" />
+            <exitPoint x="-100" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+        </tile>
+        <tile id="straightChange2" name="straightChange2">
+            <filename>straightChange2.png</filename>
+            <entryPoint x="100" y="-1" />
+            <exitPoint x="-100" y="-1" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
         <tile id="pitstopIn" name="pitstopIn">
             <filename>pitstopIn.png</filename>
-            <entryPoint x="48" y="-13" />
-            <exitPoint x="-48" y="-13" />
+            <entryPoint x="48" y="-14" />
+            <exitPoint x="-48" y="-14" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
         <tile id="pitstopOut" name="pitstopOut">
             <filename>pitstopOut.png</filename>
-            <entryPoint x="48" y="-13" />
-            <exitPoint x="-48" y="-13" />
+            <entryPoint x="48" y="-14" />
+            <exitPoint x="-48" y="-14" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
         <tile id="pitstopMiddle" name="pitstopMiddle">
             <filename>pitstopMiddle.png</filename>
-            <entryPoint x="48" y="-13" />
-            <exitPoint x="-48" y="-13" />
+            <entryPoint x="48" y="-14" />
+            <exitPoint x="-48" y="-14" />
             <entryToExitAngle>0</entryToExitAngle>
         </tile>
         <tile id="turn90deg" name="90º turn">
