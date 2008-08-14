@@ -2,11 +2,11 @@ package de.jacavi.rcp.dlg;
 
 import java.util.ArrayList;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -24,150 +24,150 @@ import de.jacavi.appl.racelogic.Player;
 import de.jacavi.rcp.dlg.provider.PlayerContentProvider;
 import de.jacavi.rcp.dlg.provider.PlayerLabelProvider;
 
+
+
 /**
  * @author Fabian Rohn
- * 
  */
 public class PlayerOverviewDialog extends TitleAreaDialog {
 
-	private static TableViewer tableViewer;
-	private PlayerTableModel model;
+    private static TableViewer tableViewer;
 
-	public PlayerOverviewDialog(Shell parentShell) {
-		super(parentShell);
-		model = new PlayerTableModel();
-	}
+    private PlayerTableModel model;
 
-	protected Control createContents(Composite parent) {
-		Control contents = super.createContents(parent);
-		setTitle("Player Overview");
-		setMessage("Please configure the number of players and its settings",
-				IMessageProvider.INFORMATION);
-		return contents;
-	}
+    public PlayerOverviewDialog(Shell parentShell) {
+        super(parentShell);
+        model = new PlayerTableModel();
+    }
 
-	@Override
-	protected Control createDialogArea(Composite parent) {
-		parent.getShell().setText("Player Overview");
+    @Override
+    protected Control createContents(Composite parent) {
+        Control contents = super.createContents(parent);
+        setTitle("Player Overview");
+        setMessage("Please configure the number of players and its settings", IMessageProvider.INFORMATION);
+        return contents;
+    }
 
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
-		gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_CENTER;
-		GridData gdInputs = new GridData();
-		gdInputs.widthHint = 100;
-		GridLayout layout = new GridLayout();
-		layout.marginHeight = 20;
-		layout.numColumns = 2;
-		layout.verticalSpacing = 10;
-		layout.horizontalSpacing = 10;
+    @Override
+    protected Control createDialogArea(Composite parent) {
+        parent.getShell().setText("Player Overview");
 
-		GridLayout parentlayout = new GridLayout();
-		parentlayout.numColumns = 1;
-		parent.setLayout(parentlayout);
+        GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+        gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_CENTER;
+        GridData gdInputs = new GridData();
+        gdInputs.widthHint = 100;
+        GridLayout layout = new GridLayout();
+        layout.marginHeight = 20;
+        layout.numColumns = 2;
+        layout.verticalSpacing = 10;
+        layout.horizontalSpacing = 10;
 
-		tableViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER
-				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION
-				| SWT.HIDE_SELECTION);
-		// // Set up the table
-		final Table playerTable = tableViewer.getTable();
-		playerTable.setLayoutData(new GridData(GridData.FILL_BOTH));
+        GridLayout parentlayout = new GridLayout();
+        parentlayout.numColumns = 1;
+        parent.setLayout(parentlayout);
 
-		playerTable.setHeaderVisible(true);
-		playerTable.setLinesVisible(true);
-		tableViewer.setColumnProperties(PlayerLabelProvider.COLUMNNNAMES);
-		tableViewer.setLabelProvider(new PlayerLabelProvider());
-		tableViewer.setContentProvider(new PlayerContentProvider());
-		tableViewer.setInput(model);
+        tableViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL
+                | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
+        // // Set up the table
+        final Table playerTable = tableViewer.getTable();
+        playerTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		String[] colNames = PlayerLabelProvider.COLUMNNNAMES;
-		TableColumn tc = null;
-		for (int i = 0; i < colNames.length; i++) {
-			tc = new TableColumn(playerTable, SWT.LEFT);
-			tc.setText(colNames[i]);
-			tc.setWidth(100);
-		}
+        playerTable.setHeaderVisible(true);
+        playerTable.setLinesVisible(true);
+        tableViewer.setColumnProperties(PlayerLabelProvider.COLUMNNNAMES);
+        tableViewer.setLabelProvider(new PlayerLabelProvider());
+        tableViewer.setContentProvider(new PlayerContentProvider());
+        tableViewer.setInput(model);
 
-		playerTable.addSelectionListener(new SelectionAdapter() {
-		});
+        String[] colNames = PlayerLabelProvider.COLUMNNNAMES;
+        TableColumn tc = null;
+        for(String colName: colNames) {
+            tc = new TableColumn(playerTable, SWT.LEFT);
+            tc.setText(colName);
+            tc.setWidth(100);
+        }
 
-		tableViewer.refresh();
+        playerTable.addSelectionListener(new SelectionAdapter() {});
 
-		// Add the buttons
-		createButtons(parent);
+        tableViewer.refresh();
 
-		return parent;
-	}
+        // Add the buttons
+        createButtons(parent);
 
-	private void createButtons(final Composite parent) {
+        return parent;
+    }
 
-		// Create and configure the "Add" button
-		Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
-		add.setText("Add");
+    private void createButtons(final Composite parent) {
 
-		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.widthHint = 80;
-		add.setLayoutData(gridData);
-		add.addSelectionListener(new SelectionAdapter() {
+        // Create and configure the "Add" button
+        Button add = new Button(parent, SWT.PUSH | SWT.CENTER);
+        add.setText("Add");
 
-			// Add a task to the ExampleTaskList and refresh the view
-			public void widgetSelected(SelectionEvent e) {
-				model.addPlayer(new Player());
-				tableViewer.refresh();
-			}
-		});
+        GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gridData.widthHint = 80;
+        add.setLayoutData(gridData);
+        add.addSelectionListener(new SelectionAdapter() {
 
-		// Create and configure the "Delete" button
-		Button delete = new Button(parent, SWT.PUSH | SWT.CENTER);
-		delete.setText("Delete");
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.widthHint = 80;
-		delete.setLayoutData(gridData);
+            // Add a task to the ExampleTaskList and refresh the view
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                model.addPlayer(new Player());
+                tableViewer.refresh();
+            }
+        });
 
-		delete.addSelectionListener(new SelectionAdapter() {
+        // Create and configure the "Delete" button
+        Button delete = new Button(parent, SWT.PUSH | SWT.CENTER);
+        delete.setText("Delete");
+        gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gridData.widthHint = 80;
+        delete.setLayoutData(gridData);
 
-			// Remove the selection and refresh the view
-			public void widgetSelected(SelectionEvent e) {
-				Player player = (Player) ((IStructuredSelection) tableViewer
-						.getSelection()).getFirstElement();
-				if (player != null) {
-					model.removePlayer(player.getId());
-					tableViewer.refresh();
-				}
-			}
-		});
+        delete.addSelectionListener(new SelectionAdapter() {
 
-		// Create and configure the "Add" button
-		Button edit = new Button(parent, SWT.PUSH | SWT.CENTER);
-		edit.setText("Edit");
+            // Remove the selection and refresh the view
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                Player player = (Player) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                if(player != null) {
+                    model.removePlayer(player.getId());
+                    tableViewer.refresh();
+                }
+            }
+        });
 
-		gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		gridData.widthHint = 80;
+        // Create and configure the "Add" button
+        Button edit = new Button(parent, SWT.PUSH | SWT.CENTER);
+        edit.setText("Edit");
 
-		edit.setLayoutData(gridData);
-		edit.addSelectionListener(new SelectionAdapter() {
+        gridData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+        gridData.widthHint = 80;
 
-			// Add a task to the ExampleTaskList and refresh the view
-			public void widgetSelected(SelectionEvent e) {
-				Player player = (Player) ((IStructuredSelection) tableViewer
-						.getSelection()).getFirstElement();
-				if (player != null) {
-					PlayerSettingsDialog dlg = new PlayerSettingsDialog(parent
-							.getShell(), player);
-					if (dlg.open() == Dialog.OK) {
-						// System.out.println(dlg.getPlayerName().getText());
-						tableViewer.refresh();
-					}
-				}
-			}
-		});
+        edit.setLayoutData(gridData);
+        edit.addSelectionListener(new SelectionAdapter() {
 
-	}
+            // Add a task to the ExampleTaskList and refresh the view
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                Player player = (Player) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                if(player != null) {
+                    PlayerSettingsDialog dlg = new PlayerSettingsDialog(parent.getShell(), player);
+                    if(dlg.open() == Window.OK) {
+                        // System.out.println(dlg.getPlayerName().getText());
+                        tableViewer.refresh();
+                    }
+                }
+            }
+        });
 
-	@Override
-	protected Point getInitialSize() {
-		return new Point(500, 400);
-	}
+    }
 
-	public ArrayList<Player> getPlayer() {
-		return model.getPlayer();
-	}
+    @Override
+    protected Point getInitialSize() {
+        return new Point(500, 400);
+    }
+
+    public ArrayList<Player> getPlayer() {
+        return model.getPlayer();
+    }
 }

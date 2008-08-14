@@ -131,9 +131,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // System.out.println("java.library.path = " + System.getProperty("java.library.path"));
 
         // check if we're accelerated
-        String graphics2DFactory = getGraphics2DFactory().getClass().getName();
-        logger.debug("Current Graphics2DFactory: " + graphics2DFactory);
-        if(graphics2DFactory.equals("org.holongate.j2d.SWTGraphics2DFactory"))
+        String graphics2DFactoryClassName = getGraphics2DFactory().getClass().getName();
+        logger.debug("Current Graphics2DFactory: " + graphics2DFactoryClassName);
+        if(graphics2DFactoryClassName.equals("org.holongate.j2d.SWTGraphics2DFactory"))
             logger
                     .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
 

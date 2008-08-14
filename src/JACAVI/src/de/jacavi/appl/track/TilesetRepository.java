@@ -28,6 +28,7 @@ public class TilesetRepository {
         DEBUG, ANALOGUE, DIGITAL;
     }
 
+    @SuppressWarnings("serial")
     public class TilesetRepositoryInitializationFailedException extends Exception {
         public TilesetRepositoryInitializationFailedException(Exception e) {
             super(e);
