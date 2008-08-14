@@ -52,7 +52,7 @@ public class Track {
      * Interface to implement for receiving modification notifications.
      */
     public interface TrackModificationListener {
-        void trackModified();
+        void handleTrackModified();
     }
 
     /** The tile set used for this track. */
@@ -134,7 +134,7 @@ public class Track {
 
     private void invokeListeners() {
         for(TrackModificationListener l: listeners)
-            l.trackModified();
+            l.handleTrackModified();
     }
 
     public TileSet getTileset() {
