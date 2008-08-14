@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.jacavi.appl.ContextLoader;
-import de.jacavi.appl.constants.Devices;
 import de.jacavi.appl.controller.CarController;
+import de.jacavi.appl.controller.Devices;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.Joystick;
 import de.jacavi.appl.controller.device.impl.Keyboard;
