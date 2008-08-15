@@ -9,6 +9,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -160,6 +161,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The bounding box of the whole track of the last rendering (used to determine scrolling limits). */
     private Rectangle2D lastTrackBoundingBox;
 
+    private Date lastFrameCounterUpdate = new Date();
+
+    private int lastFrameCount = 0;
+
+    private int frameCounter = 0;
+
     private Timer DEBUGanimationTimer;
 
     private int DEBUGanimationStep = 0;
@@ -171,7 +178,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    repaint();
+                    if(!TrackWidget.this.isDisposed())
+                        TrackWidget.this.repaint();
                 }
             });
         }
@@ -640,6 +648,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     public void paint(Control control, Graphics2D g2d) {
         Point size = control.getSize();
 
+        // update the frame counter
+        if(new Date().getTime() - lastFrameCounterUpdate.getTime() >= 1000) {
+            lastFrameCount = frameCounter;
+            lastFrameCounterUpdate = new Date();
+            frameCounter = 0;
+        }
+        frameCounter++;
+
         // update the current viewpoint transformation
         AffineTransform viewportTransformation = new AffineTransform();
         viewportTransformation.translate(size.x / 2, size.y / 2);
@@ -649,6 +665,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         // back up the current transformation, apply the viewport translation and draw the track
         drawTrack(g2d, viewportTransformation);
+
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(lastFrameCount + "fps", 20, 20);
 
         /*g2d.setTransform(AffineTransform.getTranslateInstance(50, 150));
         g2d.setColor(Color.YELLOW);
