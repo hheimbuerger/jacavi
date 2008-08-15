@@ -10,6 +10,9 @@ import java.util.Map;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -19,6 +22,8 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IEditorInput;
@@ -31,6 +36,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.TilesetRepository;
 import de.jacavi.appl.track.Track;
+import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.appl.track.Track.InitialTileMayNotBeRemoved;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
@@ -43,6 +49,8 @@ public class TrackDesigner extends EditorPart {
     private static Log log = LogFactory.getLog(TrackDesigner.class);
 
     public static String ID = "JACAVI.TrackDesigner";
+
+    private static final double TILE_IMAGE_SCALE = 0.5;
 
     boolean isDirty = false;
 
@@ -81,7 +89,6 @@ public class TrackDesigner extends EditorPart {
         SafeSaveDialog dlg = new SafeSaveDialog(getSite().getShell());
 
         dlg.setText("Save");
-        dlg.setFilterPath("C:/");
         String[] filterExt = { "*" + Track.FILE_EXTENSION };
         dlg.setFilterExtensions(filterExt);
         String selected = dlg.open();
@@ -108,10 +115,7 @@ public class TrackDesigner extends EditorPart {
     }
 
     @Override
-    public void doSaveAs() {
-    // TODO Auto-generated method stub
-
-    }
+    public void doSaveAs() {}
 
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
@@ -123,13 +127,11 @@ public class TrackDesigner extends EditorPart {
 
     @Override
     public boolean isDirty() {
-        // TODO Auto-generated method stub
         return isDirty;
     }
 
     @Override
     public boolean isSaveAsAllowed() {
-        // TODO Auto-generated method stub
         return true;
     }
 
@@ -137,31 +139,52 @@ public class TrackDesigner extends EditorPart {
     public void createPartControl(Composite parent) {
         parent.setLayout(new GridLayout());
 
-        ToolBar toolbar = new ToolBar(parent, SWT.BORDER | SWT.WRAP);
-        ToolItem toolItem1 = new ToolItem(toolbar, SWT.PUSH);
-        toolItem1.setText("bla");
-        // fill the toolbar with all available tiles
-        ToolBar tilesToolbar = new ToolBar(parent, SWT.WRAP);
         final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
+
+        CoolBar tilesCoolbar = new CoolBar(parent, SWT.NONE);
+        tilesCoolbar.setLocked(true);
+
+        CoolItem singleCoolItem = new CoolItem(tilesCoolbar, SWT.NONE);
+
+        Composite tilesComposite = new Composite(tilesCoolbar, SWT.None);
+        tilesComposite.setLayout(new GridLayout(tileMap.size(), false));
+        tilesComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
         for(String tileID: tileMap.keySet()) {
             Tile tile = tileMap.get(tileID);
             Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
             usedImages.add(image);
 
-            ToolItem toolItem = new ToolItem(tilesToolbar, SWT.PUSH);
-            toolItem.setText(tile.getName());
-            toolItem.setImage(image);
-            toolItem.addSelectionListener(new SelectionAdapter() {
-                // Append a tile
+            // Scale images
+            int width = image.getBounds().width;
+            int height = image.getBounds().height;
+            Image scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
+                    (int) (height * TILE_IMAGE_SCALE)));
+
+            // Toolbar is embedded in a CoolItem
+            ToolBar toolbar = new ToolBar(tilesComposite, SWT.WRAP);
+            toolbar.setLayoutData(new GridData(GridData.FILL_VERTICAL));
+
+            ToolItem tileToolItem = new ToolItem(toolbar, SWT.PUSH);
+            tileToolItem.setToolTipText(tile.getName());
+
+            // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be scaled
+            if(currentTrack.getTileset().equals(TileSet.DEBUG)) {
+                tileToolItem.setImage(image);
+            } else {
+                tileToolItem.setImage(scaledImage);
+            }
+
+            tileToolItem.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     handleAppendage(tileMap, e);
                 }
-
             });
         }
-
-        tilesToolbar.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        tilesComposite.pack();
+        singleCoolItem.setSize(tilesComposite.getSize());
+        singleCoolItem.setControl(tilesComposite);
 
         final TrackWidget trackWidget = new TrackWidget(parent, currentTrack);
         trackWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -192,28 +215,46 @@ public class TrackDesigner extends EditorPart {
         return tilesetRepository;
     }
 
+    /**
+     * @param trackWidget
+     * @param selectedPosition
+     */
     private void handleDeletion(final TrackWidget trackWidget, int selectedPosition) {
-        // TODO: do proper error handling here
         try {
-            log.debug("Delete Tile on Position " + selectedPosition);
             currentTrack.removeSection(selectedPosition);
+            log.debug("Delete Tile on Position " + selectedPosition);
+            fireTrackModified();
         } catch(IndexOutOfBoundsException e) {
             log.error("IndexOutOfBoundsException caught in handleDeletion()", e);
+            ErrorDialog.openError(getEditorSite().getShell(), "Error", "An Exception occured while tile deletion.",
+                    new Status(IStatus.WARNING, "JACAVI", e.toString()));
         } catch(InitialTileMayNotBeRemoved e) {
             log.error("InitialTileMayNotBeRemoved caught in handleDeletion()", e);
+            ErrorDialog.openError(getEditorSite().getShell(), "Warning", "Initital Tile may not be removed.",
+                    new Status(IStatus.WARNING, "JACAVI", e.toString()));
         }
     }
 
+    /**
+     * Appends a tile on the last position
+     * 
+     * @param tileMap
+     * @param e
+     */
     private void handleAppendage(final Map<String, Tile> tileMap, SelectionEvent e) {
         ToolItem selected = (ToolItem) e.widget;
         for(String tileID: tileMap.keySet()) {
             Tile tile = tileMap.get(tileID);
-            if(selected.getText().equals(tile.getName())) {
+            if(selected.getToolTipText().equals(tile.getName())) {
                 currentTrack.appendSection(tile);
-                log.debug(tile.getName() + "inserted into track");
-                isDirty = true;
-                firePropertyChange(PROP_DIRTY);
+                log.debug(tile.getName() + " inserted to track");
+                fireTrackModified();
             }
         }
+    }
+
+    private void fireTrackModified() {
+        isDirty = true;
+        firePropertyChange(PROP_DIRTY);
     }
 }
