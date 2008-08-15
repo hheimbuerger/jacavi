@@ -33,4 +33,13 @@ public class TrackSection {
     public boolean isInitial() {
         return tile.isInitial();
     }
+
+    public Slot getSlot1() {
+        return tile.getSlot1();
+    }
+
+    public Slot getSlot2() {
+        return tile.getSlot2();
+    }
+
 }

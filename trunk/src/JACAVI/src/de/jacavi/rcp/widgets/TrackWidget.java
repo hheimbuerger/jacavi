@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
@@ -33,6 +35,7 @@ import org.holongate.j2d.J2DUtilities;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
+import de.jacavi.appl.track.Slot.SlotPart;
 import de.jacavi.appl.track.Track.TrackModificationListener;
 
 
@@ -157,6 +160,23 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The bounding box of the whole track of the last rendering (used to determine scrolling limits). */
     private Rectangle2D lastTrackBoundingBox;
 
+    private Timer DEBUGanimationTimer;
+
+    private int DEBUGanimationStep = 0;
+
+    private class AnimationTimerHandler extends TimerTask {
+        @Override
+        public void run() {
+            TrackWidget.this.DEBUGanimationStep++;
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    repaint();
+                }
+            });
+        }
+    }
+
     /**
      * Constructor
      * <p>
@@ -254,6 +274,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
             // register listener on the new track
             this.track.addListener(this);
+
+            // DEBUG: start the animation timer
+            if(DEBUGanimationTimer == null) {
+                DEBUGanimationTimer = new Timer("DEBUG-animation");
+                DEBUGanimationTimer.scheduleAtFixedRate(new AnimationTimerHandler(), 50, 50);
+            }
         }
 
         // remove the current selection (will also trigger a repaint!)
@@ -293,6 +319,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private void handleDisposeEvent(DisposeEvent e) {
         if(this.track != null)
             this.track.removeListener(this);
+        if(this.DEBUGanimationTimer != null)
+            this.DEBUGanimationTimer.cancel();
     }
 
     /**
@@ -444,6 +472,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // initialize a counter (used for detected the selected tile)
         int counter = 0;
 
+        // DEBUG: prepare drawing the 'cars'
+        int slot1Length = track.getSlot1Length();
+        int slot2Length = track.getSlot2Length();
+        int slot1Pos = DEBUGanimationStep % slot1Length;
+        int slot2Pos = DEBUGanimationStep % slot2Length;
+        int[] car1Position = track.determineSectionFromPosition(true, slot1Pos);
+        int[] car2Position = track.determineSectionFromPosition(false, slot2Pos);
+
         // iterate over all track sections of the currently displayed track
         for(TrackSection s: track.getSections()) {
 
@@ -482,8 +518,30 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // coordinates used here are simple the origin coordinates
             g.drawImage(s.getImage(), imagePlacementOperation, 0, 0);
 
+            // DEBUG: draw the slots on top
+            AffineTransform slotPlacementTransformation = new AffineTransform();
+            slotPlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
+            slotPlacementTransformation.rotate(currentAngle.getRadians());
+            slotPlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
+            g.setColor(Color.YELLOW);
+            for(SlotPart sp: s.getSlot1().getSlotParts())
+                g.draw(slotPlacementTransformation.createTransformedShape(sp.getShape()));
+            g.setColor(Color.BLUE);
+            for(SlotPart sp: s.getSlot2().getSlotParts())
+                g.draw(slotPlacementTransformation.createTransformedShape(sp.getShape()));
+
             // DEBUG: draw the current track position
             markPoint(g, currentTrackPos, Color.GREEN);
+
+            // DEBUG: draw the current 'car' position
+            if(counter == car1Position[0]) {
+                SlotPart slotPart = s.getSlot1().getSlotParts().get(0);
+                markPoint(g, slotPlacementTransformation.transform(slotPart.getStep(car1Position[1]), null), Color.RED);
+            }
+            if(counter == car2Position[0]) {
+                SlotPart slotPart = s.getSlot2().getSlotParts().get(0);
+                markPoint(g, slotPlacementTransformation.transform(slotPart.getStep(car2Position[1]), null), Color.RED);
+            }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
             // bounding box -- that way we'll get a bounding box for the whole track in the end
@@ -536,6 +594,45 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         g2d.fill(scroller);
     }*/
 
+    /*private int factorial(int x) {
+        if(x <= 1)
+            return 1;
+        else {
+            int result = 1;
+            for(int i = 2; i <= x; i++)
+                result *= i;
+            return result;
+        }
+    }
+
+    private int binomialCoefficient(int n, int k) {
+        return factorial(n) / (factorial(k) * factorial(n - k));
+    }
+
+    private double[] computeBezierPoint(double[][] referencePoints, double t) {
+        double c[] = new double[2];
+        int n = referencePoints.length - 1;
+
+        for(int dim = 0; dim < 2; dim++)
+            for(int i = 0; i <= n; i++)
+                c[dim] += binomialCoefficient(n, i) * Math.pow(t, i) * Math.pow(1 - t, n - i) * referencePoints[i][dim];
+        return c;
+    }
+
+    private void drawBezierCurve(Graphics2D g, Point startPoint) {
+        int steps = 10;
+
+        double[][] referencePoints = new double[3][];
+        referencePoints[0] = new double[] { 0.0, 0.0 };
+        referencePoints[1] = new double[] { 50.0, -100.0 };
+        referencePoints[2] = new double[] { 100.0, 0.0 };
+
+        for(int i = 0; i <= steps; i++) {
+            double point[] = computeBezierPoint(referencePoints, (1.0 * i) / steps);
+            markPoint(g, new Point2D.Double(point[0], point[1]), Color.BLUE);
+        }
+    }*/
+
     /**
      * Invoked by base class methods to trigger an actual repaint. Not to be called directly!
      */
@@ -552,6 +649,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         // back up the current transformation, apply the viewport translation and draw the track
         drawTrack(g2d, viewportTransformation);
+
+        /*g2d.setTransform(AffineTransform.getTranslateInstance(50, 150));
+        g2d.setColor(Color.YELLOW);
+        g2d.draw(new QuadCurve2D.Double(0, 0, 50, -100, 100, 0));
+        drawBezierCurve(g2d, new Point(0, 200));*/
 
         // drawScrollers(g2d, size);
         // g2d.setTransform(null);
