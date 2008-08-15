@@ -27,8 +27,12 @@ public class Tile {
 
     private final boolean isInitial;
 
-    public Tile(String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint, int entryToExitAngle)
-            throws IOException {
+    private final Slot slot1;
+
+    private final Slot slot2;
+
+    public Tile(String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
+            int entryToExitAngle, Slot slot1, Slot slot2) throws IOException {
         sectionImage = ImageIO.read(Activator.getResourceAsStream(filename));
 
         this.filename = filename;
@@ -37,6 +41,8 @@ public class Tile {
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
         this.entryToExitAngle = new Angle(entryToExitAngle);
+        this.slot1 = slot1;
+        this.slot2 = slot2;
     }
 
     public String getFilename() {
@@ -65,6 +71,14 @@ public class Tile {
 
     public boolean isInitial() {
         return isInitial;
+    }
+
+    public Slot getSlot1() {
+        return slot1;
+    }
+
+    public Slot getSlot2() {
+        return slot2;
     }
 
 }

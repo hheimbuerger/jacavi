@@ -95,7 +95,8 @@ public class TilesetRepository {
                     + " is missing a tile marked as initial");
     }
 
-    private void importTile(TileSet tileset, Element tileElement) throws IOException {
+    private void importTile(TileSet tileset, Element tileElement) throws IOException,
+            TilesetRepositoryInitializationFailedException {
         // read the data for this tile from the XML
         String tileID = tileElement.getAttribute("id");
         String tileName = tileElement.getAttribute("name");
@@ -105,6 +106,7 @@ public class TilesetRepository {
         Point entryPoint = null;
         Point exitPoint = null;
         int entryToExitAngle = 0;
+        Slot slot1 = null, slot2 = null;
 
         NodeList tileDataNodes = tileElement.getChildNodes();
         for(int i = 0; i < tileDataNodes.getLength(); i++) {
@@ -118,14 +120,49 @@ public class TilesetRepository {
                 } else if(tileDataElement.getNodeName().equals("exitPoint")) {
                     exitPoint = new Point(Integer.valueOf(tileDataElement.getAttribute("x")), Integer
                             .valueOf(tileDataElement.getAttribute("y")));
-                } else {
+                } else if(tileDataElement.getNodeName().equals("entryToExitAngle")) {
                     entryToExitAngle = Integer.valueOf(Integer.valueOf(tileDataElement.getTextContent()));
+                } else if(tileDataElement.getNodeName().equals("slot1")) {
+                    slot1 = importSlot(tileset, tileDataElement);
+                } else if(tileDataElement.getNodeName().equals("slot2")) {
+                    slot2 = importSlot(tileset, tileDataElement);
+                } else {
+                    throw new TilesetRepositoryInitializationFailedException("Invalid element in tile: "
+                            + tileDataElement.getNodeName());
                 }
             }
         }
 
-        tiles.get(tileset)
-                .put(tileID, new Tile(filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle));
+        tiles.get(tileset).put(tileID,
+                new Tile(filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, slot1, slot2));
+    }
+
+    private Slot importSlot(TileSet tileset, Element tileDataElement)
+            throws TilesetRepositoryInitializationFailedException {
+        Slot slot = new Slot();
+
+        NodeList slotSectionNodes = tileDataElement.getChildNodes();
+        for(int i = 0; i < slotSectionNodes.getLength(); i++) {
+            if(slotSectionNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element slotSection = (Element) slotSectionNodes.item(i);
+                if(slotSection.getNodeName().equals("line")) {
+                    slot.addLine(Integer.valueOf(slotSection.getAttribute("length")), Integer.valueOf(slotSection
+                            .getAttribute("x1")), Integer.valueOf(slotSection.getAttribute("y1")), Integer
+                            .valueOf(slotSection.getAttribute("x2")), Integer.valueOf(slotSection.getAttribute("y2")));
+                } else if(slotSection.getNodeName().equals("quad-bezier")) {
+                    slot.addQuadBezier(Integer.valueOf(slotSection.getAttribute("length")), Integer.valueOf(slotSection
+                            .getAttribute("x1")), Integer.valueOf(slotSection.getAttribute("y1")), Integer
+                            .valueOf(slotSection.getAttribute("x2")), Integer.valueOf(slotSection.getAttribute("y2")),
+                            Integer.valueOf(slotSection.getAttribute("x3")), Integer.valueOf(slotSection
+                                    .getAttribute("y3")));
+                } else {
+                    throw new TilesetRepositoryInitializationFailedException("Invalid slot section in slot: "
+                            + slotSection.getNodeName());
+                }
+            }
+        }
+
+        return slot;
     }
 
     public Tile getTile(TileSet tileSet, String id) {

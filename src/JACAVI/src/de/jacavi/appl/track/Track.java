@@ -19,6 +19,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.track.Slot.SlotPart;
 import de.jacavi.appl.track.TilesetRepository.TileSet;
 
 
@@ -195,6 +196,37 @@ public class Track {
 
         // notify all listeners
         invokeListeners();
+    }
+
+    public int getSlot1Length() {
+        int length = 0;
+        for(TrackSection s: sections)
+            for(SlotPart sp: s.getSlot1().getSlotParts())
+                length += sp.length;
+        return length;
+    }
+
+    public int getSlot2Length() {
+        int length = 0;
+        for(TrackSection s: sections)
+            for(SlotPart sp: s.getSlot2().getSlotParts())
+                length += sp.length;
+        return length;
+    }
+
+    public int[] determineSectionFromPosition(boolean isSlot1, int position) {
+        int length = 0;
+        int sectionCounter = 0;
+        for(TrackSection s: sections) {
+            Slot slot = isSlot1 ? s.getSlot1() : s.getSlot2();
+            for(SlotPart sp: slot.getSlotParts()) {
+                if(position < length + sp.length)
+                    return new int[] { sectionCounter, position - length };
+                length += sp.length;
+            }
+            sectionCounter++;
+        }
+        return null;
     }
 
     public List<TrackSection> getSections() {
