@@ -34,9 +34,10 @@ import org.holongate.j2d.J2DRegistry;
 import org.holongate.j2d.J2DUtilities;
 
 import de.jacavi.appl.track.Angle;
+import de.jacavi.appl.track.SlotPart;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
-import de.jacavi.appl.track.Slot.SlotPart;
+import de.jacavi.appl.track.SlotPart.DirectedPoint;
 import de.jacavi.appl.track.Track.TrackModificationListener;
 
 
@@ -286,7 +287,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // DEBUG: start the animation timer
             if(DEBUGanimationTimer == null) {
                 DEBUGanimationTimer = new Timer("DEBUG-animation");
-                DEBUGanimationTimer.scheduleAtFixedRate(new AnimationTimerHandler(), 50, 50);
+                DEBUGanimationTimer.scheduleAtFixedRate(new AnimationTimerHandler(), 10, 10);
             }
         }
 
@@ -544,11 +545,13 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // DEBUG: draw the current 'car' position
             if(counter == car1Position[0]) {
                 SlotPart slotPart = s.getSlot1().getSlotParts().get(0);
-                markPoint(g, slotPlacementTransformation.transform(slotPart.getStep(car1Position[1]), null), Color.RED);
+                DirectedPoint directedPoint = slotPart.getStepPoint(car1Position[1]);
+                markPoint(g, slotPlacementTransformation.transform(directedPoint.point, null), Color.RED);
             }
             if(counter == car2Position[0]) {
                 SlotPart slotPart = s.getSlot2().getSlotParts().get(0);
-                markPoint(g, slotPlacementTransformation.transform(slotPart.getStep(car2Position[1]), null), Color.RED);
+                DirectedPoint directedPoint = slotPart.getStepPoint(car2Position[1]);
+                markPoint(g, slotPlacementTransformation.transform(directedPoint.point, null), Color.RED);
             }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
@@ -600,45 +603,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         g2d.draw(scroller);
         g2d.setPaint(Color.LIGHT_GRAY);
         g2d.fill(scroller);
-    }*/
-
-    /*private int factorial(int x) {
-        if(x <= 1)
-            return 1;
-        else {
-            int result = 1;
-            for(int i = 2; i <= x; i++)
-                result *= i;
-            return result;
-        }
-    }
-
-    private int binomialCoefficient(int n, int k) {
-        return factorial(n) / (factorial(k) * factorial(n - k));
-    }
-
-    private double[] computeBezierPoint(double[][] referencePoints, double t) {
-        double c[] = new double[2];
-        int n = referencePoints.length - 1;
-
-        for(int dim = 0; dim < 2; dim++)
-            for(int i = 0; i <= n; i++)
-                c[dim] += binomialCoefficient(n, i) * Math.pow(t, i) * Math.pow(1 - t, n - i) * referencePoints[i][dim];
-        return c;
-    }
-
-    private void drawBezierCurve(Graphics2D g, Point startPoint) {
-        int steps = 10;
-
-        double[][] referencePoints = new double[3][];
-        referencePoints[0] = new double[] { 0.0, 0.0 };
-        referencePoints[1] = new double[] { 50.0, -100.0 };
-        referencePoints[2] = new double[] { 100.0, 0.0 };
-
-        for(int i = 0; i <= steps; i++) {
-            double point[] = computeBezierPoint(referencePoints, (1.0 * i) / steps);
-            markPoint(g, new Point2D.Double(point[0], point[1]), Color.BLUE);
-        }
     }*/
 
     /**
