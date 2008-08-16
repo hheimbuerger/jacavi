@@ -19,7 +19,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.jacavi.appl.ContextLoader;
-import de.jacavi.appl.track.Slot.SlotPart;
 import de.jacavi.appl.track.TilesetRepository.TileSet;
 
 

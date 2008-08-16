@@ -16,47 +16,46 @@ import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 
+
+
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
-	private static final String PERSPECTIVE_ID = "JACAVI.perspective";
+    private static final String PERSPECTIVE_ID = "JACAVI.perspective";
 
-	@Override
-	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
-			IWorkbenchWindowConfigurer configurer) {
-		return new ApplicationWorkbenchWindowAdvisor(configurer);
-	}
+    @Override
+    public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
+        return new ApplicationWorkbenchWindowAdvisor(configurer);
+    }
 
-	@Override
-	public String getInitialWindowPerspectiveId() {
-		return PERSPECTIVE_ID;
-	}
+    @Override
+    public String getInitialWindowPerspectiveId() {
+        return PERSPECTIVE_ID;
+    }
 
-	// DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-	@Override
-	public void postStartup() {
-		super.postStartup();
-		TrackDesignerInput editorInput;
-		try {
-			editorInput = new TrackDesignerInput(new Track(new File(
-					"tracks/demo.track.xml")));
+    // DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    @Override
+    public void postStartup() {
+        super.postStartup();
+        TrackDesignerInput editorInput;
+        try {
+            editorInput = new TrackDesignerInput(new Track(new File("tracks/demo_crossing.track.xml")));
 
-			IWorkbenchPage page = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow().getActivePage();
+            IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-			page.openEditor(editorInput, TrackDesigner.ID);
+            page.openEditor(editorInput, TrackDesigner.ID);
 
-			IWorkbenchPart active = page.getActivePart();
-			active.setFocus();
+            IWorkbenchPart active = page.getActivePart();
+            active.setFocus();
 
-		} catch (PartInitException e) {
-			// TODO: handle exception
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (TrackLoadingException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+        } catch(PartInitException e) {
+            // TODO: handle exception
+        } catch(FileNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch(TrackLoadingException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
 
-	}
+    }
 }
