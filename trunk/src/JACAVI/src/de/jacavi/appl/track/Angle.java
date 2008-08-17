@@ -21,4 +21,8 @@ public class Angle {
     public double getRadians() {
         return Math.toRadians(angle);
     }
+
+    public void set(int newAngle) {
+        angle = newAngle;
+    }
 }
