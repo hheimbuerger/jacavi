@@ -8,6 +8,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,11 +19,14 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
@@ -39,6 +43,9 @@ import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.SlotPart.DirectedPoint;
 import de.jacavi.appl.track.Track.TrackModificationListener;
+import de.jacavi.rcp.widgets.controls.ImageButtonControl;
+import de.jacavi.rcp.widgets.controls.InnerControl;
+import de.jacavi.rcp.widgets.controls.ScrollerControl;
 
 
 
@@ -69,6 +76,18 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The factor used to slow down zooming. */
     private static final double ZOOM_SPEED_FACTOR = 0.01;
 
+    private static final String ICON_ROTATION_CLOCKWISE = "/icons/famfamfam-silk/arrow_rotate_clockwise.png";
+
+    private static final String ICON_ROTATION_COUNTER_CLOCKWISE = "/icons/famfamfam-silk/arrow_rotate_anticlockwise.png";
+
+    private static final String ICON_ROTATION_RESET = "/icons/famfamfam-silk/house.png";
+
+    private static final String ICON_ZOOM_IN = "/icons/famfamfam-silk/arrow_in.png";
+
+    private static final String ICON_ZOOM_OUT = "/icons/famfamfam-silk/arrow_out.png";
+
+    private static final String ICON_ZOOM_RESET = "/icons/famfamfam-silk/house.png";
+
     /** Logger for this class */
     private static final Logger logger = Logger.getLogger(TrackWidget.class);
 
@@ -78,7 +97,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      * Supports adding vectors and creating translation transforms (and inverse translation transforms) corresponding to
      * the vector.
      */
-    private class Vector2D {
+    private static class Vector2D {
         public Double deltax, deltay;
 
         /**
@@ -162,6 +181,18 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The bounding box of the whole track of the last rendering (used to determine scrolling limits). */
     private Rectangle2D lastTrackBoundingBox;
 
+    private static enum InnerControlID {
+        NONE, SCROLLER_TOP, SCROLLER_RIGHT, SCROLLER_BOTTOM, SCROLLER_LEFT, ROTATION_CLOCKWISE, ROTATION_COUNTER_CLOCKWISE, ROTATION_RESET, ZOOM_IN, ZOOM_OUT, ZOOM_RESET
+    }
+
+    private InnerControlID hoveredInnerControl = InnerControlID.NONE;
+
+    private Map<InnerControlID, InnerControl> innerControls = new HashMap<InnerControlID, InnerControl>();
+
+    private Timer clickEventRepetitionTimer;
+
+    private boolean isMouseOnWidget = false;
+
     private Date lastFrameCounterUpdate = new Date();
 
     private int lastFrameCount = 0;
@@ -186,6 +217,19 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         }
     }
 
+    private class ClickEventRepetitionHandler extends TimerTask {
+        @Override
+        public void run() {
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    if(!TrackWidget.this.isDisposed() && (TrackWidget.this.hoveredInnerControl != InnerControlID.NONE))
+                        TrackWidget.this.handleInnerControlClick(TrackWidget.this.hoveredInnerControl);
+                }
+            });
+        }
+    }
+
     /**
      * Constructor
      * <p>
@@ -195,8 +239,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      *            the parent SWT component to add this widget to
      * @param track
      *            the track to load initially (or null to load none)
+     * @throws IOException
+     *             if one of the icons can't be loaded
      */
-    public TrackWidget(Composite parent, Track track) {
+    public TrackWidget(Composite parent, Track track) throws IOException {
         // call the J2DCanvas constructor, then register us as the IPaintable
         super(parent, SWT.NONE, null);
         setPaintable(this);
@@ -218,17 +264,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             logger
                     .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
 
+        // initialize the inner controls
+        initializeInnerControls();
+
         // we're done with the initialization of the renderer and can initialize the track (this will also trigger the
         // first repaint)
         setTrack(track);
 
         // add various listeners, all just redirecting the calls to class methods
-        addMouseListener(new MouseListener() {
-            @Override
-            public void mouseDoubleClick(MouseEvent e) {
-                TrackWidget.this.handleMouseDoubleClick(e);
-            }
-
+        addMouseListener(new MouseAdapter() {
             @Override
             public void mouseDown(MouseEvent e) {
                 TrackWidget.this.handleMouseDown(e);
@@ -247,11 +291,45 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             }
         });
 
+        addMouseTrackListener(new MouseTrackAdapter() {
+            @Override
+            public void mouseEnter(MouseEvent e) {
+                TrackWidget.this.handleMouseEnter(e);
+            }
+
+            @Override
+            public void mouseExit(MouseEvent e) {
+                TrackWidget.this.handleMouseExit(e);
+            }
+        });
+
+        addControlListener(new ControlAdapter() {
+            @Override
+            public void controlResized(ControlEvent e) {
+                TrackWidget.this.handleControlResizedEvent(e);
+            }
+        });
+
         addDisposeListener(new DisposeListener() {
             public void widgetDisposed(DisposeEvent e) {
                 TrackWidget.this.handleDisposeEvent(e);
             }
         });
+    }
+
+    private void initializeInnerControls() throws IOException {
+        // create the controls
+        innerControls.put(InnerControlID.SCROLLER_TOP, new ScrollerControl(ScrollerControl.ScrollerPosition.NORTH));
+        innerControls.put(InnerControlID.SCROLLER_RIGHT, new ScrollerControl(ScrollerControl.ScrollerPosition.EAST));
+        innerControls.put(InnerControlID.SCROLLER_BOTTOM, new ScrollerControl(ScrollerControl.ScrollerPosition.SOUTH));
+        innerControls.put(InnerControlID.SCROLLER_LEFT, new ScrollerControl(ScrollerControl.ScrollerPosition.WEST));
+        innerControls.put(InnerControlID.ROTATION_COUNTER_CLOCKWISE, new ImageButtonControl(
+                ICON_ROTATION_COUNTER_CLOCKWISE, 2, true));
+        innerControls.put(InnerControlID.ROTATION_RESET, new ImageButtonControl(ICON_ROTATION_RESET, 1, true));
+        innerControls.put(InnerControlID.ROTATION_CLOCKWISE, new ImageButtonControl(ICON_ROTATION_CLOCKWISE, 0, true));
+        innerControls.put(InnerControlID.ZOOM_IN, new ImageButtonControl(ICON_ZOOM_IN, 2, false));
+        innerControls.put(InnerControlID.ZOOM_RESET, new ImageButtonControl(ICON_ZOOM_RESET, 1, false));
+        innerControls.put(InnerControlID.ZOOM_OUT, new ImageButtonControl(ICON_ZOOM_OUT, 0, false));
     }
 
     /**
@@ -287,7 +365,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // DEBUG: start the animation timer
             if(DEBUGanimationTimer == null) {
                 DEBUGanimationTimer = new Timer("DEBUG-animation");
-                DEBUGanimationTimer.scheduleAtFixedRate(new AnimationTimerHandler(), 10, 10);
+                DEBUGanimationTimer.schedule(new AnimationTimerHandler(), 50, 50);
             }
         }
 
@@ -326,10 +404,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      * Unregisters the listener from the currently displayed track if there is one.
      */
     private void handleDisposeEvent(DisposeEvent e) {
-        if(this.track != null)
-            this.track.removeListener(this);
-        if(this.DEBUGanimationTimer != null)
-            this.DEBUGanimationTimer.cancel();
+        if(track != null)
+            track.removeListener(this);
+        if(DEBUGanimationTimer != null)
+            DEBUGanimationTimer.cancel();
+        if(clickEventRepetitionTimer != null)
+            clickEventRepetitionTimer.cancel();
     }
 
     /**
@@ -348,6 +428,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                         wasHitDetected = true;
                         break;
                     }
+                }
+                // if a control is active, process the hit on that
+                if(hoveredInnerControl != null) {
+                    handleInnerControlClick(hoveredInnerControl);
+                    clickEventRepetitionTimer = new Timer("clickEventRepetition");
+                    clickEventRepetitionTimer.schedule(new ClickEventRepetitionHandler(), 50, 50);
                 }
                 // if no hit was detected, remove the selection
                 if(!wasHitDetected)
@@ -372,6 +458,47 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         }
     }
 
+    private void handleInnerControlClick(InnerControlID control) {
+        switch(control) {
+            case SCROLLER_TOP:
+                panPosition.y += 10;
+                break;
+            case SCROLLER_RIGHT:
+                panPosition.x -= 10;
+                break;
+            case SCROLLER_BOTTOM:
+                panPosition.y -= 10;
+                break;
+            case SCROLLER_LEFT:
+                panPosition.x += 10;
+                break;
+            case ROTATION_CLOCKWISE:
+                this.rotationAngle.turn(2);
+                break;
+            case ROTATION_COUNTER_CLOCKWISE:
+                this.rotationAngle.turn(-2);
+                break;
+            case ROTATION_RESET:
+                rotationAngle.set(0);
+                break;
+            case ZOOM_IN:
+                zoomLevel += 0.05;
+                break;
+            case ZOOM_OUT:
+                zoomLevel -= 0.05;
+                break;
+            case ZOOM_RESET:
+                zoomLevel = 1.0;
+                break;
+            default:
+                throw new RuntimeException("Event handler missing for control " + control.toString()
+                        + " in TrackWidget.handleInnerControlClick()");
+        }
+
+        // trigger a repaint
+        repaint();
+    }
+
     /**
      * Event handler for mouse up events.
      * <p>
@@ -379,6 +506,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      */
     protected void handleMouseUp(MouseEvent e) {
         switch(e.button) {
+            case SELECTION_BUTTON:
+                clickEventRepetitionTimer.cancel();
+                break;
             case PAN_BUTTON:
                 isCurrentlyPanning = false;
                 panningStartPosition = null;
@@ -416,16 +546,49 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             doesRequireRepaint = true;
         }
 
+        // do hit testing on the inner controls
+        if(hitTestInnerControls(e)) {
+            // the current control hovering has changed!
+            doesRequireRepaint = true;
+            clickEventRepetitionTimer.cancel();
+        }
+
         if(doesRequireRepaint)
             repaint();
     }
 
+    protected void handleControlResizedEvent(ControlEvent e) {
+        // tell all the inner controls to reposition themselves
+        for(InnerControl c: innerControls.values())
+            c.reposition(getSize());
+    }
+
     /**
-     * Event handler for mouse double click events.
-     * <p>
-     * (Currently unused.)
+     * TODO Cort: Comment Method
+     * 
+     * @return true, if the control the mouse cursor is hovering over changed, false otherwise
      */
-    protected void handleMouseDoubleClick(MouseEvent e) {}
+    private boolean hitTestInnerControls(MouseEvent e) {
+        InnerControlID previouslyHoveredInnerControl = hoveredInnerControl;
+        Point2D.Double p = new Point2D.Double(e.x, e.y);
+
+        hoveredInnerControl = null;
+        for(InnerControlID id: innerControls.keySet())
+            if(innerControls.get(id).doHitDetection(p)) {
+                hoveredInnerControl = id;
+                break;
+            }
+
+        return hoveredInnerControl != previouslyHoveredInnerControl;
+    }
+
+    protected void handleMouseEnter(MouseEvent e) {
+        isMouseOnWidget = true;
+    }
+
+    protected void handleMouseExit(MouseEvent e) {
+        isMouseOnWidget = false;
+    }
 
     /**
      * Event handler for modification notifications from the track.
@@ -589,22 +752,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         g.setTransform(originalTransformation);
     }
 
-    /*private void drawScrollers(Graphics2D g2d, Point size) {
-        GeneralPath scroller = new GeneralPath();
-
-        scroller.moveTo(15, 30);
-        scroller.lineTo(15, size.y - 30);
-        scroller.lineTo(15 + 3, size.y - 30 - 3);
-        scroller.lineTo(15 + 3, 33);
-        scroller.lineTo(15, 30);
-
-        g2d.setStroke(new BasicStroke(1.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
-        g2d.setColor(Color.LIGHT_GRAY);
-        g2d.draw(scroller);
-        g2d.setPaint(Color.LIGHT_GRAY);
-        g2d.fill(scroller);
-    }*/
-
     /**
      * Invoked by base class methods to trigger an actual repaint. Not to be called directly!
      */
@@ -630,18 +777,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // back up the current transformation, apply the viewport translation and draw the track
         drawTrack(g2d, viewportTransformation);
 
+        // draw the inner controls
+        if(isMouseOnWidget)
+            for(InnerControlID id: innerControls.keySet())
+                innerControls.get(id).draw(g2d, id == hoveredInnerControl);
+
+        // draw the frame counter
         g2d.setColor(Color.BLACK);
-        g2d.drawString(lastFrameCount + "fps", 20, 20);
-
-        /*g2d.setTransform(AffineTransform.getTranslateInstance(50, 150));
-        g2d.setColor(Color.YELLOW);
-        g2d.draw(new QuadCurve2D.Double(0, 0, 50, -100, 100, 0));
-        drawBezierCurve(g2d, new Point(0, 200));*/
-
-        // drawScrollers(g2d, size);
-        // g2d.setTransform(null);
-        // do the actual drawing of the widget
-        // g2d.drawImage(trackImage, panPosition.x, panPosition.y, null);
+        g2d.drawString(lastFrameCount + "fps", 10, 20);
     }
 
     /**

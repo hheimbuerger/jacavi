@@ -1,5 +1,7 @@
 package de.jacavi.rcp.views;
 
+import java.io.IOException;
+
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
@@ -7,7 +9,6 @@ import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.widgets.TrackWidget;
-
 
 
 
@@ -27,6 +28,8 @@ public class TrackView extends ViewPart {
         try {
             new TrackWidget(parent, new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml")));
         } catch(TrackLoadingException e) {
+            throw new RuntimeException("Error while creating TrackWidget.");
+        } catch(IOException e) {
             throw new RuntimeException("Error while creating TrackWidget.");
         }
     }

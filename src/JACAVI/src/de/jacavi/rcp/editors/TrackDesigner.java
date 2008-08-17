@@ -186,7 +186,13 @@ public class TrackDesigner extends EditorPart {
         singleCoolItem.setSize(tilesComposite.getSize());
         singleCoolItem.setControl(tilesComposite);
 
-        final TrackWidget trackWidget = new TrackWidget(parent, currentTrack);
+        final TrackWidget trackWidget;
+        try {
+            trackWidget = new TrackWidget(parent, currentTrack);
+        } catch(IOException e) {
+            // TODO: do proper error handling here and report to the user
+            throw new RuntimeException("Couldn't create widget. [TODO: do proper error handling here]");
+        }
         trackWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
         trackWidget.addKeyListener(new KeyAdapter() {
             @Override
