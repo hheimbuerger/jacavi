@@ -9,7 +9,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -26,6 +25,7 @@ import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.Track.InitialTileMayNotBeRemoved;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
+import de.jacavi.rcp.util.ExceptionHandler;
 import de.jacavi.rcp.widgets.TrackWidget;
 
 
@@ -67,9 +67,11 @@ public class TrackDesigner extends EditorPart {
 
             log.info("Track saved to " + selected);
         } catch(FileNotFoundException e) {
-            handleException(e);
+            ExceptionHandler.handleException(e, log, "File could not be found", true, "Error", new Status(
+                    IStatus.ERROR, "JACAVI", e.toString()));
         } catch(IOException e) {
-            handleException(e);
+            ExceptionHandler.handleException(e, log, "An IOException occured", true, "Error", new Status(IStatus.ERROR,
+                    "JACAVI", e.toString()));
         }
 
         monitor.done();
@@ -126,10 +128,6 @@ public class TrackDesigner extends EditorPart {
     @Override
     public void setFocus() {}
 
-    private void handleException(Exception e) {
-        log.error("Save failed", e);
-    }
-
     /**
      * @param tile
      */
@@ -149,13 +147,11 @@ public class TrackDesigner extends EditorPart {
             log.debug("Delete Tile on Position " + selectedPosition);
             fireTrackModified();
         } catch(IndexOutOfBoundsException e) {
-            log.error("IndexOutOfBoundsException caught in handleDeletion()", e);
-            ErrorDialog.openError(getEditorSite().getShell(), "Error", "An Exception occured while tile deletion.",
-                    new Status(IStatus.WARNING, "JACAVI", e.toString()));
+            ExceptionHandler.handleException(e, log, "IndexOutOfBoundsException caught in handleDeletion()", true,
+                    "Error", new Status(IStatus.ERROR, "JACAVI", e.toString()));
         } catch(InitialTileMayNotBeRemoved e) {
-            log.error("InitialTileMayNotBeRemoved caught in handleDeletion()", e);
-            ErrorDialog.openError(getEditorSite().getShell(), "Warning", "Initital Tile may not be removed.",
-                    new Status(IStatus.WARNING, "JACAVI", e.toString()));
+            ExceptionHandler.handleException(e, log, "Initial tile could not be removed!", true, "Error", new Status(
+                    IStatus.WARNING, "JACAVI", e.toString()));
         }
     }
 
