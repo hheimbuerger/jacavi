@@ -640,7 +640,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // recreate the shape list (used for doing hit detections) and the track bounding box (used for determining the
         // scrolling bounds)
         lastTileShapeList = new ArrayList<Shape>();
-        lastTrackBoundingBox = new Rectangle2D.Double();
+        lastTrackBoundingBox = null;
 
         // initialize a counter (used for detected the selected tile)
         int counter = 0;
@@ -722,8 +722,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
             // bounding box -- that way we'll get a bounding box for the whole track in the end
-            Rectangle2D finalImageBoundingBox = imagePlacementOperation.getBounds2D(s.getImage());
-            Rectangle2D.union(lastTrackBoundingBox, finalImageBoundingBox, lastTrackBoundingBox);
+            Rectangle2D finalImageBoundingBox = viewportTransformation.createTransformedShape(
+                    imagePlacementOperation.getBounds2D(s.getImage())).getBounds2D();
+            if(lastTrackBoundingBox == null)
+                lastTrackBoundingBox = finalImageBoundingBox;
+            else
+                Rectangle2D.union(lastTrackBoundingBox, finalImageBoundingBox, lastTrackBoundingBox);
 
             // create a shape of the exact box of the image (not parallel to the viewport!) by transforming a rectangle
             // corresponding to the image with the viewport transformation
@@ -747,12 +751,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             currentAngle.turn(s.getEntryToExitAngle());
         }
 
+        // restore the old transformation
+        g.setTransform(originalTransformation);
+
         // DEBUG: draw the track bounding box in red
         g.setColor(Color.RED);
         g.draw(lastTrackBoundingBox);
-
-        // restore the old transformation
-        g.setTransform(originalTransformation);
     }
 
     private void drawCar(Graphics2D g, Point2D position, Angle carDirection) {
@@ -790,7 +794,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         viewportTransformation.scale(zoomLevel, zoomLevel);
         viewportTransformation.rotate(rotationAngle.getRadians(), 0, 0);
 
-        // back up the current transformation, apply the viewport translation and draw the track
+        // draw the track
         drawTrack(g2d, viewportTransformation);
 
         // draw the inner controls
