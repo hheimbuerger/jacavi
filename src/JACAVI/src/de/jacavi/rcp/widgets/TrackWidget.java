@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.AffineTransformOp;
@@ -709,12 +710,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             if(counter == car1Position[0]) {
                 SlotPart slotPart = s.getSlot1().getSlotParts().get(0);
                 DirectedPoint directedPoint = slotPart.getStepPoint(car1Position[1]);
-                markPoint(g, slotPlacementTransformation.transform(directedPoint.point, null), Color.RED);
+                Angle carDirection = new Angle(currentAngle.angle - directedPoint.angle.angle);
+                drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
             if(counter == car2Position[0]) {
                 SlotPart slotPart = s.getSlot2().getSlotParts().get(0);
                 DirectedPoint directedPoint = slotPart.getStepPoint(car2Position[1]);
-                markPoint(g, slotPlacementTransformation.transform(directedPoint.point, null), Color.RED);
+                Angle carDirection = new Angle(currentAngle.angle - directedPoint.angle.angle);
+                drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
@@ -750,6 +753,19 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         // restore the old transformation
         g.setTransform(originalTransformation);
+    }
+
+    private void drawCar(Graphics2D g, Point2D position, Angle carDirection) {
+        GeneralPath car = new GeneralPath();
+        car.moveTo(-5, 0);
+        car.lineTo(5, 0);
+
+        AffineTransform carRotationTransformation = new AffineTransform();
+        carRotationTransformation.translate(position.getX(), position.getY());
+        carRotationTransformation.rotate(carDirection.getRadians());
+        Shape rotatedCar = carRotationTransformation.createTransformedShape(car);
+        g.setColor(Color.RED);
+        g.draw(rotatedCar);
     }
 
     /**
