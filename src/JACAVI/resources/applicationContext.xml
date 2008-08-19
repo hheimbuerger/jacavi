@@ -34,16 +34,14 @@
 					<property name="id" value="1" />
 					<property name="name" value="Player 1" />
 					<property name="controller">
-						<bean id="mouseControlBean" class="de.jacavi.appl.controller.device.impl.Mouse" />
-					</property><!--
-					<property name="technologyController" ref="lib42technologyBean"/>
-				--></bean>
+						<bean id="mouseControlBean" class="de.jacavi.appl.controller.device.impl.MouseDeviceController" />
+					</property>
+				</bean>
 				<bean id="player2" class="de.jacavi.appl.racelogic.Player">
 					<property name="id" value="2" />
-					<property name="name" value="Player 2" /><!--
-					<property name="technologyController" ref="lib42technologyBean" />
-					--><property name="controller">
-						<bean id="wiimoteControlBean" class="de.jacavi.appl.controller.device.impl.Wiimote" />
+					<property name="name" value="Player 2" />
+					<property name="controller">
+						<bean id="wiimoteControlBean" class="de.jacavi.appl.controller.device.impl.WiimoteDeviceCotroller" />
 					</property>
 				</bean>
 			</list>

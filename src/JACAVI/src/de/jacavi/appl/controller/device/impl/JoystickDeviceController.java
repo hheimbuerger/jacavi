@@ -7,7 +7,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 
 
 
-public class Mouse implements DeviceController {
+public class JoystickDeviceController implements DeviceController {
 
     @Override
     public boolean initialize(Composite guiElement) {

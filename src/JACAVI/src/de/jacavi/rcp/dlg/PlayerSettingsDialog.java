@@ -25,13 +25,12 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.constants.Devices;
 import de.jacavi.appl.controller.CarController;
-import de.jacavi.appl.controller.Devices;
 import de.jacavi.appl.controller.device.DeviceController;
-import de.jacavi.appl.controller.device.impl.Joystick;
-import de.jacavi.appl.controller.device.impl.Keyboard;
-import de.jacavi.appl.controller.device.impl.Mouse;
-import de.jacavi.appl.controller.device.impl.Wiimote;
+import de.jacavi.appl.controller.device.impl.JoystickDeviceController;
+import de.jacavi.appl.controller.device.impl.KeyboardDeviceController;
+import de.jacavi.appl.controller.device.impl.MouseDeviceController;
 import de.jacavi.appl.controller.script.ScriptController;
 import de.jacavi.appl.controller.script.impl.Script;
 import de.jacavi.appl.racelogic.Player;
@@ -215,24 +214,26 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     @Override
     protected void okPressed() {
         player.setName(playerName.getText());
+
         if(inputs[1].equals(comboInput.getText()))
             player.setController(new Script());
         else
             switch(Devices.valueOf(comboDevices.getText().toUpperCase())) {
                 case JOYSTICK:
-                    player.setController(new Joystick());
+                    player.setController(new JoystickDeviceController());
                     break;
 
                 case KEYBOARD:
-                    player.setController(new Keyboard());
+                    player.setController(new KeyboardDeviceController());
                     break;
 
                 case MOUSE:
-                    player.setController(new Mouse());
+                    player.setController(new MouseDeviceController());
                     break;
 
                 case WIIMOTE:
-                    player.setController(new Wiimote());
+                    // FIXME:?!?!? inject a configured wiimote from WiimoteDeviceManager
+                    // player.setController(new WiimoteDeviceCotrollere());
                     break;
                 default:
                     throw new IllegalArgumentException("No Device selected");

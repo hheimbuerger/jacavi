@@ -7,7 +7,13 @@ import de.jacavi.appl.controller.device.DeviceController;
 
 
 
-public class Joystick implements DeviceController {
+public class KeyboardDeviceController implements DeviceController {
+
+    @Override
+    public void cleanup() {
+    // TODO Auto-generated method stub
+
+    }
 
     @Override
     public boolean initialize(Composite guiElement) {
@@ -19,12 +25,6 @@ public class Joystick implements DeviceController {
     public ControllerSignal poll() {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public void cleanup() {
-    // TODO Auto-generated method stub
-
     }
 
 }
