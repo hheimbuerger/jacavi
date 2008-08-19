@@ -27,6 +27,16 @@ public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener
 
     private Wiimote wiimote = null;
 
+    public WiimoteDeviceCotroller() {}
+
+    public Wiimote getWiimote() {
+        return wiimote;
+    }
+
+    public void setWiimote(Wiimote wiimote) {
+        this.wiimote = wiimote;
+    }
+
     public WiimoteDeviceCotroller(Wiimote wiimote) {
         if(wiimote == null)
             throw new IllegalArgumentException("wiimote may not be null");
