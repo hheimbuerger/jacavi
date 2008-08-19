@@ -39,7 +39,6 @@ public class Slot {
     public DirectedPoint getStepPoint(int position) {
         int currentPos = 0;
         Angle currentAngle = new Angle(0);
-        System.out.println(position);
         for(SlotPart sp: slotParts) {
             if(position < currentPos + sp.length) {
                 DirectedPoint stepPoint = sp.getStepPoint(position - currentPos);
