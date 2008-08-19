@@ -40,6 +40,11 @@ public class TrackDesigner extends EditorPart {
 
     private Track currentTrack;
 
+    /**
+     * A property flag for all IPropertyListeners which is fired, when the track has changed
+     */
+    public static final int PROP_TRACK_CHANGED = 1;
+
     @Override
     protected void setInput(IEditorInput input) {
 
@@ -158,6 +163,7 @@ public class TrackDesigner extends EditorPart {
     public void fireTrackModified() {
         isDirty = true;
         firePropertyChange(PROP_DIRTY);
+        firePropertyChange(PROP_TRACK_CHANGED);
     }
 
     public Track getCurrentTrack() {
