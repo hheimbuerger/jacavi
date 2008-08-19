@@ -25,7 +25,7 @@ public class LineSlotPart extends SlotPart {
         Point2D point = new Point2D.Double(entryPoint.x + (exitPoint.x - entryPoint.x) * position
                 / Double.valueOf(length), entryPoint.y + (exitPoint.y - entryPoint.y) * position
                 / Double.valueOf(length));
-        Angle angle = new Angle(0); // FIXME: not yet implemented
+        Angle angle = new Angle(0); // the angle of a line is always zero (relative to the entry angle!)
         return new DirectedPoint(point, angle);
     }
 }

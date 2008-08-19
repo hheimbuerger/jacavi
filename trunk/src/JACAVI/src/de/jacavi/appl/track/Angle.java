@@ -25,4 +25,9 @@ public class Angle {
     public void set(int newAngle) {
         angle = newAngle;
     }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + '[' + angle + ']';
+    }
 }
