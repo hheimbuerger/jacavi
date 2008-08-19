@@ -150,11 +150,13 @@ public class TilesetRepository {
                             .getAttribute("x1")), Integer.valueOf(slotSection.getAttribute("y1")), Integer
                             .valueOf(slotSection.getAttribute("x2")), Integer.valueOf(slotSection.getAttribute("y2")));
                 } else if(slotSection.getNodeName().equals("quad-bezier")) {
-                    slot.addQuadBezier(Integer.valueOf(slotSection.getAttribute("length")), Integer.valueOf(slotSection
-                            .getAttribute("x1")), Integer.valueOf(slotSection.getAttribute("y1")), Integer
-                            .valueOf(slotSection.getAttribute("x2")), Integer.valueOf(slotSection.getAttribute("y2")),
-                            Integer.valueOf(slotSection.getAttribute("x3")), Integer.valueOf(slotSection
-                                    .getAttribute("y3")));
+                    slot
+                            .addQuadBezier(Integer.valueOf(slotSection.getAttribute("length")), Integer
+                                    .valueOf(slotSection.getAttribute("x1")), Integer.valueOf(slotSection
+                                    .getAttribute("y1")), Integer.valueOf(slotSection.getAttribute("x2")), Integer
+                                    .valueOf(slotSection.getAttribute("y2")), Integer.valueOf(slotSection
+                                    .getAttribute("x3")), Integer.valueOf(slotSection.getAttribute("y3")), Integer
+                                    .valueOf(slotSection.getAttribute("entryToExitAngle")));
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid slot section in slot: "
                             + slotSection.getNodeName());

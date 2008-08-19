@@ -22,16 +22,19 @@ public abstract class SlotPart {
         }
     }
 
-    public int length;
+    public final int length;
 
-    public Point entryPoint;
+    public final Point entryPoint;
 
-    public Point exitPoint;
+    public final Point exitPoint;
 
-    public SlotPart(int length, Point entryPoint, Point exitPoint) {
+    public final int entryToExitAngle;
+
+    public SlotPart(int length, Point entryPoint, Point exitPoint, int entryToExitAngle) {
         this.length = length;
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
+        this.entryToExitAngle = entryToExitAngle;
     }
 
     abstract public Shape getShape();

@@ -7,7 +7,11 @@ public class Angle {
     public int angle;
 
     public Angle(int angle) {
-        this.angle = angle % 360;
+        normalizeAndSet(angle);
+    }
+
+    private void normalizeAndSet(int angle) {
+        this.angle = (angle % 360) < 0 ? ((angle % 360) + 360) : (angle % 360);
     }
 
     public void turn(Angle turningAngle) {
@@ -15,7 +19,7 @@ public class Angle {
     }
 
     public void turn(int turningAngle) {
-        this.angle = (this.angle + turningAngle) % 360;
+        normalizeAndSet(this.angle + turningAngle);
     }
 
     public double getRadians() {
@@ -23,7 +27,7 @@ public class Angle {
     }
 
     public void set(int newAngle) {
-        angle = newAngle;
+        normalizeAndSet(newAngle);
     }
 
     @Override

@@ -41,6 +41,7 @@ import org.holongate.j2d.J2DUtilities;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.SlotPart;
 import de.jacavi.appl.track.Track;
+import de.jacavi.appl.track.TrackPosition;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.SlotPart.DirectedPoint;
 import de.jacavi.appl.track.Track.TrackModificationListener;
@@ -650,8 +651,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         int slot2Length = track.getSlot2Length();
         int slot1Pos = DEBUGanimationStep % slot1Length;
         int slot2Pos = DEBUGanimationStep % slot2Length;
-        int[] car1Position = track.determineSectionFromPosition(true, slot1Pos);
-        int[] car2Position = track.determineSectionFromPosition(false, slot2Pos);
+        TrackPosition car1Position = track.determineSectionFromPosition(true, slot1Pos);
+        TrackPosition car2Position = track.determineSectionFromPosition(false, slot2Pos);
 
         // iterate over all track sections of the currently displayed track
         for(TrackSection s: track.getSections()) {
@@ -707,16 +708,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             markPoint(g, currentTrackPos, Color.GREEN);
 
             // DEBUG: draw the current 'car' position
-            if(counter == car1Position[0]) {
-                SlotPart slotPart = s.getSlot1().getSlotParts().get(0);
-                DirectedPoint directedPoint = slotPart.getStepPoint(car1Position[1]);
-                Angle carDirection = new Angle(currentAngle.angle - directedPoint.angle.angle);
+            if(s == car1Position.section) {
+                DirectedPoint directedPoint = car1Position.point;
+                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+                // System.out.println(carDirection);
                 drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
-            if(counter == car2Position[0]) {
-                SlotPart slotPart = s.getSlot2().getSlotParts().get(0);
-                DirectedPoint directedPoint = slotPart.getStepPoint(car2Position[1]);
-                Angle carDirection = new Angle(currentAngle.angle - directedPoint.angle.angle);
+            if(s == car2Position.section) {
+                DirectedPoint directedPoint = car2Position.point;
+                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
                 drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
 
