@@ -1,11 +1,16 @@
 package de.jacavi.rcp.views;
 
+import java.util.LinkedList;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -30,9 +35,11 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
 
     public static final String ID = "JACAVI.trackOutline";
 
+    private TrackDesigner activeEditor;
+
     private Track currentTrack;
 
-    private TableViewer listViewer;
+    private TableViewer tilesTableViewer;
 
     public TrackOutline() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
@@ -43,17 +50,17 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     @Override
     public void createPartControl(Composite parent) {
 
-        listViewer = new TableViewer(parent);
-        listViewer.getTable().setLinesVisible(true);
+        tilesTableViewer = new TableViewer(parent);
+        tilesTableViewer.getTable().setLinesVisible(true);
 
         // the following provokes that only one single column is painted. Otherwise two columns are painted as default
-        TableColumn singleColumn = new TableColumn(listViewer.getTable(), SWT.NONE);
+        TableColumn singleColumn = new TableColumn(tilesTableViewer.getTable(), SWT.NONE);
         TableColumnLayout tableColumnLayout = new TableColumnLayout();
         tableColumnLayout.setColumnData(singleColumn, new ColumnWeightData(100));
         parent.setLayout(tableColumnLayout);
 
-        listViewer.setContentProvider(new ArrayContentProvider());
-        listViewer.setLabelProvider(new LabelProvider() {
+        tilesTableViewer.setContentProvider(new ArrayContentProvider());
+        tilesTableViewer.setLabelProvider(new LabelProvider() {
             @Override
             public Image getImage(Object element) {
                 return null;
@@ -66,20 +73,26 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         });
 
         if(currentTrack != null) {
-            listViewer.setInput(currentTrack.getSections());
+            tilesTableViewer.setInput(currentTrack.getSections());
         }
 
-        // listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-        // public void selectionChanged(SelectionChangedEvent event) {
-        // IStructuredSelection selection = (IStructuredSelection) event.getSelection();
-        // StringBuffer sb = new StringBuffer("Selection - ");
-        // sb.append("tatal " + selection.size() + " items selected: ");
-        // for(Iterator iterator = selection.iterator(); iterator.hasNext();) {
-        // sb.append(iterator.next() + ", ");
-        // }
-        // System.out.println(sb);
-        // }
-        // });
+        tilesTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
+            @SuppressWarnings("unchecked")
+            public void selectionChanged(SelectionChangedEvent event) {
+                IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+                selection.iterator().toString();
+
+                if(event.getSource() instanceof TableViewer) {
+                    TableViewer source = (TableViewer) event.getSource();
+                    LinkedList<TrackSection> sectionList = (LinkedList<TrackSection>) source.getInput();
+                    for(int i = 0; i < sectionList.size(); i++) {
+                        if(sectionList.get(i) == selection.getFirstElement())
+                            activeEditor.getTrackWidget().setSelectedTile(i);
+
+                    }
+                }
+            }
+        });
 
         // listViewer.addFilter(new ViewerFilter() {
         // @Override
@@ -109,7 +122,7 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     public void partActivated(IWorkbenchPartReference partRef) {
         if(partRef.getId().equals(TrackDesigner.ID)) {
             log.debug(partRef.getPartName() + " activated");
-            TrackDesigner activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
+            activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
             refresh(activeEditor);
         }
     }
@@ -117,7 +130,7 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     @Override
     public void partBroughtToTop(IWorkbenchPartReference partRef) {
         if(partRef.getId().equals(TrackDesigner.ID)) {
-            TrackDesigner activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
+            activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
             activeEditor.addPropertyListener(this);
         }
     }
@@ -149,9 +162,9 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     }
 
     private void refresh(TrackDesigner source) {
-        currentTrack = source.getCurrentTrack();
-        listViewer.setInput(currentTrack.getSections());
-        listViewer.refresh();
+        currentTrack = source.getTrackWidget().getTrack();
+        tilesTableViewer.setInput(currentTrack.getSections());
+        tilesTableViewer.refresh();
         log.debug("TableViewer inside the TrackOutlineView refreshed");
     }
 }

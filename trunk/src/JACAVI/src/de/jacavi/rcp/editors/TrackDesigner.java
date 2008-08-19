@@ -40,6 +40,8 @@ public class TrackDesigner extends EditorPart {
 
     private Track currentTrack;
 
+    private TrackWidget trackWidget;
+
     /**
      * A property flag for all IPropertyListeners which is fired, when the track has changed
      */
@@ -110,7 +112,6 @@ public class TrackDesigner extends EditorPart {
     public void createPartControl(Composite parent) {
         parent.setLayout(new GridLayout());
 
-        final TrackWidget trackWidget;
         try {
             trackWidget = new TrackWidget(parent, currentTrack);
         } catch(IOException e) {
@@ -146,7 +147,7 @@ public class TrackDesigner extends EditorPart {
      * @param trackWidget
      * @param selectedPosition
      */
-    private void handleDeletion(final TrackWidget trackWidget, int selectedPosition) {
+    public void handleDeletion(final TrackWidget trackWidget, int selectedPosition) {
         try {
             currentTrack.removeSection(selectedPosition);
             log.debug("Delete Tile on Position " + selectedPosition);
@@ -166,8 +167,7 @@ public class TrackDesigner extends EditorPart {
         firePropertyChange(PROP_TRACK_CHANGED);
     }
 
-    public Track getCurrentTrack() {
-        return currentTrack;
+    public TrackWidget getTrackWidget() {
+        return trackWidget;
     }
-
 }
