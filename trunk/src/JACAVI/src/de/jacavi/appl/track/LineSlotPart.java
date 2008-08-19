@@ -12,7 +12,7 @@ import java.awt.geom.Point2D;
 
 public class LineSlotPart extends SlotPart {
     public LineSlotPart(int length, Point entryPoint, Point exitPoint) {
-        super(length, entryPoint, exitPoint);
+        super(length, entryPoint, exitPoint, 0);
     }
 
     @Override

@@ -33,10 +33,10 @@
             <exitPoint x="0" y="-12" />
             <entryToExitAngle>-90</entryToExitAngle>
             <slot1>
-                <quad-bezier length="20" x1="-12" y1="-5" x2="-5" y2="-5" x3="-5" y3="-12" />
+                <quad-bezier length="20" x1="-12" y1="-5" x2="-5" y2="-5" x3="-5" y3="-12" entryToExitAngle="-90" />
             </slot1>
             <slot2>
-                <quad-bezier length="40" x1="-12" y1="5" x2="5" y2="5" x3="5" y3="-12" />
+                <quad-bezier length="40" x1="-12" y1="5" x2="5" y2="5" x3="5" y3="-12" entryToExitAngle="-90" />
             </slot2>
         </tile>
         <tile id="turn30deg" name="30º turn">
@@ -45,10 +45,34 @@
             <exitPoint x="-2" y="-2" />
             <entryToExitAngle>-30</entryToExitAngle>
             <slot1>
-                <quad-bezier length="5" x1="-8" y1="-5" x2="-5" y2="-6" x3="-4" y3="-7" />
+                <quad-bezier length="5" x1="-8" y1="-5" x2="-5" y2="-6" x3="-4" y3="-7" entryToExitAngle="-30" />
             </slot1>
             <slot2>
-                <quad-bezier length="10" x1="-8" y1="5" x2="-4" y2="5" x3="1" y3="2" />
+                <quad-bezier length="10" x1="-8" y1="5" x2="-4" y2="5" x3="1" y3="2" entryToExitAngle="-30" />
+            </slot2>
+        </tile>
+        <tile id="cloverleaf" name="cloverleaf">
+            <filename>cloverleaf.png</filename>
+            <entryPoint x="-36" y="0" />
+            <exitPoint x="36" y="0" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <slot1>
+                <line length="30" x1="-36" y1="-5" x2="10" y2="-5" />
+                <quad-bezier length="20" x1="10" y1="-5" x2="20" y2="-5" x3="20" y3="-15" entryToExitAngle="-90" />
+                <quad-bezier length="20" x1="20" y1="-15" x2="20" y2="-25" x3="10" y3="-25" entryToExitAngle="-90" />
+                <line length="30" x1="10" y1="-25" x2="-10" y2="-25" />
+                <quad-bezier length="20" x1="-10" y1="-25" x2="-20" y2="-25" x3="-20" y3="-15" entryToExitAngle="-90" />
+                <quad-bezier length="20" x1="-20" y1="-15" x2="-20" y2="-5" x3="-10" y3="-5" entryToExitAngle="-90" />
+                <line length="30" x1="-10" y1="-5" x2="36" y2="-5" />
+            </slot1>
+            <slot2>
+                <line length="30" x1="-36" y1="5" x2="10" y2="5" />
+                <quad-bezier length="20" x1="10" y1="5" x2="20" y2="5" x3="20" y3="15" entryToExitAngle="-90" />
+                <quad-bezier length="20" x1="20" y1="15" x2="20" y2="25" x3="10" y3="25" entryToExitAngle="-90" />
+                <line length="30" x1="10" y1="25" x2="-10" y2="25" />
+                <quad-bezier length="20" x1="-10" y1="25" x2="-20" y2="25" x3="-20" y3="15" entryToExitAngle="-90" />
+                <quad-bezier length="20" x1="-20" y1="15" x2="-20" y2="5" x3="-10" y3="5" entryToExitAngle="-90" />
+                <line length="30" x1="-10" y1="5" x2="36" y2="5" />
             </slot2>
         </tile>
     </tileset>

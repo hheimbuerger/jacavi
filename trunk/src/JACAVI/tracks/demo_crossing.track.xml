@@ -3,7 +3,7 @@
 <track name="demo_crossing" tileset="debug">
 	    
 	<section id="finishingStraight" />
-    <section id="straight" />
+    <section id="cloverleaf" />
     <section id="turn90deg" />
     <section id="straight" />
     <section id="turn90deg" />

@@ -17,8 +17,8 @@ public class QuadBezierSlotPart extends SlotPart {
 
     private double distP0P1, distP1P2, distP0P2;
 
-    public QuadBezierSlotPart(int length, Point entryPoint, Point controlPoint, Point exitPoint) {
-        super(length, entryPoint, exitPoint);
+    public QuadBezierSlotPart(int length, Point entryPoint, Point controlPoint, Point exitPoint, int entryToExitAngle) {
+        super(length, entryPoint, exitPoint, entryToExitAngle);
         this.controlPoint = controlPoint;
 
         // extract to double array for easier computation
@@ -61,7 +61,19 @@ public class QuadBezierSlotPart extends SlotPart {
         return Math.sqrt(Math.pow(leftLeg, 2) + Math.pow(rightLeg, 2) - 2 * leftLeg * rightLeg * Math.cos(alpha));
     }
 
-    private Angle computerQuadBezierAngle(double t) {
+    private double determineCurveDirection() {
+        double m = (referencePoints[2][1] - referencePoints[0][1]) / (referencePoints[2][0] - referencePoints[0][0]);
+        double y = referencePoints[0][1] - referencePoints[0][0] * m;
+        double f_of_P1 = m * referencePoints[1][0] + y;
+        double reference_f = referencePoints[1][1];
+
+        if(referencePoints[0][0] < referencePoints[2][0])
+            return (reference_f > f_of_P1) ? -1.0 : 1.0;
+        else
+            return (reference_f < f_of_P1) ? -1.0 : 1.0;
+    }
+
+    private Angle computeQuadBezierAngle(double t) {
         // The comments in this method assume you know
         // http://upload.wikimedia.org/wikipedia/commons/3/35/Bezier_quadratic_anim.gif
 
@@ -77,8 +89,9 @@ public class QuadBezierSlotPart extends SlotPart {
         // last calculation.
         double angleAtBezierPoint = computeLawOfCosinesRadiansAngle(distP1P2 * t, distP0P1 * (1 - t), lengthOfTangent);
 
-        // Now convert the radians angle into degrees.
-        double relativeAngle = Math.toDegrees(angleAtBezierPoint);
+        // Now convert the radians angle into degrees and apply the curve's turning direction.
+        double relativeAngle = determineCurveDirection() * Math.toDegrees(angleAtBezierPoint);
+        System.out.println(relativeAngle);
 
         // And return it as a new Angle instance.
         return new Angle(new Double(relativeAngle).intValue());
@@ -88,7 +101,7 @@ public class QuadBezierSlotPart extends SlotPart {
     public DirectedPoint getStepPoint(int position) {
         double t = Double.valueOf(position) / Double.valueOf(length);
         Point2D point = computeQuadBezierPoint(t);
-        Angle angle = computerQuadBezierAngle(t);
+        Angle angle = computeQuadBezierAngle(t);
         return new DirectedPoint(point, angle);
     }
 }

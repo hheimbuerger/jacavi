@@ -213,17 +213,13 @@ public class Track {
         return length;
     }
 
-    public int[] determineSectionFromPosition(boolean isSlot1, int position) {
+    public TrackPosition determineSectionFromPosition(boolean isSlot1, int position) {
         int length = 0;
-        int sectionCounter = 0;
         for(TrackSection s: sections) {
             Slot slot = isSlot1 ? s.getSlot1() : s.getSlot2();
-            for(SlotPart sp: slot.getSlotParts()) {
-                if(position < length + sp.length)
-                    return new int[] { sectionCounter, position - length };
-                length += sp.length;
-            }
-            sectionCounter++;
+            if(position < length + slot.getLength())
+                return new TrackPosition(s, slot.getStepPoint(position - length));
+            length += slot.getLength();
         }
         return null;
     }
