@@ -91,7 +91,6 @@ public class QuadBezierSlotPart extends SlotPart {
 
         // Now convert the radians angle into degrees and apply the curve's turning direction.
         double relativeAngle = determineCurveDirection() * Math.toDegrees(angleAtBezierPoint);
-        System.out.println(relativeAngle);
 
         // And return it as a new Angle instance.
         return new Angle(new Double(relativeAngle).intValue());

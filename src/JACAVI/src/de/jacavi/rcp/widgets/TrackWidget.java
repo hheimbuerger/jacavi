@@ -711,7 +711,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             if(s == car1Position.section) {
                 DirectedPoint directedPoint = car1Position.point;
                 Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                // System.out.println(carDirection);
                 drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
             if(s == car2Position.section) {
