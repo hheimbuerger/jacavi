@@ -55,16 +55,15 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         window.getActivePage().addPartListener(this);
         this.addListenerObject(this);
         tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
-        currentTrack = new Track(TileSet.DEBUG);
     }
 
     @Override
     public void createPartControl(Composite parent) {
         scrolledComposite = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-        refresh();
+        paintAndRefresh();
     }
 
-    public void refresh() {
+    public void paintAndRefresh() {
         scrolledComposite.setLayout(new FillLayout());
 
         GridLayout gd = new GridLayout(2, true);
@@ -73,41 +72,43 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         Composite innerComposite = new Composite(scrolledComposite, SWT.NONE);
         innerComposite.setLayout(gd);
 
-        final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
+        if(currentTrack != null) {
+            final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
 
-        for(String tileID: tileMap.keySet()) {
-            Tile tile = tileMap.get(tileID);
-            Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
-            usedImages.add(image);
+            for(String tileID: tileMap.keySet()) {
+                Tile tile = tileMap.get(tileID);
+                Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
+                usedImages.add(image);
 
-            // Scale images
-            int width = image.getBounds().width;
-            int height = image.getBounds().height;
-            Image scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
-                    (int) (height * TILE_IMAGE_SCALE)));
+                // Scale images
+                int width = image.getBounds().width;
+                int height = image.getBounds().height;
+                Image scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
+                        (int) (height * TILE_IMAGE_SCALE)));
 
-            Button tileButton = new Button(innerComposite, SWT.PUSH);
-            tileButton.setToolTipText(tile.getName());
-            tileButton.setImage(scaledImage);
-            tileButton.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-            // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be scaled
-            if(currentTrack.getTileset().equals(TileSet.DEBUG)) {
-                tileButton.setImage(image);
-            } else {
+                Button tileButton = new Button(innerComposite, SWT.PUSH);
+                tileButton.setToolTipText(tile.getName());
                 tileButton.setImage(scaledImage);
-            }
+                tileButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-            tileButton.addSelectionListener(new SelectionAdapter() {
-                @Override
-                public void widgetSelected(SelectionEvent e) {
-                    invokeInsertion(tileMap, e);
+                // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be scaled
+                if(currentTrack.getTileset().equals(TileSet.DEBUG)) {
+                    tileButton.setImage(image);
+                } else {
+                    tileButton.setImage(scaledImage);
                 }
-            });
+
+                tileButton.addSelectionListener(new SelectionAdapter() {
+                    @Override
+                    public void widgetSelected(SelectionEvent e) {
+                        invokeInsertion(tileMap, e);
+                    }
+                });
+            }
+            innerComposite.pack();
+            scrolledComposite.setContent(innerComposite);
+            log.debug("TileExplorer refreshed!");
         }
-        innerComposite.pack();
-        scrolledComposite.setContent(innerComposite);
-        log.debug("TileExplorer refreshed!");
     }
 
     @Override
@@ -119,10 +120,10 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     @Override
     public void partActivated(IWorkbenchPartReference partRef) {
         if(partRef.getId().equals(TrackDesigner.ID)) {
-            System.out.println(partRef.getPartName() + " activated");
+            log.debug(partRef.getPartName() + " activated");
             activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
             currentTrack = activeEditor.getCurrentTrack();
-            refresh();
+            paintAndRefresh();
         }
     }
 

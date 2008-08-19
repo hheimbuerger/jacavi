@@ -39,6 +39,20 @@
             id="JACAVI.trackView"
             name="Track View">
       </view>
+      <view
+            class="de.jacavi.rcp.views.TileExplorer"
+            icon="icons/EclipseIcons/web.gif"
+            id="JACAVI.tileExplorerView"
+            name="Tile Explorer"
+            restorable="true">
+      </view>
+      <view
+            class="de.jacavi.rcp.views.TrackOutline"
+            icon="icons/EclipseIcons/flat.gif"
+            id="JACAVI.trackOutline"
+            name="Track Outline"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">

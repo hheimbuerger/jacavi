@@ -42,4 +42,8 @@ public class TrackSection {
         return tile.getSlot2();
     }
 
+    public String getName() {
+        return tile.getName();
+    }
+
 }
