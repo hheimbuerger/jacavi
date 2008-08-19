@@ -7,13 +7,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 
 
 
-public class Wiimote implements DeviceController {
-
-    @Override
-    public void cleanup() {
-    // TODO Auto-generated method stub
-
-    }
+public class MouseDeviceController implements DeviceController {
 
     @Override
     public boolean initialize(Composite guiElement) {
@@ -25,6 +19,12 @@ public class Wiimote implements DeviceController {
     public ControllerSignal poll() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void cleanup() {
+    // TODO Auto-generated method stub
+
     }
 
 }
