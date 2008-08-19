@@ -122,7 +122,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         if(partRef.getId().equals(TrackDesigner.ID)) {
             log.debug(partRef.getPartName() + " activated");
             activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
-            currentTrack = activeEditor.getCurrentTrack();
+            currentTrack = activeEditor.getTrackWidget().getTrack();
             paintAndRefresh();
         }
     }
