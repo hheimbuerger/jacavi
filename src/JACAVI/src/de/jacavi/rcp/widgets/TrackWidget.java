@@ -552,7 +552,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         if(hitTestInnerControls(e)) {
             // the current control hovering has changed!
             doesRequireRepaint = true;
-            clickEventRepetitionTimer.cancel();
+            if(clickEventRepetitionTimer != null)
+                clickEventRepetitionTimer.cancel();
         }
 
         if(doesRequireRepaint)
