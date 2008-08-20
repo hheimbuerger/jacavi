@@ -15,6 +15,7 @@ import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
+import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
@@ -57,5 +58,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
             e1.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void eventLoopException(Throwable exception) {
+        ExceptionHandler.handleException(exception, true);
+        super.eventLoopException(exception);
     }
 }
