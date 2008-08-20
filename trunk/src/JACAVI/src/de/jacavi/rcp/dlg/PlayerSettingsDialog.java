@@ -38,6 +38,7 @@ import de.jacavi.hal.CarreraLibraryType;
 import de.jacavi.hal.FirstCarreraNativeLibraryFactory;
 import de.jacavi.hal.TechnologyController;
 import de.jacavi.hal.lib42.NativeLib42Adapter;
+import de.jacavi.rcp.util.OSResolverUtil;
 
 
 
@@ -48,13 +49,13 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     // private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
 
-    private String[] inputs = new String[] { "Device", "Script" };
+    private final String[] inputs = new String[] { "Device", "Script" };
 
-    private List<String> devices;
+    private final List<String> devices;
 
-    private List<String> technologies;
+    private final List<String> technologies;
 
-    private Player player;
+    private final Player player;
 
     private Text playerName;
 
@@ -64,7 +65,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Combo comboTechnologies;
 
-    private Shell parentShell;
+    private final Shell parentShell;
 
     private Color c;
 
@@ -77,11 +78,14 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
             String dev = d.toString().substring(0, 1).toUpperCase() + d.toString().substring(1).toLowerCase();
             devices.add(dev);
         }
-        this.technologies = new ArrayList<String>();
-        for(CarreraLibraryType clt: CarreraLibraryType.values()) {
-            String dev = clt.toString().substring(0, 1).toUpperCase() + clt.toString().substring(1).toLowerCase();
-            technologies.add(dev);
-        }
+        // fro only the technolgies supported by the current os
+        this.technologies = OSResolverUtil.getTechnologiesByOS();
+
+        /*
+         * for(CarreraLibraryType clt: CarreraLibraryType.values()) { String dev = clt.toString().substring(0,
+         * 1).toUpperCase() + clt.toString().substring(1).toLowerCase(); technologies.add(dev); }
+         */
+
     }
 
     @Override
@@ -242,6 +246,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         FirstCarreraNativeLibraryFactory factory = (FirstCarreraNativeLibraryFactory) ContextLoader
                 .getBean("nativeLibraryFactoryBean");
+
         switch(CarreraLibraryType.valueOf(comboTechnologies.getText().toLowerCase())) {
             case lib42:
                 // TODO: here is an Exception thrown...please DEBUG inside init method
