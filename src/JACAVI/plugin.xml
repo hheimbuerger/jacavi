@@ -29,7 +29,7 @@
       </view>
       <view
             class="de.jacavi.rcp.views.PlayerSettingsView"
-            icon="icons/Sony-Playstation-Dual-Shock-16x16.png"
+            icon="icons/famfamfam-silk/controller.png"
             id="JACAVI.playerSettingsView"
             name="Player Settings View">
       </view>
@@ -95,10 +95,19 @@
                tooltip="Start Race">
          </action>
          <action
+               class="de.jacavi.rcp.actions.OpenInputDeviceSettingsAction"
+               icon="icons/famfamfam-silk/controller.png"
+               id="JACAVI.OpenInputDeviceSettingsAction"
+               label="Configure Input Devices..."
+               menubarPath="settingsMenu/settingsGroup"
+               style="push"
+               toolbarPath="settingsGroup">
+         </action>
+         <action
                class="de.jacavi.rcp.actions.PlayerSettingsAction"
-               icon="icons/Sony-Playstation-Dual-Shock-16x16.png"
+               icon="icons/famfamfam-silk/user.png"
                id="JACAVI.PlayerSettingsAction"
-               label="Player Settings"
+               label="Configure Players..."
                menubarPath="settingsMenu/settingsGroup"
                toolbarPath="settingsGroup">
          </action>
