@@ -1,8 +1,10 @@
-package de.jacavi.helper;
+package de.jacavi.rcp.util;
 
-public class Helper {
+public class OSResolverUtil {
 
     /**
+     * Checkout if it is a Windows OS
+     * 
      * @return boolean
      */
     public static boolean isWindowsOs() {
