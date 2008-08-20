@@ -46,4 +46,8 @@ public class TrackSection {
         return tile.getName();
     }
 
+    public Tile getTile() {
+        return tile;
+    }
+
 }

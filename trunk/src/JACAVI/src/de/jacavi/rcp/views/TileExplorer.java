@@ -85,6 +85,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
                 int height = image.getBounds().height;
                 Image scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
                         (int) (height * TILE_IMAGE_SCALE)));
+                usedImages.add(scaledImage);
 
                 Button tileButton = new Button(innerComposite, SWT.PUSH);
                 tileButton.setToolTipText(tile.getName());
