@@ -27,7 +27,7 @@
                 <line length="50" x1="-26" y1="5" x2="26" y2="5" />
             </slot2>
         </tile>
-        <tile id="turn90deg" name="90º turn">
+        <tile id="turn90deg" name="90Âº turn">
             <filename>turn_90deg.png</filename>
             <entryPoint x="-12" y="0" />
             <exitPoint x="0" y="-12" />
@@ -39,7 +39,7 @@
                 <quad-bezier length="40" x1="-12" y1="5" x2="5" y2="5" x3="5" y3="-12" entryToExitAngle="-90" />
             </slot2>
         </tile>
-        <tile id="turn30deg" name="30º turn">
+        <tile id="turn30deg" name="30Âº turn">
             <filename>turn_30deg.png</filename>
             <entryPoint x="-8" y="0" />
             <exitPoint x="-2" y="-2" />
@@ -80,8 +80,8 @@
     <tileset id="digital">
         <tile id="finishingStraight" name="finishing straight" isInitial="true">
             <filename>straight.png</filename>
-            <entryPoint x="50" y="-1" />
-            <exitPoint x="-50" y="-1" />
+            <entryPoint x="49" y="-1" />
+            <exitPoint x="-49" y="-1" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -92,8 +92,8 @@
         </tile>
         <tile id="straight" name="straight">
             <filename>straight.png</filename>
-            <entryPoint x="50" y="-1" />
-            <exitPoint x="-50" y="-1" />
+            <entryPoint x="49" y="0" />
+            <exitPoint x="-49" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -103,9 +103,9 @@
             </slot2>
         </tile>
         <tile id="straightShort" name="straightShort">
-            <filename>straightShort.png</filename>
-            <entryPoint x="17" y="-1" />
-            <exitPoint x="-17" y="-1" />
+            <filename>kurze_gerade.png</filename>
+            <entryPoint x="16" y="0" />
+            <exitPoint x="-16" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -114,10 +114,40 @@
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
             </slot2>
         </tile>
+        <tile id="turn30deg" name="30Âº turn">
+            <filename>kurve_30_neu.png</filename>
+            <entryPoint x="26" y="-4" />
+            <exitPoint x="-11" y="6" />
+            <entryToExitAngle>-30</entryToExitAngle>
+            <slot1>
+                <line length="100" x1="0" y1="0" x2="0" y2="0" />
+            </slot1>
+            <slot2>
+                <line length="100" x1="0" y1="0" x2="0" y2="0" />
+            </slot2>
+        </tile>
+        <tile id="turn60deg" name="60Â° turn">
+            <filename>kurve_60_neu.png</filename>
+            <entryPoint x="44" y="-12" />
+            <exitPoint x="-20" y="24" />
+            <entryToExitAngle>-60</entryToExitAngle>
+            <slot1>
+                <line length="100" x1="0" y1="0" x2="0" y2="0" />
+            </slot1>
+            <slot2>
+                <line length="100" x1="0" y1="0" x2="0" y2="0" />
+            </slot2>
+        </tile>
+        
+        
+        
+        
+        
+        
         <tile id="straightChange1" name="straightChange1">
-            <filename>straightChange1.png</filename>
-            <entryPoint x="100" y="-1" />
-            <exitPoint x="-100" y="-1" />
+            <filename>spurwechsel_OU.png</filename>
+            <entryPoint x="97" y="0" />
+            <exitPoint x="-97" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -127,9 +157,9 @@
             </slot2>
         </tile>
         <tile id="straightChange2" name="straightChange2">
-            <filename>straightChange2.png</filename>
-            <entryPoint x="100" y="-1" />
-            <exitPoint x="-100" y="-1" />
+            <filename>spurwechsel_UO.png</filename>
+            <entryPoint x="98" y="0" />
+            <exitPoint x="-98" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -139,9 +169,9 @@
             </slot2>
         </tile>
         <tile id="pitstopIn" name="pitstopIn">
-            <filename>pitstopIn.png</filename>
-            <entryPoint x="48" y="-14" />
-            <exitPoint x="-48" y="-14" />
+            <filename>pitstop_in.png</filename>
+            <entryPoint x="49" y="16" />
+            <exitPoint x="-49" y="16" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -151,9 +181,9 @@
             </slot2>
         </tile>
         <tile id="pitstopOut" name="pitstopOut">
-            <filename>pitstopOut.png</filename>
-            <entryPoint x="48" y="-14" />
-            <exitPoint x="-48" y="-14" />
+            <filename>pitstop_out.png</filename>
+            <entryPoint x="49" y="16" />
+            <exitPoint x="-49" y="16" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -163,9 +193,9 @@
             </slot2>
         </tile>
         <tile id="pitstopMiddle" name="pitstopMiddle">
-            <filename>pitstopMiddle.png</filename>
-            <entryPoint x="48" y="-14" />
-            <exitPoint x="-48" y="-14" />
+            <filename>pitstop_mitte.png</filename>
+            <entryPoint x="49" y="16" />
+            <exitPoint x="-49" y="16" />
             <entryToExitAngle>0</entryToExitAngle>
             <slot1>
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
@@ -174,42 +204,12 @@
                 <line length="100" x1="0" y1="0" x2="0" y2="0" />
             </slot2>
         </tile>
-        <tile id="turn90deg" name="90º turn">
-            <filename>turn60deg.png</filename>
-            <entryPoint x="-12" y="0" />
-            <exitPoint x="0" y="-12" />
-            <entryToExitAngle>-90</entryToExitAngle>
-            <slot1>
-                <line length="100" x1="0" y1="0" x2="0" y2="0" />
-            </slot1>
-            <slot2>
-                <line length="100" x1="0" y1="0" x2="0" y2="0" />
-            </slot2>
-        </tile>
-        <tile id="turn60deg" name="60° turn">
-            <filename>turn60deg.png</filename>
-            <entryPoint x="44" y="-13" />
-            <exitPoint x="-21" y="-24" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <slot1>
-                <line length="100" x1="0" y1="0" x2="0" y2="0" />
-            </slot1>
-            <slot2>
-                <line length="100" x1="0" y1="0" x2="0" y2="0" />
-            </slot2>
-        </tile>
-        <tile id="turn30deg" name="30º turn">
-            <filename>turn30deg.png</filename>
-            <entryPoint x="23" y="-4" />
-            <exitPoint x="-12" y="6" />
-            <entryToExitAngle>-30</entryToExitAngle>
-            <slot1>
-                <line length="100" x1="0" y1="0" x2="0" y2="0" />
-            </slot1>
-            <slot2>
-                <line length="100" x1="0" y1="0" x2="0" y2="0" />
-            </slot2>
-        </tile>
+        
+        
+        
+        
+        
+        
     </tileset>
 
 <!--
