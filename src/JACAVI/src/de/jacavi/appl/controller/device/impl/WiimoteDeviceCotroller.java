@@ -18,12 +18,13 @@ import wiiusej.wiiusejevents.wiiuseapievents.NunchukRemovedEvent;
 import wiiusej.wiiusejevents.wiiuseapievents.StatusEvent;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
+import de.jacavi.rcp.util.Check;
 
 
 
 public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener {
 
-    private ControllerSignal currentControllerSignal = new ControllerSignal();
+    private final ControllerSignal currentControllerSignal = new ControllerSignal();
 
     private Wiimote wiimote = null;
 
@@ -38,8 +39,7 @@ public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener
     }
 
     public WiimoteDeviceCotroller(Wiimote wiimote) {
-        if(wiimote == null)
-            throw new IllegalArgumentException("wiimote may not be null");
+        Check.Require(wiimote == null, "wiimote may not be null");
         this.wiimote = wiimote;
     }
 
