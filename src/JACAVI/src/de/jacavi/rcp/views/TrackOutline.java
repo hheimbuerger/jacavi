@@ -1,6 +1,8 @@
 package de.jacavi.rcp.views;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -25,6 +27,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
+import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.editors.TrackDesigner;
 
 
@@ -34,6 +37,8 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     private static Log log = LogFactory.getLog(TileExplorer.class);
 
     public static final String ID = "JACAVI.trackOutline";
+
+    private final List<Image> usedImages = new ArrayList<Image>();
 
     private TrackDesigner activeEditor;
 
@@ -50,7 +55,7 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     @Override
     public void createPartControl(Composite parent) {
 
-        tilesTableViewer = new TableViewer(parent);
+        tilesTableViewer = new TableViewer(parent, SWT.SINGLE);
         tilesTableViewer.getTable().setLinesVisible(true);
 
         // the following provokes that only one single column is painted. Otherwise two columns are painted as default
@@ -63,7 +68,12 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         tilesTableViewer.setLabelProvider(new LabelProvider() {
             @Override
             public Image getImage(Object element) {
-                return null;
+                Image image = Activator.getImageDescriptor(((TrackSection) element).getTile().getFilename())
+                        .createImage();
+                Image scaledImage = new Image(null, image.getImageData().scaledTo(16, 16));
+                usedImages.add(image);
+                usedImages.add(scaledImage);
+                return scaledImage;
             }
 
             @Override
@@ -94,29 +104,12 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
             }
         });
 
-        // listViewer.addFilter(new ViewerFilter() {
-        // @Override
-        // public boolean select(Viewer viewer, Object parentElement, Object element) {
-        //
-        // if(((Language) element).isObjectOriented)
-        // return true;
-        // else
-        // return false;
-        // }
-        // });
-        //
-        // listViewer.setSorter(new ViewerSorter() {
-        // @Override
-        // public int compare(Viewer viewer, Object e1, Object e2) {
-        // return ((Language) e1).genre.compareTo(((Language) e2).genre);
-        // }
-        //
-        // });
-
     }
 
     @Override
-    public void setFocus() {}
+    public void setFocus() {
+        tilesTableViewer.getTable().setFocus();
+    }
 
     @Override
     public void partActivated(IWorkbenchPartReference partRef) {
@@ -155,9 +148,20 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
 
     @Override
     public void propertyChanged(Object source, int propId) {
-        if(source instanceof TrackDesigner && TrackDesigner.PROP_TRACK_CHANGED == propId) {
+        // handles PROP_TRACK_CHANGED and PROP_SELECTION_CHANGE
+        if(source instanceof TrackDesigner) {
             TrackDesigner sourceDesigner = (TrackDesigner) source;
-            refresh(sourceDesigner);
+            if(TrackDesigner.PROP_TRACK_CHANGED == propId) {
+                refresh(sourceDesigner);
+            }
+
+            // if no section is selection, set the selection to null(none)
+            int selected = sourceDesigner.getTrackWidget().getSelectedTile();
+            if(selected == -1) {
+                tilesTableViewer.setSelection(null);
+            } else {
+                tilesTableViewer.getTable().select(selected);
+            }
         }
     }
 
@@ -166,5 +170,17 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         tilesTableViewer.setInput(currentTrack.getSections());
         tilesTableViewer.refresh();
         log.debug("TableViewer inside the TrackOutlineView refreshed");
+    }
+
+    /**
+     * Dispose handler that is invoked when the view is closed.
+     * <p>
+     * Used to dispose the loaded images, because each of them is managing an operating system resource.
+     */
+    @Override
+    public void dispose() {
+        super.dispose();
+        for(Image image: usedImages)
+            image.dispose();
     }
 }

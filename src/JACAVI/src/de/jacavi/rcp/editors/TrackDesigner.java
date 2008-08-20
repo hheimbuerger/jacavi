@@ -12,6 +12,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -43,9 +45,14 @@ public class TrackDesigner extends EditorPart {
     private TrackWidget trackWidget;
 
     /**
-     * A property flag for all IPropertyListeners which is fired, when the track has changed
+     * The following flag is catched from all IPropertyListeners, is fired when the track has changed
      */
     public static final int PROP_TRACK_CHANGED = 1;
+
+    /**
+     * The following flag is catched from all IPropertyListeners, is fired when a selection has changed
+     */
+    public static final int PROP_SELECTION_CHANGED = 2;
 
     @Override
     protected void setInput(IEditorInput input) {
@@ -128,6 +135,14 @@ public class TrackDesigner extends EditorPart {
                 }
             }
 
+        });
+
+        // this Listener is only for synchronization with the Track Outline View
+        trackWidget.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDown(MouseEvent e) {
+                firePropertyChange(PROP_SELECTION_CHANGED);
+            }
         });
     }
 
