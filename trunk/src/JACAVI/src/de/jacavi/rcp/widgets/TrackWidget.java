@@ -509,7 +509,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     protected void handleMouseUp(MouseEvent e) {
         switch(e.button) {
             case SELECTION_BUTTON:
-                clickEventRepetitionTimer.cancel();
+                if(clickEventRepetitionTimer != null) {
+                    clickEventRepetitionTimer.cancel();
+                    clickEventRepetitionTimer = null;
+                }
                 break;
             case PAN_BUTTON:
                 isCurrentlyPanning = false;
@@ -552,8 +555,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         if(hitTestInnerControls(e)) {
             // the current control hovering has changed!
             doesRequireRepaint = true;
-            if(clickEventRepetitionTimer != null)
+            if(clickEventRepetitionTimer != null) {
                 clickEventRepetitionTimer.cancel();
+                clickEventRepetitionTimer = null;
+            }
         }
 
         if(doesRequireRepaint)
