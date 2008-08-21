@@ -1,10 +1,10 @@
 package de.jacavi.rcp.dlg;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -26,11 +26,8 @@ import org.eclipse.swt.widgets.Text;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
-import de.jacavi.appl.controller.Devices;
 import de.jacavi.appl.controller.device.DeviceController;
-import de.jacavi.appl.controller.device.impl.JoystickDeviceController;
-import de.jacavi.appl.controller.device.impl.KeyboardDeviceController;
-import de.jacavi.appl.controller.device.impl.MouseDeviceController;
+import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.script.ScriptController;
 import de.jacavi.appl.controller.script.impl.Script;
 import de.jacavi.appl.racelogic.Player;
@@ -51,8 +48,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private final String[] inputs = new String[] { "Device", "Script" };
 
-    private final List<String> devices;
-
     private final List<String> technologies;
 
     private final Player player;
@@ -69,15 +64,17 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Color c;
 
+    private InputDeviceManager inputDeviceManager;
+
+    private ComboViewer comboViewer;
+
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
         this.player = player;
         this.parentShell = parentShell;
-        this.devices = new ArrayList<String>();
-        for(Devices d: Devices.values()) {
-            String dev = d.toString().substring(0, 1).toUpperCase() + d.toString().substring(1).toLowerCase();
-            devices.add(dev);
-        }
+
+        inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
+
         // fro only the technolgies supported by the current os
         this.technologies = OSResolverUtil.getTechnologiesByOS();
 
@@ -160,14 +157,17 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
-        comboDevices.setItems(devices.toArray(new String[devices.size()]));
+        comboViewer = new ComboViewer(comboDevices);
+        comboViewer.add(inputDeviceManager.getInputDevices().toArray(
+                new Object[inputDeviceManager.getInputDevices().size()]));
+        /*comboDevices.setItems(devices.toArray(new String[devices.size()]));
         for(int i = 0; i < devices.size(); i++) {
             if(controller instanceof DeviceController) {
                 DeviceController devController = (DeviceController) controller;
                 if(devController.getClass().getSimpleName().equals(devices.get(i)))
                     comboDevices.select(i);
             }
-        }
+        }*/
 
         CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
         labelProtocol1.setText("Technology:");
@@ -222,17 +222,17 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         if(inputs[1].equals(comboInput.getText()))
             player.setController(new Script());
         else
-            switch(Devices.valueOf(comboDevices.getText().toUpperCase())) {
+            /*switch(Devices.valueOf(comboDevices.getText().toUpperCase())) {
                 case JOYSTICK:
-                    player.setController(new JoystickDeviceController());
+                    player.setController(new GameControllerDevice());
                     break;
 
                 case KEYBOARD:
-                    player.setController(new KeyboardDeviceController());
+                    player.setController(new KeyboardDevice());
                     break;
 
                 case MOUSE:
-                    player.setController(new MouseDeviceController());
+                    player.setController(new MouseDevice());
                     break;
 
                 case WIIMOTE:
@@ -241,8 +241,8 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                     break;
                 default:
                     throw new IllegalArgumentException("No Device selected");
-            }
-        ;
+            }*/
+            ;
 
         FirstCarreraNativeLibraryFactory factory = (FirstCarreraNativeLibraryFactory) ContextLoader
                 .getBean("nativeLibraryFactoryBean");

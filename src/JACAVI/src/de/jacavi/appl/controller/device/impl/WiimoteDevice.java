@@ -22,24 +22,23 @@ import de.jacavi.rcp.util.Check;
 
 
 
-public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener {
+public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     private final ControllerSignal currentControllerSignal = new ControllerSignal();
 
     private Wiimote wiimote = null;
 
-    public WiimoteDeviceCotroller() {}
+    public WiimoteDevice(String name, Wiimote wiimote) {
+        super(name);
+        Check.Require(wiimote != null, "wiimote may not be null");
+        this.wiimote = wiimote;
+    }
 
     public Wiimote getWiimote() {
         return wiimote;
     }
 
     public void setWiimote(Wiimote wiimote) {
-        this.wiimote = wiimote;
-    }
-
-    public WiimoteDeviceCotroller(Wiimote wiimote) {
-        Check.Require(wiimote != null, "wiimote may not be null");
         this.wiimote = wiimote;
     }
 

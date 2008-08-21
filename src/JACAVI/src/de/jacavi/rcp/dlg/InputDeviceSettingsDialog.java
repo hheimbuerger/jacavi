@@ -1,5 +1,8 @@
 package de.jacavi.rcp.dlg;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
@@ -14,6 +17,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.controller.device.DeviceController;
+import de.jacavi.appl.controller.device.InputDeviceManager;
+import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 import de.jacavi.rcp.Activator;
 
 
@@ -30,8 +37,14 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
     private final Font headingFont;
 
+    private InputDeviceManager inputDeviceManager;
+
+    private List<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
+
     public InputDeviceSettingsDialog(Shell parentShell) {
         super(parentShell);
+
+        inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
 
         // prepare the images
         imageKeyboard = Activator.getImageDescriptor("/icons/input_devices/keyboard.png").createImage();
@@ -140,33 +153,40 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
     }
 
     private void createKeyboardSection(Composite groupKeyboard) {
-        Button checkboxKeyboard1 = new Button(groupKeyboard, SWT.CHECK);
-        checkboxKeyboard1.setText("keyboard 1 active");
-        checkboxKeyboard1.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+        List<DeviceController> inputDevices = inputDeviceManager.getInputDevicesByType(KeyboardDevice.class);
 
-        Button checkboxKeyboard2 = new Button(groupKeyboard, SWT.CHECK);
-        checkboxKeyboard2.setText("keyboard 2 active");
-        checkboxKeyboard2.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+        for(DeviceController d: inputDevices) {
+            Button checkboxKeyboard = new Button(groupKeyboard, SWT.CHECK);
+            checkboxKeyboard.setText(d.getName());
+            checkboxKeyboard.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+            checkboxKeyboard.setData(d.getId());
+            checkboxKeyboard.setSelection(true);
+            checkboxesKeyboardConfigs.add(checkboxKeyboard);
+        }
     }
 
     private void createMouseSection(Composite groupMouse) {
         Button checkboxMouse1 = new Button(groupMouse, SWT.CHECK);
         checkboxMouse1.setText("mouse 1 active");
         checkboxMouse1.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+        checkboxMouse1.setEnabled(false);
 
         Button checkboxMouse2 = new Button(groupMouse, SWT.CHECK);
         checkboxMouse2.setText("mouse 2 active");
         checkboxMouse2.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+        checkboxMouse2.setEnabled(false);
     }
 
     private void createGameControllerSection(Composite groupGameController) {
         Button checkboxGameController1 = new Button(groupGameController, SWT.CHECK);
         checkboxGameController1.setText("game controller 1 active");
         checkboxGameController1.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+        checkboxGameController1.setEnabled(false);
 
         Button checkboxGameController2 = new Button(groupGameController, SWT.CHECK);
         checkboxGameController2.setText("game controller 2 active");
         checkboxGameController2.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
+        checkboxGameController2.setEnabled(false);
     }
 
     private void createWiimoteSection(Composite groupWiimote) {
@@ -177,9 +197,14 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
     @Override
     protected void okPressed() {
+        inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
+        for(Button b: checkboxesKeyboardConfigs) {
+            if(b.getSelection())
+                inputDeviceManager.addInputDevice(new KeyboardDevice(b.getText()));
+        }
+
         super.okPressed();
     }
-
     /*public static void main(String[] args) {
         Display display = new Display();
         Shell shell = new Shell(display);

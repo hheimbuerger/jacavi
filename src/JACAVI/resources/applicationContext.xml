@@ -21,7 +21,9 @@
 		<constructor-arg ref="raceBean"></constructor-arg>
 		<property name="raceTimerInterval" ref="raceTimerIntervalValueBean"></property>
 	</bean>
-	
+
+    <bean id="inputDeviceManagerBean" class="de.jacavi.appl.controller.device.InputDeviceManager" />
+
 	<bean id="nativeLibraryFactoryBean" class="de.jacavi.hal.FirstCarreraNativeLibraryFactory">
 	</bean> 
 	
@@ -32,14 +34,18 @@
 					<property name="id" value="1" />
 					<property name="name" value="Player 1" />
 					<property name="controller">
-						<bean id="mouseControlBean" class="de.jacavi.appl.controller.device.impl.MouseDeviceController" />
+						<bean id="mouseControlBean" class="de.jacavi.appl.controller.device.impl.MouseDevice">
+                            <constructor-arg index="0" value="mouse" />
+                        </bean>
 					</property>
 				</bean>
 				<bean id="player2" class="de.jacavi.appl.racelogic.Player">
 					<property name="id" value="2" />
 					<property name="name" value="Player 2" />
 					<property name="controller">
-						<bean id="wiimoteControlBean" class="de.jacavi.appl.controller.device.impl.WiimoteDeviceCotroller" />
+						<bean id="gamecontrollerControlBean" class="de.jacavi.appl.controller.device.impl.GameControllerDevice">
+                            <constructor-arg index="0" value="gamectrl" />
+                        </bean>
 					</property>
 				</bean>
 			</list>
