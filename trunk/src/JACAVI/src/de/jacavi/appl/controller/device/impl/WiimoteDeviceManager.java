@@ -39,7 +39,7 @@ public class WiimoteDeviceManager {
      */
     public Wiimote getWiimote(int id) {
         // check precondition
-        Check.Require(id > wiimotes.size() || id <= 0, "id may not be <=0 or > available wiimotes");
+        Check.Require(id <= wiimotes.size() || id > 0, "id may not be <=0 or > available wiimotes");
         return wiimotes.get(id - 1);
     }
 }

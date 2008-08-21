@@ -39,7 +39,7 @@ public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener
     }
 
     public WiimoteDeviceCotroller(Wiimote wiimote) {
-        Check.Require(wiimote == null, "wiimote may not be null");
+        Check.Require(wiimote != null, "wiimote may not be null");
         this.wiimote = wiimote;
     }
 
