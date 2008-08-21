@@ -41,7 +41,7 @@ public class OSResolverUtil {
             retList.add(type.toString());
         }
         // get the config Bean
-        Object noWindowsTechBean = ContextLoader.getBean("noWindowsHALTechnologies");
+        Object noWindowsTechBean = ContextLoader.getBean("noWindowsHALTechnologiesBean");
         List<String> noWindowsTechList = null;
         // make cast a bit more save
         if(noWindowsTechBean instanceof List) {
