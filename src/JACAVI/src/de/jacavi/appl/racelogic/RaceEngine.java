@@ -6,9 +6,13 @@ import java.util.TimerTask;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.hal.TechnologyController;
+import de.jacavi.rcp.util.Check;
 
 
 
+/**
+ * @author fro
+ */
 public class RaceEngine extends TimerTask {
 
     private Race race = null;
@@ -27,8 +31,7 @@ public class RaceEngine extends TimerTask {
 
     public RaceEngine(Race race) {
         // preconditions
-        if(race == null)
-            throw new IllegalArgumentException("race may not be null");
+        Check.Require(race != null, "race may not be null");
 
         // needs
         this.race = race;
