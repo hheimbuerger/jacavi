@@ -64,13 +64,15 @@ public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener
 
     @Override
     public void onMotionSensingEvent(MotionSensingEvent arg0) {
-        int speed = prepareSignal(arg0.getOrientation().getPitch());
-        currentControllerSignal.speed = speed;
+        int speed = normaliseSpeedSignal((int) arg0.getOrientation().getPitch());
+        currentControllerSignal.setSpeed(speed);
     }
 
-    private int prepareSignal(float pitch) {
+    @Override
+    public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
         int retVal = 0;
-        float tmpPitch = pitch - 1;
+        float tmpPitch = deviceSpecificInputSpeedSignal * -1;
+
         if(tmpPitch >= 90)
             retVal = 100;
         else if(tmpPitch <= 0)
@@ -84,8 +86,11 @@ public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener
 
     @Override
     public void onButtonsEvent(WiimoteButtonsEvent arg0) {
-    // TODO Auto-generated method stub
-
+        // TODO: Check the other options
+        if(arg0.isButtonBJustPressed())
+            currentControllerSignal.setTrigger(true);
+        else
+            currentControllerSignal.setTrigger(false);
     }
 
     @Override
