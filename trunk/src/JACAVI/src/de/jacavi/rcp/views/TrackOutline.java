@@ -55,7 +55,7 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     @Override
     public void createPartControl(Composite parent) {
 
-        tilesTableViewer = new TableViewer(parent, SWT.SINGLE);
+        tilesTableViewer = new TableViewer(parent, SWT.SINGLE | SWT.FULL_SELECTION);
         tilesTableViewer.getTable().setLinesVisible(true);
 
         // the following provokes that only one single column is painted. Otherwise two columns are painted as default
