@@ -7,7 +7,10 @@ import de.jacavi.appl.controller.device.DeviceController;
 
 
 
-public class MouseDeviceController implements DeviceController {
+public class GameControllerDevice extends DeviceController {
+    public GameControllerDevice(String name) {
+        super(name);
+    }
 
     @Override
     public boolean initialize(Composite guiElement) {
@@ -32,5 +35,4 @@ public class MouseDeviceController implements DeviceController {
         // TODO Auto-generated method stub
         return 0;
     }
-
 }

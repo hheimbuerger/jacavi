@@ -7,12 +7,9 @@ import de.jacavi.appl.controller.device.DeviceController;
 
 
 
-public class KeyboardDeviceController implements DeviceController {
-
-    @Override
-    public void cleanup() {
-    // TODO Auto-generated method stub
-
+public class MouseDevice extends DeviceController {
+    public MouseDevice(String name) {
+        super(name);
     }
 
     @Override
@@ -25,6 +22,12 @@ public class KeyboardDeviceController implements DeviceController {
     public ControllerSignal poll() {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    @Override
+    public void cleanup() {
+    // TODO Auto-generated method stub
+
     }
 
     @Override
