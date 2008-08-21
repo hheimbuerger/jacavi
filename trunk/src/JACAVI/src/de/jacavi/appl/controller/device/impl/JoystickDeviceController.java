@@ -27,4 +27,10 @@ public class JoystickDeviceController implements DeviceController {
 
     }
 
+    @Override
+    public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

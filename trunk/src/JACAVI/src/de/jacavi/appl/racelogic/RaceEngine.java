@@ -21,14 +21,6 @@ public class RaceEngine extends TimerTask {
 
     private int raceTimerInterval = 0;
 
-    public Timer getRaceTimer() {
-        return raceTimer;
-    }
-
-    public void setRaceTimerInterval(int raceTimerInterval) {
-        this.raceTimerInterval = raceTimerInterval;
-    }
-
     public RaceEngine(Race race) {
         // preconditions
         Check.Require(race != null, "race may not be null");
@@ -37,6 +29,14 @@ public class RaceEngine extends TimerTask {
         this.race = race;
         raceTimer = new Timer();
         startTimer();
+    }
+
+    public Timer getRaceTimer() {
+        return raceTimer;
+    }
+
+    public void setRaceTimerInterval(int raceTimerInterval) {
+        this.raceTimerInterval = raceTimerInterval;
     }
 
     private void startTimer() {
@@ -56,10 +56,10 @@ public class RaceEngine extends TimerTask {
             TechnologyController technologyController = player.getTechnologyController();
             ControllerSignal signal = carController.poll();
             // change track
-            if(signal.trigger)
+            if(signal.isTrigger())
                 technologyController.toggleSwitch(carID);
             // set new speed
-            technologyController.setSpeed(carID, signal.speed);
+            technologyController.setSpeed(carID, signal.getSpeed());
         }
     }
 }
