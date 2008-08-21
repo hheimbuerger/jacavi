@@ -2,6 +2,6 @@
 
 <track name="demo_crossing" tileset="digital">
 
-	<section id="turn60deg" />
+	<section id="straight" />
 	
 </track>
