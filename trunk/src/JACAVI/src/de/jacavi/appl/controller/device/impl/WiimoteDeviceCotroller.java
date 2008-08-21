@@ -74,9 +74,9 @@ public class WiimoteDeviceCotroller implements DeviceController, WiimoteListener
         float tmpPitch = deviceSpecificInputSpeedSignal * -1;
 
         if(tmpPitch >= 90)
-            retVal = 100;
-        else if(tmpPitch <= 0)
             retVal = 0;
+        else if(tmpPitch <= 0)
+            retVal = 100;
         else {
             tmpPitch = tmpPitch * 1.1111111111111111111111f;
             retVal = (int) tmpPitch;
