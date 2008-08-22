@@ -1,8 +1,8 @@
 package de.jacavi.appl.track;
 
-import java.awt.image.BufferedImage;
-
 import org.eclipse.swt.graphics.Point;
+
+import de.jacavi.rcp.util.MultiStyleImage;
 
 
 
@@ -26,7 +26,7 @@ public class TrackSection {
         return tile.getExitPoint();
     }
 
-    public BufferedImage getImage() {
+    public MultiStyleImage getImage() {
         return tile.getSectionImage();
     }
 

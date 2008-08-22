@@ -617,11 +617,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /**
      * Helper method for drawing a point on the screen. Mostly used for debugging purposes.
      */
-    private void markPoint(Graphics2D g, Point2D currentTrackPos, Color color) {
+    /*private void markPoint(Graphics2D g, Point2D currentTrackPos, Color color) {
         g.setColor(color);
         g.drawRect(new Double(currentTrackPos.getX() - 1).intValue(),
                 new Double(currentTrackPos.getY() - 1).intValue(), 3, 3);
-    }
+    }*/
 
     /**
      * Renders the currently displayed track.
@@ -694,9 +694,13 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransformation,
                     AffineTransformOp.TYPE_BICUBIC);
 
-            // now we can draw the image -- the placement is already included in the transformation operation, so the
+            // now we can draw the image (using the negated version if it's the currently selected one) -- the placement
+            // is already included in the transformation operation, so the
             // coordinates used here are simple the origin coordinates
-            g.drawImage(s.getImage(), imagePlacementOperation, 0, 0);
+            if(counter++ == selectedTile)
+                g.drawImage(s.getImage().getHighlightedImage(), imagePlacementOperation, 0, 0);
+            else
+                g.drawImage(s.getImage().getColorImage(), imagePlacementOperation, 0, 0);
 
             // DEBUG: draw the slots on top
             AffineTransform slotPlacementTransformation = new AffineTransform();
@@ -711,7 +715,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 g.draw(slotPlacementTransformation.createTransformedShape(sp.getShape()));
 
             // DEBUG: draw the current track position
-            markPoint(g, currentTrackPos, Color.GREEN);
+            // markPoint(g, currentTrackPos, Color.GREEN);
 
             // DEBUG: draw the current 'car' position
             if(s == car1Position.section) {
@@ -728,7 +732,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
             // bounding box -- that way we'll get a bounding box for the whole track in the end
             Rectangle2D finalImageBoundingBox = viewportTransformation.createTransformedShape(
-                    imagePlacementOperation.getBounds2D(s.getImage())).getBounds2D();
+                    imagePlacementOperation.getBounds2D(s.getImage().getColorImage())).getBounds2D();
             if(lastTrackBoundingBox == null)
                 lastTrackBoundingBox = finalImageBoundingBox;
             else
@@ -743,9 +747,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             lastTileShapeList.add(viewportTransformation.createTransformedShape(tileShape));
 
             // if the current image is selected, draw its shape to indicate the selection to the user
-            g.setColor(Color.YELLOW);
-            if(counter++ == selectedTile)
-                g.draw(tileShape);
+            /*            g.setColor(Color.YELLOW);
+                        if(counter++ == selectedTile)
+                            g.draw(tileShape);*/
 
             // calculate the new track position by taking current track position and applying the
             // entryToExitPointTransformation

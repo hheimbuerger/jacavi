@@ -1,13 +1,10 @@
 package de.jacavi.appl.track;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-
-import javax.imageio.ImageIO;
 
 import org.eclipse.swt.graphics.Point;
 
-import de.jacavi.rcp.Activator;
+import de.jacavi.rcp.util.MultiStyleImage;
 
 
 
@@ -17,7 +14,7 @@ public class Tile {
 
     private final String name;
 
-    private final BufferedImage sectionImage;
+    private final MultiStyleImage sectionImage;
 
     private final Point entryPoint;
 
@@ -33,7 +30,7 @@ public class Tile {
 
     public Tile(String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
             int entryToExitAngle, Slot slot1, Slot slot2) throws IOException {
-        sectionImage = ImageIO.read(Activator.getResourceAsStream(filename));
+        sectionImage = new MultiStyleImage(filename);
 
         this.filename = filename;
         this.name = name;
@@ -49,7 +46,7 @@ public class Tile {
         return filename;
     }
 
-    public BufferedImage getSectionImage() {
+    public MultiStyleImage getSectionImage() {
         return sectionImage;
     }
 

@@ -9,7 +9,7 @@ import java.io.IOException;
 
 import org.eclipse.swt.graphics.Point;
 
-import de.jacavi.rcp.util.GrayscalableImage;
+import de.jacavi.rcp.util.MultiStyleImage;
 
 
 
@@ -18,7 +18,7 @@ public class ImageButtonControl extends InnerControl {
 
     final static int OFFSET = 4;
 
-    final GrayscalableImage image;
+    final MultiStyleImage image;
 
     private Point position;
 
@@ -27,7 +27,8 @@ public class ImageButtonControl extends InnerControl {
     private final boolean isTop;
 
     public ImageButtonControl(String imageFilename, int indexFromRight, boolean isTop) throws IOException {
-        this.image = new GrayscalableImage(imageFilename, true);
+        this.image = new MultiStyleImage(imageFilename);
+        this.image.prepareGrayscaleImage();
         this.indexFromRight = indexFromRight;
         this.isTop = isTop;
     }
@@ -40,8 +41,8 @@ public class ImageButtonControl extends InnerControl {
 
     @Override
     public void reposition(Point size) {
-        final int IMAGE_WIDTH = image.getCurrentImage().getWidth();
-        final int IMAGE_HEIGHT = image.getCurrentImage().getHeight();
+        final int IMAGE_WIDTH = image.getWidth();
+        final int IMAGE_HEIGHT = image.getHeight();
         position = new Point(size.x - MARGIN - IMAGE_WIDTH - (indexFromRight * (IMAGE_WIDTH + OFFSET)), (isTop ? MARGIN
                 : size.y - IMAGE_HEIGHT - MARGIN));
         shape = image.getShape(position);
