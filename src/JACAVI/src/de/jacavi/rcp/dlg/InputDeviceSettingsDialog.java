@@ -1,11 +1,18 @@
 package de.jacavi.rcp.dlg;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -21,7 +28,10 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
+import de.jacavi.appl.controller.device.impl.WiimoteDevice;
+import de.jacavi.appl.controller.device.impl.WiimoteDeviceManager;
 import de.jacavi.rcp.Activator;
+import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
@@ -35,11 +45,15 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
     private final Image imageWiimote;
 
+    private final Image imageWiimoteButtons;
+
     private final Font headingFont;
 
     private InputDeviceManager inputDeviceManager;
 
     private List<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
+
+    private org.eclipse.swt.widgets.List listConnectedWiimotes;
 
     public InputDeviceSettingsDialog(Shell parentShell) {
         super(parentShell);
@@ -51,10 +65,12 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         imageMouse = Activator.getImageDescriptor("/icons/input_devices/mouse.png").createImage();
         imageGameController = Activator.getImageDescriptor("/icons/input_devices/game_controller.png").createImage();
         imageWiimote = Activator.getImageDescriptor("/icons/input_devices/wiimote.png").createImage();
+        imageWiimoteButtons = Activator.getImageDescriptor("/icons/wiimote_buttons.png").createImage();
         /*imageKeyboard = new Image(Display.getDefault(), "icons/input_devices/keyboard.png");
         imageMouse = new Image(Display.getDefault(), "icons/input_devices/mouse.png");
         imageGameController = new Image(Display.getDefault(), "icons/input_devices/game_controller.png");
-        imageWiimote = new Image(Display.getDefault(), "icons/input_devices/wiimote.png");*/
+        imageWiimote = new Image(Display.getDefault(), "icons/input_devices/wiimote.png");
+        imageWiimoteButtons = new Image(Display.getDefault(), "icons/wiimote_buttons.png");*/
 
         // prepare the font
         headingFont = new Font(Display.getDefault(), "Arial", 11, SWT.BOLD);
@@ -66,6 +82,7 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         imageMouse.dispose();
         imageGameController.dispose();
         imageWiimote.dispose();
+        imageWiimoteButtons.dispose();
         headingFont.dispose();
         return super.close();
     }
@@ -83,6 +100,11 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         setMessage("Please initialize and configure the input devices you want to use in races.",
                 IMessageProvider.INFORMATION);
         return super.createButtonBar(parent);
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
     }
 
     @Override
@@ -114,7 +136,7 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         separator1.setLayoutData(separatorLayoutData);
         separator2.setLayoutData(separatorLayoutData);
         separator3.setLayoutData(separatorLayoutData);
-        GridData compositeLayoutData = new GridData(GridData.FILL, GridData.BEGINNING, true, false);
+        GridData compositeLayoutData = new GridData(GridData.FILL, GridData.FILL, true, true);
         groupKeyboard.setLayoutData(compositeLayoutData);
         groupMouse.setLayoutData(compositeLayoutData);
         groupGameController.setLayoutData(compositeLayoutData);
@@ -139,7 +161,7 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
     private void createSectionHeader(Composite group, String heading, Image image) {
         GridLayout grid = new GridLayout(1, true);
-        grid.verticalSpacing = 10;
+        grid.verticalSpacing = 5;
         group.setLayout(grid);
 
         Label labelHeading = new Label(group, SWT.NONE);
@@ -190,9 +212,96 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
     }
 
     private void createWiimoteSection(Composite groupWiimote) {
-        Button buttonDetectWiimotes = new Button(groupWiimote, SWT.PUSH);
+        // create the composite used to hold all the inner widgets
+        Composite c = new Composite(groupWiimote, SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+
+        // create the layout manager for laying out the inner widgets
+        GridLayout l = new GridLayout(1, true);
+        l.verticalSpacing = 5;
+        c.setLayout(l);
+
+        // create the "Connected devices:" label
+        Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
+        labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelConnectedWiimotes.setText("Connected devices:");
+
+        listConnectedWiimotes = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
+        GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
+        listLayout.widthHint = 100;
+        listLayout.heightHint = 50;
+        listConnectedWiimotes.setLayoutData(listLayout);
+        updateConnectedWiimotesList(listConnectedWiimotes);
+
+        // create the label describing the setup process (part 1)
+        Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
+        labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelWiimoteInfo1
+                .setText("Redetecting will drop all existing connections. To redetect, pair all devices via Bluetooth, then hold");
+
+        // create the label used to show the bitmap with the two buttons
+        Label labelWiimoteButtons = new Label(c, SWT.NONE);
+        labelWiimoteButtons.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, false, false));
+        labelWiimoteButtons.setImage(imageWiimoteButtons);
+
+        // create the label describing the setup process (part 2)
+        Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);
+        labelWiimoteInfo2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelWiimoteInfo2.setText("on all devices while clicking the button below.");
+
+        // create the button to start a new detection
+        Button buttonDetectWiimotes = new Button(c, SWT.PUSH);
+        buttonDetectWiimotes.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
         buttonDetectWiimotes.setText("Detect Wii remotes");
-        buttonDetectWiimotes.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
+        buttonDetectWiimotes.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                InputDeviceSettingsDialog.this.handleClickWiimoteDetection(e);
+            }
+        });
+    }
+
+    private void updateConnectedWiimotesList(org.eclipse.swt.widgets.List listConnectedWiimotes) {
+        listConnectedWiimotes.removeAll();
+        for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
+            listConnectedWiimotes.add(d.toString());
+    }
+
+    protected void handleClickWiimoteDetection(SelectionEvent e) {
+        // remove previously connected devices from the device manager
+        inputDeviceManager.removeInputDevicesByType(WiimoteDevice.class);
+
+        // show the progress dialog while detecting devices
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            @Override
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                monitor.setTaskName("Please stand by while available Wiimotes are detected.");
+
+                // run the detection
+                WiimoteDeviceManager wiimoteDeviceManager = new WiimoteDeviceManager();
+                int numWiimotesConnected = wiimoteDeviceManager.scanForWiimotes();
+
+                // add the detected devices to the device manager
+                for(int i = 0; i < numWiimotesConnected; i++)
+                    inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager
+                            .getWiimote(i)));
+
+                /*// FIXME: DEBUG
+                Thread.sleep(5000);
+                inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote 1", null));*/
+            }
+        };
+        try {
+            ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(getShell());
+            progressMonitorDialog.run(true, false, op);
+        } catch(InvocationTargetException e1) {
+            ExceptionHandler.handleException(e1.getCause(), true);
+        } catch(InterruptedException e1) {
+            ExceptionHandler.handleException(e1, true);
+        }
+
+        // update the list of
+        updateConnectedWiimotesList(listConnectedWiimotes);
     }
 
     @Override
@@ -205,6 +314,7 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
         super.okPressed();
     }
+
     /*public static void main(String[] args) {
         Display display = new Display();
         Shell shell = new Shell(display);
