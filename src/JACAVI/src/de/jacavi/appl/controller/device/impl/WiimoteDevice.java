@@ -106,8 +106,8 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     @Override
     public void onDisconnectionEvent(DisconnectionEvent arg0) {
-    // TODO Auto-generated method stub
-
+        // TODO Auto-generated method stub
+        System.out.println("Disconnection " + arg0.getWiimoteId());
     }
 
     @Override
