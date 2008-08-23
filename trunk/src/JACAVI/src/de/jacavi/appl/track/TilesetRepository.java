@@ -134,7 +134,7 @@ public class TilesetRepository {
         }
 
         tiles.get(tileset).put(tileID,
-                new Tile(filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, slot1, slot2));
+                new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, slot1, slot2));
     }
 
     private Slot importSlot(TileSet tileset, Element tileDataElement)
