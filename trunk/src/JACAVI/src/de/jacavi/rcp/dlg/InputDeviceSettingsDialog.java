@@ -49,9 +49,9 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
     private final Font headingFont;
 
-    private InputDeviceManager inputDeviceManager;
+    private final InputDeviceManager inputDeviceManager;
 
-    private List<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
+    private final List<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
 
     private org.eclipse.swt.widgets.List listConnectedWiimotes;
 
@@ -66,11 +66,13 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         imageGameController = Activator.getImageDescriptor("/icons/input_devices/game_controller.png").createImage();
         imageWiimote = Activator.getImageDescriptor("/icons/input_devices/wiimote.png").createImage();
         imageWiimoteButtons = Activator.getImageDescriptor("/icons/wiimote_buttons.png").createImage();
-        /*imageKeyboard = new Image(Display.getDefault(), "icons/input_devices/keyboard.png");
-        imageMouse = new Image(Display.getDefault(), "icons/input_devices/mouse.png");
-        imageGameController = new Image(Display.getDefault(), "icons/input_devices/game_controller.png");
-        imageWiimote = new Image(Display.getDefault(), "icons/input_devices/wiimote.png");
-        imageWiimoteButtons = new Image(Display.getDefault(), "icons/wiimote_buttons.png");*/
+        /*
+         * imageKeyboard = new Image(Display.getDefault(), "icons/input_devices/keyboard.png"); imageMouse = new
+         * Image(Display.getDefault(), "icons/input_devices/mouse.png"); imageGameController = new
+         * Image(Display.getDefault(), "icons/input_devices/game_controller.png"); imageWiimote = new
+         * Image(Display.getDefault(), "icons/input_devices/wiimote.png"); imageWiimoteButtons = new
+         * Image(Display.getDefault(), "icons/wiimote_buttons.png");
+         */
 
         // prepare the font
         headingFont = new Font(Display.getDefault(), "Arial", 11, SWT.BOLD);
@@ -282,13 +284,14 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
                 int numWiimotesConnected = wiimoteDeviceManager.scanForWiimotes();
 
                 // add the detected devices to the device manager
-                for(int i = 0; i < numWiimotesConnected; i++)
+                for(int i = 1; i <= numWiimotesConnected; i++)
                     inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager
                             .getWiimote(i)));
 
-                /*// FIXME: DEBUG
-                Thread.sleep(5000);
-                inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote 1", null));*/
+                /*
+                 * // FIXME: DEBUG Thread.sleep(5000); inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote 1",
+                 * null));
+                 */
             }
         };
         try {
@@ -315,11 +318,8 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         super.okPressed();
     }
 
-    /*public static void main(String[] args) {
-        Display display = new Display();
-        Shell shell = new Shell(display);
-        InputDeviceSettingsDialog dlg = new InputDeviceSettingsDialog(shell);
-        dlg.open();
-        display.dispose();
-    }*/
+    /*
+     * public static void main(String[] args) { Display display = new Display(); Shell shell = new Shell(display);
+     * InputDeviceSettingsDialog dlg = new InputDeviceSettingsDialog(shell); dlg.open(); display.dispose(); }
+     */
 }
