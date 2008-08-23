@@ -11,10 +11,10 @@ Require-Bundle: org.eclipse.ui;bundle-version="3.4.0",
  org.junit4
 Eclipse-LazyStart: true
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: libs/spring-2.0.jar,
- .,
+Bundle-ClassPath: .,
  libs/commons-logging-1.1.1.jar,
  libs/log4j-1.2.15.jar,
+ libs/spring-2.5.5.jar,
  libs/j2d4swt-2.3.0.jar,
  libs/wiiusej.jar
 Bundle-Vendor: JaCaVi - Team
