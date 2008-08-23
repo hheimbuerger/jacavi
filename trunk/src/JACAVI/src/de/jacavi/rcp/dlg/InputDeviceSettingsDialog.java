@@ -91,7 +91,7 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
     @Override
     protected Control createContents(Composite parent) {
-        getShell().setSize(700, 700);
+        getShell().setSize(700, 500);
         return super.createContents(parent);
     }
 
