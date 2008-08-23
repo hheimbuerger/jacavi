@@ -3,6 +3,7 @@ package de.jacavi.appl.track;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -12,7 +13,16 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.FactoryConfigurationError;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -247,8 +257,44 @@ public class Track {
         this.trackName = trackName;
     }
 
-    public void saveToXml(String filename) {
-        throw new RuntimeException("Not yet implemented.");
+    /**
+     * Writes the current track to a file.
+     * 
+     * @param filename
+     *            the file to save the track to
+     * @throws (various exceptions) thrown when saving fails
+     */
+    public void saveToXml(String filename) throws FileNotFoundException, XMLStreamException, FactoryConfigurationError,
+            TransformerException, ParserConfigurationException {
+        // create the FileOutputStream and the DocumentBuilder
+        FileOutputStream fos = new FileOutputStream(filename);
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        DOMImplementation impl = builder.getDOMImplementation();
+
+        // create the document and the root element
+        Document document = impl.createDocument(null, null, null);
+        Element rootElement = document.createElement("track");
+        rootElement.setAttribute("name", trackName);
+        rootElement.setAttribute("tileset", tileset.toString().toLowerCase());
+        document.appendChild(rootElement);
+
+        // append child elements for all the track sections
+        for(TrackSection ts: sections) {
+            Element sectionElement = document.createElement("section");
+            sectionElement.setAttribute("id", ts.getTile().getId());
+            rootElement.appendChild(sectionElement);
+        }
+
+        // transform the Document into a String
+        DOMSource domSource = new DOMSource(document);
+        TransformerFactory tf = TransformerFactory.newInstance();
+        Transformer transformer = tf.newTransformer();
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.transform(domSource, new StreamResult(fos));
     }
 
     private Document parseTrackFile(InputStream is) throws ParserConfigurationException, SAXException, IOException {
@@ -263,7 +309,7 @@ public class Track {
 
         // parse the XML file
         Document document = parseTrackFile(inputStream);
-        trackName = document.getDocumentElement().getAttribute("tileset");
+        trackName = document.getDocumentElement().getAttribute("name");
         String tilesetID = document.getDocumentElement().getAttribute("tileset");
         tileset = TileSet.valueOf(tilesetID.toUpperCase());
 

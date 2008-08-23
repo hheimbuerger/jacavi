@@ -28,10 +28,11 @@ public class Tile {
 
     private final Slot slot2;
 
-    public Tile(String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
-            int entryToExitAngle, Slot slot1, Slot slot2) throws IOException {
-        sectionImage = new MultiStyleImage(filename);
+    private final String id;
 
+    public Tile(String id, String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
+            int entryToExitAngle, Slot slot1, Slot slot2) throws IOException {
+        this.id = id;
         this.filename = filename;
         this.name = name;
         this.isInitial = isInitial;
@@ -40,10 +41,20 @@ public class Tile {
         this.entryToExitAngle = new Angle(entryToExitAngle);
         this.slot1 = slot1;
         this.slot2 = slot2;
+
+        sectionImage = new MultiStyleImage(filename);
+    }
+
+    public String getId() {
+        return id;
     }
 
     public String getFilename() {
         return filename;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public MultiStyleImage getSectionImage() {
@@ -60,10 +71,6 @@ public class Tile {
 
     public Angle getEntryToExitAngle() {
         return entryToExitAngle;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public boolean isInitial() {

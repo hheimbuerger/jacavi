@@ -1,7 +1,6 @@
 package de.jacavi.rcp.editors;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.commons.logging.Log;
@@ -71,21 +70,14 @@ public class TrackDesigner extends EditorPart {
         dlg.setFilterExtensions(filterExt);
         String selected = dlg.open();
         try {
-
-            // TODO: currentTrack.saveToXml(filename);
-
-            FileOutputStream fo = new FileOutputStream(selected);
-            fo.write(10);
-            fo.flush();
-            fo.close();
+            currentTrack.saveToXml(selected);
 
             log.info("Track saved to " + selected);
         } catch(FileNotFoundException e) {
             ExceptionHandler.handleException(e, log, "File could not be found", true, "Error", new Status(
                     IStatus.ERROR, "JACAVI", e.toString()));
-        } catch(IOException e) {
-            ExceptionHandler.handleException(e, log, "An IOException occured", true, "Error", new Status(IStatus.ERROR,
-                    "JACAVI", e.toString()));
+        } catch(Exception e) {
+            ExceptionHandler.handleException(e, true);
         }
 
         monitor.done();
