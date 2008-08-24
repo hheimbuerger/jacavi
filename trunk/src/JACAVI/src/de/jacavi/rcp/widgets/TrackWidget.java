@@ -1,6 +1,9 @@
 package de.jacavi.rcp.widgets;
 
+import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
@@ -8,6 +11,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.RoundRectangle2D;
 import java.awt.image.AffineTransformOp;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,6 +42,9 @@ import org.holongate.j2d.J2DCanvas;
 import org.holongate.j2d.J2DRegistry;
 import org.holongate.j2d.J2DUtilities;
 
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.controller.device.DeviceController;
+import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.DirectedPoint;
 import de.jacavi.appl.track.LaneSection;
@@ -183,6 +190,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The bounding box of the whole track of the last rendering (used to determine scrolling limits). */
     private Rectangle2D lastTrackBoundingBox;
 
+    private final Font widgetFont;
+
     private static enum InnerControlID {
         NONE, SCROLLER_TOP, SCROLLER_RIGHT, SCROLLER_BOTTOM, SCROLLER_LEFT, ROTATION_CLOCKWISE, ROTATION_COUNTER_CLOCKWISE, ROTATION_RESET, ZOOM_IN, ZOOM_OUT, ZOOM_RESET
     }
@@ -265,6 +274,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         if(graphics2DFactoryClassName.equals("org.holongate.j2d.SWTGraphics2DFactory"))
             logger
                     .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
+
+        // prepare the font
+        widgetFont = new Font("Arial", Font.BOLD, 10);
 
         // initialize the inner controls
         initializeInnerControls();
@@ -781,6 +793,54 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         g.draw(rotatedCar);
     }
 
+    private void drawThrustGauges(Graphics2D g) {
+        final BasicStroke stroke = new BasicStroke(1.0f, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER);
+        final int LEFT_MARGIN = 40;
+        final int TOP_MARGIN = 40;
+        final int WIDTH = 20;
+        final int HEIGHT = 100;
+        final int OFFSET = 20;
+
+        InputDeviceManager inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
+
+        int i = 0;
+        // FIXME: This should be taken from the players, not straight from the devices!
+        for(DeviceController dc: inputDeviceManager.getInputDevices()) {
+            // determine the current state
+            String name = dc.getName();
+            int speed = dc.poll().getSpeed();
+
+            // calculate the gauge positions
+            int leftOffset = LEFT_MARGIN + (i * (WIDTH + OFFSET));
+            RoundRectangle2D outerGauge = new RoundRectangle2D.Double(leftOffset, TOP_MARGIN, WIDTH, HEIGHT, 5, 5);
+            Rectangle2D gradientClip = new Rectangle2D.Double(leftOffset, TOP_MARGIN + (HEIGHT - speed), WIDTH, HEIGHT
+                    - (HEIGHT - speed));
+            GradientPaint gradient = new GradientPaint(new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN - 20),
+                    Color.GREEN, new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN + HEIGHT + 20), Color.RED);
+
+            // draw the gauge
+            g.setPaint(gradient);
+            g.setClip(gradientClip);
+            g.fill(outerGauge);
+            g.setClip(null);
+            g.setStroke(stroke);
+            g.setColor(Color.BLACK);
+            g.draw(outerGauge);
+
+            // draw the current speed into the gauge
+            g.setFont(widgetFont);
+            g.setColor(Color.BLACK);
+            int speedWidth = g.getFontMetrics(widgetFont).stringWidth(String.valueOf(speed));
+            g.drawString(String.valueOf(speed), leftOffset + WIDTH / 2 - speedWidth / 2 + 1, TOP_MARGIN + HEIGHT - 20);
+
+            // draw the player name below the gauge
+            int nameWidth = g.getFontMetrics(widgetFont).stringWidth(name);
+            g.drawString(name, leftOffset + WIDTH / 2 - nameWidth / 2, TOP_MARGIN + HEIGHT + (i % 2 == 0 ? 15 : 28));
+
+            i++;
+        }
+    }
+
     /**
      * Invoked by base class methods to trigger an actual repaint. Not to be called directly!
      */
@@ -811,7 +871,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             for(InnerControlID id: innerControls.keySet())
                 innerControls.get(id).draw(g2d, id == hoveredInnerControl);
 
+        // draw the thrust gauges
+        drawThrustGauges(g2d);
+
         // draw the frame counter
+        g2d.setFont(widgetFont);
         g2d.setColor(Color.BLACK);
         g2d.drawString(lastFrameCount + "fps", 10, 20);
     }
