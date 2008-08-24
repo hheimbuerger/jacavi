@@ -16,6 +16,7 @@ Bundle-ClassPath: .,
  libs/log4j-1.2.15.jar,
  libs/spring-2.5.5.jar,
  libs/j2d4swt-2.3.0.jar,
- libs/wiiusej.jar
+ libs/wiiusej.jar,
+ libs/javajoystick-0.7.jar
 Bundle-Vendor: JaCaVi - Team
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

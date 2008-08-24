@@ -2,6 +2,7 @@ package de.jacavi.rcp.dlg;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -27,9 +28,12 @@ import org.eclipse.swt.widgets.Shell;
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
+import de.jacavi.appl.controller.device.impl.GameControllerDevice;
+import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDeviceManager;
+import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameControllerDescriptor;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.ExceptionHandler;
 
@@ -54,6 +58,18 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
     private final List<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
 
     private org.eclipse.swt.widgets.List listConnectedWiimotes;
+
+    private org.eclipse.swt.widgets.List listConnectedGameControllers;
+
+    private GameControllerDescriptor[] gameControllers;
+
+    private Label labelGameControllerName;
+
+    private Label labelGameControllerAxes;
+
+    private Label labelGameControllerButtons;
+
+    private Label labelGameControllerCapabilities;
 
     public InputDeviceSettingsDialog(Shell parentShell) {
         super(parentShell);
@@ -202,15 +218,61 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
     }
 
     private void createGameControllerSection(Composite groupGameController) {
-        Button checkboxGameController1 = new Button(groupGameController, SWT.CHECK);
-        checkboxGameController1.setText("game controller 1 active");
-        checkboxGameController1.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
-        checkboxGameController1.setEnabled(false);
+        // create the composite used to hold all the inner widgets
+        Composite c = new Composite(groupGameController, SWT.NONE);
+        c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
-        Button checkboxGameController2 = new Button(groupGameController, SWT.CHECK);
-        checkboxGameController2.setText("game controller 2 active");
-        checkboxGameController2.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
-        checkboxGameController2.setEnabled(false);
+        // create the layout manager for laying out the inner widgets
+        GridLayout l = new GridLayout(1, true);
+        l.verticalSpacing = 5;
+        c.setLayout(l);
+
+        // create the "Connected devices:" label
+        Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
+        labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelConnectedWiimotes.setText("Connected devices:");
+
+        // create the list of detected devices
+        listConnectedGameControllers = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
+        GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
+        listLayout.widthHint = 100;
+        listLayout.heightHint = 50;
+        listConnectedGameControllers.setLayoutData(listLayout);
+        listConnectedGameControllers.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                InputDeviceSettingsDialog.this.handleSelectionDetectedGameController(e);
+            }
+        });
+
+        labelGameControllerName = new Label(c, SWT.WRAP);
+        labelGameControllerName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelGameControllerName.setText("");
+        labelGameControllerAxes = new Label(c, SWT.WRAP);
+        labelGameControllerAxes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelGameControllerAxes.setText("");
+        labelGameControllerButtons = new Label(c, SWT.WRAP);
+        labelGameControllerButtons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelGameControllerButtons.setText("");
+        labelGameControllerCapabilities = new Label(c, SWT.WRAP);
+        labelGameControllerCapabilities.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+        labelGameControllerCapabilities.setText("");
+
+        // create the label describing the setup process (part 1)
+        Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
+        labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
+        labelWiimoteInfo1.setText("Redetecting will drop all existing connections.");
+
+        // create the button to start a new detection
+        Button buttonDetectGameController = new Button(c, SWT.PUSH);
+        buttonDetectGameController.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false));
+        buttonDetectGameController.setText("Detect game controllers");
+        buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                InputDeviceSettingsDialog.this.handleClickGameControllerDetection(e);
+            }
+        });
     }
 
     private void createWiimoteSection(Composite groupWiimote) {
@@ -266,7 +328,7 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
     private void updateConnectedWiimotesList(org.eclipse.swt.widgets.List listConnectedWiimotes) {
         listConnectedWiimotes.removeAll();
         for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
-            listConnectedWiimotes.add(d.toString());
+            listConnectedWiimotes.add(d.getName());
     }
 
     protected void handleClickWiimoteDetection(SelectionEvent e) {
@@ -305,6 +367,67 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
 
         // update the list of
         updateConnectedWiimotesList(listConnectedWiimotes);
+    }
+
+    protected void handleClickGameControllerDetection(SelectionEvent e) {
+        // remove previously connected devices from the device manager
+        inputDeviceManager.removeInputDevicesByType(GameControllerDevice.class);
+
+        // show the progress dialog while detecting devices
+        IRunnableWithProgress op = new IRunnableWithProgress() {
+            @Override
+            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+                monitor.setTaskName("Please stand by while available game controllers are detected.");
+
+                // run the detection
+                GameControllerDeviceManager gameControllerDeviceManager = new GameControllerDeviceManager();
+                gameControllers = gameControllerDeviceManager.scanForGameControllers();
+
+                // add the detected devices to the device manager
+                if(gameControllers != null)
+                    for(GameControllerDescriptor gameController: gameControllers)
+                        inputDeviceManager.addInputDevice(new GameControllerDevice(gameController.name,
+                                gameControllerDeviceManager.getGameController(gameController)));
+            }
+        };
+        try {
+            ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(getShell());
+            progressMonitorDialog.run(true, false, op);
+        } catch(InvocationTargetException e1) {
+            ExceptionHandler.handleException(e1.getCause(), true);
+        } catch(InterruptedException e1) {
+            ExceptionHandler.handleException(e1, true);
+        }
+
+        // update the list
+        updateConnectedGameControllersList(listConnectedGameControllers);
+        handleSelectionDetectedGameController(e);
+    }
+
+    protected void handleSelectionDetectedGameController(SelectionEvent e) {
+        int selectionIndex = listConnectedGameControllers.getSelectionIndex();
+        if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.length) {
+            labelGameControllerName.setText("Name: " + gameControllers[selectionIndex].name);
+            labelGameControllerAxes.setText("Axes: " + gameControllers[selectionIndex].numAxes);
+            labelGameControllerButtons.setText("Buttons: " + gameControllers[selectionIndex].numButtons);
+            labelGameControllerCapabilities.setText("Capabilities: "
+                    + Arrays.toString(gameControllers[selectionIndex].capabilities));
+        } else {
+            labelGameControllerName.setText("");
+            labelGameControllerAxes.setText("");
+            labelGameControllerButtons.setText("");
+            labelGameControllerCapabilities.setText("");
+        }
+    }
+
+    private void updateConnectedGameControllersList(org.eclipse.swt.widgets.List listConnectedGameControllers) {
+        listConnectedGameControllers.removeAll();
+
+        if(gameControllers != null)
+            for(DeviceController d: inputDeviceManager.getInputDevicesByType(GameControllerDevice.class))
+                listConnectedGameControllers.add(d.getName());
+        else
+            listConnectedGameControllers.add("[failed to load library]");
     }
 
     @Override

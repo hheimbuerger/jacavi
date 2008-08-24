@@ -43,6 +43,7 @@ import org.holongate.j2d.J2DRegistry;
 import org.holongate.j2d.J2DUtilities;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.track.Angle;
@@ -808,7 +809,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         for(DeviceController dc: inputDeviceManager.getInputDevices()) {
             // determine the current state
             String name = dc.getName();
-            int speed = dc.poll().getSpeed();
+            ControllerSignal signal = dc.poll();
+            int speed = signal.getSpeed();
+            boolean isTriggered = signal.isTrigger();
 
             // calculate the gauge positions
             int leftOffset = LEFT_MARGIN + (i * (WIDTH + OFFSET));
@@ -824,7 +827,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             g.fill(outerGauge);
             g.setClip(null);
             g.setStroke(stroke);
-            g.setColor(Color.BLACK);
+            g.setColor(isTriggered ? Color.MAGENTA : Color.BLACK);
             g.draw(outerGauge);
 
             // draw the current speed into the gauge
