@@ -22,7 +22,7 @@ public class PlayerSettingsView extends ViewPart {
 	public static final String ID = "JACAVI.playerSettingsView";
 
 	private static final String[] inputs = new String[] { "--Select Input--",
-			"Device", "Script" };
+			"Device", "DrivingAgentExample" };
 	private static final String[] devices = new String[] { "--Select Device--",
 			"Keyboard", "Joystick", "Wiimote" };
 	private static final String[] protocols = new String[] {

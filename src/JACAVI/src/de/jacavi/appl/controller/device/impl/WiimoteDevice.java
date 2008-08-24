@@ -1,7 +1,5 @@
 package de.jacavi.appl.controller.device.impl;
 
-import org.eclipse.swt.widgets.Composite;
-
 import wiiusej.Wiimote;
 import wiiusej.wiiusejevents.physicalevents.ExpansionEvent;
 import wiiusej.wiiusejevents.physicalevents.IREvent;
@@ -49,7 +47,7 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     }
 
     @Override
-    public boolean initialize(Composite guiElement) {
+    public boolean initialize() {
         wiimote.activateMotionSensing();
         wiimote.addWiiMoteEventListeners(this);
 

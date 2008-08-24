@@ -28,8 +28,8 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
-import de.jacavi.appl.controller.script.ScriptController;
-import de.jacavi.appl.controller.script.impl.Script;
+import de.jacavi.appl.controller.script.DrivingAgentController;
+import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.CarreraLibraryType;
 import de.jacavi.hal.FirstCarreraNativeLibraryFactory;
@@ -46,7 +46,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     // private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
 
-    private final String[] inputs = new String[] { "Device", "Script" };
+    private final String[] inputs = new String[] { "Device", "DrivingAgentExample" };
 
     private final List<String> technologies;
 
@@ -134,7 +134,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                 if(!value.equals("")) {
                     if(((Combo) event.getSource()).getText().equals(inputs[1])) {
                         comboDevices.setEnabled(false);
-                        player.setController(new Script());
+                        player.setController(new DrivingAgentExample());
                     } else {
                         comboDevices.setEnabled(true);
                     }
@@ -147,7 +147,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         CarController controller = player.getController();
         if(controller instanceof DeviceController) {
             comboInput.select(0);
-        } else if(controller instanceof ScriptController) {
+        } else if(controller instanceof DrivingAgentController) {
             comboInput.select(1);
         }
 
@@ -220,7 +220,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         player.setName(playerName.getText());
 
         if(inputs[1].equals(comboInput.getText()))
-            player.setController(new Script());
+            player.setController(new DrivingAgentExample());
         else
             /*switch(Devices.valueOf(comboDevices.getText().toUpperCase())) {
                 case JOYSTICK:
