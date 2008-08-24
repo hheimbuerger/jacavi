@@ -10,8 +10,11 @@ import java.awt.geom.Point2D;
 
 
 
-public class LineSlotPart extends SlotPart {
-    public LineSlotPart(int length, Point entryPoint, Point exitPoint) {
+/**
+ * A lane section representing a path that describes a straight line.
+ */
+public class LaneSectionLine extends LaneSection {
+    public LaneSectionLine(int length, Point entryPoint, Point exitPoint) {
         super(length, entryPoint, exitPoint, 0);
     }
 

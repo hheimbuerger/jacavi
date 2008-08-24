@@ -10,14 +10,17 @@ import java.awt.geom.QuadCurve2D;
 
 
 
-public class QuadBezierSlotPart extends SlotPart {
+/**
+ * A lane section describing a path using quadratic Beziér curves.
+ */
+public class LaneSectionQuadBezier extends LaneSection {
     public Point controlPoint;
 
-    private double[][] referencePoints = new double[3][];
+    private final double[][] referencePoints = new double[3][];
 
-    private double distP0P1, distP1P2, distP0P2;
+    private final double distP0P1, distP1P2, distP0P2;
 
-    public QuadBezierSlotPart(int length, Point entryPoint, Point controlPoint, Point exitPoint, int entryToExitAngle) {
+    public LaneSectionQuadBezier(int length, Point entryPoint, Point controlPoint, Point exitPoint, int entryToExitAngle) {
         super(length, entryPoint, exitPoint, entryToExitAngle);
         this.controlPoint = controlPoint;
 

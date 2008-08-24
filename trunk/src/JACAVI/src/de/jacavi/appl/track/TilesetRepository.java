@@ -2,7 +2,9 @@ package de.jacavi.appl.track;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -39,7 +41,7 @@ public class TilesetRepository {
         }
     }
 
-    private Map<TileSet, SortedMap<String, Tile>> tiles = new HashMap<TileSet, SortedMap<String, Tile>>();
+    private final Map<TileSet, SortedMap<String, Tile>> tiles = new HashMap<TileSet, SortedMap<String, Tile>>();
 
     public TilesetRepository(String configurationFile) throws TilesetRepositoryInitializationFailedException {
         try {
@@ -106,7 +108,7 @@ public class TilesetRepository {
         Point entryPoint = null;
         Point exitPoint = null;
         int entryToExitAngle = 0;
-        Slot slot1 = null, slot2 = null;
+        List<Lane> lanes = new ArrayList<Lane>();
 
         NodeList tileDataNodes = tileElement.getChildNodes();
         for(int i = 0; i < tileDataNodes.getLength(); i++) {
@@ -122,10 +124,8 @@ public class TilesetRepository {
                             .valueOf(tileDataElement.getAttribute("y")));
                 } else if(tileDataElement.getNodeName().equals("entryToExitAngle")) {
                     entryToExitAngle = Integer.valueOf(Integer.valueOf(tileDataElement.getTextContent()));
-                } else if(tileDataElement.getNodeName().equals("slot1")) {
-                    slot1 = importSlot(tileset, tileDataElement);
-                } else if(tileDataElement.getNodeName().equals("slot2")) {
-                    slot2 = importSlot(tileset, tileDataElement);
+                } else if(tileDataElement.getNodeName().equals("lane")) {
+                    lanes.add(importLane(tileset, tileDataElement));
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid element in tile: "
                             + tileDataElement.getNodeName());
@@ -133,38 +133,40 @@ public class TilesetRepository {
             }
         }
 
-        tiles.get(tileset).put(tileID,
-                new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, slot1, slot2));
+        tiles.get(tileset).put(
+                tileID,
+                new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, lanes
+                        .toArray(new Lane[lanes.size()])));
     }
 
-    private Slot importSlot(TileSet tileset, Element tileDataElement)
+    private Lane importLane(TileSet tileset, Element tileDataElement)
             throws TilesetRepositoryInitializationFailedException {
-        Slot slot = new Slot();
+        Lane lane = new Lane();
 
-        NodeList slotSectionNodes = tileDataElement.getChildNodes();
-        for(int i = 0; i < slotSectionNodes.getLength(); i++) {
-            if(slotSectionNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
-                Element slotSection = (Element) slotSectionNodes.item(i);
-                if(slotSection.getNodeName().equals("line")) {
-                    slot.addLine(Integer.valueOf(slotSection.getAttribute("length")), Integer.valueOf(slotSection
-                            .getAttribute("x1")), Integer.valueOf(slotSection.getAttribute("y1")), Integer
-                            .valueOf(slotSection.getAttribute("x2")), Integer.valueOf(slotSection.getAttribute("y2")));
-                } else if(slotSection.getNodeName().equals("quad-bezier")) {
-                    slot
-                            .addQuadBezier(Integer.valueOf(slotSection.getAttribute("length")), Integer
-                                    .valueOf(slotSection.getAttribute("x1")), Integer.valueOf(slotSection
-                                    .getAttribute("y1")), Integer.valueOf(slotSection.getAttribute("x2")), Integer
-                                    .valueOf(slotSection.getAttribute("y2")), Integer.valueOf(slotSection
-                                    .getAttribute("x3")), Integer.valueOf(slotSection.getAttribute("y3")), Integer
-                                    .valueOf(slotSection.getAttribute("entryToExitAngle")));
+        NodeList laneSectionNodes = tileDataElement.getChildNodes();
+        for(int i = 0; i < laneSectionNodes.getLength(); i++) {
+            if(laneSectionNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                Element laneSection = (Element) laneSectionNodes.item(i);
+                if(laneSection.getNodeName().equals("line")) {
+                    lane.addLine(Integer.valueOf(laneSection.getAttribute("length")), Integer.valueOf(laneSection
+                            .getAttribute("x1")), Integer.valueOf(laneSection.getAttribute("y1")), Integer
+                            .valueOf(laneSection.getAttribute("x2")), Integer.valueOf(laneSection.getAttribute("y2")));
+                } else if(laneSection.getNodeName().equals("quad-bezier")) {
+                    lane
+                            .addQuadBezier(Integer.valueOf(laneSection.getAttribute("length")), Integer
+                                    .valueOf(laneSection.getAttribute("x1")), Integer.valueOf(laneSection
+                                    .getAttribute("y1")), Integer.valueOf(laneSection.getAttribute("x2")), Integer
+                                    .valueOf(laneSection.getAttribute("y2")), Integer.valueOf(laneSection
+                                    .getAttribute("x3")), Integer.valueOf(laneSection.getAttribute("y3")), Integer
+                                    .valueOf(laneSection.getAttribute("entryToExitAngle")));
                 } else {
-                    throw new TilesetRepositoryInitializationFailedException("Invalid slot section in slot: "
-                            + slotSection.getNodeName());
+                    throw new TilesetRepositoryInitializationFailedException("Invalid lane section in lane: "
+                            + laneSection.getNodeName());
                 }
             }
         }
 
-        return slot;
+        return lane;
     }
 
     public Tile getTile(TileSet tileSet, String id) {

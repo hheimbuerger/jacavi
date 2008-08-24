@@ -75,13 +75,13 @@ public class Track {
     private TileSet tileset;
 
     /** The list of sections (tiles) this track consists of. */
-    private List<TrackSection> sections = new LinkedList<TrackSection>();
+    private final List<TrackSection> sections = new LinkedList<TrackSection>();
 
     /** The visible name of the track. */
     private String trackName;
 
     /** The listeners receiving modification events. */
-    private List<TrackModificationListener> listeners;
+    private final List<TrackModificationListener> listeners;
 
     /**
      * Private constructor that is only called internally with common initializations.
@@ -207,29 +207,21 @@ public class Track {
         invokeListeners();
     }
 
-    public int getSlot1Length() {
+    public int getLaneLength(int index) {
         int length = 0;
         for(TrackSection s: sections)
-            for(SlotPart sp: s.getSlot1().getSlotParts())
-                length += sp.length;
+            for(LaneSection ls: s.getLane(index).getLaneSections())
+                length += ls.length;
         return length;
     }
 
-    public int getSlot2Length() {
-        int length = 0;
-        for(TrackSection s: sections)
-            for(SlotPart sp: s.getSlot2().getSlotParts())
-                length += sp.length;
-        return length;
-    }
-
-    public TrackPosition determineSectionFromPosition(boolean isSlot1, int position) {
+    public TrackPosition determineSectionFromPosition(int laneIndex, int position) {
         int length = 0;
         for(TrackSection s: sections) {
-            Slot slot = isSlot1 ? s.getSlot1() : s.getSlot2();
-            if(position < length + slot.getLength())
-                return new TrackPosition(s, slot.getStepPoint(position - length));
-            length += slot.getLength();
+            Lane lane = s.getLane(laneIndex);
+            if(position < length + lane.getLength())
+                return new TrackPosition(s, lane.getStepPoint(position - length));
+            length += lane.getLength();
         }
         return null;
     }
