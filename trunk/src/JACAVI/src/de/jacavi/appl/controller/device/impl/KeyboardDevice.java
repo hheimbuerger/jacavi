@@ -1,7 +1,5 @@
 package de.jacavi.appl.controller.device.impl;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 
@@ -19,7 +17,7 @@ public class KeyboardDevice extends DeviceController {
     }
 
     @Override
-    public boolean initialize(Composite guiElement) {
+    public boolean initialize() {
         // TODO Auto-generated method stub
         return false;
     }

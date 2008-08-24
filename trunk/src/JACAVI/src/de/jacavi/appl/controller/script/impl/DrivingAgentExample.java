@@ -1,13 +1,11 @@
 package de.jacavi.appl.controller.script.impl;
 
-import org.eclipse.swt.widgets.Composite;
-
 import de.jacavi.appl.controller.ControllerSignal;
-import de.jacavi.appl.controller.script.ScriptController;
+import de.jacavi.appl.controller.script.DrivingAgentController;
 
 
 
-public class Script implements ScriptController {
+public class DrivingAgentExample implements DrivingAgentController {
 
     @Override
     public void cleanup() {
@@ -16,7 +14,7 @@ public class Script implements ScriptController {
     }
 
     @Override
-    public boolean initialize(Composite guiElement) {
+    public boolean initialize() {
         // TODO Auto-generated method stub
         return false;
     }

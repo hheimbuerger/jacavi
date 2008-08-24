@@ -27,7 +27,7 @@ public class InputDeviceManager {
         inputDevices.put(controller.getId(), controller);
 
         // FIXME: Initializing input devices here for testing!
-        controller.initialize(null);
+        controller.initialize();
     }
 
     public Collection<DeviceController> getInputDevices() {
