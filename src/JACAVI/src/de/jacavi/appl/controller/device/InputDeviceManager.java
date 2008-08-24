@@ -13,7 +13,7 @@ import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 
 public class InputDeviceManager {
 
-    private Map<UUID, DeviceController> inputDevices = new TreeMap<UUID, DeviceController>();
+    private final Map<UUID, DeviceController> inputDevices = new TreeMap<UUID, DeviceController>();
 
     public InputDeviceManager() {
         // TODO: should be read from configuration, just inserting some for testing here
@@ -25,6 +25,9 @@ public class InputDeviceManager {
 
     public void addInputDevice(DeviceController controller) {
         inputDevices.put(controller.getId(), controller);
+
+        // FIXME: Initializing input devices here for testing!
+        controller.initialize(null);
     }
 
     public Collection<DeviceController> getInputDevices() {

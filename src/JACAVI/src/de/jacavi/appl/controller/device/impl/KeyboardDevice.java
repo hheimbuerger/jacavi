@@ -26,8 +26,8 @@ public class KeyboardDevice extends DeviceController {
 
     @Override
     public ControllerSignal poll() {
-        // TODO Auto-generated method stub
-        return null;
+        // FIXME: Returning a fixed signal for testing here!
+        return new ControllerSignal(50, false);
     }
 
     @Override
