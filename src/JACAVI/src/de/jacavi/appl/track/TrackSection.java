@@ -34,12 +34,8 @@ public class TrackSection {
         return tile.isInitial();
     }
 
-    public Slot getSlot1() {
-        return tile.getSlot1();
-    }
-
-    public Slot getSlot2() {
-        return tile.getSlot2();
+    public Lane getLane(int index) {
+        return tile.getLane(index);
     }
 
     public String getName() {

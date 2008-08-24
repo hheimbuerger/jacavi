@@ -1,6 +1,5 @@
 package de.jacavi.appl.track;
 
-import de.jacavi.appl.track.SlotPart.DirectedPoint;
 
 
 

@@ -39,11 +39,11 @@ import org.holongate.j2d.J2DRegistry;
 import org.holongate.j2d.J2DUtilities;
 
 import de.jacavi.appl.track.Angle;
-import de.jacavi.appl.track.SlotPart;
+import de.jacavi.appl.track.DirectedPoint;
+import de.jacavi.appl.track.LaneSection;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackPosition;
 import de.jacavi.appl.track.TrackSection;
-import de.jacavi.appl.track.SlotPart.DirectedPoint;
 import de.jacavi.appl.track.Track.TrackModificationListener;
 import de.jacavi.rcp.widgets.controls.ImageButtonControl;
 import de.jacavi.rcp.widgets.controls.InnerControl;
@@ -160,13 +160,13 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private boolean isCurrentlyRotatingOrZooming = false;
 
     /** The current viewport pan position. */
-    private Point panPosition = new Point(0, 0);
+    private final Point panPosition = new Point(0, 0);
 
     /** The current viewport zoom. */
     private double zoomLevel = 1.0;
 
     /** The current viewport rotation. */
-    private Angle rotationAngle = new Angle(0);
+    private final Angle rotationAngle = new Angle(0);
 
     /** Used to determine the mouse movement between events during panning. */
     private Point panningStartPosition = null;
@@ -189,7 +189,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private InnerControlID hoveredInnerControl = InnerControlID.NONE;
 
-    private Map<InnerControlID, InnerControl> innerControls = new HashMap<InnerControlID, InnerControl>();
+    private final Map<InnerControlID, InnerControl> innerControls = new HashMap<InnerControlID, InnerControl>();
 
     private Timer clickEventRepetitionTimer;
 
@@ -653,12 +653,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         int counter = 0;
 
         // DEBUG: prepare drawing the 'cars'
-        int slot1Length = track.getSlot1Length();
-        int slot2Length = track.getSlot2Length();
-        int slot1Pos = DEBUGanimationStep % slot1Length;
-        int slot2Pos = DEBUGanimationStep % slot2Length;
-        TrackPosition car1Position = track.determineSectionFromPosition(true, slot1Pos);
-        TrackPosition car2Position = track.determineSectionFromPosition(false, slot2Pos);
+        int lane0Length = track.getLaneLength(0);
+        int lane1Length = track.getLaneLength(1);
+        int lane0Pos = DEBUGanimationStep % lane0Length;
+        int lane1Pos = DEBUGanimationStep % lane1Length;
+        TrackPosition car0Position = track.determineSectionFromPosition(0, lane0Pos);
+        TrackPosition car1Position = track.determineSectionFromPosition(1, lane1Pos);
 
         // iterate over all track sections of the currently displayed track
         for(TrackSection s: track.getSections()) {
@@ -702,31 +702,31 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             else
                 g.drawImage(s.getImage().getColorImage(), imagePlacementOperation, 0, 0);
 
-            // DEBUG: draw the slots on top
-            AffineTransform slotPlacementTransformation = new AffineTransform();
-            slotPlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
-            slotPlacementTransformation.rotate(currentAngle.getRadians());
-            slotPlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
+            // DEBUG: draw the lanes on top
+            AffineTransform lanePlacementTransformation = new AffineTransform();
+            lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
+            lanePlacementTransformation.rotate(currentAngle.getRadians());
+            lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
             g.setColor(Color.YELLOW);
-            for(SlotPart sp: s.getSlot1().getSlotParts())
-                g.draw(slotPlacementTransformation.createTransformedShape(sp.getShape()));
+            for(LaneSection ls: s.getLane(0).getLaneSections())
+                g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
             g.setColor(Color.BLUE);
-            for(SlotPart sp: s.getSlot2().getSlotParts())
-                g.draw(slotPlacementTransformation.createTransformedShape(sp.getShape()));
+            for(LaneSection ls: s.getLane(1).getLaneSections())
+                g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
 
             // DEBUG: draw the current track position
             // markPoint(g, currentTrackPos, Color.GREEN);
 
             // DEBUG: draw the current 'car' position
+            if(s == car0Position.section) {
+                DirectedPoint directedPoint = car0Position.point;
+                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+                drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+            }
             if(s == car1Position.section) {
                 DirectedPoint directedPoint = car1Position.point;
                 Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
-            }
-            if(s == car2Position.section) {
-                DirectedPoint directedPoint = car2Position.point;
-                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                drawCar(g, slotPlacementTransformation.transform(directedPoint.point, null), carDirection);
+                drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track

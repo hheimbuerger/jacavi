@@ -10,6 +10,8 @@ import de.jacavi.rcp.util.MultiStyleImage;
 
 public class Tile {
 
+    private final String id;
+
     private final String filename;
 
     private final String name;
@@ -24,14 +26,10 @@ public class Tile {
 
     private final boolean isInitial;
 
-    private final Slot slot1;
-
-    private final Slot slot2;
-
-    private final String id;
+    private final Lane[] lanes;
 
     public Tile(String id, String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
-            int entryToExitAngle, Slot slot1, Slot slot2) throws IOException {
+            int entryToExitAngle, Lane[] lanes) throws IOException {
         this.id = id;
         this.filename = filename;
         this.name = name;
@@ -39,8 +37,7 @@ public class Tile {
         this.entryPoint = entryPoint;
         this.exitPoint = exitPoint;
         this.entryToExitAngle = new Angle(entryToExitAngle);
-        this.slot1 = slot1;
-        this.slot2 = slot2;
+        this.lanes = lanes;
 
         sectionImage = new MultiStyleImage(filename);
     }
@@ -77,12 +74,7 @@ public class Tile {
         return isInitial;
     }
 
-    public Slot getSlot1() {
-        return slot1;
+    public Lane getLane(int index) {
+        return lanes[index];
     }
-
-    public Slot getSlot2() {
-        return slot2;
-    }
-
 }
