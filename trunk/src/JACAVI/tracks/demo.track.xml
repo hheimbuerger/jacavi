@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<track name="demo_crossing" tileset="digital">
+<track name="demo_crossing" tileset="analogue">
 
-	<section id="straight" />
+	<section id="turn30deg" />
 	
 </track>
