@@ -7,6 +7,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
+import java.awt.geom.Rectangle2D;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -25,7 +26,9 @@ public class ScrollerControl extends InnerControl {
         NORTH, EAST, WEST, SOUTH
     };
 
-    private ScrollerControl.ScrollerPosition position;
+    private final ScrollerPosition position;
+
+    private GeneralPath scroller;
 
     public ScrollerControl(ScrollerPosition position) {
         this.position = position;
@@ -34,15 +37,15 @@ public class ScrollerControl extends InnerControl {
     @Override
     public void draw(Graphics2D g2d, boolean isHoveredOver) {
         g2d.setPaint(isHoveredOver ? new Color(0, 200, 0) : Color.LIGHT_GRAY);
-        g2d.fill(shape);
+        g2d.fill(scroller);
         g2d.setStroke(new BasicStroke(3.0f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         g2d.setColor(isHoveredOver ? new Color(0, 160, 0) : Color.LIGHT_GRAY);
-        g2d.draw(shape);
+        g2d.draw(scroller);
     }
 
     @Override
     public void reposition(Point size) {
-        GeneralPath scroller = new GeneralPath();
+        scroller = new GeneralPath();
 
         switch(position) {
             case NORTH:
@@ -72,6 +75,9 @@ public class ScrollerControl extends InnerControl {
         }
         scroller.closePath();
 
-        shape = scroller;
+        // create the click detection shape
+        Rectangle2D bounds = scroller.getBounds2D();
+        shape = new Rectangle2D.Double(bounds.getMinX() - 2, bounds.getMinY() - 2, bounds.getMaxX() - bounds.getMinX()
+                + 5, bounds.getMaxY() - bounds.getMinY() + 5);
     }
 }

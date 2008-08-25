@@ -230,13 +230,19 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     private class ClickEventRepetitionHandler extends TimerTask {
+        private final InnerControlID heldControl;
+
+        public ClickEventRepetitionHandler(InnerControlID heldControl) {
+            this.heldControl = heldControl;
+        }
+
         @Override
         public void run() {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    if(!TrackWidget.this.isDisposed() && (TrackWidget.this.hoveredInnerControl != InnerControlID.NONE))
-                        TrackWidget.this.handleInnerControlClick(TrackWidget.this.hoveredInnerControl);
+                    if(!TrackWidget.this.isDisposed() && (TrackWidget.this.hoveredInnerControl == heldControl))
+                        TrackWidget.this.handleInnerControlClick(heldControl);
                 }
             });
         }
@@ -437,19 +443,21 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // if the selection button has been pressed down, do a hit detection and chance the current selection
             case SELECTION_BUTTON:
                 boolean wasHitDetected = false;
-                for(int i = lastTileShapeList.size() - 1; i >= 0; i--) {
-                    if(lastTileShapeList.get(i).contains(e.x, e.y)) {
-                        setSelectedTile(i);
-                        wasHitDetected = true;
-                        break;
-                    }
-                }
                 // if a control is active, process the hit on that
                 if(hoveredInnerControl != null) {
                     handleInnerControlClick(hoveredInnerControl);
                     clickEventRepetitionTimer = new Timer("clickEventRepetition");
-                    clickEventRepetitionTimer.schedule(new ClickEventRepetitionHandler(), 50, 50);
+                    clickEventRepetitionTimer.schedule(new ClickEventRepetitionHandler(hoveredInnerControl), 50, 50);
                 }
+                // if that isn't the case, check if there's a hit on any of the track sections
+                else
+                    for(int i = lastTileShapeList.size() - 1; i >= 0; i--) {
+                        if(lastTileShapeList.get(i).contains(e.x, e.y)) {
+                            setSelectedTile(i);
+                            wasHitDetected = true;
+                            break;
+                        }
+                    }
                 // if no hit was detected, remove the selection
                 if(!wasHitDetected)
                     setSelectedTile(-1);
@@ -585,7 +593,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     /**
-     * TODO Cort: Comment Method
+     * Performs a hit test on the inner controls and updates the hoveredInnerControl field.
      * 
      * @return true, if the control the mouse cursor is hovering over changed, false otherwise
      */
