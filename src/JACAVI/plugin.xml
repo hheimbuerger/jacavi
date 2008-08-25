@@ -126,11 +126,22 @@
    <extension
          point="org.eclipse.ui.newWizards">
       <wizard
-            class="de.jacavi.rcp.wizards.NewTrackWizard"
-            descriptionImage="icons/strecke.jpg"
+            class="de.jacavi.rcp.wizards.NewDebugTrackWizard"
             icon="icons/cars-16x16.png"
-            id="JACAVI.NewTrackWizard"
-            name="New Track">
+            id="JACAVI.NewDebugTrackWizard"
+            name="New Debug Track">
+      </wizard>
+      <wizard
+            class="de.jacavi.rcp.wizards.NewAnalogTrackWizard"
+            icon="icons/cars-16x16.png"
+            id="JACAVI.NewAnalogTrackWizard"
+            name="New Analog Track">
+      </wizard>
+      <wizard
+            class="de.jacavi.rcp.wizards.NewDigitalTrackWizard"
+            icon="icons/cars-16x16.png"
+            id="JACAVI.NewDigitalTrackWizard"
+            name="New Digital Track">
       </wizard>
    </extension>
 </plugin>
