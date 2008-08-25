@@ -24,6 +24,8 @@ public class RaceEngine {
 
     private int raceTimerInterval = 0;
 
+    boolean isTimerRunning = false;
+
     public RaceEngine(Race race) {
         // preconditions
         Check.Require(race != null, "race may not be null");
@@ -43,17 +45,23 @@ public class RaceEngine {
     public void startRaceTimer(RaceView raceView) {
         // TODO: check if the require is correct. Whats if we start a game without a RaceView only hardware
         Check.Require(raceView != null, "raceView may not be null");
-        this.raceView = raceView;
-        // create new timer feed with RaceTimerTask and start it
-        raceTimer = new Timer();
-        raceTimer.schedule(new RaceTimerTask(), 0, raceTimerInterval);
+        if(!isTimerRunning) {
+            this.raceView = raceView;
+            // create new timer feed with RaceTimerTask and start it
+            raceTimer = new Timer();
+            raceTimer.schedule(new RaceTimerTask(), 0, raceTimerInterval);
+            isTimerRunning = true;
+        }
     }
 
     /**
      * Stop the RaceTimerTask
      */
     public void stopRaceTimer() {
-        raceTimer.cancel();
+        if(isTimerRunning) {
+            raceTimer.cancel();
+            isTimerRunning = false;
+        }
     }
 
     /**
