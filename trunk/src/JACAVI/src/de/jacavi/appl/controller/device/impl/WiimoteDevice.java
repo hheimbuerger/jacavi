@@ -68,12 +68,12 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     @Override
     public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
         int retVal = 0;
-        float tmpPitch = deviceSpecificInputSpeedSignal * -1;
+        float tmpPitch = (deviceSpecificInputSpeedSignal + 90);
 
         if(tmpPitch >= 90)
-            retVal = 0;
-        else if(tmpPitch <= 0)
             retVal = 100;
+        else if(tmpPitch <= 0)
+            retVal = 0;
         else {
             tmpPitch = tmpPitch * 1.1111111111111111111111f;
             retVal = (int) tmpPitch;
