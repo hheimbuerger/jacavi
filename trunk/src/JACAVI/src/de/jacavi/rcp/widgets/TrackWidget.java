@@ -86,6 +86,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The factor used to slow down zooming. */
     private static final double ZOOM_SPEED_FACTOR = 0.01;
 
+    /** The minimum zoom level ("zoomed all out"). */
+    private static final double ZOOM_MIN = 0.5;
+
+    /** The adjustment to the zoom level taken for every click on the control. */
+    private static final double ZOOM_STEPS = 0.05;
+
+    /** The maximum zoom level ("zoomed all in"). */
+    private static final double ZOOM_MAX = 5.0;
+
     private static final String ICON_ROTATION_CLOCKWISE = "/icons/famfamfam-silk/arrow_rotate_clockwise.png";
 
     private static final String ICON_ROTATION_COUNTER_CLOCKWISE = "/icons/famfamfam-silk/arrow_rotate_anticlockwise.png";
@@ -505,10 +514,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 rotationAngle.set(0);
                 break;
             case ZOOM_IN:
-                zoomLevel += 0.05;
+                adjustZoomLevelBounded(+ZOOM_STEPS);
                 break;
             case ZOOM_OUT:
-                zoomLevel -= 0.05;
+                adjustZoomLevelBounded(-ZOOM_STEPS);
                 break;
             case ZOOM_RESET:
                 zoomLevel = 1.0;
@@ -567,7 +576,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // trigger a repaint
         if(isCurrentlyRotatingOrZooming) {
             rotationAngle.turn((e.x - rotationZoomingStartPosition.x) / ROTATION_SPEED_DIVISOR);
-            zoomLevel += -(e.y - rotationZoomingStartPosition.y) * ZOOM_SPEED_FACTOR;
+            adjustZoomLevelBounded(-(e.y - rotationZoomingStartPosition.y) * ZOOM_SPEED_FACTOR);
             rotationZoomingStartPosition = new Point(e.x, e.y);
             doesRequireRepaint = true;
         }
@@ -633,6 +642,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 setSelectedTile(-1);
         else
             repaint();
+    }
+
+    /**
+     * Adjusts the zoom level by the given amount while restricting it to the static bounds.
+     * 
+     * @param adjustment
+     *            the amount of adjustment (a negative value indicates zooming out, a positive value indicates zooming
+     *            in)
+     */
+    private void adjustZoomLevelBounded(double adjustment) {
+        zoomLevel = Math.max(Math.min(zoomLevel + adjustment, ZOOM_MAX), ZOOM_MIN);
     }
 
     /**
