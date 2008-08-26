@@ -19,7 +19,6 @@ public class EditorPerspective implements IPerspectiveFactory {
         // layout.addView(LapView.ID, IPageLayout.BOTTOM, 0.8f, editorArea);
         layout.addView(TileExplorer.ID, IPageLayout.LEFT, 0.31f, editorArea);
         layout.addView(TrackOutline.ID, IPageLayout.RIGHT, 0.7f, editorArea);
-
     }
 
 }

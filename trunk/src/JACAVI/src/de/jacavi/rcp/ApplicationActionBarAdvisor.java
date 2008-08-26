@@ -4,66 +4,96 @@ import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
 import org.eclipse.ui.application.IActionBarConfigurer;
 
+import de.jacavi.rcp.perspectives.EditorPerspective;
+import de.jacavi.rcp.perspectives.RacePerspective;
 
-public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 
-	private IWorkbenchAction exitAction;
-	private IWorkbenchAction saveTrackAction;
-	private IWorkbenchAction newTrackAction;
-	private IWorkbenchAction aboutAction;
 
-	public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
-		super(configurer);
-	}
+public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPerspectiveListener {
 
-	protected void makeActions(final IWorkbenchWindow window) {
-		newTrackAction = ActionFactory.NEW.create(window);
-		newTrackAction.setText("New");
-		register(newTrackAction);
+    private MenuManager fileMenu;
 
-		saveTrackAction = ActionFactory.SAVE.create(window);
-		saveTrackAction.setText("Save");
-		register(saveTrackAction);
+    private MenuManager trackMenu;
 
-		aboutAction = ActionFactory.ABOUT.create(window);
-		register(aboutAction);
+    private GroupMarker otherGroup;
 
-		exitAction = ActionFactory.QUIT.create(window);
-		register(exitAction);
-	}
+    private MenuManager infoMenu;
 
-	protected void fillMenuBar(IMenuManager menuBar) {
-		MenuManager fileMenu = new MenuManager("&File");
-		menuBar.add(fileMenu);
-		fileMenu.add(exitAction);
-		
+    private IWorkbenchAction exitAction;
 
-		MenuManager trackMenu = new MenuManager("&Track","trackMenu");
-		menuBar.add(trackMenu);
-		trackMenu.add(newTrackAction);
-		trackMenu.add(new GroupMarker("trackGroup"));
-		trackMenu.add(new Separator());
-		trackMenu.add(saveTrackAction);
+    private IWorkbenchAction saveTrackAction;
 
-		menuBar.add(new GroupMarker("other"));
+    private IWorkbenchAction newTrackAction;
 
-		MenuManager infoMenu = new MenuManager("&Help");
-		menuBar.add(infoMenu);
-		infoMenu.add(aboutAction);
-	}
+    private IWorkbenchAction aboutAction;
 
-//	protected void fillCoolBar(ICoolBarManager coolBar) {
-//		// This will add a new toolbar to the application
-//		IToolBarManager toolbar = new ToolBarManager(SWT.FLAT | SWT.RIGHT);
-//		coolBar.add(new ToolBarContributionItem(toolbar, "main"));
-//		// Add the entry to the toolbar
-//		 toolbar.add(Factory.iSaveAction);
-//	}
+    public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
+        super(configurer);
+    }
+
+    @Override
+    protected void makeActions(final IWorkbenchWindow window) {
+        window.addPerspectiveListener(this);
+        newTrackAction = ActionFactory.NEW.create(window);
+        newTrackAction.setText("New");
+        register(newTrackAction);
+
+        saveTrackAction = ActionFactory.SAVE.create(window);
+        saveTrackAction.setText("Save");
+        register(saveTrackAction);
+
+        aboutAction = ActionFactory.ABOUT.create(window);
+        register(aboutAction);
+
+        exitAction = ActionFactory.QUIT.create(window);
+        register(exitAction);
+    }
+
+    @Override
+    protected void fillMenuBar(IMenuManager menuBar) {
+        fileMenu = new MenuManager("&File", "fileMenu");
+        menuBar.add(fileMenu);
+        fileMenu.add(exitAction);
+
+        trackMenu = new MenuManager("&Track", "trackMenu");
+        menuBar.add(trackMenu);
+        trackMenu.add(newTrackAction);
+        trackMenu.add(new GroupMarker("trackGroup"));
+        trackMenu.add(new Separator());
+        trackMenu.add(saveTrackAction);
+
+        // Group marker for other Actions, see plugin.xml
+        otherGroup = new GroupMarker("other");
+        menuBar.add(otherGroup);
+
+        infoMenu = new MenuManager("&Help");
+        menuBar.add(infoMenu);
+        infoMenu.add(aboutAction);
+    }
+
+    @Override
+    public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+        if(perspective.getId().equals(RacePerspective.ID)) {
+            saveTrackAction.setEnabled(false);
+            newTrackAction.setEnabled(false);
+            trackMenu.setVisible(false);
+        } else if(perspective.getId().equals(EditorPerspective.ID)) {
+            saveTrackAction.setEnabled(true);
+            newTrackAction.setEnabled(true);
+            trackMenu.setVisible(true);
+        }
+    }
+
+    @Override
+    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
 
 }

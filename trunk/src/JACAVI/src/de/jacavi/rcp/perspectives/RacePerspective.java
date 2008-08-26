@@ -21,7 +21,7 @@ public class RacePerspective implements IPerspectiveFactory {
 
         // Alternative 1 - view with border and name, can't be closed
         // layout.addView(TrackView.ID, IPageLayout.LEFT, 0.31f, editorArea);
-        // layout.getViewLayout(TrackView.ID).setCloseable(false);
+        // layout.getViewLayout(TrackView.ID).setCloseable(true);
 
         // Alternative 2 - standalone view without name and border (more space)
         layout.addStandaloneView(TrackView.ID, false, IPageLayout.LEFT, 0.31f, editorArea);
