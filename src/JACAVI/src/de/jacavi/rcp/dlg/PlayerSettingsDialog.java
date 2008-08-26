@@ -32,7 +32,7 @@ import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.SlotCarSystemConnector;
-import de.jacavi.hal.JacaviSlotCarSystemConnectorFactory;
+import de.jacavi.hal.SlotCarSystemConnectorFactory;
 import de.jacavi.hal.SlotCarSystemType;
 import de.jacavi.hal.lib42.Lib42ConnectorAdapter;
 import de.jacavi.rcp.util.OSResolverUtil;
@@ -228,7 +228,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
              */
             ;
 
-        JacaviSlotCarSystemConnectorFactory factory = (JacaviSlotCarSystemConnectorFactory) ContextLoader
+        SlotCarSystemConnectorFactory factory = (SlotCarSystemConnectorFactory) ContextLoader
                 .getBean("slotCarSystemConnectorFactory");
 
         switch(SlotCarSystemType.valueOf(comboTechnologies.getText().toLowerCase())) {
