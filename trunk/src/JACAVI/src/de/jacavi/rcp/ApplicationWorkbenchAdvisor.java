@@ -15,13 +15,12 @@ import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
+import de.jacavi.rcp.perspectives.EditorPerspective;
 import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
-
-    private static final String PERSPECTIVE_ID = "JACAVI.perspective";
 
     @Override
     public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -30,7 +29,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
     @Override
     public String getInitialWindowPerspectiveId() {
-        return PERSPECTIVE_ID;
+        return EditorPerspective.ID;
     }
 
     // DEBUG!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
