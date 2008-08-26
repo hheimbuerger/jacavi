@@ -31,10 +31,10 @@ import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.hal.CarreraLibraryType;
-import de.jacavi.hal.FirstCarreraNativeLibraryFactory;
-import de.jacavi.hal.TechnologyController;
-import de.jacavi.hal.lib42.NativeLib42Adapter;
+import de.jacavi.hal.SlotCarSystemConnector;
+import de.jacavi.hal.JacaviSlotCarSystemConnectorFactory;
+import de.jacavi.hal.SlotCarSystemType;
+import de.jacavi.hal.lib42.Lib42ConnectorAdapter;
 import de.jacavi.rcp.util.OSResolverUtil;
 
 
@@ -64,7 +64,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Color c;
 
-    private InputDeviceManager inputDeviceManager;
+    private final InputDeviceManager inputDeviceManager;
 
     private ComboViewer comboViewer;
 
@@ -160,14 +160,11 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboViewer = new ComboViewer(comboDevices);
         comboViewer.add(inputDeviceManager.getInputDevices().toArray(
                 new Object[inputDeviceManager.getInputDevices().size()]));
-        /*comboDevices.setItems(devices.toArray(new String[devices.size()]));
-        for(int i = 0; i < devices.size(); i++) {
-            if(controller instanceof DeviceController) {
-                DeviceController devController = (DeviceController) controller;
-                if(devController.getClass().getSimpleName().equals(devices.get(i)))
-                    comboDevices.select(i);
-            }
-        }*/
+        /*
+         * comboDevices.setItems(devices.toArray(new String[devices.size()])); for(int i = 0; i < devices.size(); i++) {
+         * if(controller instanceof DeviceController) { DeviceController devController = (DeviceController) controller;
+         * if(devController.getClass().getSimpleName().equals(devices.get(i))) comboDevices.select(i); } }
+         */
 
         CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
         labelProtocol1.setText("Technology:");
@@ -177,9 +174,9 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboTechnologies.setItems(technologies.toArray(new String[technologies.size()]));
 
         // TODO: this is only a HACK
-        TechnologyController techController = player.getTechnologyController();
+        SlotCarSystemConnector techController = player.getTechnologyController();
         if(techController != null) {
-            if(techController instanceof NativeLib42Adapter) {
+            if(techController instanceof Lib42ConnectorAdapter) {
                 comboTechnologies.select(0);
             } else {
                 comboTechnologies.select(1);
@@ -222,38 +219,25 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         if(inputs[1].equals(comboInput.getText()))
             player.setController(new DrivingAgentExample());
         else
-            /*switch(Devices.valueOf(comboDevices.getText().toUpperCase())) {
-                case JOYSTICK:
-                    player.setController(new GameControllerDevice());
-                    break;
-
-                case KEYBOARD:
-                    player.setController(new KeyboardDevice());
-                    break;
-
-                case MOUSE:
-                    player.setController(new MouseDevice());
-                    break;
-
-                case WIIMOTE:
-                    // FIXME:?!?!? inject a configured wiimote from WiimoteDeviceManager
-                    // player.setController(new WiimoteDeviceCotrollere());
-                    break;
-                default:
-                    throw new IllegalArgumentException("No Device selected");
-            }*/
+            /*
+             * switch(Devices.valueOf(comboDevices.getText().toUpperCase())) { case JOYSTICK: player.setController(new
+             * GameControllerDevice()); break; case KEYBOARD: player.setController(new KeyboardDevice()); break; case
+             * MOUSE: player.setController(new MouseDevice()); break; case WIIMOTE: // FIXME:?!?!? inject a configured
+             * wiimote from WiimoteDeviceManager // player.setController(new WiimoteDeviceCotrollere()); break; default:
+             * throw new IllegalArgumentException("No Device selected"); }
+             */
             ;
 
-        FirstCarreraNativeLibraryFactory factory = (FirstCarreraNativeLibraryFactory) ContextLoader
-                .getBean("nativeLibraryFactoryBean");
+        JacaviSlotCarSystemConnectorFactory factory = (JacaviSlotCarSystemConnectorFactory) ContextLoader
+                .getBean("slotCarSystemConnectorFactory");
 
-        switch(CarreraLibraryType.valueOf(comboTechnologies.getText().toLowerCase())) {
+        switch(SlotCarSystemType.valueOf(comboTechnologies.getText().toLowerCase())) {
             case lib42:
                 // TODO: here is an Exception thrown...please DEBUG inside init method
-                player.setTechnologyController(factory.initialiseCarreraLib(CarreraLibraryType.lib42));
+                player.setTechnologyController(factory.initialiseCarreraLib(SlotCarSystemType.lib42));
                 break;
             case bluerider:
-                player.setTechnologyController(factory.initialiseCarreraLib(CarreraLibraryType.bluerider));
+                player.setTechnologyController(factory.initialiseCarreraLib(SlotCarSystemType.bluerider));
                 break;
             default:
                 break;

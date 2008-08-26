@@ -5,7 +5,7 @@ import java.util.TimerTask;
 
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
-import de.jacavi.hal.TechnologyController;
+import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.rcp.util.Check;
 import de.jacavi.rcp.views.RaceView;
 
@@ -78,7 +78,7 @@ public class RaceEngine {
             for(Player player: race.getPlayers()) {
                 int carID = player.getId();
                 CarController carController = player.getController();
-                TechnologyController technologyController = player.getTechnologyController();
+                SlotCarSystemConnector technologyController = player.getTechnologyController();
                 ControllerSignal signal = carController.poll();
                 // change track
                 if(signal.isTrigger())

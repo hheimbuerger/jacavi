@@ -24,7 +24,7 @@
 
     <bean id="inputDeviceManagerBean" class="de.jacavi.appl.controller.device.InputDeviceManager" />
 
-	<bean id="nativeLibraryFactoryBean" class="de.jacavi.hal.FirstCarreraNativeLibraryFactory">
+	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.hal.JacaviSlotCarSystemConnectorFactory">
 	</bean> 
 	
 	<bean id="playersBean" class="java.util.ArrayList">
@@ -43,7 +43,7 @@
 					<property name="id" value="2" />
 					<property name="name" value="Player 2" />
 					<property name="controller">
-						<bean id="gamecontrollerControlBean" class="de.jacavi.appl.controller.device.impl.GameControllerDevice">
+						<bean id="gamecontrollerControlBean" class="de.jacavi.appl.controller.device.impl.MouseDevice">
                             <constructor-arg index="0" value="gamectrl" />
                         </bean>
 					</property>
