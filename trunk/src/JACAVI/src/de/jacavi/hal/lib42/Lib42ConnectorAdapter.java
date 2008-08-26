@@ -148,4 +148,10 @@ public class Lib42ConnectorAdapter implements Lib42Connector {
         return 0;
     }
 
+    @Override
+    public void finalize() throws Throwable {
+        // TODO: native lib doesnt throw an exception
+        lib42.releaseLib42();
+    }
+
 }
