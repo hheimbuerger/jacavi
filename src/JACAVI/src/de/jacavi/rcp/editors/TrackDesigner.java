@@ -28,6 +28,7 @@ import de.jacavi.appl.track.Track.InitialTileMayNotBeRemoved;
 import de.jacavi.rcp.dlg.SafeSaveDialog;
 import de.jacavi.rcp.util.ExceptionHandler;
 import de.jacavi.rcp.widgets.TrackWidget;
+import de.jacavi.rcp.widgets.TrackWidget.TrackWidgetMode;
 
 
 
@@ -112,7 +113,7 @@ public class TrackDesigner extends EditorPart {
         parent.setLayout(new GridLayout());
 
         try {
-            trackWidget = new TrackWidget(parent, currentTrack);
+            trackWidget = new TrackWidget(parent, currentTrack, TrackWidgetMode.DESIGN_MODE);
         } catch(IOException e) {
             // TODO: do proper error handling here and report to the user
             throw new RuntimeException("Couldn't create widget. [TODO: do proper error handling here]");

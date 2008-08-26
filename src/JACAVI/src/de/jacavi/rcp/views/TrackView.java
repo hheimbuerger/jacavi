@@ -11,6 +11,7 @@ import org.eclipse.ui.part.ViewPart;
 import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.widgets.TrackWidget;
+import de.jacavi.rcp.widgets.TrackWidget.TrackWidgetMode;
 
 
 
@@ -36,7 +37,7 @@ public class TrackView extends ViewPart {
     @Override
     public void createPartControl(Composite parent) {
         try {
-            trackWidget = new TrackWidget(parent, currentTrack);
+            trackWidget = new TrackWidget(parent, currentTrack, TrackWidgetMode.RACE_MODE);
         } catch(IOException e) {
             log.error("TrackWidget could not be created", e);
             throw new RuntimeException("Error while creating TrackWidget.");
