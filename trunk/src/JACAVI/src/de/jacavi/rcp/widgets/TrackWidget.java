@@ -46,6 +46,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
+import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.DirectedPoint;
 import de.jacavi.appl.track.LaneSection;
@@ -67,6 +68,28 @@ import de.jacavi.rcp.widgets.controls.ScrollerControl;
  * The widgets automatically updates when the track changes.
  */
 public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificationListener {
+
+    /**
+     * Used to define the mode the widget is operating in during construction.
+     * <p>
+     * The major differences are:
+     * <ul>
+     * <li>RACE_MODE:
+     * <ul>
+     * <li>shows thrust gauges
+     * <li>shows cars
+     * <li>redraws triggered by {@link RaceEngine}
+     * </ul>
+     * <li>DESIGN_MODE:
+     * <ul>
+     * <li>allows selecting track sections
+     * <li>redraws triggered by events or by internal thread when inner control is clicked and held
+     * </ul>
+     * </ul>
+     */
+    public enum TrackWidgetMode {
+        RACE_MODE, DESIGN_MODE
+    }
 
     /** The background color of the widget. */
     private static final int BACKGROUND_COLOR = SWT.COLOR_WHITE;
@@ -224,6 +247,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private int DEBUGanimationStep = 0;
 
+    private final TrackWidgetMode widgetMode;
+
     private class AnimationTimerHandler extends TimerTask {
         @Override
         public void run() {
@@ -266,13 +291,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      *            the parent SWT component to add this widget to
      * @param track
      *            the track to load initially (or null to load none)
+     * @param widgetMode
+     *            if MODE_RACE, the track widget is initialized in race mode and shows only race mode elements, if
+     *            MODE_DESIGN, the track widget is initialized in design mode and shows the design mode elements
      * @throws IOException
-     *             if one of the icons can't be loaded
+     *             if one of the bitmaps can't be loaded
      */
-    public TrackWidget(Composite parent, Track track) throws IOException {
+    public TrackWidget(Composite parent, Track track, TrackWidgetMode widgetMode) throws IOException {
         // call the J2DCanvas constructor, then register us as the IPaintable
         super(parent, SWT.NONE, null);
         setPaintable(this);
+        this.widgetMode = widgetMode;
 
         // set the background color of the widget
         setBackground(Display.getCurrent().getSystemColor(BACKGROUND_COLOR));
@@ -393,7 +422,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             this.track.addListener(this);
 
             // DEBUG: start the animation timer
-            if(DEBUGanimationTimer == null) {
+            if((widgetMode == TrackWidgetMode.RACE_MODE) && (DEBUGanimationTimer == null)) {
                 DEBUGanimationTimer = new Timer("DEBUG-animation");
                 DEBUGanimationTimer.schedule(new AnimationTimerHandler(), 50, 50);
             }
@@ -459,7 +488,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     clickEventRepetitionTimer.schedule(new ClickEventRepetitionHandler(hoveredInnerControl), 50, 50);
                 }
                 // if that isn't the case, check if there's a hit on any of the track sections
-                else
+                else if(widgetMode == TrackWidgetMode.DESIGN_MODE)
                     for(int i = lastTileShapeList.size() - 1; i >= 0; i--) {
                         if(lastTileShapeList.get(i).contains(e.x, e.y)) {
                             setSelectedTile(i);
@@ -779,15 +808,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // markPoint(g, currentTrackPos, Color.GREEN);
 
             // DEBUG: draw the current 'car' position
-            if(s == car0Position.section) {
-                DirectedPoint directedPoint = car0Position.point;
-                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
-            }
-            if(s == car1Position.section) {
-                DirectedPoint directedPoint = car1Position.point;
-                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+            if(widgetMode == TrackWidgetMode.RACE_MODE) {
+                if(s == car0Position.section) {
+                    DirectedPoint directedPoint = car0Position.point;
+                    Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+                    drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+                }
+                if(s == car1Position.section) {
+                    DirectedPoint directedPoint = car1Position.point;
+                    Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+                    drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+                }
             }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
@@ -923,7 +954,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 innerControls.get(id).draw(g2d, id == hoveredInnerControl);
 
         // draw the thrust gauges
-        drawThrustGauges(g2d);
+        if(widgetMode == TrackWidgetMode.RACE_MODE)
+            drawThrustGauges(g2d);
 
         // draw the frame counter
         g2d.setFont(widgetFont);
