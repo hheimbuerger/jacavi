@@ -3,8 +3,8 @@
 <tiles>
 
     <tileset id="debug">
-        <tile id="finishingStraight" name="finishing straight" isInitial="true">
-            <filename>finishing_straight.png</filename>
+        <tile id="finishing_straight" name="finishing straight" isInitial="true">
+            <filename>straight.png</filename>
             <entryPoint x="-53" y="6" />
             <exitPoint x="53" y="6" />
             <entryToExitAngle>0</entryToExitAngle>
