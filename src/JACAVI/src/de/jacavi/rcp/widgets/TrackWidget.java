@@ -493,16 +493,16 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private void handleInnerControlClick(InnerControlID control) {
         switch(control) {
             case SCROLLER_TOP:
-                panPosition.y += 10;
+                adjustPanPositionBounded(0, +10);
                 break;
             case SCROLLER_RIGHT:
-                panPosition.x -= 10;
+                adjustPanPositionBounded(-10, 0);
                 break;
             case SCROLLER_BOTTOM:
-                panPosition.y -= 10;
+                adjustPanPositionBounded(0, -10);
                 break;
             case SCROLLER_LEFT:
-                panPosition.x += 10;
+                adjustPanPositionBounded(+10, 0);
                 break;
             case ROTATION_CLOCKWISE:
                 this.rotationAngle.turn(2);
@@ -566,8 +566,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // if panning is active, pan by the movement since the last event, reset the panning base point and trigger a
         // repaint
         if(isCurrentlyPanning) {
-            panPosition.x += e.x - panningStartPosition.x;
-            panPosition.y += e.y - panningStartPosition.y;
+            adjustPanPositionBounded(e.x - panningStartPosition.x, e.y - panningStartPosition.y);
             panningStartPosition = new Point(e.x, e.y);
             doesRequireRepaint = true;
         }
@@ -642,6 +641,27 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 setSelectedTile(-1);
         else
             repaint();
+    }
+
+    /**
+     * Adjusts the pan position by the given amount while restricting it to certain bounds.
+     * <p>
+     * The bounds are currently set so that 10% of the track have to be visible in both dimensions.
+     * 
+     * @param xAdjustment
+     *            the adjustment in pixels (negative values mean to the left, positive to the right)
+     * @param yAdjustment
+     *            the adjustment in pixels (negative values mean to up, positive mean down)
+     */
+    private void adjustPanPositionBounded(int xAdjustment, int yAdjustment) {
+        int upperBound = (int) (-lastTrackBoundingBox.getMinY() + panPosition.y - lastTrackBoundingBox.getHeight() * 0.9);
+        int rightBound = (int) (-lastTrackBoundingBox.getMaxX() + panPosition.x + getSize().x + lastTrackBoundingBox
+                .getWidth() * 0.9);
+        int lowerBound = (int) (-lastTrackBoundingBox.getMaxY() + panPosition.y + getSize().y + lastTrackBoundingBox
+                .getHeight() * 0.9);
+        int leftBound = (int) (-lastTrackBoundingBox.getMinX() + panPosition.x - lastTrackBoundingBox.getWidth() * 0.9);
+        panPosition.x = Math.max(Math.min(panPosition.x + xAdjustment, rightBound), leftBound);
+        panPosition.y = Math.max(Math.min(panPosition.y + yAdjustment, lowerBound), upperBound);
     }
 
     /**
