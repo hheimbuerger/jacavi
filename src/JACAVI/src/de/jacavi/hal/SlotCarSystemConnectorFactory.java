@@ -1,5 +1,27 @@
 package de.jacavi.hal;
 
-public interface SlotCarSystemConnectorFactory {
-	SlotCarSystemConnector initialiseCarreraLib(SlotCarSystemType type);
+import de.jacavi.hal.lib42.Lib42ConnectorAdapter;
+
+
+
+public class SlotCarSystemConnectorFactory {
+
+    public SlotCarSystemConnector initialiseCarreraLib(SlotCarSystemType type) {
+
+        SlotCarSystemConnector halController = null;
+
+        switch(type) {
+            case lib42:
+
+                halController = new Lib42ConnectorAdapter();
+                break;
+
+            case bluerider:
+                // TODO
+                break;
+        }
+
+        return halController;
+    }
+
 }
