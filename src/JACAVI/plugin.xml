@@ -63,9 +63,20 @@
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
-            id="JACAVI.actionSet"
-            label="Sample Action Set"
+            id="JACAVI.defaultActionSet"
+            label="Default Action Set"
             visible="true">
+         <menu
+               id="fileMenu"
+               label="File">
+            <groupMarker
+                  name="fileGroup">
+            </groupMarker>
+         </menu>
+      </actionSet>
+      <actionSet
+            id="JACAVI.editorActionSet"
+            label="Editor Action Set">
          <action
                class="de.jacavi.rcp.actions.OpenTrackFileAction"
                icon="icons/EclipseIcons/import_wiz.gif"
@@ -118,6 +129,26 @@
                toolbarPath="settingsGroup">
          </action>
       </actionSet>
+      <actionSet
+            id="JACAVI.raceActionSet"
+            label="Race Action Set">
+         <menu
+               id="raceMenu2"
+               label="Race">
+            <groupMarker
+                  name="raceGroup2">
+            </groupMarker>
+         </menu>
+         <action
+               class="de.jacavi.rcp.actions.StopRaceAction"
+               icon="icons/EclipseIcons/progress_stop.gif"
+               id="JACAVI.stopRace"
+               label="Stop Race"
+               menubarPath="raceMenu2/raceGroup2"
+               style="push"
+               toolbarPath="raceGroup2">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -130,6 +161,8 @@
       </editor>
    </extension>
    <extension
+         id="JACAVI.newTrackWizards"
+         name="New Track Wizards"
          point="org.eclipse.ui.newWizards">
       <wizard
             class="de.jacavi.rcp.wizards.NewDebugTrackWizard"
@@ -149,5 +182,26 @@
             id="JACAVI.NewDigitalTrackWizard"
             name="New Digital Track">
       </wizard>
+   </extension>
+   <extension
+         point="org.eclipse.ui.perspectiveExtensions">
+      <perspectiveExtension
+            targetID="JACAVI.editorPerspective">
+         <actionSet
+               id="JACAVI.defaultActionSet">
+         </actionSet>
+         <actionSet
+               id="JACAVI.editorActionSet">
+         </actionSet>
+      </perspectiveExtension>
+      <perspectiveExtension
+            targetID="JACAVI.racePerspective">
+         <actionSet
+               id="JACAVI.defaultActionSet">
+         </actionSet>
+         <actionSet
+               id="JACAVI.raceActionSet">
+         </actionSet>
+      </perspectiveExtension>
    </extension>
 </plugin>

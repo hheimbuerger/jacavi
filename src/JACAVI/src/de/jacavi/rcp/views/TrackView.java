@@ -5,6 +5,9 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
@@ -18,7 +21,7 @@ import de.jacavi.rcp.widgets.TrackWidget.TrackWidgetMode;
 /**
  * @author Fabian Rohn View that is used to show realtime Carrera cars on the track
  */
-public class TrackView extends ViewPart {
+public class TrackView extends ViewPart implements IPerspectiveListener {
 
     private static Log log = LogFactory.getLog(TrackView.class);
 
@@ -29,9 +32,8 @@ public class TrackView extends ViewPart {
     private TrackWidget trackWidget;
 
     public TrackView() {
-        TrackDesigner active = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-                .getActiveEditor();
-        currentTrack = active.getTrackWidget().getTrack();
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().addPerspectiveListener(this);
+        currentTrack = getActiveTrack();
     }
 
     @Override
@@ -47,6 +49,23 @@ public class TrackView extends ViewPart {
     @Override
     public void setFocus() {
         trackWidget.setFocus();
+    }
+
+    @Override
+    public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+        trackWidget.setTrack(getActiveTrack());
+    }
+
+    @Override
+    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
+
+    /**
+     * @return the actual track of the active editor
+     */
+    private Track getActiveTrack() {
+        TrackDesigner active = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                .getActiveEditor();
+        return active.getTrackWidget().getTrack();
     }
 
 }
