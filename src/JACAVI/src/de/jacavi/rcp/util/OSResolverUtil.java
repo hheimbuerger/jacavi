@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.jacavi.appl.ContextLoader;
-import de.jacavi.hal.CarreraLibraryType;
+import de.jacavi.hal.SlotCarSystemType;
 
 
 
@@ -37,7 +37,7 @@ public class OSResolverUtil {
 
         List<String> retList = new ArrayList<String>();
 
-        for(CarreraLibraryType type: CarreraLibraryType.values()) {
+        for(SlotCarSystemType type: SlotCarSystemType.values()) {
             retList.add(type.toString());
         }
         // get the config Bean

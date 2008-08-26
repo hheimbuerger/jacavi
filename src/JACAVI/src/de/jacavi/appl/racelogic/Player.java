@@ -3,7 +3,7 @@ package de.jacavi.appl.racelogic;
 import org.eclipse.swt.graphics.Color;
 
 import de.jacavi.appl.controller.CarController;
-import de.jacavi.hal.TechnologyController;
+import de.jacavi.hal.SlotCarSystemConnector;
 
 
 
@@ -15,7 +15,7 @@ public class Player {
 
     private CarController carController;
 
-    private TechnologyController technologyController;
+    private SlotCarSystemConnector technologyController;
 
     private int position; // including current track
 
@@ -64,11 +64,11 @@ public class Player {
         this.position = position;
     }
 
-    public TechnologyController getTechnologyController() {
+    public SlotCarSystemConnector getTechnologyController() {
         return technologyController;
     }
 
-    public void setTechnologyController(TechnologyController technologyController) {
+    public void setTechnologyController(SlotCarSystemConnector technologyController) {
         this.technologyController = technologyController;
     }
 

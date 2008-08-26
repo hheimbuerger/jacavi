@@ -1,23 +1,23 @@
 package de.jacavi.hal.lib42;
 
-import de.jacavi.hal.HALSpeedNormalizer;
+import de.jacavi.hal.SlotCarSpeedAdjuster;
 
 
 
-public class NativeLib42Adapter implements Clib42CarreraController {
+public class Lib42ConnectorAdapter implements Lib42Connector {
 
     private NativeLib42 lib42 = null;
 
     private final int maxHALSpeed = 15;
 
-    public NativeLib42Adapter() {
+    public Lib42ConnectorAdapter() {
         lib42 = new NativeLib42();
         lib42.initLib42(/* mode */0);
     }
 
     @Override
     public int getSpeed(int carID) {
-        int speed = HALSpeedNormalizer.denormalizeSpeed(lib42.getSpeed(carID), maxHALSpeed);
+        int speed = SlotCarSpeedAdjuster.denormalizeSpeed(lib42.getSpeed(carID), maxHALSpeed);
         return speed;
     }
 
@@ -28,7 +28,7 @@ public class NativeLib42Adapter implements Clib42CarreraController {
 
     @Override
     public void setSpeed(int carID, int speed) {
-        int normalizedSpeed = HALSpeedNormalizer.normalizeSpeed(speed, maxHALSpeed);
+        int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
         lib42.setSpeed(carID, normalizedSpeed);
     }
 
