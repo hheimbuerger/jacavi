@@ -14,9 +14,14 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Perspective"
-            class="de.jacavi.rcp.perspectives.Perspective"
-            id="JACAVI.perspective">
+            name="Editor Perspective"
+            class="de.jacavi.rcp.perspectives.EditorPerspective"
+            id="JACAVI.editorPerspective">
+      </perspective>
+      <perspective
+            class="de.jacavi.rcp.perspectives.RacePerspective"
+            id="JACAVI.racePerspective"
+            name="Race Perspective">
       </perspective>
    </extension>
    <extension
@@ -34,6 +39,7 @@
             name="Player Settings View">
       </view>
       <view
+            allowMultiple="false"
             class="de.jacavi.rcp.views.TrackView"
             icon="icons/cars-16x16.png"
             id="JACAVI.trackView"

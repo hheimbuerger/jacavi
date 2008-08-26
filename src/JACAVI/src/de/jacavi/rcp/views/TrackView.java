@@ -2,12 +2,14 @@ package de.jacavi.rcp.views;
 
 import java.io.IOException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.Track.TrackLoadingException;
-import de.jacavi.rcp.Activator;
+import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.widgets.TrackWidget;
 
 
@@ -17,27 +19,33 @@ import de.jacavi.rcp.widgets.TrackWidget;
  */
 public class TrackView extends ViewPart {
 
+    private static Log log = LogFactory.getLog(TrackView.class);
+
     public static final String ID = "JACAVI.trackView";
 
+    private final Track currentTrack;
+
+    private TrackWidget trackWidget;
+
     public TrackView() {
-    // TODO Auto-generated constructor stub
+        TrackDesigner active = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+                .getActiveEditor();
+        currentTrack = active.getTrackWidget().getTrack();
     }
 
     @Override
     public void createPartControl(Composite parent) {
         try {
-            new TrackWidget(parent, new Track(Activator.getResourceAsStream("/tracks/demo_with30degturns.track.xml")));
-        } catch(TrackLoadingException e) {
-            throw new RuntimeException("Error while creating TrackWidget.");
+            trackWidget = new TrackWidget(parent, currentTrack);
         } catch(IOException e) {
+            log.error("TrackWidget could not be created", e);
             throw new RuntimeException("Error while creating TrackWidget.");
         }
     }
 
     @Override
     public void setFocus() {
-    // TODO Auto-generated method stub
-
+        trackWidget.setFocus();
     }
 
 }

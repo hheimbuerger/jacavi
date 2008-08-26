@@ -8,7 +8,9 @@ import de.jacavi.rcp.views.TrackOutline;
 
 
 
-public class Perspective implements IPerspectiveFactory {
+public class EditorPerspective implements IPerspectiveFactory {
+
+    public static String ID = "JACAVI.editorPerspective";
 
     public void createInitialLayout(IPageLayout layout) {
         String editorArea = layout.getEditorArea();
