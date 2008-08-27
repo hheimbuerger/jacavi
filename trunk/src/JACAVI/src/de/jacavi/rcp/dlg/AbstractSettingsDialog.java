@@ -127,9 +127,6 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
             }
         });
 
-        // tell the subclass to create the tab items now
-        createTabItems(tabFolder);
-
         // create the composite holding the device list at the bottom
         Composite bottomSectionComposite = new Composite(content, SWT.NONE);
         bottomSectionComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -153,6 +150,9 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         listFormData.bottom = new FormAttachment(100); // to 100% height
         listFormData.left = new FormAttachment(10, 0); // from 10% width
         listDevices.setLayoutData(listFormData);
+
+        // tell the subclass to create the tab items now
+        createTabItems(tabFolder);
 
         // refresh the device list
         updateDeviceList();

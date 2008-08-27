@@ -178,7 +178,7 @@ public class InputDeviceManager {
         if(gameControllers != null)
             for(GameControllerDescriptor gameController: gameControllers)
                 addInputDevice(new GameControllerDevice(gameController.name, gameControllerDeviceManager
-                        .getGameController(gameController)));
+                        .getGameController(gameController), gameController));
     }
 
     /**
@@ -195,5 +195,9 @@ public class InputDeviceManager {
         // add the detected devices to the device manager
         for(int i = 1; i <= numWiimotesConnected; i++)
             addInputDevice(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager.getWiimote(i)));
+    }
+
+    public DeviceController getDevice(UUID id) {
+        return inputDevices.get(id);
     }
 }
