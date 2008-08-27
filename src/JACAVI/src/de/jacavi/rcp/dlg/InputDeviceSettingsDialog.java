@@ -1,65 +1,40 @@
 package de.jacavi.rcp.dlg;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
-import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
-import de.jacavi.appl.controller.device.impl.WiimoteDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameControllerDescriptor;
 import de.jacavi.rcp.Activator;
-import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
-public class InputDeviceSettingsDialog extends TitleAreaDialog {
-
-    private final Image imageKeyboard;
-
-    private final Image imageMouse;
-
-    private final Image imageGameController;
-
-    private final Image imageWiimote;
-
-    private final Image imageWiimoteButtons;
-
-    private final Font headingFont;
+public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private final InputDeviceManager inputDeviceManager;
 
-    private final List<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
+    private final ArrayList<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
 
-    private org.eclipse.swt.widgets.List listConnectedWiimotes;
+    private List listConnectedWiimotes;
 
-    private org.eclipse.swt.widgets.List listConnectedGameControllers;
+    private List listConnectedGameControllers;
 
     private GameControllerDescriptor[] gameControllers;
 
@@ -77,125 +52,37 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
 
         // prepare the images
-        imageKeyboard = Activator.getImageDescriptor("/icons/input_devices/keyboard.png").createImage();
-        imageMouse = Activator.getImageDescriptor("/icons/input_devices/mouse.png").createImage();
-        imageGameController = Activator.getImageDescriptor("/icons/input_devices/game_controller.png").createImage();
-        imageWiimote = Activator.getImageDescriptor("/icons/input_devices/wiimote.png").createImage();
-        imageWiimoteButtons = Activator.getImageDescriptor("/icons/wiimote_buttons.png").createImage();
-        /*
-         * imageKeyboard = new Image(Display.getDefault(), "icons/input_devices/keyboard.png"); imageMouse = new
-         * Image(Display.getDefault(), "icons/input_devices/mouse.png"); imageGameController = new
-         * Image(Display.getDefault(), "icons/input_devices/game_controller.png"); imageWiimote = new
-         * Image(Display.getDefault(), "icons/input_devices/wiimote.png"); imageWiimoteButtons = new
-         * Image(Display.getDefault(), "icons/wiimote_buttons.png");
-         */
+        imageManager.put("imageKeyboard", Activator.getImageDescriptor("/icons/input_devices/keyboard.png")
+                .createImage());
+        imageManager.put("imageMouse", Activator.getImageDescriptor("/icons/input_devices/mouse.png").createImage());
+        imageManager.put("imageGameController", Activator
+                .getImageDescriptor("/icons/input_devices/game_controller.png").createImage());
+        imageManager
+                .put("imageWiimote", Activator.getImageDescriptor("/icons/input_devices/wiimote.png").createImage());
+        imageManager.put("imageWiimoteButtons", Activator.getImageDescriptor("/icons/wiimote_buttons.png")
+                .createImage());
+        imageManager.put("icon", Activator.getImageDescriptor("/icons/famfamfam-silk/controller.png").createImage());
 
-        // prepare the font
-        headingFont = new Font(Display.getDefault(), "Arial", 11, SWT.BOLD);
+        /*imageManager.put("imageKeyboard", new Image(Display.getDefault(), "icons/input_devices/keyboard.png"));
+        imageManager.put("imageMouse", new Image(Display.getDefault(), "icons/input_devices/mouse.png"));
+        imageManager.put("imageGameController", new Image(Display.getDefault(),
+                "icons/input_devices/game_controller.png"));
+        imageManager.put("imageWiimote", new Image(Display.getDefault(), "icons/input_devices/wiimote.png"));
+        imageManager.put("imageWiimoteButtons", new Image(Display.getDefault(), "icons/wiimote_buttons.png"));
+        imageManager.put("icon", new Image(Display.getDefault(), "icons/famfamfam-silk/controller.png"));*/
     }
 
     @Override
-    public boolean close() {
-        imageKeyboard.dispose();
-        imageMouse.dispose();
-        imageGameController.dispose();
-        imageWiimote.dispose();
-        imageWiimoteButtons.dispose();
-        headingFont.dispose();
-        return super.close();
-    }
-
-    @Override
-    protected Control createContents(Composite parent) {
-        getShell().setSize(700, 700);
-        return super.createContents(parent);
-    }
-
-    @Override
-    protected Control createButtonBar(Composite parent) {
-        getShell().setText("Input Device Settings");
-        setTitle("Initialize and configure input devices");
-        setMessage("Please initialize and configure the input devices you want to use in races.",
-                IMessageProvider.INFORMATION);
-        return super.createButtonBar(parent);
-    }
-
-    @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-    }
-
-    @Override
-    protected Control createDialogArea(Composite parent) {
-        Composite content = new Composite(parent, SWT.NONE);
-
-        // prepare the dialog layout
-        content.setLayoutData(new GridData(GridData.FILL_BOTH));
-
-        // prepare the composite layout
-        GridLayout layout = new GridLayout(7, false);
-        layout.marginTop = 10;
-        layout.marginRight = 10;
-        layout.marginBottom = 10;
-        layout.marginLeft = 10;
-        content.setLayout(layout);
-
-        // create the per-device composites and the vertical splitters
-        Composite groupKeyboard = new Composite(content, SWT.NONE);
-        Label separator1 = new Label(content, SWT.SEPARATOR | SWT.VERTICAL | SWT.SHADOW_OUT);
-        Composite groupMouse = new Composite(content, SWT.NONE);
-        Label separator2 = new Label(content, SWT.SEPARATOR | SWT.VERTICAL | SWT.SHADOW_OUT);
-        Composite groupGameController = new Composite(content, SWT.NONE);
-        Label separator3 = new Label(content, SWT.SEPARATOR | SWT.VERTICAL | SWT.SHADOW_OUT);
-        Composite groupWiimote = new Composite(content, SWT.NONE);
-
-        // set the layout data of the composites
-        GridData separatorLayoutData = new GridData(GridData.CENTER, GridData.FILL, false, true);
-        separator1.setLayoutData(separatorLayoutData);
-        separator2.setLayoutData(separatorLayoutData);
-        separator3.setLayoutData(separatorLayoutData);
-        GridData compositeLayoutData = new GridData(GridData.FILL, GridData.FILL, true, true);
-        groupKeyboard.setLayoutData(compositeLayoutData);
-        groupMouse.setLayoutData(compositeLayoutData);
-        groupGameController.setLayoutData(compositeLayoutData);
-        groupWiimote.setLayoutData(compositeLayoutData);
-
-        // create the section headers (headline + image)
-        createSectionHeader(groupKeyboard, "Keyboard", imageKeyboard);
-        createSectionHeader(groupMouse, "Mouse", imageMouse);
-        createSectionHeader(groupGameController, "Game Controller", imageGameController);
-        createSectionHeader(groupWiimote, "Wiimote", imageWiimote);
-
-        // create the individual sections
-        createKeyboardSection(groupKeyboard);
-        createMouseSection(groupMouse);
-        createGameControllerSection(groupGameController);
-        createWiimoteSection(groupWiimote);
-
-        content.pack();
-
-        return content;
-    }
-
-    private void createSectionHeader(Composite group, String heading, Image image) {
-        GridLayout grid = new GridLayout(1, true);
-        grid.verticalSpacing = 5;
-        group.setLayout(grid);
-
-        Label labelHeading = new Label(group, SWT.NONE);
-        labelHeading.setText(heading);
-        labelHeading.setFont(headingFont);
-        labelHeading.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, true, false));
-
-        Label imagebox = new Label(group, SWT.CENTER | SWT.SHADOW_NONE);
-        imagebox.setImage(image);
-        imagebox.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, true, false));
+    protected void createTabItems(CTabFolder tabFolder) {
+        createKeyboardSection(prepareTabItem("Keyboard", imageManager.get("icon"), imageManager.get("imageKeyboard")));
+        createMouseSection(prepareTabItem("Mouse", imageManager.get("icon"), imageManager.get("imageMouse")));
+        createGameControllerSection(prepareTabItem("Game Controller", imageManager.get("icon"), imageManager
+                .get("imageGameController")));
+        createWiimoteSection(prepareTabItem("Wiimote", imageManager.get("icon"), imageManager.get("imageWiimote")));
     }
 
     private void createKeyboardSection(Composite groupKeyboard) {
-        List<DeviceController> inputDevices = inputDeviceManager.getInputDevicesByType(KeyboardDevice.class);
-
-        for(DeviceController d: inputDevices) {
+        for(DeviceController d: inputDeviceManager.getInputDevicesByType(KeyboardDevice.class)) {
             Button checkboxKeyboard = new Button(groupKeyboard, SWT.CHECK);
             checkboxKeyboard.setText(d.getName());
             checkboxKeyboard.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
@@ -203,18 +90,13 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
             checkboxKeyboard.setSelection(true);
             checkboxesKeyboardConfigs.add(checkboxKeyboard);
         }
+        groupKeyboard.pack();
     }
 
     private void createMouseSection(Composite groupMouse) {
-        Button checkboxMouse1 = new Button(groupMouse, SWT.CHECK);
-        checkboxMouse1.setText("mouse 1 active");
-        checkboxMouse1.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
-        checkboxMouse1.setEnabled(false);
-
-        Button checkboxMouse2 = new Button(groupMouse, SWT.CHECK);
-        checkboxMouse2.setText("mouse 2 active");
-        checkboxMouse2.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
-        checkboxMouse2.setEnabled(false);
+        Label labelMouse = new Label(groupMouse, SWT.WRAP);
+        labelMouse.setText("The mouse cannot be configured and is always available.");
+        labelMouse.setLayoutData(new GridData(GridData.FILL));
     }
 
     private void createGameControllerSection(Composite groupGameController) {
@@ -227,52 +109,61 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         l.verticalSpacing = 5;
         c.setLayout(l);
 
-        // create the "Connected devices:" label
-        Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
-        labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelConnectedWiimotes.setText("Connected devices:");
+        if(inputDeviceManager.isGameControllerSupportAvailable()) {
+            // create the "Connected devices:" label
+            Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
+            labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelConnectedWiimotes.setText("Connected devices:");
 
-        // create the list of detected devices
-        listConnectedGameControllers = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
-        GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
-        listLayout.widthHint = 100;
-        listLayout.heightHint = 50;
-        listConnectedGameControllers.setLayoutData(listLayout);
-        listConnectedGameControllers.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                InputDeviceSettingsDialog.this.handleSelectionDetectedGameController(e);
-            }
-        });
+            // create the list of detected devices
+            listConnectedGameControllers = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
+            GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
+            // listLayout.widthHint = 100;
+            listLayout.heightHint = 100;
+            listConnectedGameControllers.setLayoutData(listLayout);
+            listConnectedGameControllers.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    InputDeviceSettingsDialog.this.handleSelectionDetectedGameController(e);
+                }
+            });
+            for(DeviceController d: inputDeviceManager.getInputDevicesByType(GameControllerDevice.class))
+                listConnectedGameControllers.add(d.getName());
 
-        labelGameControllerName = new Label(c, SWT.WRAP);
-        labelGameControllerName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelGameControllerName.setText("");
-        labelGameControllerAxes = new Label(c, SWT.WRAP);
-        labelGameControllerAxes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelGameControllerAxes.setText("");
-        labelGameControllerButtons = new Label(c, SWT.WRAP);
-        labelGameControllerButtons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelGameControllerButtons.setText("");
-        labelGameControllerCapabilities = new Label(c, SWT.WRAP);
-        labelGameControllerCapabilities.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelGameControllerCapabilities.setText("");
+            labelGameControllerName = new Label(c, SWT.WRAP);
+            labelGameControllerName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerName.setText("");
+            labelGameControllerAxes = new Label(c, SWT.WRAP);
+            labelGameControllerAxes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerAxes.setText("");
+            labelGameControllerButtons = new Label(c, SWT.WRAP);
+            labelGameControllerButtons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerButtons.setText("");
+            labelGameControllerCapabilities = new Label(c, SWT.WRAP);
+            labelGameControllerCapabilities.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerCapabilities.setText("");
 
-        // create the label describing the setup process (part 1)
-        Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
-        labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
-        labelWiimoteInfo1.setText("Redetecting will drop all existing connections.");
+            // create the label describing the setup process (part 1)
+            Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
+            labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
+            labelWiimoteInfo1.setText("Redetecting will drop all existing connections.");
 
-        // create the button to start a new detection
-        Button buttonDetectGameController = new Button(c, SWT.PUSH);
-        buttonDetectGameController.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false));
-        buttonDetectGameController.setText("Detect game controllers");
-        buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                InputDeviceSettingsDialog.this.handleClickGameControllerDetection(e);
-            }
-        });
+            // create the button to start a new detection
+            Button buttonDetectGameController = new Button(c, SWT.PUSH);
+            buttonDetectGameController.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false));
+            buttonDetectGameController.setText("Detect game controllers");
+            buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    InputDeviceSettingsDialog.this.handleClickGameControllerDetection(e);
+                }
+            });
+        } else {
+            Label labelGameControllerError = new Label(c, SWT.WRAP);
+            labelGameControllerError
+                    .setText("Game Controller support could not be initialized, please check the logs.");
+            labelGameControllerError.setLayoutData(new GridData(SWT.FILL));
+        }
     }
 
     private void createWiimoteSection(Composite groupWiimote) {
@@ -285,122 +176,73 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         l.verticalSpacing = 5;
         c.setLayout(l);
 
-        // create the "Connected devices:" label
-        Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
-        labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelConnectedWiimotes.setText("Connected devices:");
+        if(inputDeviceManager.isWiimoteSupportAvailable()) {
+            // create the "Connected devices:" label
+            Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
+            labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelConnectedWiimotes.setText("Connected devices:");
 
-        listConnectedWiimotes = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
-        GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
-        listLayout.widthHint = 100;
-        listLayout.heightHint = 50;
-        listConnectedWiimotes.setLayoutData(listLayout);
-        updateConnectedWiimotesList(listConnectedWiimotes);
+            listConnectedWiimotes = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
+            GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
+            listLayout.widthHint = 100;
+            listLayout.heightHint = 50;
+            listConnectedWiimotes.setLayoutData(listLayout);
+            for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
+                listConnectedWiimotes.add(d.getName());
 
-        // create the label describing the setup process (part 1)
-        Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
-        labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelWiimoteInfo1
-                .setText("Redetecting will drop all existing connections. To redetect, pair all devices via Bluetooth, then hold");
+            // create the label describing the setup process (part 1)
+            Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
+            labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelWiimoteInfo1
+                    .setText("Redetecting will drop all existing connections. To redetect, pair all devices via Bluetooth, then hold");
 
-        // create the label used to show the bitmap with the two buttons
-        Label labelWiimoteButtons = new Label(c, SWT.NONE);
-        labelWiimoteButtons.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, false, false));
-        labelWiimoteButtons.setImage(imageWiimoteButtons);
+            // create the label used to show the bitmap with the two buttons
+            Label labelWiimoteButtons = new Label(c, SWT.NONE);
+            labelWiimoteButtons.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, false, false));
+            labelWiimoteButtons.setImage(imageManager.get("imageWiimoteButtons"));
 
-        // create the label describing the setup process (part 2)
-        Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);
-        labelWiimoteInfo2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-        labelWiimoteInfo2.setText("on all devices while clicking the button below.");
+            // create the label describing the setup process (part 2)
+            Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);
+            labelWiimoteInfo2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelWiimoteInfo2.setText("on all devices while clicking the button below.");
 
-        // create the button to start a new detection
-        Button buttonDetectWiimotes = new Button(c, SWT.PUSH);
-        buttonDetectWiimotes.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
-        buttonDetectWiimotes.setText("Detect Wii remotes");
-        buttonDetectWiimotes.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                InputDeviceSettingsDialog.this.handleClickWiimoteDetection(e);
-            }
-        });
+            // create the button to start a new detection
+            Button buttonDetectWiimotes = new Button(c, SWT.PUSH);
+            buttonDetectWiimotes.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
+            buttonDetectWiimotes.setText("Detect Wii remotes");
+            buttonDetectWiimotes.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    InputDeviceSettingsDialog.this.handleClickWiimoteDetection(e);
+                }
+            });
+        } else {
+            Label labelWiimoteError = new Label(c, SWT.WRAP);
+            labelWiimoteError.setText("Wiimote support could not be initialized, please check the logs.");
+            labelWiimoteError.setLayoutData(new GridData(SWT.FILL));
+        }
     }
 
-    private void updateConnectedWiimotesList(org.eclipse.swt.widgets.List listConnectedWiimotes) {
+    protected void handleClickWiimoteDetection(SelectionEvent e) {
+        // start the redetection
+        inputDeviceManager.redetectWiimotes();
+        updateDeviceList();
+
+        // update the list
         listConnectedWiimotes.removeAll();
         for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
             listConnectedWiimotes.add(d.getName());
     }
 
-    protected void handleClickWiimoteDetection(SelectionEvent e) {
-        // remove previously connected devices from the device manager
-        inputDeviceManager.removeInputDevicesByType(WiimoteDevice.class);
-
-        // show the progress dialog while detecting devices
-        IRunnableWithProgress op = new IRunnableWithProgress() {
-            @Override
-            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                monitor.setTaskName("Please stand by while available Wiimotes are detected.");
-
-                // run the detection
-                WiimoteDeviceManager wiimoteDeviceManager = new WiimoteDeviceManager();
-                int numWiimotesConnected = wiimoteDeviceManager.scanForWiimotes();
-
-                // add the detected devices to the device manager
-                for(int i = 1; i <= numWiimotesConnected; i++)
-                    inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager
-                            .getWiimote(i)));
-
-                /*
-                 * // FIXME: DEBUG Thread.sleep(5000); inputDeviceManager.addInputDevice(new WiimoteDevice("Wiimote 1",
-                 * null));
-                 */
-            }
-        };
-        try {
-            ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(getShell());
-            progressMonitorDialog.run(true, false, op);
-        } catch(InvocationTargetException e1) {
-            ExceptionHandler.handleException(e1.getCause(), true);
-        } catch(InterruptedException e1) {
-            ExceptionHandler.handleException(e1, true);
-        }
-
-        // update the list of
-        updateConnectedWiimotesList(listConnectedWiimotes);
-    }
-
     protected void handleClickGameControllerDetection(SelectionEvent e) {
-        // remove previously connected devices from the device manager
-        inputDeviceManager.removeInputDevicesByType(GameControllerDevice.class);
-
-        // show the progress dialog while detecting devices
-        IRunnableWithProgress op = new IRunnableWithProgress() {
-            @Override
-            public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-                monitor.setTaskName("Please stand by while available game controllers are detected.");
-
-                // run the detection
-                GameControllerDeviceManager gameControllerDeviceManager = new GameControllerDeviceManager();
-                gameControllers = gameControllerDeviceManager.scanForGameControllers();
-
-                // add the detected devices to the device manager
-                if(gameControllers != null)
-                    for(GameControllerDescriptor gameController: gameControllers)
-                        inputDeviceManager.addInputDevice(new GameControllerDevice(gameController.name,
-                                gameControllerDeviceManager.getGameController(gameController)));
-            }
-        };
-        try {
-            ProgressMonitorDialog progressMonitorDialog = new ProgressMonitorDialog(getShell());
-            progressMonitorDialog.run(true, false, op);
-        } catch(InvocationTargetException e1) {
-            ExceptionHandler.handleException(e1.getCause(), true);
-        } catch(InterruptedException e1) {
-            ExceptionHandler.handleException(e1, true);
-        }
+        // start the redetection
+        inputDeviceManager.redetectGameControllers();
+        updateDeviceList();
 
         // update the list
-        updateConnectedGameControllersList(listConnectedGameControllers);
+        listConnectedGameControllers.removeAll();
+        for(DeviceController d: inputDeviceManager.getInputDevicesByType(GameControllerDevice.class))
+            listConnectedGameControllers.add(d.getName());
         handleSelectionDetectedGameController(e);
     }
 
@@ -420,18 +262,9 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         }
     }
 
-    private void updateConnectedGameControllersList(org.eclipse.swt.widgets.List listConnectedGameControllers) {
-        listConnectedGameControllers.removeAll();
-
-        if(gameControllers != null)
-            for(DeviceController d: inputDeviceManager.getInputDevicesByType(GameControllerDevice.class))
-                listConnectedGameControllers.add(d.getName());
-        else
-            listConnectedGameControllers.add("[failed to load library]");
-    }
-
     @Override
     protected void okPressed() {
+        // FIXME: just a hack to make some changes available for testing
         inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
         for(Button b: checkboxesKeyboardConfigs) {
             if(b.getSelection())
@@ -441,8 +274,17 @@ public class InputDeviceSettingsDialog extends TitleAreaDialog {
         super.okPressed();
     }
 
-    /*
-     * public static void main(String[] args) { Display display = new Display(); Shell shell = new Shell(display);
-     * InputDeviceSettingsDialog dlg = new InputDeviceSettingsDialog(shell); dlg.open(); display.dispose(); }
-     */
+    @Override
+    protected void fillDeviceList(List deviceList) {
+        for(DeviceController dc: inputDeviceManager.getInputDevices())
+            deviceList.add(dc.getName());
+    }
+
+    /*public static void main(String[] args) {
+        Display display = new Display();
+        Shell shell = new Shell(display);
+        InputDeviceSettingsDialog dlg = new InputDeviceSettingsDialog(shell);
+        dlg.open();
+        display.dispose();
+    }*/
 }

@@ -4,6 +4,8 @@ import de.jacavi.appl.controller.CarController;
 
 
 
-public interface DrivingAgentController extends CarController {
-
+public abstract class DrivingAgentController extends CarController {
+    protected DrivingAgentController(String name) {
+        super(name);
+    }
 }
