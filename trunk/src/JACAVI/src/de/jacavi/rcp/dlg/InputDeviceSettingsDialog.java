@@ -1,26 +1,19 @@
 package de.jacavi.rcp.dlg;
 
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.UUID;
+import java.util.Arrays;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FormAttachment;
-import org.eclipse.swt.layout.FormData;
-import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.jacavi.appl.ContextLoader;
@@ -29,6 +22,7 @@ import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
+import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameControllerDescriptor;
 import de.jacavi.rcp.Activator;
 
 
@@ -41,46 +35,17 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private List listConnectedWiimotes;
 
-    private List listConnectedDevices;
+    private List listConnectedGameControllers;
 
-    private Label labelName;
+    private GameControllerDescriptor[] gameControllers;
 
-    private Label labelAxes;
+    private Label labelGameControllerName;
 
-    private Label labelButtons;
+    private Label labelGameControllerAxes;
 
-    private Label labelCapabilities;
+    private Label labelGameControllerButtons;
 
-    private ProgressBar thrustGauge;
-
-    private Timer thrustPreviewUpdater;
-
-    private java.util.List<DeviceController> gameControllers;
-
-    private static class DevicePreviewUpdater extends TimerTask {
-        private final UUID deviceID;
-
-        private final ProgressBar progressBar;
-
-        private final InputDeviceManager inputDeviceManager;
-
-        public DevicePreviewUpdater(InputDeviceManager inputDeviceManager, UUID deviceID, ProgressBar progressBar) {
-            this.inputDeviceManager = inputDeviceManager;
-            this.deviceID = deviceID;
-            this.progressBar = progressBar;
-        }
-
-        @Override
-        public void run() {
-            Display.getDefault().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    if(inputDeviceManager.isIdValid(deviceID))
-                        progressBar.setSelection(inputDeviceManager.getDevice(deviceID).poll().getSpeed());
-                }
-            });
-        }
-    }
+    private Label labelGameControllerCapabilities;
 
     public InputDeviceSettingsDialog(Shell parentShell) {
         super(parentShell);
@@ -148,53 +113,52 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // create the layout manager for laying out the inner widgets
-        c.setLayout(new FormLayout());
+        GridLayout l = new GridLayout(1, true);
+        l.verticalSpacing = 5;
+        c.setLayout(l);
 
         if(inputDeviceManager.isGameControllerSupportAvailable()) {
             // create the "Connected devices:" label
-            Label labelConnectedDevices = new Label(c, SWT.WRAP);
-            FormData fd1 = new FormData();
-            fd1.top = new FormAttachment(0);
-            fd1.left = new FormAttachment(0);
-            labelConnectedDevices.setLayoutData(fd1);
-            labelConnectedDevices.setText("Connected devices:");
-
-            thrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
-            FormData fd5 = new FormData();
-            fd5.top = new FormAttachment(labelConnectedDevices, 10);
-            fd5.right = new FormAttachment(100, -10);
-            fd5.width = SWT.DEFAULT;
-            thrustGauge.setLayoutData(fd5);
+            Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
+            labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelConnectedWiimotes.setText("Connected devices:");
 
             // create the list of detected devices
-            listConnectedDevices = new List(c, SWT.BORDER);
-            FormData fd2 = new FormData();
-            fd2.top = new FormAttachment(labelConnectedDevices, 10);
-            fd2.left = new FormAttachment(0);
-            fd2.right = new FormAttachment(thrustGauge, -30);
-            fd2.height = 80;
-            listConnectedDevices.setLayoutData(fd2);
-            listConnectedDevices.addSelectionListener(new SelectionAdapter() {
+            listConnectedGameControllers = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
+            GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
+            // listLayout.widthHint = 100;
+            listLayout.heightHint = 100;
+            listConnectedGameControllers.setLayoutData(listLayout);
+            listConnectedGameControllers.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     InputDeviceSettingsDialog.this.handleSelectionDetectedGameController(e);
                 }
             });
+            for(DeviceController d: inputDeviceManager.getInputDevicesByType(GameControllerDevice.class))
+                listConnectedGameControllers.add(d.getName());
 
-            // create the label "Preview:"
-            Label labelThrustGauge = new Label(c, SWT.WRAP);
-            FormData fd6 = new FormData();
-            fd6.left = new FormAttachment(thrustGauge, 0, SWT.CENTER);
-            fd6.bottom = new FormAttachment(thrustGauge, -10);
-            labelThrustGauge.setLayoutData(fd6);
-            labelThrustGauge.setText("Preview:");
+            labelGameControllerName = new Label(c, SWT.WRAP);
+            labelGameControllerName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerName.setText("");
+            labelGameControllerAxes = new Label(c, SWT.WRAP);
+            labelGameControllerAxes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerAxes.setText("");
+            labelGameControllerButtons = new Label(c, SWT.WRAP);
+            labelGameControllerButtons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerButtons.setText("");
+            labelGameControllerCapabilities = new Label(c, SWT.WRAP);
+            labelGameControllerCapabilities.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerCapabilities.setText("");
+
+            // create the label describing the setup process (part 1)
+            Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
+            labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
+            labelWiimoteInfo1.setText("Redetecting will drop all existing connections.");
 
             // create the button to start a new detection
             Button buttonDetectGameController = new Button(c, SWT.PUSH);
-            FormData fd4 = new FormData();
-            fd4.left = new FormAttachment(0);
-            fd4.bottom = new FormAttachment(100);
-            buttonDetectGameController.setLayoutData(fd4);
+            buttonDetectGameController.setLayoutData(new GridData(GridData.FILL, GridData.END, true, false));
             buttonDetectGameController.setText("Detect game controllers");
             buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
                 @Override
@@ -202,54 +166,11 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                     InputDeviceSettingsDialog.this.handleClickGameControllerDetection(e);
                 }
             });
-
-            // create the details grid
-            Composite details = new Composite(c, SWT.NONE);
-            FormData fd3 = new FormData();
-            fd3.top = new FormAttachment(listConnectedDevices, 10);
-            fd3.left = new FormAttachment(0);
-            fd3.right = new FormAttachment(thrustGauge, -30);
-            fd3.bottom = new FormAttachment(buttonDetectGameController, -10);
-            details.setLayoutData(fd3);
-
-            // create the details stuff
-            GridLayout l = new GridLayout(2, false);
-            l.verticalSpacing = 3;
-            l.horizontalSpacing = 20;
-            details.setLayout(l);
-            Label labelNameDesc = new Label(details, SWT.WRAP);
-            labelNameDesc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL, GridData.BEGINNING, false, false));
-            labelNameDesc.setText("Name:");
-            labelName = new Label(details, SWT.WRAP);
-            labelName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelName.setText("");
-            Label labelAxesDesc = new Label(details, SWT.WRAP);
-            labelAxesDesc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL, GridData.BEGINNING, false, false));
-            labelAxesDesc.setText("Axes:");
-            labelAxes = new Label(details, SWT.WRAP);
-            labelAxes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelAxes.setText("");
-            Label labelButtonsDesc = new Label(details, SWT.WRAP);
-            labelButtonsDesc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL, GridData.BEGINNING, false, false));
-            labelButtonsDesc.setText("Buttons:");
-            labelButtons = new Label(details, SWT.WRAP);
-            labelButtons.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelButtons.setText("");
-            Label labelCapabilitiesDesc = new Label(details, SWT.WRAP);
-            labelCapabilitiesDesc
-                    .setLayoutData(new GridData(GridData.FILL_HORIZONTAL, GridData.BEGINNING, false, false));
-            labelCapabilitiesDesc.setText("Capabilities:");
-            labelCapabilities = new Label(details, SWT.WRAP);
-            labelCapabilities.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-            labelCapabilities.setText("");
-
-            // update the device list
-            handleClickGameControllerDetection(null);
         } else {
             Label labelGameControllerError = new Label(c, SWT.WRAP);
             labelGameControllerError
                     .setText("Game Controller support could not be initialized, please check the logs.");
-            labelGameControllerError.setLayoutData(new FormData());
+            labelGameControllerError.setLayoutData(new GridData(SWT.FILL));
         }
     }
 
@@ -322,55 +243,35 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     protected void handleClickGameControllerDetection(SelectionEvent e) {
-        // cancel the timer
-        if(thrustPreviewUpdater != null)
-            thrustPreviewUpdater.cancel();
-
         // start the redetection
         inputDeviceManager.redetectGameControllers();
         updateDeviceList();
-        gameControllers = inputDeviceManager.getInputDevicesByType(GameControllerDevice.class);
 
         // update the list
-        listConnectedDevices.removeAll();
-        for(DeviceController d: gameControllers)
-            listConnectedDevices.add(d.getName());
+        listConnectedGameControllers.removeAll();
+        for(DeviceController d: inputDeviceManager.getInputDevicesByType(GameControllerDevice.class))
+            listConnectedGameControllers.add(d.getName());
         handleSelectionDetectedGameController(e);
     }
 
     protected void handleSelectionDetectedGameController(SelectionEvent e) {
-        if(thrustPreviewUpdater != null)
-            thrustPreviewUpdater.cancel();
-        int selectionIndex = listConnectedDevices.getSelectionIndex();
-        if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.size()) {
-            GameControllerDevice gameController = (GameControllerDevice) gameControllers.get(selectionIndex);
-            labelName.setText(gameController.getName());
-            labelAxes.setText(String.valueOf(gameController.getNumAxes()));
-            labelButtons.setText(String.valueOf(gameController.getNumButtons()));
-            StringBuffer capabilities = new StringBuffer();
-            for(String capability: gameController.getCapabilities()) {
-                if(capabilities.length() > 0)
-                    capabilities.append(", ");
-                capabilities.append(capability);
-            }
-            labelCapabilities.setText(capabilities.toString());
-            thrustPreviewUpdater = new Timer("thrustPreviewUpdater");
-            thrustPreviewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, gameController.getId(),
-                    thrustGauge), 50, 50);
+        int selectionIndex = listConnectedGameControllers.getSelectionIndex();
+        if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.length) {
+            labelGameControllerName.setText("Name: " + gameControllers[selectionIndex].name);
+            labelGameControllerAxes.setText("Axes: " + gameControllers[selectionIndex].numAxes);
+            labelGameControllerButtons.setText("Buttons: " + gameControllers[selectionIndex].numButtons);
+            labelGameControllerCapabilities.setText("Capabilities: "
+                    + Arrays.toString(gameControllers[selectionIndex].capabilities));
         } else {
-            labelName.setText("");
-            labelAxes.setText("");
-            labelButtons.setText("");
-            labelCapabilities.setText("");
-            thrustGauge.setSelection(0);
+            labelGameControllerName.setText("");
+            labelGameControllerAxes.setText("");
+            labelGameControllerButtons.setText("");
+            labelGameControllerCapabilities.setText("");
         }
     }
 
     @Override
     protected void okPressed() {
-        if(thrustPreviewUpdater != null)
-            thrustPreviewUpdater.cancel();
-
         // FIXME: just a hack to make some changes available for testing
         inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
         for(Button b: checkboxesKeyboardConfigs) {
