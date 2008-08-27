@@ -3,6 +3,7 @@ package de.jacavi.rcp.dlg;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -70,6 +71,13 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         imageManager.put("imageWiimote", new Image(Display.getDefault(), "icons/input_devices/wiimote.png"));
         imageManager.put("imageWiimoteButtons", new Image(Display.getDefault(), "icons/wiimote_buttons.png"));
         imageManager.put("icon", new Image(Display.getDefault(), "icons/famfamfam-silk/controller.png"));*/
+    }
+
+    @Override
+    protected void setDescriptionTexts() {
+        getShell().setText("Input Device Settings");
+        setTitle("Initialize and configure input devices");
+        setMessage("Initialize and configure your input devices.", IMessageProvider.INFORMATION);
     }
 
     @Override
