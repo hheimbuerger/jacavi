@@ -18,8 +18,7 @@ public class MouseDevice extends DeviceController {
 
     @Override
     public ControllerSignal poll() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ControllerSignal(50, false);
     }
 
     @Override

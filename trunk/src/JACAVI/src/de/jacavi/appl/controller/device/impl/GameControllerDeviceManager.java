@@ -1,5 +1,6 @@
 package de.jacavi.appl.controller.device.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,35 +44,35 @@ public class GameControllerDeviceManager {
      * @return the list of descriptors, or null if the library could not be initialized
      */
     public GameControllerDescriptor[] scanForGameControllers() {
-        try {
-            // prepare a list for all detected game controllers
-            List<GameControllerDescriptor> detectedGameControllers = new ArrayList<GameControllerDescriptor>();
+        // prepare a list for all detected game controllers
+        List<GameControllerDescriptor> detectedGameControllers = new ArrayList<GameControllerDescriptor>();
 
-            // iterate over the IDs for all *potentially* connected devices
-            for(int id = 0; id < Joystick.getNumDevices(); id++) {
+        // iterate over the IDs for all *potentially* connected devices
+        for(int id = 0; id < Joystick.getNumDevices(); id++) {
 
-                // check if there's actually a device plugged in under that ID
-                if(Joystick.isPluggedIn(id)) {
+            // check if there's actually a device plugged in under that ID
+            if(Joystick.isPluggedIn(id)) {
 
-                    // create a Joystick instance for the device with that ID
-                    Joystick gameController = Joystick.createInstance(id);
-
-                    // create a descriptor for this device
-                    String[] capabilities = determineDeviceCapabilities(gameController);
-                    GameControllerDescriptor descriptor = new GameControllerDescriptor(id, gameController.toString(),
-                            gameController.getNumAxes(), gameController.getNumButtons(), capabilities);
-
-                    // add the device to the list
-                    detectedGameControllers.add(descriptor);
+                // create a Joystick instance for the device with that ID
+                Joystick gameController;
+                try {
+                    gameController = Joystick.createInstance(id);
+                } catch(IOException e) {
+                    throw new RuntimeException("Couldn't create joystick instance.", e);
                 }
-            }
 
-            // return the result
-            return detectedGameControllers.toArray(new GameControllerDescriptor[detectedGameControllers.size()]);
-        } catch(Throwable t) {
-            logger.warn("Game controller library failed to initialize, returning 0 game controllers.", t);
-            return null;
+                // create a descriptor for this device
+                String[] capabilities = determineDeviceCapabilities(gameController);
+                GameControllerDescriptor descriptor = new GameControllerDescriptor(id, gameController.toString(),
+                        gameController.getNumAxes(), gameController.getNumButtons(), capabilities);
+
+                // add the device to the list
+                detectedGameControllers.add(descriptor);
+            }
         }
+
+        // return the result
+        return detectedGameControllers.toArray(new GameControllerDescriptor[detectedGameControllers.size()]);
     }
 
     private String[] determineDeviceCapabilities(Joystick gameController) {

@@ -27,30 +27,7 @@
 	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.hal.SlotCarSystemConnectorFactory">
 	</bean> 
 	
-	<bean id="playersBean" class="java.util.ArrayList">
-		<constructor-arg>
-			<list>
-				<bean id="player1" class="de.jacavi.appl.racelogic.Player">
-					<property name="id" value="1" />
-					<property name="name" value="Player 1" />
-					<property name="controller">
-						<bean id="mouseControlBean" class="de.jacavi.appl.controller.device.impl.MouseDevice">
-                            <constructor-arg index="0" value="mouse" />
-                        </bean>
-					</property>
-				</bean>
-				<bean id="player2" class="de.jacavi.appl.racelogic.Player">
-					<property name="id" value="2" />
-					<property name="name" value="Player 2" />
-					<property name="controller">
-						<bean id="gamecontrollerControlBean" class="de.jacavi.appl.controller.device.impl.MouseDevice">
-                            <constructor-arg index="0" value="gamectrl" />
-                        </bean>
-					</property>
-				</bean>
-			</list>
-		</constructor-arg>
-	</bean>
+	<bean id="playersBean" class="java.util.ArrayList"/>
 	
 	<bean id="osResolverUtilBean" class="de.jacavi.rcp.util.OSResolverUtil">
 	</bean>

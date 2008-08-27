@@ -6,20 +6,17 @@ import de.jacavi.appl.controller.CarController;
 
 
 
-public abstract class DeviceController implements CarController {
-    private UUID id;
-
-    private String name;
-
+public abstract class DeviceController extends CarController {
     protected DeviceController(String name) {
-        this.id = UUID.randomUUID();
-        this.name = name;
+        super(name);
     }
 
+    @Override
     public UUID getId() {
         return id;
     }
 
+    @Override
     public String getName() {
         return name;
     }

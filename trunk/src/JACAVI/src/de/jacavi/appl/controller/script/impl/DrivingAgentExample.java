@@ -5,7 +5,11 @@ import de.jacavi.appl.controller.script.DrivingAgentController;
 
 
 
-public class DrivingAgentExample implements DrivingAgentController {
+public class DrivingAgentExample extends DrivingAgentController {
+
+    public DrivingAgentExample() {
+        super("DEBUG"); // FIXME: name should be taken from constructor argument
+    }
 
     @Override
     public void cleanup() {
