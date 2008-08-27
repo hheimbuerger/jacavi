@@ -112,6 +112,15 @@
                tooltip="Start Race">
          </action>
          <action
+               class="de.jacavi.rcp.actions.OpenConnectorSettingsAction"
+               icon="icons/famfamfam-silk/connect.png"
+               id="JACAVI.OpenConnectorSettingsDialog"
+               label="Configure Connectors..."
+               menubarPath="settingsMenu/settingsGroup"
+               style="push"
+               toolbarPath="settingsGroup">
+         </action>
+         <action
                class="de.jacavi.rcp.actions.OpenInputDeviceSettingsAction"
                icon="icons/famfamfam-silk/controller.png"
                id="JACAVI.OpenInputDeviceSettingsAction"

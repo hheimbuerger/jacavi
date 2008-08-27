@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -86,10 +85,7 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
 
     @Override
     protected Control createButtonBar(Composite parent) {
-        getShell().setText("Input Device Settings");
-        setTitle("Initialize and configure input devices");
-        setMessage("Please initialize and configure the input devices you want to use in races.",
-                IMessageProvider.INFORMATION);
+        setDescriptionTexts();
         return super.createButtonBar(parent);
     }
 
@@ -207,6 +203,8 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         listDevices.removeAll();
         fillDeviceList(listDevices);
     }
+
+    abstract protected void setDescriptionTexts();
 
     abstract protected void createTabItems(CTabFolder tabFolder);
 
