@@ -92,4 +92,8 @@ public class RaceEngine {
 
     }
 
+    public Race getRace() {
+        return race;
+    }
+
 }

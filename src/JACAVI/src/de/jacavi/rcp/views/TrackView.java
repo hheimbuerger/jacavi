@@ -21,7 +21,7 @@ import de.jacavi.rcp.widgets.TrackWidget.TrackWidgetMode;
 /**
  * @author Fabian Rohn View that is used to show realtime Carrera cars on the track
  */
-public class TrackView extends ViewPart implements IPerspectiveListener {
+public class TrackView extends ViewPart implements IPerspectiveListener, RaceView {
 
     private static Log log = LogFactory.getLog(TrackView.class);
 
@@ -66,6 +66,11 @@ public class TrackView extends ViewPart implements IPerspectiveListener {
         TrackDesigner active = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
                 .getActiveEditor();
         return active.getTrackWidget().getTrack();
+    }
+
+    @Override
+    public void repaint() {
+        trackWidget.repaint();
     }
 
 }
