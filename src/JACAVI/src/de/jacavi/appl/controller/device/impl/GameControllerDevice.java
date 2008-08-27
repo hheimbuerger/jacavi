@@ -4,7 +4,6 @@ import com.centralnexus.input.Joystick;
 
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
-import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameControllerDescriptor;
 
 
 
@@ -12,12 +11,9 @@ public class GameControllerDevice extends DeviceController {
 
     private final Joystick device;
 
-    private final GameControllerDescriptor descriptor;
-
-    public GameControllerDevice(String name, Joystick device, GameControllerDescriptor gameController) {
+    public GameControllerDevice(String name, Joystick device) {
         super(name);
         this.device = device;
-        this.descriptor = gameController;
     }
 
     @Override
@@ -43,17 +39,5 @@ public class GameControllerDevice extends DeviceController {
             return new Float(deviceSpecificInputSpeedSignal * -100).intValue();
         else
             return 0;
-    }
-
-    public int getNumAxes() {
-        return descriptor.numAxes;
-    }
-
-    public int getNumButtons() {
-        return descriptor.numButtons;
-    }
-
-    public String[] getCapabilities() {
-        return descriptor.capabilities;
     }
 }
