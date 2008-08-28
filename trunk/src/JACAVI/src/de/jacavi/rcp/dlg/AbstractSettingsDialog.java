@@ -193,7 +193,6 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         // create the content composite that will be used by the subclass to insert its widgets
         Composite content = new Composite(tabControl, SWT.NONE);
         content.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true));
-        content.setLayout(new GridLayout(1, false));
 
         // return that content composite
         return content;

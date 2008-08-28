@@ -10,6 +10,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -131,6 +132,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     private void createKeyboardSection(Composite groupKeyboard) {
+        groupKeyboard.setLayout(new GridLayout(1, false));
         for(DeviceController d: inputDeviceManager.getInputDevicesByType(KeyboardDevice.class)) {
             Button checkboxKeyboard = new Button(groupKeyboard, SWT.CHECK);
             checkboxKeyboard.setText(d.getName());
@@ -143,16 +145,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     private void createMouseSection(Composite groupMouse) {
+        groupMouse.setLayout(new FillLayout());
         Label labelMouse = new Label(groupMouse, SWT.WRAP);
         labelMouse.setText("The mouse cannot be configured and is always available.");
-        labelMouse.setLayoutData(new GridData(GridData.FILL));
     }
 
-    private void createGameControllerSection(Composite groupGameController) {
-        // create the composite used to hold all the inner widgets
-        Composite c = new Composite(groupGameController, SWT.NONE);
-        c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+    private void createGameControllerSection(Composite c) {
         // create the layout manager for laying out the inner widgets
         c.setLayout(new FormLayout());
 
@@ -160,15 +158,15 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             // create the "Connected devices:" label
             Label labelConnectedDevices = new Label(c, SWT.WRAP);
             FormData fd1 = new FormData();
-            fd1.top = new FormAttachment(0);
-            fd1.left = new FormAttachment(0);
+            fd1.top = new FormAttachment(0, 5);
+            fd1.left = new FormAttachment(0, 5);
             labelConnectedDevices.setLayoutData(fd1);
             labelConnectedDevices.setText("Connected devices:");
 
             gameControllerThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
             FormData fd5 = new FormData();
             fd5.top = new FormAttachment(labelConnectedDevices, 10);
-            fd5.right = new FormAttachment(100, -10);
+            fd5.right = new FormAttachment(100, -20);
             fd5.width = SWT.DEFAULT;
             gameControllerThrustGauge.setLayoutData(fd5);
 
@@ -176,7 +174,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             listConnectedGameControllers = new List(c, SWT.BORDER);
             FormData fd2 = new FormData();
             fd2.top = new FormAttachment(labelConnectedDevices, 10);
-            fd2.left = new FormAttachment(0);
+            fd2.left = new FormAttachment(labelConnectedDevices, 0, SWT.LEFT);
             fd2.right = new FormAttachment(gameControllerThrustGauge, -30);
             fd2.height = 80;
             listConnectedGameControllers.setLayoutData(fd2);
@@ -198,8 +196,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             // create the button to start a new detection
             Button buttonDetectGameController = new Button(c, SWT.PUSH);
             FormData fd4 = new FormData();
-            fd4.left = new FormAttachment(0);
-            fd4.bottom = new FormAttachment(100);
+            fd4.left = new FormAttachment(labelConnectedDevices, 0, SWT.LEFT);
+            fd4.bottom = new FormAttachment(100, -5);
             buttonDetectGameController.setLayoutData(fd4);
             buttonDetectGameController.setText("Redetect game controllers");
             buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
@@ -213,7 +211,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Composite details = new Composite(c, SWT.NONE);
             FormData fd3 = new FormData();
             fd3.top = new FormAttachment(listConnectedGameControllers, 10);
-            fd3.left = new FormAttachment(0);
+            fd3.left = new FormAttachment(labelConnectedDevices, 0, SWT.LEFT);
             fd3.right = new FormAttachment(gameControllerThrustGauge, -30);
             fd3.bottom = new FormAttachment(buttonDetectGameController, -10);
             details.setLayoutData(fd3);
@@ -259,11 +257,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         }
     }
 
-    private void createWiimoteSection(Composite groupWiimote) {
-        // create the composite used to hold all the inner widgets
-        Composite c = new Composite(groupWiimote, SWT.NONE);
-        c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-
+    private void createWiimoteSection(Composite c) {
         // create the layout manager for laying out the inner widgets
         c.setLayout(new FormLayout());
 
@@ -271,22 +265,22 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             // create the "Connected devices:" label
             Label labelConnectedDevices = new Label(c, SWT.WRAP);
             FormData fd1 = new FormData();
-            fd1.top = new FormAttachment(0);
-            fd1.left = new FormAttachment(0);
+            fd1.top = new FormAttachment(0, 5);
+            fd1.left = new FormAttachment(0, 5);
             labelConnectedDevices.setLayoutData(fd1);
             labelConnectedDevices.setText("Connected devices:");
 
             wiimoteThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
             FormData fd5 = new FormData();
             fd5.top = new FormAttachment(labelConnectedDevices, 10);
-            fd5.right = new FormAttachment(100, -10);
+            fd5.right = new FormAttachment(100, -20);
             fd5.width = SWT.DEFAULT;
             wiimoteThrustGauge.setLayoutData(fd5);
 
             listConnectedWiimotes = new List(c, SWT.BORDER);
             FormData fd2 = new FormData();
             fd2.top = new FormAttachment(labelConnectedDevices, 10);
-            fd2.left = new FormAttachment(0);
+            fd2.left = new FormAttachment(labelConnectedDevices, 0, SWT.LEFT);
             fd2.right = new FormAttachment(wiimoteThrustGauge, -30);
             fd2.height = 80;
             listConnectedWiimotes.setLayoutData(fd2);
@@ -308,8 +302,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             // create the button to start a new detection
             Button buttonDetectGameController = new Button(c, SWT.PUSH);
             FormData fd4 = new FormData();
-            fd4.left = new FormAttachment(0);
-            fd4.bottom = new FormAttachment(100);
+            fd4.left = new FormAttachment(listConnectedWiimotes, 0, SWT.LEFT);
+            fd4.bottom = new FormAttachment(100, -5);
             buttonDetectGameController.setLayoutData(fd4);
             buttonDetectGameController.setText("Redetect Wiimotes");
             buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
@@ -323,7 +317,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
             FormData fd7 = new FormData();
             fd7.top = new FormAttachment(listConnectedWiimotes, 10);
-            fd7.left = new FormAttachment(0);
+            fd7.left = new FormAttachment(listConnectedWiimotes, 0, SWT.LEFT);
             fd7.right = new FormAttachment(listConnectedWiimotes, 0, SWT.RIGHT);
             labelWiimoteInfo1.setLayoutData(fd7);
             labelWiimoteInfo1
@@ -341,8 +335,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);
             FormData fd9 = new FormData();
             fd9.top = new FormAttachment(labelWiimoteButtons, 5);
-            fd9.left = new FormAttachment(0);
-            fd7.right = new FormAttachment(listConnectedWiimotes, 0, SWT.RIGHT);
+            fd9.left = new FormAttachment(listConnectedWiimotes, 0, SWT.LEFT);
+            fd9.right = new FormAttachment(listConnectedWiimotes, 0, SWT.RIGHT);
             labelWiimoteInfo2.setLayoutData(fd9);
             labelWiimoteInfo2.setText("on all devices while clicking the button below.");
 
