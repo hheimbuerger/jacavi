@@ -51,7 +51,7 @@ public class RaceValidationDialog extends TitleAreaDialog {
     protected Control createContents(Composite parent) {
         Control contents = super.createContents(parent);
         setTitle("Validate Race Settings");
-        setMessage("Please set Player specific options", IMessageProvider.INFORMATION);
+        setMessage("Congratulations! Validation successfull!", IMessageProvider.INFORMATION);
         return contents;
     }
 
@@ -96,6 +96,7 @@ public class RaceValidationDialog extends TitleAreaDialog {
                     isValidLabel.setText("INVALID");
                     isValidLabel.setImage(this.invalid);
                     readyForStart = false;
+                    setErrorMessage("Please fix the following errors in your settings.");
                 }
 
             } catch(IllegalArgumentException e) {
