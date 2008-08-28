@@ -3,6 +3,7 @@ package de.jacavi.rcp.dlg;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -42,21 +43,21 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
     }
 
     private void createLib42Tab(Composite parent) {
+        parent.setLayout(new FillLayout());
         Label dummy = new Label(parent, SWT.WRAP);
         dummy.setText("Insert Lib42 configuration widgets here.");
-        dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     private void createBlueRiderTab(Composite parent) {
+        parent.setLayout(new FillLayout());
         Label dummy = new Label(parent, SWT.WRAP);
         dummy.setText("Insert BlueRider configuration widgets here.");
-        dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     private void createAnalogueTab(Composite parent) {
+        parent.setLayout(new FillLayout());
         Label dummy = new Label(parent, SWT.WRAP);
         dummy.setText("Insert analogue configuration widgets here.");
-        dummy.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
     }
 
     @Override
