@@ -39,11 +39,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private final ArrayList<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
 
-    private List listConnectedWiimotes;
-
-    private List listConnectedDevices;
-
-    private Label labelName;
+    private Label labelGameControllerName;
 
     private Label labelAxes;
 
@@ -51,11 +47,21 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private Label labelCapabilities;
 
-    private ProgressBar thrustGauge;
-
-    private Timer thrustPreviewUpdater;
-
     private java.util.List<DeviceController> gameControllers;
+
+    private List listConnectedGameControllers;
+
+    private ProgressBar gameControllerThrustGauge;
+
+    private Timer gameControllerPreviewUpdater;
+
+    private List listConnectedWiimotes;
+
+    private ProgressBar wiimoteThrustGauge;
+
+    private Timer wiimotePreviewUpdater;
+
+    private java.util.List<DeviceController> wiimotes;
 
     private static class DevicePreviewUpdater extends TimerTask {
         private final UUID deviceID;
@@ -159,22 +165,22 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             labelConnectedDevices.setLayoutData(fd1);
             labelConnectedDevices.setText("Connected devices:");
 
-            thrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
+            gameControllerThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
             FormData fd5 = new FormData();
             fd5.top = new FormAttachment(labelConnectedDevices, 10);
             fd5.right = new FormAttachment(100, -10);
             fd5.width = SWT.DEFAULT;
-            thrustGauge.setLayoutData(fd5);
+            gameControllerThrustGauge.setLayoutData(fd5);
 
             // create the list of detected devices
-            listConnectedDevices = new List(c, SWT.BORDER);
+            listConnectedGameControllers = new List(c, SWT.BORDER);
             FormData fd2 = new FormData();
             fd2.top = new FormAttachment(labelConnectedDevices, 10);
             fd2.left = new FormAttachment(0);
-            fd2.right = new FormAttachment(thrustGauge, -30);
+            fd2.right = new FormAttachment(gameControllerThrustGauge, -30);
             fd2.height = 80;
-            listConnectedDevices.setLayoutData(fd2);
-            listConnectedDevices.addSelectionListener(new SelectionAdapter() {
+            listConnectedGameControllers.setLayoutData(fd2);
+            listConnectedGameControllers.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     InputDeviceSettingsDialog.this.handleSelectionDetectedGameController(e);
@@ -184,8 +190,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             // create the label "Preview:"
             Label labelThrustGauge = new Label(c, SWT.WRAP);
             FormData fd6 = new FormData();
-            fd6.left = new FormAttachment(thrustGauge, 0, SWT.CENTER);
-            fd6.bottom = new FormAttachment(thrustGauge, -10);
+            fd6.left = new FormAttachment(gameControllerThrustGauge, 0, SWT.CENTER);
+            fd6.bottom = new FormAttachment(gameControllerThrustGauge, -10);
             labelThrustGauge.setLayoutData(fd6);
             labelThrustGauge.setText("Preview:");
 
@@ -195,7 +201,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             fd4.left = new FormAttachment(0);
             fd4.bottom = new FormAttachment(100);
             buttonDetectGameController.setLayoutData(fd4);
-            buttonDetectGameController.setText("Detect game controllers");
+            buttonDetectGameController.setText("Redetect game controllers");
             buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
@@ -206,9 +212,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             // create the details grid
             Composite details = new Composite(c, SWT.NONE);
             FormData fd3 = new FormData();
-            fd3.top = new FormAttachment(listConnectedDevices, 10);
+            fd3.top = new FormAttachment(listConnectedGameControllers, 10);
             fd3.left = new FormAttachment(0);
-            fd3.right = new FormAttachment(thrustGauge, -30);
+            fd3.right = new FormAttachment(gameControllerThrustGauge, -30);
             fd3.bottom = new FormAttachment(buttonDetectGameController, -10);
             details.setLayoutData(fd3);
 
@@ -220,9 +226,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Label labelNameDesc = new Label(details, SWT.WRAP);
             labelNameDesc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL, GridData.BEGINNING, false, false));
             labelNameDesc.setText("Name:");
-            labelName = new Label(details, SWT.WRAP);
-            labelName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelName.setText("");
+            labelGameControllerName = new Label(details, SWT.WRAP);
+            labelGameControllerName.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+            labelGameControllerName.setText("");
             Label labelAxesDesc = new Label(details, SWT.WRAP);
             labelAxesDesc.setLayoutData(new GridData(GridData.FILL_HORIZONTAL, GridData.BEGINNING, false, false));
             labelAxesDesc.setText("Axes:");
@@ -259,50 +265,89 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         c.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
         // create the layout manager for laying out the inner widgets
-        GridLayout l = new GridLayout(1, true);
-        l.verticalSpacing = 5;
-        c.setLayout(l);
+        c.setLayout(new FormLayout());
 
         if(inputDeviceManager.isWiimoteSupportAvailable()) {
             // create the "Connected devices:" label
-            Label labelConnectedWiimotes = new Label(c, SWT.WRAP);
-            labelConnectedWiimotes.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelConnectedWiimotes.setText("Connected devices:");
+            Label labelConnectedDevices = new Label(c, SWT.WRAP);
+            FormData fd1 = new FormData();
+            fd1.top = new FormAttachment(0);
+            fd1.left = new FormAttachment(0);
+            labelConnectedDevices.setLayoutData(fd1);
+            labelConnectedDevices.setText("Connected devices:");
 
-            listConnectedWiimotes = new org.eclipse.swt.widgets.List(c, SWT.BORDER);
-            GridData listLayout = new GridData(SWT.CENTER, SWT.BEGINNING, true, false);
-            listLayout.widthHint = 100;
-            listLayout.heightHint = 50;
-            listConnectedWiimotes.setLayoutData(listLayout);
-            for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
-                listConnectedWiimotes.add(d.getName());
+            wiimoteThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
+            FormData fd5 = new FormData();
+            fd5.top = new FormAttachment(labelConnectedDevices, 10);
+            fd5.right = new FormAttachment(100, -10);
+            fd5.width = SWT.DEFAULT;
+            wiimoteThrustGauge.setLayoutData(fd5);
 
-            // create the label describing the setup process (part 1)
-            Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
-            labelWiimoteInfo1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelWiimoteInfo1
-                    .setText("Redetecting will drop all existing connections. To redetect, pair all devices via Bluetooth, then hold");
+            listConnectedWiimotes = new List(c, SWT.BORDER);
+            FormData fd2 = new FormData();
+            fd2.top = new FormAttachment(labelConnectedDevices, 10);
+            fd2.left = new FormAttachment(0);
+            fd2.right = new FormAttachment(wiimoteThrustGauge, -30);
+            fd2.height = 80;
+            listConnectedWiimotes.setLayoutData(fd2);
+            listConnectedWiimotes.addSelectionListener(new SelectionAdapter() {
+                @Override
+                public void widgetSelected(SelectionEvent e) {
+                    InputDeviceSettingsDialog.this.handleSelectionDetectedWiimote(e);
+                }
+            });
 
-            // create the label used to show the bitmap with the two buttons
-            Label labelWiimoteButtons = new Label(c, SWT.NONE);
-            labelWiimoteButtons.setLayoutData(new GridData(GridData.CENTER, GridData.BEGINNING, false, false));
-            labelWiimoteButtons.setImage(imageManager.get("imageWiimoteButtons"));
-
-            // create the label describing the setup process (part 2)
-            Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);
-            labelWiimoteInfo2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-            labelWiimoteInfo2.setText("on all devices while clicking the button below.");
+            // create the label "Preview:"
+            Label labelThrustGauge = new Label(c, SWT.WRAP);
+            FormData fd6 = new FormData();
+            fd6.left = new FormAttachment(wiimoteThrustGauge, 0, SWT.CENTER);
+            fd6.bottom = new FormAttachment(wiimoteThrustGauge, -10);
+            labelThrustGauge.setLayoutData(fd6);
+            labelThrustGauge.setText("Preview:");
 
             // create the button to start a new detection
-            Button buttonDetectWiimotes = new Button(c, SWT.PUSH);
-            buttonDetectWiimotes.setLayoutData(new GridData(GridData.FILL, GridData.END, true, true));
-            buttonDetectWiimotes.setText("Detect Wii remotes");
-            buttonDetectWiimotes.addSelectionListener(new SelectionAdapter() {
+            Button buttonDetectGameController = new Button(c, SWT.PUSH);
+            FormData fd4 = new FormData();
+            fd4.left = new FormAttachment(0);
+            fd4.bottom = new FormAttachment(100);
+            buttonDetectGameController.setLayoutData(fd4);
+            buttonDetectGameController.setText("Redetect Wiimotes");
+            buttonDetectGameController.addSelectionListener(new SelectionAdapter() {
                 @Override
                 public void widgetSelected(SelectionEvent e) {
                     InputDeviceSettingsDialog.this.handleClickWiimoteDetection(e);
                 }
             });
+
+            // create the label describing the setup process (part 1)
+            Label labelWiimoteInfo1 = new Label(c, SWT.WRAP);
+            FormData fd7 = new FormData();
+            fd7.top = new FormAttachment(listConnectedWiimotes, 10);
+            fd7.left = new FormAttachment(0);
+            fd7.right = new FormAttachment(listConnectedWiimotes, 0, SWT.RIGHT);
+            labelWiimoteInfo1.setLayoutData(fd7);
+            labelWiimoteInfo1
+                    .setText("Redetecting will drop all existing connections. To redetect, pair all devices via Bluetooth, then hold");
+
+            // create the label used to show the bitmap with the two buttons
+            Label labelWiimoteButtons = new Label(c, SWT.NONE);
+            FormData fd8 = new FormData();
+            fd8.top = new FormAttachment(labelWiimoteInfo1, 5);
+            fd8.left = new FormAttachment(listConnectedWiimotes, 0, SWT.CENTER);
+            labelWiimoteButtons.setLayoutData(fd8);
+            labelWiimoteButtons.setImage(imageManager.get("imageWiimoteButtons"));
+
+            // create the label describing the setup process (part 2)
+            Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);
+            FormData fd9 = new FormData();
+            fd9.top = new FormAttachment(labelWiimoteButtons, 5);
+            fd9.left = new FormAttachment(0);
+            fd7.right = new FormAttachment(listConnectedWiimotes, 0, SWT.RIGHT);
+            labelWiimoteInfo2.setLayoutData(fd9);
+            labelWiimoteInfo2.setText("on all devices while clicking the button below.");
+
+            // update the device list
+            handleClickWiimoteDetection(null);
         } else {
             Label labelWiimoteError = new Label(c, SWT.WRAP);
             labelWiimoteError.setText("Wiimote support could not be initialized, please check the logs.");
@@ -310,21 +355,10 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         }
     }
 
-    protected void handleClickWiimoteDetection(SelectionEvent e) {
-        // start the redetection
-        inputDeviceManager.redetectWiimotes();
-        updateDeviceList();
-
-        // update the list
-        listConnectedWiimotes.removeAll();
-        for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
-            listConnectedWiimotes.add(d.getName());
-    }
-
     protected void handleClickGameControllerDetection(SelectionEvent e) {
         // cancel the timer
-        if(thrustPreviewUpdater != null)
-            thrustPreviewUpdater.cancel();
+        if(gameControllerPreviewUpdater != null)
+            gameControllerPreviewUpdater.cancel();
 
         // start the redetection
         inputDeviceManager.redetectGameControllers();
@@ -332,19 +366,36 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         gameControllers = inputDeviceManager.getInputDevicesByType(GameControllerDevice.class);
 
         // update the list
-        listConnectedDevices.removeAll();
+        listConnectedGameControllers.removeAll();
         for(DeviceController d: gameControllers)
-            listConnectedDevices.add(d.getName());
+            listConnectedGameControllers.add(d.getName());
         handleSelectionDetectedGameController(e);
     }
 
+    protected void handleClickWiimoteDetection(SelectionEvent e) {
+        // cancel the timer
+        if(wiimotePreviewUpdater != null)
+            wiimotePreviewUpdater.cancel();
+
+        // start the redetection
+        inputDeviceManager.redetectWiimotes();
+        updateDeviceList();
+        wiimotes = inputDeviceManager.getInputDevicesByType(WiimoteDevice.class);
+
+        // update the list
+        listConnectedWiimotes.removeAll();
+        for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
+            listConnectedWiimotes.add(d.getName());
+        handleSelectionDetectedWiimote(e);
+    }
+
     protected void handleSelectionDetectedGameController(SelectionEvent e) {
-        if(thrustPreviewUpdater != null)
-            thrustPreviewUpdater.cancel();
-        int selectionIndex = listConnectedDevices.getSelectionIndex();
+        if(gameControllerPreviewUpdater != null)
+            gameControllerPreviewUpdater.cancel();
+        int selectionIndex = listConnectedGameControllers.getSelectionIndex();
         if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.size()) {
             GameControllerDevice gameController = (GameControllerDevice) gameControllers.get(selectionIndex);
-            labelName.setText(gameController.getName());
+            labelGameControllerName.setText(gameController.getName());
             labelAxes.setText(String.valueOf(gameController.getNumAxes()));
             labelButtons.setText(String.valueOf(gameController.getNumButtons()));
             StringBuffer capabilities = new StringBuffer();
@@ -354,22 +405,38 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                 capabilities.append(capability);
             }
             labelCapabilities.setText(capabilities.toString());
-            thrustPreviewUpdater = new Timer("thrustPreviewUpdater");
-            thrustPreviewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, gameController.getId(),
-                    thrustGauge), 50, 50);
+            gameControllerPreviewUpdater = new Timer("gameControllerPreviewUpdater");
+            gameControllerPreviewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, gameController.getId(),
+                    gameControllerThrustGauge), 50, 50);
         } else {
-            labelName.setText("");
+            labelGameControllerName.setText("");
             labelAxes.setText("");
             labelButtons.setText("");
             labelCapabilities.setText("");
-            thrustGauge.setSelection(0);
+            gameControllerThrustGauge.setSelection(0);
+        }
+    }
+
+    protected void handleSelectionDetectedWiimote(SelectionEvent e) {
+        if(wiimotePreviewUpdater != null)
+            wiimotePreviewUpdater.cancel();
+        int selectionIndex = listConnectedWiimotes.getSelectionIndex();
+        if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= wiimotes.size()) {
+            WiimoteDevice wiimote = (WiimoteDevice) wiimotes.get(selectionIndex);
+            wiimotePreviewUpdater = new Timer("wiimotePreviewUpdater");
+            wiimotePreviewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, wiimote.getId(),
+                    wiimoteThrustGauge), 50, 50);
+        } else {
+            wiimoteThrustGauge.setSelection(0);
         }
     }
 
     @Override
     protected void okPressed() {
-        if(thrustPreviewUpdater != null)
-            thrustPreviewUpdater.cancel();
+        if(wiimotePreviewUpdater != null)
+            wiimotePreviewUpdater.cancel();
+        if(gameControllerPreviewUpdater != null)
+            gameControllerPreviewUpdater.cancel();
 
         // FIXME: just a hack to make some changes available for testing
         inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
