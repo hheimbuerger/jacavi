@@ -8,6 +8,7 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.application.ActionBarAdvisor;
@@ -82,6 +83,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
 
     @Override
     public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+        String labelShell = ApplicationWorkbenchWindowAdvisor.appliacationTitle + " - " + perspective.getLabel();
+        PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setText(labelShell);
         if(perspective.getId().equals(RacePerspective.ID)) {
             saveTrackAction.setEnabled(false);
             newTrackAction.setEnabled(false);

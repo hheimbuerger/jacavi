@@ -14,14 +14,14 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            name="Editor Perspective"
             class="de.jacavi.rcp.perspectives.EditorPerspective"
-            id="JACAVI.editorPerspective">
+            id="JACAVI.editorPerspective"
+            name="Design">
       </perspective>
       <perspective
             class="de.jacavi.rcp.perspectives.RacePerspective"
             id="JACAVI.racePerspective"
-            name="Race Perspective">
+            name="Race">
       </perspective>
    </extension>
    <extension
