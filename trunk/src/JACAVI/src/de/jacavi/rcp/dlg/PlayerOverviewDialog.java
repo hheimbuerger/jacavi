@@ -6,8 +6,9 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
@@ -33,7 +34,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
 
     private static TableViewer tableViewer;
 
-    private PlayerTableModel model;
+    private final PlayerTableModel model;
 
     public PlayerOverviewDialog(Shell parentShell) {
         super(parentShell);
@@ -49,7 +50,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
     }
 
     @Override
-    protected Control createDialogArea(Composite parent) {
+    protected Control createDialogArea(final Composite parent) {
         parent.getShell().setText("Player Overview");
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
@@ -88,6 +89,13 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
         }
 
         playerTable.addSelectionListener(new SelectionAdapter() {});
+        playerTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseDoubleClick(MouseEvent e) {
+                Player player = (Player) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
+                openPlayerSettingsDialog(parent, player);
+            }
+        });
 
         tableViewer.refresh();
 
@@ -111,7 +119,9 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             // Add a task to the ExampleTaskList and refresh the view
             @Override
             public void widgetSelected(SelectionEvent e) {
-                model.addPlayer(new Player());
+                Player newPlayer = new Player();
+                model.addPlayer(newPlayer);
+                openPlayerSettingsDialog(parent, newPlayer);
                 tableViewer.refresh();
             }
         });
@@ -151,15 +161,18 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent e) {
                 Player player = (Player) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
                 if(player != null) {
-                    PlayerSettingsDialog dlg = new PlayerSettingsDialog(parent.getShell(), player);
-                    if(dlg.open() == Window.OK) {
-                        // System.out.println(dlg.getPlayerName().getText());
-                        tableViewer.refresh();
-                    }
+                    openPlayerSettingsDialog(parent, player);
                 }
             }
         });
 
+    }
+
+    protected static void openPlayerSettingsDialog(Composite parent, Player player) {
+        PlayerSettingsDialog dlg = new PlayerSettingsDialog(parent.getShell(), player);
+        if(dlg.open() == PlayerSettingsDialog.OK) {
+            tableViewer.refresh();
+        }
     }
 
     @Override
