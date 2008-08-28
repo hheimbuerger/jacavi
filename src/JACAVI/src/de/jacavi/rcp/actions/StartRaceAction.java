@@ -12,6 +12,7 @@ import org.eclipse.ui.WorkbenchException;
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.racelogic.Race;
 import de.jacavi.appl.racelogic.RaceEngine;
+import de.jacavi.rcp.dlg.RaceValidationDialog;
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.PartFromIDResolver;
 import de.jacavi.rcp.views.TrackView;
@@ -50,34 +51,6 @@ public class StartRaceAction implements IWorkbenchWindowActionDelegate {
      * @see IWorkbenchWindowActionDelegate#run
      */
     public void run(IAction action) {
-
-        // MessageDialog.openInformation(
-        // window.getShell(),
-        // "Starting Race",
-        // "Now Race is starting...");
-        // ProgressMonitorDialog dialog = new ProgressMonitorDialog(window
-        // .getShell());
-        // try {
-        // dialog.run(true, true, new IRunnableWithProgress() {
-        // @Override
-        // public void run(IProgressMonitor monitor) {
-        // monitor.beginTask("Initializing Player...",
-        // IProgressMonitor.UNKNOWN);
-        // for (int i = 0; i < 10; i++) {
-        // if (monitor.isCanceled())
-        // return;
-        // monitor.subTask("Init Player " + i);
-        // sleep(1000);
-        // }
-        // monitor.done();
-        // }
-        // });
-        // } catch (InvocationTargetException e) {
-        // e.printStackTrace();
-        // } catch (InterruptedException e) {
-        // e.printStackTrace();
-        // }
-
         // TODO
         // # Check if all players have a non-empty name and a selected car. Abort and report if not.
         // # Check if all players have an input device that is connected (InputDeviceManager has to be asked for the ID)
@@ -89,6 +62,12 @@ public class StartRaceAction implements IWorkbenchWindowActionDelegate {
         // FIXED Switch the active perspective to the race perspective.
         // # Show the staging lights, and wait until they are done.
         // # Start the RaceEngine.
+
+        if(new RaceValidationDialog(window.getShell(), race).open() == RaceValidationDialog.OK)
+            log.debug("Race validated successfull");
+        else {
+            return;
+        }
 
         try {
             log.debug("Opening Race Perspective");
@@ -128,10 +107,4 @@ public class StartRaceAction implements IWorkbenchWindowActionDelegate {
         this.window = window;
     }
 
-    // private void sleep(Integer waitTime) {
-    // try {
-    // Thread.sleep(waitTime);
-    // } catch(Throwable t) {
-    // System.out.println("Wait time interrupted");
-    // }
 }
