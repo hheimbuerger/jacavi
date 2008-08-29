@@ -6,5 +6,5 @@ package de.jacavi.hal;
  * @author fro
  */
 public interface SlotCarFeedbackConnector {
-
+    FeedbackSignal pollFeedback();
 }

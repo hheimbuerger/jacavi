@@ -1,20 +1,52 @@
 package de.jacavi.hal;
 
-/*
- * fro: this interface should be as simple as possible to control a car for all the several hardware
- */
-public interface SlotCarSystemConnector {
+import de.jacavi.rcp.util.Check;
 
-    void setSpeed(int carID, int speed);
 
-    int getSpeed(int carID);
 
-    int getSwitch(int carID);
+public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCarSystemDriveConnector {
 
-    int toggleSwitch(int carID);
+    private SlotCarSystemDriveConnector driveConnector = null;
 
-    void fullBreak(int carID);
+    private SlotCarFeedbackConnector feedbackConnector = null;
 
-    FeedbackSignal pollFeedback();
+    public SlotCarSystemConnector(SlotCarSystemDriveConnector driveConnector, SlotCarFeedbackConnector feedbackConnector) {
+        super();
+        Check.Require(driveConnector != null && feedbackConnector != null,
+                "driveConnector and feedbackConnector may not be null");
+        this.driveConnector = driveConnector;
+        this.feedbackConnector = feedbackConnector;
+    }
+
+    @Override
+    public FeedbackSignal pollFeedback() {
+        return feedbackConnector.pollFeedback();
+    }
+
+    @Override
+    public void fullBreak(int carID) {
+        driveConnector.fullBreak(carID);
+
+    }
+
+    @Override
+    public int getSpeed(int carID) {
+        return driveConnector.getSpeed(carID);
+    }
+
+    @Override
+    public int getSwitch(int carID) {
+        return driveConnector.getSwitch(carID);
+    }
+
+    @Override
+    public void setSpeed(int carID, int speed) {
+        driveConnector.setSpeed(carID, speed);
+    }
+
+    @Override
+    public int toggleSwitch(int carID) {
+        return driveConnector.toggleSwitch(carID);
+    }
 
 }

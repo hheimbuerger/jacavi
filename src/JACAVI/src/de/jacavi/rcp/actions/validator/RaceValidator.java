@@ -5,7 +5,7 @@ import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.racelogic.Race;
-import de.jacavi.hal.SlotCarSystemConnector;
+import de.jacavi.hal.SlotCarSystemDriveConnector;
 
 
 
@@ -45,7 +45,7 @@ public class RaceValidator {
     public static boolean validatePlayerTechnologies(Race race) {
         boolean valid = false;
         for(Player player: race.getPlayers()) {
-            SlotCarSystemConnector systemConnector = player.getSlotCarSystemConnector();
+            SlotCarSystemDriveConnector systemConnector = player.getSlotCarSystemConnector();
             if(systemConnector != null)// TODO check also an ID ???
                 valid = true;
         }

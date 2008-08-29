@@ -1,6 +1,15 @@
 package de.jacavi.hal.lib42;
 
+import java.util.PriorityQueue;
+import java.util.Queue;
+
+import de.jacavi.hal.FeedbackSignal;
+
+
+
 public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
+
+    private final Queue<FeedbackSignal> signalQueue = new PriorityQueue<FeedbackSignal>();
 
     private NativeCsdLib nativeCsdLib = null;
 
@@ -17,11 +26,17 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
      */
     @Override
     public void sensorCallback(int carID, int sensorID) {
-    // TODO:fro: TDA should do something with this method
+
     }
 
     @Override
     protected void finalize() throws Throwable {
         nativeCsdLib.unsubscribe();
+    }
+
+    @Override
+    public FeedbackSignal pollFeedback() {
+
+        return null;
     }
 }

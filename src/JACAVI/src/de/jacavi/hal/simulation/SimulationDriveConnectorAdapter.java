@@ -1,11 +1,8 @@
-package de.jacavi.hal.analogue;
+package de.jacavi.hal.simulation;
 
-import de.jacavi.hal.FeedbackSignal;
-import de.jacavi.hal.SlotCarSystemConnector;
+import de.jacavi.hal.SlotCarSystemDriveConnector;
 
-
-
-public class AnalogueConnectorAdapter implements SlotCarSystemConnector {
+public class SimulationDriveConnectorAdapter implements SlotCarSystemDriveConnector {
 
     @Override
     public void fullBreak(int carID) {
@@ -36,10 +33,7 @@ public class AnalogueConnectorAdapter implements SlotCarSystemConnector {
         // TODO Auto-generated method stub
         return 0;
     }
-
-    @Override
-    public FeedbackSignal pollFeedback() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    /**
+     * @author Florian Roth
+     */
 }
