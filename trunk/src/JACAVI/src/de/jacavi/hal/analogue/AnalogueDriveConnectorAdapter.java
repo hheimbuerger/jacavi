@@ -1,6 +1,10 @@
-package de.jacavi.hal;
+package de.jacavi.hal.analogue;
 
-public class NoneConnectorAdapter implements SlotCarSystemConnector {
+import de.jacavi.hal.SlotCarSystemDriveConnector;
+
+
+
+public class AnalogueDriveConnectorAdapter implements SlotCarSystemDriveConnector {
 
     @Override
     public void fullBreak(int carID) {
@@ -30,14 +34,5 @@ public class NoneConnectorAdapter implements SlotCarSystemConnector {
     public int toggleSwitch(int carID) {
         // TODO Auto-generated method stub
         return 0;
-    }
-    /**
-     * @author Florian Roth
-     */
-
-    @Override
-    public FeedbackSignal pollFeedback() {
-        // TODO Auto-generated method stub
-        return null;
     }
 }

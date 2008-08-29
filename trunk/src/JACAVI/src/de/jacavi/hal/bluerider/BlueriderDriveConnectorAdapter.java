@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
-import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSpeedAdjuster;
 import de.jacavi.rcp.util.Check;
 import de.jacavi.rcp.util.ExceptionHandler;
@@ -28,9 +27,9 @@ import de.jacavi.rcp.util.ExceptionHandler;
 /**
  * @author fro
  */
-public class BlueriderConnectorAdapter implements BlueriderConnector, ComListener {
+public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComListener {
 
-    private static Log log = LogFactory.getLog(BlueriderConnectorAdapter.class);
+    private static Log log = LogFactory.getLog(BlueriderDriveConnectorAdapter.class);
 
     private ComManager comManager = null;
 
@@ -41,7 +40,7 @@ public class BlueriderConnectorAdapter implements BlueriderConnector, ComListene
 
     private int currentSpeed;
 
-    public BlueriderConnectorAdapter() {
+    public BlueriderDriveConnectorAdapter() {
         comManager = ComManager.getInstanceOfCM();
     }
 
@@ -113,12 +112,6 @@ public class BlueriderConnectorAdapter implements BlueriderConnector, ComListene
     @Override
     public void msgReceived(Message m, int index) {
 
-    }
-
-    @Override
-    public FeedbackSignal pollFeedback() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }
