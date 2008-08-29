@@ -1,5 +1,7 @@
 package de.jacavi.appl.controller.device.impl;
 
+import org.apache.log4j.Logger;
+
 import wiiusej.Wiimote;
 import wiiusej.wiiusejevents.physicalevents.ExpansionEvent;
 import wiiusej.wiiusejevents.physicalevents.IREvent;
@@ -21,6 +23,10 @@ import de.jacavi.rcp.util.Check;
 
 
 public class WiimoteDevice extends DeviceController implements WiimoteListener {
+    /**
+     * Logger for this class
+     */
+    private static final Logger log = Logger.getLogger(WiimoteDevice.class);
 
     private final ControllerSignal currentControllerSignal = new ControllerSignal();
 
@@ -30,6 +36,8 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
         super(name);
         Check.Require(wiimote != null, "wiimote may not be null");
         this.wiimote = wiimote;
+        wiimote.activateMotionSensing();
+        wiimote.addWiiMoteEventListeners(this);
     }
 
     public Wiimote getWiimote() {
@@ -48,9 +56,7 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     @Override
     public boolean initialize() {
-        wiimote.activateMotionSensing();
-        wiimote.addWiiMoteEventListeners(this);
-
+        // TODO: do really need this
         return true;
     }
 
@@ -105,7 +111,7 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     @Override
     public void onDisconnectionEvent(DisconnectionEvent arg0) {
         // TODO Auto-generated method stub
-        System.out.println("Disconnection " + arg0.getWiimoteId());
+        log.warn("Wiiremote " + arg0.getWiimoteId() + " is disconnected and no longer available.");
     }
 
     @Override
