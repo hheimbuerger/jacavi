@@ -31,10 +31,10 @@ import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.hal.SlotCarSystemConnectorFactory;
+import de.jacavi.hal.SlotCarSystemDriveConnector;
 import de.jacavi.hal.SlotCarSystemType;
-import de.jacavi.hal.lib42.Lib42ConnectorAdapter;
+import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
 import de.jacavi.rcp.util.OSResolverUtil;
 
 
@@ -174,9 +174,9 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboTechnologies.setItems(technologies.toArray(new String[technologies.size()]));
 
         // TODO: this is only a HACK
-        SlotCarSystemConnector techController = player.getSlotCarSystemConnector();
+        SlotCarSystemDriveConnector techController = player.getSlotCarSystemConnector();
         if(techController != null) {
-            if(techController instanceof Lib42ConnectorAdapter) {
+            if(techController instanceof Lib42DriveConnectorAdapter) {
                 comboTechnologies.select(0);
             } else {
                 comboTechnologies.select(1);
@@ -226,7 +226,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         SlotCarSystemConnectorFactory factory = (SlotCarSystemConnectorFactory) ContextLoader
                 .getBean("slotCarSystemConnectorFactory");
 
-        SlotCarSystemType type = SlotCarSystemType.none;
+        SlotCarSystemType type = SlotCarSystemType.simulation;
         // get the enum
         type = Enum.valueOf(type.getDeclaringClass(), comboTechnologies.getText().toLowerCase());
         // create a connector and inject it to the player
