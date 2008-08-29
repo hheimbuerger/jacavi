@@ -45,7 +45,6 @@ public class RaceEngine {
      * Start the RaceTimerTask
      */
     public void startRaceTimer(RaceView raceView) {
-        // TODO: check if the require is correct. Whats if we start a game without a RaceView only hardware
         Check.Require(raceView != null, "raceView may not be null");
         if(!isTimerRunning) {
             this.raceView = raceView;
@@ -81,9 +80,13 @@ public class RaceEngine {
         public void run() {
             for(Player player: race.getPlayers()) {
                 int carID = player.getId();
+                // get the players CarController
                 CarController carController = player.getController();
+                // get players hal connector
                 SlotCarSystemConnector slotCarSystemConnector = player.getSlotCarSystemConnector();
+                // get players controller signal
                 ControllerSignal controllerSignal = carController.poll();
+                // get the hal feedback signal
                 FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
                 // change track
                 if(controllerSignal.isTrigger())
