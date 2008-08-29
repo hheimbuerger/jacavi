@@ -42,8 +42,8 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                 break;
             case 2:
                 // result = "[FIXME]";
-                if(p.getTechnologyController() != null)
-                    result = p.getTechnologyController().getClass().getSimpleName();
+                if(p.getSlotCarSystemConnector() != null)
+                    result = p.getSlotCarSystemConnector().getClass().getSimpleName();
                 break;
             case 3:
                 // if (p.getColor() != null)

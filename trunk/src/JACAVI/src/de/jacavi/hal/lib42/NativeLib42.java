@@ -1,18 +1,59 @@
 package de.jacavi.hal.lib42;
 
 /**
- * @author fro 
- * <p>
- * Gives the interface on the native Clib42 library and loads it.
+ * @author fro
+ *         <p>
+ *         Gives the interface on the native Clib42 library and loads it. Singelton
  */
 public class NativeLib42 {
 
+    private static NativeLib42 instance = null;
+
+    /**
+     * here we count the usage of this instance to know the point of release the native library
+     */
+    private static int usedCount = 0;
     static {
         System.loadLibrary("Clib42");
     }
 
+    /**
+     * @return NativeLib42 the only instance because of read write device problem
+     */
+    public static NativeLib42 subscribe() {
+        if(instance == null) {
+            instance = new NativeLib42();
+            instance.initLib42(0);
+        }
+        usedCount++;
+        return instance;
+    }
+
+    public void unsubscribe() {
+        usedCount--;
+        if(usedCount == 0)
+            instance.releaseLib42();
+    }
+
+    private NativeLib42() {}
+
+    /**
+     * Dont call this from outside
+     * <p>
+     * TODO: make protected
+     * 
+     * @param mode
+     * @return
+     */
     public native int initLib42(int mode);
 
+    /**
+     * Releases the native lib. ! Dont call this from outside ! TODO: Make this function protected or private. This will
+     * effect an new generation of jni header etc.
+     * 
+     * @param mode
+     * @return
+     */
     public native void releaseLib42();
 
     /*

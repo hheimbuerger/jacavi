@@ -11,7 +11,7 @@ public class Lib42ConnectorAdapter implements Lib42Connector {
     private final int maxHALSpeed = 15;
 
     public Lib42ConnectorAdapter() {
-        lib42 = new NativeLib42();
+        lib42 = NativeLib42.subscribe();
         lib42.initLib42(/* mode */0);
     }
 
@@ -150,8 +150,8 @@ public class Lib42ConnectorAdapter implements Lib42Connector {
 
     @Override
     public void finalize() throws Throwable {
-        // TODO: native lib doesnt throw an exception
-        lib42.releaseLib42();
+        // tell the native lib that there is one less that needs it
+        lib42.unsubscribe();
     }
 
 }

@@ -45,7 +45,7 @@ public class RaceValidator {
     public static boolean validatePlayerTechnologies(Race race) {
         boolean valid = false;
         for(Player player: race.getPlayers()) {
-            SlotCarSystemConnector systemConnector = player.getTechnologyController();
+            SlotCarSystemConnector systemConnector = player.getSlotCarSystemConnector();
             if(systemConnector != null)// TODO check also an ID ???
                 valid = true;
         }
