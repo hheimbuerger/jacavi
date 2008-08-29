@@ -25,8 +25,7 @@ public class DrivingAgentExample extends DrivingAgentController {
 
     @Override
     public ControllerSignal poll() {
-        // TODO Auto-generated method stub
-        return null;
+        return new ControllerSignal(50, false);
     }
 
 }

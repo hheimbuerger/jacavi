@@ -6,6 +6,7 @@ import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -170,7 +171,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
 
     protected static void openPlayerSettingsDialog(Composite parent, Player player) {
         PlayerSettingsDialog dlg = new PlayerSettingsDialog(parent.getShell(), player);
-        if(dlg.open() == PlayerSettingsDialog.OK) {
+        if(dlg.open() == Window.OK) {
             tableViewer.refresh();
         }
     }
