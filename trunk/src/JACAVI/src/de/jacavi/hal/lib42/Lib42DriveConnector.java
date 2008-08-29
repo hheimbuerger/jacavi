@@ -7,13 +7,13 @@ import de.jacavi.hal.SlotCarSystemDriveConnector;
 /*
  * This interface has extra Clib42 functionality for example to program a cars id
  */
-public interface Lib42Connector extends SlotCarSystemDriveConnector {
+public interface Lib42DriveConnector extends SlotCarSystemDriveConnector {
     // HANDLE PIT STOP
-    void setPitstop(int carId, int pitstop);
+    void setPitstop(int pitstop);
 
-    int togglePitstop(int carId);
+    int togglePitstop();
 
-    int getPitstop(int carId);
+    int getPitstop();
 
     // HANDLE FUEL FOR ALL CARS
     void activateFuel();
@@ -23,7 +23,7 @@ public interface Lib42Connector extends SlotCarSystemDriveConnector {
     /*
      * Methods to programm cars
      */
-    void programmCar(int carID);
+    void programmCar();
 
     void programmSpeed(int value);
 
@@ -46,7 +46,8 @@ public interface Lib42Connector extends SlotCarSystemDriveConnector {
 
     void setPcPitstop(int pitstop);
 
-    int isPacecarActive();
+    boolean isPacecarActive();
 
     int getPcSwitch();
+
 }

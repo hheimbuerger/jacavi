@@ -27,6 +27,9 @@
 	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.hal.SlotCarSystemConnectorFactory">
 	</bean> 
 	
+	<bean id="lib42FeedbackManager" class="de.jacavi.hal.lib42.Lib42FeedbackManager"/>
+	
+	
 	<bean id="playersBean" class="java.util.ArrayList"/>
 	
 	<bean id="osResolverUtilBean" class="de.jacavi.rcp.util.OSResolverUtil">

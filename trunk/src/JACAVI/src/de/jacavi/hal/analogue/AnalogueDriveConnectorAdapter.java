@@ -7,31 +7,31 @@ import de.jacavi.hal.SlotCarSystemDriveConnector;
 public class AnalogueDriveConnectorAdapter implements SlotCarSystemDriveConnector {
 
     @Override
-    public void fullBreak(int carID) {
+    public void fullBreak() {
     // TODO Auto-generated method stub
 
     }
 
     @Override
-    public int getSpeed(int carID) {
+    public int getSpeed() {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public int getSwitch(int carID) {
+    public int getSwitch() {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public void setSpeed(int carID, int speed) {
+    public void setSpeed(int speed) {
     // TODO Auto-generated method stub
 
     }
 
     @Override
-    public int toggleSwitch(int carID) {
+    public int toggleSwitch() {
         // TODO Auto-generated method stub
         return 0;
     }

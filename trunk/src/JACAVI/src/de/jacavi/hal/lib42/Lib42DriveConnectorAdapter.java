@@ -4,58 +4,60 @@ import de.jacavi.hal.SlotCarSpeedAdjuster;
 
 
 
-public class Lib42DriveConnectorAdapter implements Lib42Connector {
+public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
+
+    private int carID;
 
     private NativeLib42 lib42 = null;
 
     private final int maxHALSpeed = 15;
 
-    public Lib42DriveConnectorAdapter() {
-        lib42 = NativeLib42.subscribe();
-        lib42.initLib42(/* mode */0);
+    public Lib42DriveConnectorAdapter(int carID) {
+        this.carID = carID;
+        lib42 = NativeLib42.getInstance();
     }
 
     @Override
-    public int getSpeed(int carID) {
+    public int getSpeed() {
         int speed = SlotCarSpeedAdjuster.denormalizeSpeed(lib42.getSpeed(carID), maxHALSpeed);
         return speed;
     }
 
     @Override
-    public int getSwitch(int carID) {
+    public int getSwitch() {
         return lib42.getSwitch(carID);
     }
 
     @Override
-    public void setSpeed(int carID, int speed) {
+    public void setSpeed(int speed) {
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
         lib42.setSpeed(carID, normalizedSpeed);
     }
 
     @Override
-    public int toggleSwitch(int carID) {
+    public int toggleSwitch() {
         return lib42.toggleSwitch(carID);
     }
 
     @Override
-    public void fullBreak(int carID) {
+    public void fullBreak() {
         lib42.fullBreak(carID);
     }
 
     @Override
-    public int getPitstop(int carId) {
+    public int getPitstop() {
 
-        return lib42.getPitstop(carId);
+        return lib42.getPitstop(carID);
     }
 
     @Override
-    public void setPitstop(int carId, int pitstop) {
-        lib42.setPitstop(carId, pitstop);
+    public void setPitstop(int pitstop) {
+        lib42.setPitstop(carID, pitstop);
     }
 
     @Override
-    public int togglePitstop(int carId) {
-        return lib42.togglePitstop(carId);
+    public int togglePitstop() {
+        return lib42.togglePitstop(carID);
     }
 
     @Override
@@ -67,91 +69,78 @@ public class Lib42DriveConnectorAdapter implements Lib42Connector {
 
     @Override
     public void deactivateFuel() {
-    // TODO Auto-generated method stub
+        lib42.deactivateFuel();
 
     }
 
     @Override
     public void programmBreak(int value) {
-    // TODO Auto-generated method stub
-
+        lib42.programmBreak(value);
     }
 
     @Override
-    public void programmCar(int carID) {
-        lib42.programmCar(carID);
-    }
-
-    @Override
-    public void programmFuel(int valu) {
-    // TODO Auto-generated method stub
-
+    public void programmFuel(int value) {
+        lib42.programmFuel(value);
     }
 
     @Override
     public void programmSpeed(int value) {
-    // TODO Auto-generated method stub
-
+        lib42.programmSpeed(value);
     }
 
     @Override
     public void resetCars() {
-    // TODO Auto-generated method stub
-
+        lib42.resetCars();
     }
 
     @Override
     public void activatePacecar() {
-    // TODO Auto-generated method stub
-
+        lib42.activatePacecar();
     }
 
     @Override
     public void deactivatePacecar() {
-    // TODO Auto-generated method stub
-
+        lib42.deactivatePacecar();
     }
 
     @Override
     public int getPcSwitch() {
-        // TODO Auto-generated method stub
-        return 0;
+        return lib42.getPcSwitch();
+
     }
 
     @Override
-    public int isPacecarActive() {
-        // TODO Auto-generated method stub
-        return 0;
+    public boolean isPacecarActive() {
+        boolean retVal = false;
+        if(lib42.isPacecarActive() == 1)
+            retVal = true;
+        return retVal;
     }
 
     @Override
     public void pacecar2box() {
-    // TODO Auto-generated method stub
-
+        lib42.pacecar2box();
     }
 
     @Override
     public void setPacecarSwitch(int value) {
-    // TODO Auto-generated method stub
-
+        lib42.setPacecarSwitch(value);
     }
 
     @Override
     public void setPcPitstop(int pitstop) {
-    // TODO Auto-generated method stub
+        lib42.setPcPitstop(pitstop);
 
     }
 
     @Override
     public int togglePacecarSwitch() {
-        // TODO Auto-generated method stub
-        return 0;
+        return lib42.togglePacecarSwitch();
     }
 
     @Override
-    public void finalize() throws Throwable {
-        // tell the native lib that there is one less that needs it
-        lib42.unsubscribe();
+    public void programmCar() {
+        lib42.programmCar(carID);
     }
 
 }

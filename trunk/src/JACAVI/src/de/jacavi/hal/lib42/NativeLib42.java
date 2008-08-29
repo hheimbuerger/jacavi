@@ -9,10 +9,6 @@ public class NativeLib42 {
 
     private static NativeLib42 instance = null;
 
-    /**
-     * here we count the usage of this instance to know the point of release the native library
-     */
-    private static int usedCount = 0;
     static {
         System.loadLibrary("Clib42");
     }
@@ -20,28 +16,22 @@ public class NativeLib42 {
     /**
      * @return NativeLib42 the only instance because of read write device problem
      */
-    public static NativeLib42 subscribe() {
+    public static NativeLib42 getInstance() {
         if(instance == null) {
             instance = new NativeLib42();
             instance.initLib42(0);
         }
-        usedCount++;
         return instance;
     }
 
-    public void unsubscribe() {
-        usedCount--;
-        if(usedCount == 0)
-            instance.releaseLib42();
+    @Override
+    protected void finalize() {
+        instance.releaseLib42();
     }
 
     private NativeLib42() {}
 
     /**
-     * Dont call this from outside
-     * <p>
-     * TODO: make protected
-     * 
      * @param mode
      * @return
      */

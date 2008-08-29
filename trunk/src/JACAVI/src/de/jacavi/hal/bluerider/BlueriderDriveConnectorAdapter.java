@@ -60,7 +60,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
     }
 
     @Override
-    public void fullBreak(int carID) {
+    public void fullBreak() {
 
         try {
             comManager.setFixData(ComManager.FIX_0, (byte) 0);
@@ -72,18 +72,18 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
     }
 
     @Override
-    public int getSpeed(int carID) {
+    public int getSpeed() {
         return SlotCarSpeedAdjuster.denormalizeSpeed(currentSpeed, maxHALSpeed);
     }
 
     @Override
-    public int getSwitch(int carID) {
+    public int getSwitch() {
         // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
-    public void setSpeed(int carID, int speed) {
+    public void setSpeed(int speed) {
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
         byte value = (byte) normalizedSpeed;
 
@@ -97,7 +97,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
     }
 
     @Override
-    public int toggleSwitch(int carID) {
+    public int toggleSwitch() {
         // TODO Auto-generated method stub
         return 0;
     }

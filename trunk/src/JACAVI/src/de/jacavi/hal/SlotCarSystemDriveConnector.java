@@ -5,16 +5,14 @@ package de.jacavi.hal;
  */
 public interface SlotCarSystemDriveConnector {
 
-    void setSpeed(int carID, int speed);
+    void setSpeed(int speed);
 
-    int getSpeed(int carID);
+    int getSpeed();
 
-    int getSwitch(int carID);
+    int getSwitch();
 
-    int toggleSwitch(int carID);
+    int toggleSwitch();
 
-    void fullBreak(int carID);
-
-    // FeedbackSignal pollFeedback();
+    void fullBreak();
 
 }
