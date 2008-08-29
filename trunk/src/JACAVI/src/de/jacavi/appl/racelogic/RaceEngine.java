@@ -5,6 +5,8 @@ import java.util.TimerTask;
 
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
+import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
+import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.rcp.util.Check;
 import de.jacavi.rcp.views.RaceView;
@@ -73,21 +75,29 @@ public class RaceEngine {
      */
     class RaceTimerTask extends TimerTask {
 
+        int gametick = 0;
+
         @Override
         public void run() {
             for(Player player: race.getPlayers()) {
                 int carID = player.getId();
                 CarController carController = player.getController();
                 SlotCarSystemConnector slotCarSystemConnector = player.getSlotCarSystemConnector();
-                ControllerSignal signal = carController.poll();
+                ControllerSignal controllerSignal = carController.poll();
+                FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
                 // change track
-                if(signal.isTrigger())
+                if(controllerSignal.isTrigger())
                     slotCarSystemConnector.toggleSwitch(carID);
                 // set new speed
-                slotCarSystemConnector.setSpeed(carID, signal.getSpeed());
+                slotCarSystemConnector.setSpeed(carID, controllerSignal.getSpeed());
+                // invoke the TDA
+                TrackDataApproximator tda = player.getTda();
+                player.setPosition(tda.determineNewPosition(gametick, player.getPosition(), controllerSignal,
+                        feedbackSignal));
                 // repaint the RaceView
                 raceView.repaint();
             }
+            gametick++;
         }
 
     }

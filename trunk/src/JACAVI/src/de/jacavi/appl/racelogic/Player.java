@@ -3,6 +3,8 @@ package de.jacavi.appl.racelogic;
 import org.eclipse.swt.graphics.Color;
 
 import de.jacavi.appl.controller.CarController;
+import de.jacavi.appl.racelogic.tda.DebugTDA;
+import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
 import de.jacavi.hal.SlotCarSystemConnector;
 
 
@@ -17,12 +19,15 @@ public class Player {
 
     private SlotCarSystemConnector slotCarSystemConnector;
 
+    private TrackDataApproximator tda;
+
     private int position; // including current track
 
     private Color color;
 
     public Player() {
         this.name = "Player";
+        this.tda = new DebugTDA(null); // FIXME: needs to be set based on slotCarSystemController
     }
 
     public Player(int id, String name, CarController controller) {
@@ -70,6 +75,10 @@ public class Player {
 
     public void setSlotCarSystemConnector(SlotCarSystemConnector slotCarSystemConnector) {
         this.slotCarSystemConnector = slotCarSystemConnector;
+    }
+
+    public TrackDataApproximator getTda() {
+        return tda;
     }
 
     public void setColor(Color color) {

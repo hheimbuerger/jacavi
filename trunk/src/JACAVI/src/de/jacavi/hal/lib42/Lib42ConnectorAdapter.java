@@ -1,5 +1,6 @@
 package de.jacavi.hal.lib42;
 
+import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSpeedAdjuster;
 
 
@@ -152,6 +153,12 @@ public class Lib42ConnectorAdapter implements Lib42Connector {
     public void finalize() throws Throwable {
         // tell the native lib that there is one less that needs it
         lib42.unsubscribe();
+    }
+
+    @Override
+    public FeedbackSignal pollFeedback() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 }

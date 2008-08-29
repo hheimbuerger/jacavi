@@ -34,4 +34,10 @@ public class NoneConnectorAdapter implements SlotCarSystemConnector {
     /**
      * @author Florian Roth
      */
+
+    @Override
+    public FeedbackSignal pollFeedback() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

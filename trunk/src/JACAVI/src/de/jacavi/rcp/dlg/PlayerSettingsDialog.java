@@ -216,11 +216,12 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     protected void okPressed() {
         player.setName(playerName.getText());
 
-        if(inputs[1].equals(comboInput.getText()))
+        /*if(inputs[1].equals(comboInput.getText()))
             player.setController(new DrivingAgentExample());
         else {
             // TODO: set the controller here?
-        }
+        }*/
+        player.setController(new DrivingAgentExample());
 
         SlotCarSystemConnectorFactory factory = (SlotCarSystemConnectorFactory) ContextLoader
                 .getBean("slotCarSystemConnectorFactory");

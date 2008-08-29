@@ -1,6 +1,9 @@
 package de.jacavi.hal.analogue;
 
+import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSystemConnector;
+
+
 
 public class AnalogueConnectorAdapter implements SlotCarSystemConnector {
 
@@ -33,7 +36,10 @@ public class AnalogueConnectorAdapter implements SlotCarSystemConnector {
         // TODO Auto-generated method stub
         return 0;
     }
-    /**
-     * @author Florian Roth
-     */
+
+    @Override
+    public FeedbackSignal pollFeedback() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

@@ -15,4 +15,6 @@ public interface SlotCarSystemConnector {
 
     void fullBreak(int carID);
 
+    FeedbackSignal pollFeedback();
+
 }
