@@ -243,7 +243,25 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private int frameCounter = 0;
 
+    private Timer DEBUGanimationTimer;
+
+    private int DEBUGanimationStep = 0;
+
     private final TrackWidgetMode widgetMode;
+
+    private class AnimationTimerHandler extends TimerTask {
+        @Override
+        public void run() {
+            TrackWidget.this.DEBUGanimationStep++;
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    if(!TrackWidget.this.isDisposed())
+                        TrackWidget.this.repaint();
+                }
+            });
+        }
+    }
 
     private class ClickEventRepetitionHandler extends TimerTask {
         private final InnerControlID heldControl;
@@ -402,6 +420,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
             // register listener on the new track
             this.track.addListener(this);
+
+            // DEBUG: start the animation timer
+            if((widgetMode == TrackWidgetMode.RACE_MODE) && (DEBUGanimationTimer == null)) {
+                DEBUGanimationTimer = new Timer("DEBUG-animation");
+                DEBUGanimationTimer.schedule(new AnimationTimerHandler(), 50, 50);
+            }
         }
 
         // remove the current selection (will also trigger a repaint!)
@@ -775,24 +799,28 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 g.drawImage(s.getImage().getColorImage(), imagePlacementOperation, 0, 0);
 
             // DEBUG: draw the lanes on top
-            final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.GREEN, Color.RED };
             AffineTransform lanePlacementTransformation = new AffineTransform();
             lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
             lanePlacementTransformation.rotate(currentAngle.getRadians());
             lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
-            for(int laneIndex = 0; laneIndex < track.getNumLanes(); laneIndex++) {
-                g.setColor(laneColors[laneIndex]);
-                for(LaneSection ls: s.getLane(laneIndex).getLaneSections())
-                    g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-            }
+            g.setColor(Color.YELLOW);
+            for(LaneSection ls: s.getLane(0).getLaneSections())
+                g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+            g.setColor(Color.BLUE);
+            for(LaneSection ls: s.getLane(1).getLaneSections())
+                g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+            g.setColor(Color.GREEN);
+            for(LaneSection ls: s.getLane(2).getLaneSections())
+            	g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+            g.setColor(Color.RED);
+            for(LaneSection ls: s.getLane(3).getLaneSections())
+            	g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
 
             // DEBUG: draw the current track position
             // markPoint(g, currentTrackPos, Color.GREEN);
 
             // DEBUG: draw the current 'car' position
             if(widgetMode == TrackWidgetMode.RACE_MODE) {
-                for()
-                TrackPosition car0Position = track.determineSectionFromPosition(0, lane0Pos);
                 if(s == car0Position.section) {
                     DirectedPoint directedPoint = car0Position.point;
                     Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
@@ -805,14 +833,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 }
             }
             if(s == car2Position.section) {
-                DirectedPoint directedPoint = car2Position.point;
-                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+            	DirectedPoint directedPoint = car2Position.point;
+            	Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+            	drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
             if(s == car3Position.section) {
-                DirectedPoint directedPoint = car3Position.point;
-                Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+            	DirectedPoint directedPoint =  car3Position.point;
+            	Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+            	drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
             }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
