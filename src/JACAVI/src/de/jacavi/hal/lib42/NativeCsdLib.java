@@ -11,48 +11,58 @@ import de.jacavi.rcp.util.Check;
  */
 public class NativeCsdLib {
 
-    private Lib42FeedbackConnector feedbackConnector = null;
+    private Lib42FeedbackManager feedbackManager = null;
 
     private static NativeCsdLib instance = null;
-
-    private static int usedCount = 0;
 
     static {
         System.loadLibrary("CsdLib");
     }
 
-    public static NativeCsdLib subscribe(Lib42FeedbackConnector feedbackConnector) {
+    /**
+     * @param feedbackManager
+     */
+    public static void startLib42Sensordetection(Lib42FeedbackManager feedbackManager) {
         if(instance == null) {
-            instance = new NativeCsdLib(feedbackConnector);
+            Check.Require(feedbackManager != null, "feedbackManager may not be null");
+            instance = new NativeCsdLib();
             instance.initSensorDetection();
+            instance.feedbackManager = feedbackManager;
         }
-        usedCount++;
-        return instance;
     }
 
-    public void unsubscribe() {
-        usedCount--;
-        if(usedCount == 0)
-            instance.releaseSensorDetection();
-    }
+    private NativeCsdLib() {}
 
-    private NativeCsdLib(Lib42FeedbackConnector feedbackConnector) {
-        Check.Require(feedbackConnector != null, "feedbackConnector may not be null");
-        this.feedbackConnector = feedbackConnector;
-    }
-
-    /* initialization */
+    /**
+     * Initialize the native sensor detection library
+     * <p>
+     * TODO: Make private or protected (effects new creation of jni interface etc.)
+     * 
+     * @return
+     */
     public native int initSensorDetection();
 
+    /**
+     * Release the native sensor detection library
+     * <p>
+     * TODO: Make this private or protected
+     */
     public native void releaseSensorDetection();
 
     /**
      * This function is called by the csdlib (Sensordetection Library) when a sensor is detected
+     * <p>
+     * TODO: make this protected
      * 
      * @param carID
      * @param sensorID
      */
     public void callback(int carID, int sensorID) {
-        feedbackConnector.sensorCallback(carID, sensorID);
+        feedbackManager.distributeFeedback(carID, sensorID);
+    }
+
+    @Override
+    protected void finalize() {
+        instance.releaseSensorDetection();
     }
 }

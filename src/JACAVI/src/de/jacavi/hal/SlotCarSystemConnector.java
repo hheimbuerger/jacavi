@@ -24,29 +24,29 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
     }
 
     @Override
-    public void fullBreak(int carID) {
-        driveConnector.fullBreak(carID);
+    public void fullBreak() {
+        driveConnector.fullBreak();
 
     }
 
     @Override
-    public int getSpeed(int carID) {
-        return driveConnector.getSpeed(carID);
+    public int getSpeed() {
+        return driveConnector.getSpeed();
     }
 
     @Override
-    public int getSwitch(int carID) {
-        return driveConnector.getSwitch(carID);
+    public int getSwitch() {
+        return driveConnector.getSwitch();
     }
 
     @Override
-    public void setSpeed(int carID, int speed) {
-        driveConnector.setSpeed(carID, speed);
+    public void setSpeed(int speed) {
+        driveConnector.setSpeed(speed);
     }
 
     @Override
-    public int toggleSwitch(int carID) {
-        return driveConnector.toggleSwitch(carID);
+    public int toggleSwitch() {
+        return driveConnector.toggleSwitch();
     }
 
 }

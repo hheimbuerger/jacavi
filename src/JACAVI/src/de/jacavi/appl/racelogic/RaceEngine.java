@@ -79,7 +79,6 @@ public class RaceEngine {
         @Override
         public void run() {
             for(Player player: race.getPlayers()) {
-                int carID = player.getId();
                 // get the players CarController
                 CarController carController = player.getController();
                 // get players hal connector
@@ -90,9 +89,9 @@ public class RaceEngine {
                 FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
                 // change track
                 if(controllerSignal.isTrigger())
-                    slotCarSystemConnector.toggleSwitch(carID);
+                    slotCarSystemConnector.toggleSwitch();
                 // set new speed
-                slotCarSystemConnector.setSpeed(carID, controllerSignal.getSpeed());
+                slotCarSystemConnector.setSpeed(controllerSignal.getSpeed());
                 // invoke the TDA
                 TrackDataApproximator tda = player.getTda();
                 player.setPosition(tda.determineNewPosition(gametick, player.getPosition(), controllerSignal,

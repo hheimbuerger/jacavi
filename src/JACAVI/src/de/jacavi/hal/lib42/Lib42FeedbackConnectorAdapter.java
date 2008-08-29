@@ -1,42 +1,55 @@
 package de.jacavi.hal.lib42;
 
-import java.util.PriorityQueue;
-import java.util.Queue;
-
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.FeedbackSignal;
 
 
 
+/**
+ * Adapts the functionality of NativeCsdLib for lib42 sensor detection and gets feedback distributed by the
+ * Lib42FeedbackManager
+ * 
+ * @author fro
+ */
 public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
 
-    private final Queue<FeedbackSignal> signalQueue = new PriorityQueue<FeedbackSignal>();
+    private int carID;
 
-    private NativeCsdLib nativeCsdLib = null;
+    private Lib42FeedbackManager feedbackManager = null;
 
-    public Lib42FeedbackConnectorAdapter() {
-        // subscribe to native lib
-        nativeCsdLib = NativeCsdLib.subscribe(this);
+    // The latest received feedback
+    private FeedbackSignal latestFeedback = null;
+
+    public Lib42FeedbackConnectorAdapter(int carID) {
+        this.carID = carID;
+        // get the feedbackManager and add me as listener on sensor callbacks
+        feedbackManager = (Lib42FeedbackManager) ContextLoader.getBean("lib42FeedbackManager");
+        feedbackManager.addFeedbackListener(this);
+    }
+
+    @Override
+    public int getCarID() {
+        return carID;
     }
 
     /**
-     * This is callback function from native lib42 use this in TDA for lib42 sensor detection
+     * This is the callback on an sensor detection called and distributed by the feedbackManager
      * 
-     * @param int carID The id of the car
-     * @param int sensorID Th id of the detected sensor
+     * @param int sensorID The id of the detected sensor
      */
     @Override
-    public void sensorCallback(int carID, int sensorID) {
-
+    public void sensorCallback(int sensorID) {
+        latestFeedback = new FeedbackSignal(null, sensorID + "");
     }
 
     @Override
     protected void finalize() throws Throwable {
-        nativeCsdLib.unsubscribe();
+        feedbackManager.removeFeedbackListener(this);
     }
 
     @Override
     public FeedbackSignal pollFeedback() {
-
-        return null;
+        return latestFeedback;
     }
+
 }

@@ -31,9 +31,7 @@ import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.hal.SlotCarSystemConnectorFactory;
 import de.jacavi.hal.SlotCarSystemDriveConnector;
-import de.jacavi.hal.SlotCarSystemType;
 import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
 import de.jacavi.rcp.util.OSResolverUtil;
 
@@ -223,6 +221,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         }*/
         player.setController(new DrivingAgentExample());
 
+        /*
         SlotCarSystemConnectorFactory factory = (SlotCarSystemConnectorFactory) ContextLoader
                 .getBean("slotCarSystemConnectorFactory");
 
@@ -231,6 +230,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         type = Enum.valueOf(type.getDeclaringClass(), comboTechnologies.getText().toLowerCase());
         // create a connector and inject it to the player
         player.setSlotCarSystemConnector(factory.createSlotCarSystemConnector(type));
+        */
 
         player.setColor(c);
         super.okPressed();
