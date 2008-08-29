@@ -15,7 +15,7 @@ public class Player {
 
     private CarController carController;
 
-    private SlotCarSystemConnector technologyController;
+    private SlotCarSystemConnector slotCarSystemConnector;
 
     private int position; // including current track
 
@@ -64,12 +64,12 @@ public class Player {
         this.position = position;
     }
 
-    public SlotCarSystemConnector getTechnologyController() {
-        return technologyController;
+    public SlotCarSystemConnector getSlotCarSystemConnector() {
+        return slotCarSystemConnector;
     }
 
-    public void setTechnologyController(SlotCarSystemConnector technologyController) {
-        this.technologyController = technologyController;
+    public void setSlotCarSystemConnector(SlotCarSystemConnector slotCarSystemConnector) {
+        this.slotCarSystemConnector = slotCarSystemConnector;
     }
 
     public void setColor(Color color) {

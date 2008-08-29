@@ -174,7 +174,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboTechnologies.setItems(technologies.toArray(new String[technologies.size()]));
 
         // TODO: this is only a HACK
-        SlotCarSystemConnector techController = player.getTechnologyController();
+        SlotCarSystemConnector techController = player.getSlotCarSystemConnector();
         if(techController != null) {
             if(techController instanceof Lib42ConnectorAdapter) {
                 comboTechnologies.select(0);
@@ -218,30 +218,19 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         if(inputs[1].equals(comboInput.getText()))
             player.setController(new DrivingAgentExample());
-        else
-            /*
-             * switch(Devices.valueOf(comboDevices.getText().toUpperCase())) { case JOYSTICK: player.setController(new
-             * GameControllerDevice()); break; case KEYBOARD: player.setController(new KeyboardDevice()); break; case
-             * MOUSE: player.setController(new MouseDevice()); break; case WIIMOTE: // FIXME:?!?!? inject a configured
-             * wiimote from WiimoteDeviceManager // player.setController(new WiimoteDeviceCotrollere()); break; default:
-             * throw new IllegalArgumentException("No Device selected"); }
-             */
-            ;
+        else {
+            // TODO: set the controller here?
+        }
 
         SlotCarSystemConnectorFactory factory = (SlotCarSystemConnectorFactory) ContextLoader
                 .getBean("slotCarSystemConnectorFactory");
 
-        switch(SlotCarSystemType.valueOf(comboTechnologies.getText().toLowerCase())) {
-            case lib42:
-                // TODO: here is an Exception thrown...please DEBUG inside init method
-                player.setTechnologyController(factory.initialiseCarreraLib(SlotCarSystemType.lib42));
-                break;
-            case bluerider:
-                player.setTechnologyController(factory.initialiseCarreraLib(SlotCarSystemType.bluerider));
-                break;
-            default:
-                break;
-        }
+        SlotCarSystemType type = SlotCarSystemType.none;
+        // get the enum
+        type = Enum.valueOf(type.getDeclaringClass(), comboTechnologies.getText().toLowerCase());
+        // create a connector and inject it to the player
+        player.setSlotCarSystemConnector(factory.createSlotCarSystemConnector(type));
+
         player.setColor(c);
         super.okPressed();
         comboInput.dispose();

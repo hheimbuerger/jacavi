@@ -5,10 +5,8 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
     private NativeCsdLib nativeCsdLib = null;
 
     public Lib42FeedbackConnectorAdapter() {
-        // create a new instance and give this for callback
-        nativeCsdLib = new NativeCsdLib(this);
-        // init sensor detection
-        nativeCsdLib.initSensorDetection();
+        // subscribe to native lib
+        nativeCsdLib = NativeCsdLib.subscribe(this);
     }
 
     /**
@@ -24,7 +22,6 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
 
     @Override
     protected void finalize() throws Throwable {
-        // FIXME: problem is that the native library doesnt throw an exception
-        nativeCsdLib.releaseSensorDetection();
+        nativeCsdLib.unsubscribe();
     }
 }

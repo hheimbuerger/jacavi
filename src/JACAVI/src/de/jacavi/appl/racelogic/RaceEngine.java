@@ -78,13 +78,13 @@ public class RaceEngine {
             for(Player player: race.getPlayers()) {
                 int carID = player.getId();
                 CarController carController = player.getController();
-                SlotCarSystemConnector technologyController = player.getTechnologyController();
+                SlotCarSystemConnector slotCarSystemConnector = player.getSlotCarSystemConnector();
                 ControllerSignal signal = carController.poll();
                 // change track
                 if(signal.isTrigger())
-                    technologyController.toggleSwitch(carID);
+                    slotCarSystemConnector.toggleSwitch(carID);
                 // set new speed
-                technologyController.setSpeed(carID, signal.getSpeed());
+                slotCarSystemConnector.setSpeed(carID, signal.getSpeed());
                 // repaint the RaceView
                 raceView.repaint();
             }

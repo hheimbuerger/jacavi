@@ -13,11 +13,30 @@ public class NativeCsdLib {
 
     private Lib42FeedbackConnector feedbackConnector = null;
 
+    private static NativeCsdLib instance = null;
+
+    private static int usedCount = 0;
+
     static {
         System.loadLibrary("CsdLib");
     }
 
-    public NativeCsdLib(Lib42FeedbackConnector feedbackConnector) {
+    public static NativeCsdLib subscribe(Lib42FeedbackConnector feedbackConnector) {
+        if(instance == null) {
+            instance = new NativeCsdLib(feedbackConnector);
+            instance.initSensorDetection();
+        }
+        usedCount++;
+        return instance;
+    }
+
+    public void unsubscribe() {
+        usedCount--;
+        if(usedCount == 0)
+            instance.releaseSensorDetection();
+    }
+
+    private NativeCsdLib(Lib42FeedbackConnector feedbackConnector) {
         Check.Require(feedbackConnector != null, "feedbackConnector may not be null");
         this.feedbackConnector = feedbackConnector;
     }
