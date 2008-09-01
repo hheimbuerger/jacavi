@@ -15,6 +15,7 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
     public Lib42DriveConnectorAdapter(int carID) {
         this.carID = carID;
         lib42 = NativeLib42.getInstance();
+        lib42.programmCar(carID);
     }
 
     @Override
@@ -141,6 +142,11 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
     @Override
     public void programmCar() {
         lib42.programmCar(carID);
+    }
+
+    @Override
+    public int getCarID() {
+        return carID;
     }
 
 }

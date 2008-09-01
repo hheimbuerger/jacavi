@@ -1,10 +1,18 @@
-package de.jacavi.hal.analogue;
+package de.jacavi.test.hal.connectors;
 
 import java.net.InetSocketAddress;
 
+import de.jacavi.hal.analogue.AnalogueDriveConnector;
 
 
-public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
+
+public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
+
+    private int lane;
+
+    public TestAnalogueDriveConnectorAdapter(InetSocketAddress analogueDeviceAdress, int lane) {
+        this.lane = lane;
+    }
 
     @Override
     public void fullBreak() {
@@ -44,7 +52,6 @@ public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
 
     @Override
     public int getLane() {
-        // TODO Auto-generated method stub
-        return 0;
+        return lane;
     }
 }

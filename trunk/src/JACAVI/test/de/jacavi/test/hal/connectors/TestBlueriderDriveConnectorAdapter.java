@@ -1,10 +1,14 @@
-package de.jacavi.hal.analogue;
+package de.jacavi.test.hal.connectors;
 
-import java.net.InetSocketAddress;
+import de.jacavi.hal.SlotCarSystemDriveConnector;
 
 
 
-public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
+public class TestBlueriderDriveConnectorAdapter implements SlotCarSystemDriveConnector {
+
+    public TestBlueriderDriveConnectorAdapter(String comPort) {
+    // TODO Auto-generated constructor stub
+    }
 
     @Override
     public void fullBreak() {
@@ -35,16 +39,7 @@ public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
         // TODO Auto-generated method stub
         return 0;
     }
-
-    @Override
-    public InetSocketAddress getAdress() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int getLane() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
+    /**
+     * @author Florian Roth
+     */
 }
