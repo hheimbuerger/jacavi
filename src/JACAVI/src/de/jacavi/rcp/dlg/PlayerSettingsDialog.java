@@ -1,5 +1,7 @@
 package de.jacavi.rcp.dlg;
 
+import java.util.List;
+
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -7,14 +9,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,6 +27,7 @@ import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.ConnectorConfigurationManager;
+import de.jacavi.hal.SlotCarSystemConnector;
 
 
 
@@ -52,10 +50,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Combo comboConnectors;
 
-    private final Shell parentShell;
-
-    private Color c;
-
     private final InputDeviceManager inputDeviceManager;
 
     private final ConnectorConfigurationManager connectorManager;
@@ -67,7 +61,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
         this.player = player;
-        this.parentShell = parentShell;
 
         inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
 
@@ -110,7 +103,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         playerName = new Text(group, SWT.BORDER);
         playerName.setLayoutData(gdInputs);
-        playerName.setText(player.getName());
 
         CLabel labelInput1 = new CLabel(group, SWT.NONE);
         labelInput1.setText("Input:");
@@ -134,12 +126,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         });
         comboInput.setLayoutData(gdInputs);
         comboInput.setItems(inputs);
-        CarController controller = player.getController();
-        if(controller instanceof DeviceController) {
-            comboInput.select(0);
-        } else if(controller instanceof DrivingAgentController) {
-            comboInput.select(1);
-        }
 
         CLabel labelDevice1 = new CLabel(group, SWT.NONE);
         labelDevice1.setText("Devices:");
@@ -150,11 +136,14 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboDevicesViewer = new ComboViewer(comboDevices);
         comboDevicesViewer.add(inputDeviceManager.getInputDevices().toArray(
                 new Object[inputDeviceManager.getInputDevices().size()]));
-        /*
-         * comboDevices.setItems(devices.toArray(new String[devices.size()])); for(int i = 0; i < devices.size(); i++) {
-         * if(controller instanceof DeviceController) { DeviceController devController = (DeviceController) controller;
-         * if(devController.getClass().getSimpleName().equals(devices.get(i))) comboDevices.select(i); } }
-         */
+        comboDevices.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                int selected = ((Combo) event.getSource()).getSelectionIndex();
+                player.setController((DeviceController) comboDevicesViewer.getElementAt(selected));
+            }
+        });
 
         CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
         labelProtocol1.setText("Connector:");
@@ -164,44 +153,60 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboConnectorsViewer = new ComboViewer(comboConnectors);
         comboConnectorsViewer.add(connectorManager.getConnectors().toArray(
                 new Object[connectorManager.getConnectors().size()]));
+        comboConnectors.addSelectionListener(new SelectionAdapter() {
 
-        CLabel labelColor = new CLabel(group, SWT.NONE);
-        labelColor.setText("Color:");
-
-        final Button colorButton = new Button(group, SWT.NONE);
-        colorButton.setText("Select Color...");
-        colorButton.setLayoutData(gdInputs);
-        colorButton.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent event) {
-                ColorDialog dialog = new ColorDialog(parentShell, SWT.BORDER);
-                if(player.getColor() != null)
-                    dialog.setRGB(player.getColor().getRGB());
-                RGB rgb = dialog.open();
-                if(rgb != null) {
-                    c = new Color(parentShell.getDisplay(), rgb);
-                    System.out.println(c);
-                    Image image = new Image(parentShell.getDisplay(), 10, 10);
-                    GC gc = new GC(image);
-                    gc.setBackground(c);
-                    gc.fillRectangle(0, 0, 10, 10);
-                    gc.dispose();
-                    colorButton.setImage(image);
-                }
+                int selected = ((Combo) event.getSource()).getSelectionIndex();
+                player.setSlotCarSystemConnector((SlotCarSystemConnector) comboConnectorsViewer.getElementAt(selected));
             }
         });
 
+        CLabel labelColor = new CLabel(group, SWT.NONE);
+        labelColor.setText("Car:");
+
+        final Button carButton = new Button(group, SWT.NONE);
+        carButton.setText("Select a Car...(Debug)");
+        carButton.setLayoutData(gdInputs);
+        setContent();
         return parent;
     }
 
     @Override
     protected void okPressed() {
         player.setName(playerName.getText());
-
-        player.setController(new DrivingAgentExample());
-        player.setColor(c);
         super.okPressed();
         comboInput.dispose();
+        comboDevices.dispose();
+        comboConnectors.dispose();
 
+    }
+
+    private void setContent() {
+        playerName.setText(player.getName());
+
+        CarController controller = player.getController();
+        if(controller instanceof DeviceController) {
+            comboInput.select(0);
+        } else if(controller instanceof DrivingAgentController) {
+            comboInput.select(1);
+            comboDevices.setEnabled(false);
+        }
+
+        List<DeviceController> availableController = inputDeviceManager.getInputDevices();
+        if(player.getController() != null) {
+            for(int i = 0; i < availableController.size(); i++) {
+                if(availableController.get(i).getId() == player.getController().getId())
+                    comboDevices.select(i);
+            }
+        }
+
+        List<SlotCarSystemConnector> availableConnectors = connectorManager.getConnectors();
+        if(player.getSlotCarSystemConnector() != null) {
+            for(int i = 0; i < availableConnectors.size(); i++) {
+                if(availableConnectors.get(i).getId() == player.getSlotCarSystemConnector().getId())
+                    comboConnectors.select(i);
+            }
+        }
     }
 }

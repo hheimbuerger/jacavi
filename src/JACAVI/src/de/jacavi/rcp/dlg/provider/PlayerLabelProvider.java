@@ -2,7 +2,6 @@ package de.jacavi.rcp.dlg.provider;
 
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 
 import de.jacavi.appl.racelogic.Player;
@@ -11,20 +10,11 @@ import de.jacavi.appl.racelogic.Player;
 
 public class PlayerLabelProvider implements ITableLabelProvider {
 
-    public static String[] COLUMNNNAMES = { "Player Name", "Controller", "Protocol", "Color" };
+    public static String[] COLUMNNNAMES = { "Player Name", "Controller", "Connector" };
 
     public Image getColumnImage(Object element, int columnIndex) {
-        Player p = (Player) element;
-
-        if(columnIndex == 3 && p.getColor() != null) {
-            Image image = new Image(null, 15, 15);
-            GC gc = new GC(image);
-            gc.setBackground(p.getColor());
-            gc.fillRectangle(0, 0, 15, 15);
-            gc.dispose();
-            return image;
-        } else
-            return null;
+        // TODO here we could fill each column with a 16x16 px image (e.g. a small wiimote or a 42 logo)
+        return null;
     }
 
     public String getColumnText(Object element, int columnIndex) {
@@ -38,12 +28,11 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                 break;
             case 1:
                 if(p.getController() != null)
-                    result = p.getController().getClass().getSimpleName();
+                    result = p.getController().toString();
                 break;
             case 2:
-                // result = "[FIXME]";
                 if(p.getSlotCarSystemConnector() != null)
-                    result = p.getSlotCarSystemConnector().getClass().getSimpleName();
+                    result = p.getSlotCarSystemConnector().toString();
                 break;
             case 3:
                 // if (p.getColor() != null)
