@@ -34,7 +34,7 @@ import de.jacavi.rcp.editors.TrackDesigner;
 
 public class TrackOutline extends ViewPart implements IPartListener2, IPropertyListener {
 
-    private static Log log = LogFactory.getLog(TileExplorer.class);
+    private static Log log = LogFactory.getLog(TrackOutline.class);
 
     public static final String ID = "JACAVI.trackOutline";
 
@@ -48,8 +48,8 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
 
     public TrackOutline() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        window.getActivePage().addPartListener(this);
-        this.addListenerObject(this);
+        window.getPartService().addPartListener(this);
+        // this.addListenerObject(this);
     }
 
     @Override
