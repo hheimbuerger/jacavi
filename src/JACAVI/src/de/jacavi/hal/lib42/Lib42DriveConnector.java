@@ -50,4 +50,6 @@ public interface Lib42DriveConnector extends SlotCarSystemDriveConnector {
 
     int getPcSwitch();
 
+    int getCarID();
+
 }

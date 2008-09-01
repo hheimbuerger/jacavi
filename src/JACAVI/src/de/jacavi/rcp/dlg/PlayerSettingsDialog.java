@@ -1,7 +1,5 @@
 package de.jacavi.rcp.dlg;
 
-import java.util.List;
-
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -31,9 +29,7 @@ import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.hal.SlotCarSystemDriveConnector;
-import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
-import de.jacavi.rcp.util.OSResolverUtil;
+import de.jacavi.hal.ConnectorConfigurationManager;
 
 
 
@@ -46,8 +42,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private final String[] inputs = new String[] { "Device", "DrivingAgentExample" };
 
-    private final List<String> technologies;
-
     private final Player player;
 
     private Text playerName;
@@ -56,7 +50,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Combo comboDevices;
 
-    private Combo comboTechnologies;
+    private Combo comboConnectors;
 
     private final Shell parentShell;
 
@@ -64,7 +58,11 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private final InputDeviceManager inputDeviceManager;
 
-    private ComboViewer comboViewer;
+    private final ConnectorConfigurationManager connectorManager;
+
+    private ComboViewer comboDevicesViewer;
+
+    private ComboViewer comboConnectorsViewer;
 
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
@@ -73,13 +71,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
 
-        // fro only the technolgies supported by the current os
-        this.technologies = OSResolverUtil.getTechnologiesByOS();
-
-        /*
-         * for(CarreraLibraryType clt: CarreraLibraryType.values()) { String dev = clt.toString().substring(0,
-         * 1).toUpperCase() + clt.toString().substring(1).toLowerCase(); technologies.add(dev); }
-         */
+        connectorManager = (ConnectorConfigurationManager) ContextLoader.getBean("connectorManager");
 
     }
 
@@ -155,8 +147,8 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
-        comboViewer = new ComboViewer(comboDevices);
-        comboViewer.add(inputDeviceManager.getInputDevices().toArray(
+        comboDevicesViewer = new ComboViewer(comboDevices);
+        comboDevicesViewer.add(inputDeviceManager.getInputDevices().toArray(
                 new Object[inputDeviceManager.getInputDevices().size()]));
         /*
          * comboDevices.setItems(devices.toArray(new String[devices.size()])); for(int i = 0; i < devices.size(); i++) {
@@ -165,21 +157,13 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
          */
 
         CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
-        labelProtocol1.setText("Technology:");
+        labelProtocol1.setText("Connector:");
 
-        comboTechnologies = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-        comboTechnologies.setLayoutData(gdInputs);
-        comboTechnologies.setItems(technologies.toArray(new String[technologies.size()]));
-
-        // TODO: this is only a HACK
-        SlotCarSystemDriveConnector techController = player.getSlotCarSystemConnector();
-        if(techController != null) {
-            if(techController instanceof Lib42DriveConnectorAdapter) {
-                comboTechnologies.select(0);
-            } else {
-                comboTechnologies.select(1);
-            }
-        }
+        comboConnectors = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+        comboConnectors.setLayoutData(gdInputs);
+        comboConnectorsViewer = new ComboViewer(comboConnectors);
+        comboConnectorsViewer.add(connectorManager.getConnectors().toArray(
+                new Object[connectorManager.getConnectors().size()]));
 
         CLabel labelColor = new CLabel(group, SWT.NONE);
         labelColor.setText("Color:");
@@ -214,24 +198,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     protected void okPressed() {
         player.setName(playerName.getText());
 
-        /*if(inputs[1].equals(comboInput.getText()))
-            player.setController(new DrivingAgentExample());
-        else {
-            // TODO: set the controller here?
-        }*/
         player.setController(new DrivingAgentExample());
-
-        /*
-        SlotCarSystemConnectorFactory factory = (SlotCarSystemConnectorFactory) ContextLoader
-                .getBean("slotCarSystemConnectorFactory");
-
-        SlotCarSystemType type = SlotCarSystemType.simulation;
-        // get the enum
-        type = Enum.valueOf(type.getDeclaringClass(), comboTechnologies.getText().toLowerCase());
-        // create a connector and inject it to the player
-        player.setSlotCarSystemConnector(factory.createSlotCarSystemConnector(type));
-        */
-
         player.setColor(c);
         super.okPressed();
         comboInput.dispose();

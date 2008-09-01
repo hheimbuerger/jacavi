@@ -1,42 +1,39 @@
 package de.jacavi.hal;
 
+import java.net.InetSocketAddress;
+
+import de.jacavi.hal.analogue.AnalogueFeedbackConnectorAdapter;
+import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42FeedbackConnectorAdapter;
+import de.jacavi.hal.simulation.SimulationDriveConnectorAdapter;
+import de.jacavi.hal.simulation.SimulationFeddbackConnectorAdapter;
 
 
 
-public class SlotCarSystemConnectorFactory {
+public class SlotCarSystemConnectorFactory implements ConnectorFactory {
 
-    /*
-      public SlotCarSystemConnector createSlotCarSystemConnector(SlotCarSystemType type) {
-          Check.Require(Arrays.asList(SlotCarSystemType.values()).contains(type),
-                  "type must be an value of SlotCarSystemTypes");
-          SlotCarSystemConnector systemConnector = null;
-          switch(type) {
-              case lib42:
-                  systemConnector = new SlotCarSystemConnector(new Lib42DriveConnectorAdapter(),
-                          new Lib42FeedbackConnectorAdapter());
-                  break;
-              case bluerider:
-                  systemConnector = new SlotCarSystemConnector(new BlueriderDriveConnectorAdapter(),
-                          new AnalogueFeedbackConnectorAdapter());
-                  break;
-              case analogue:
-                  systemConnector = new SlotCarSystemConnector(new AnalogueDriveConnectorAdapter(),
-                          new AnalogueFeedbackConnectorAdapter());
-                  break;
-              case simulation:
-                  systemConnector = new SlotCarSystemConnector(new SimulationDriveConnectorAdapter(),
-                          new SimulationFeddbackConnectorAdapter());
-                  break;
-          }
+    public SlotCarSystemConnector createLib42Connector(String name, int carID) {
+        return new SlotCarSystemConnector(name, new Lib42DriveConnectorAdapter(carID),
+                new Lib42FeedbackConnectorAdapter(carID));
+    }
 
-          return systemConnector;
-      }
-    */
+    public SlotCarSystemConnector createBlueriderConnector(String name, String comPort,
+            InetSocketAddress analogueDeviceAdress) {
+        // Blueride can only run on analogue track so he can use the analogue light barrier sensor detection
+        // TODO:
+        return new SlotCarSystemConnector(name, new BlueriderDriveConnectorAdapter(),
+                new AnalogueFeedbackConnectorAdapter());
+    }
 
-    public SlotCarSystemConnector createLib42Connector(int carID, int speedProgramming) {
-        return new SlotCarSystemConnector(new Lib42DriveConnectorAdapter(carID), new Lib42FeedbackConnectorAdapter(
-                carID));
+    public SlotCarSystemConnector createAnalogueConnector(String name, int lane, InetSocketAddress analogueDeviceAdress) {
+        // TODO:
+        return null;
+    }
+
+    public SlotCarSystemConnector createSimulatedConnector(String name) {
+        // TODO:
+        return new SlotCarSystemConnector(name, new SimulationDriveConnectorAdapter(),
+                new SimulationFeddbackConnectorAdapter());
     }
 }

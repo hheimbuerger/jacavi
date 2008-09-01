@@ -43,7 +43,11 @@ public class Lib42FeedbackManager {
      *            the Lib42FeedbackConnector whos not interessted in further sensorcallbacks
      */
     public void removeFeedbackListener(Lib42FeedbackConnector feedbackConnector) {
-        feedbackConnectors.remove(feedbackConnector.getCarID() + "");
+        if(feedbackConnectors.containsKey(feedbackConnector.getCarID()))
+            feedbackConnectors.remove(feedbackConnector.getCarID() + "");
+        else
+            throw new IllegalArgumentException("there is no lib42 feedbackConnector with carID: "
+                    + feedbackConnector.getCarID() + " registered");
     }
 
     /**

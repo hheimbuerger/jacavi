@@ -1,4 +1,7 @@
-package de.jacavi.hal.test;
+package de.jacavi.test.hal;
+
+
+
 
 /**
  * @author fro
