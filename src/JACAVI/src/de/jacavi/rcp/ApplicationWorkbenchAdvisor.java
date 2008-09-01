@@ -7,6 +7,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
@@ -63,5 +64,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     public void eventLoopException(Throwable exception) {
         ExceptionHandler.handleException(exception, true);
         super.eventLoopException(exception);
+    }
+
+    @Override
+    public void initialize(IWorkbenchConfigurer configurer) {
+        configurer.setSaveAndRestore(true);
+        super.initialize(configurer);
     }
 }

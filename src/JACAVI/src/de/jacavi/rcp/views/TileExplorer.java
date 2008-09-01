@@ -52,8 +52,8 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
 
     public TileExplorer() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-        window.getActivePage().addPartListener(this);
-        this.addListenerObject(this);
+        window.getPartService().addPartListener(this);
+        // this.addListenerObject(this);
         tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
     }
 
