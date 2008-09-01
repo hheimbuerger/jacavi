@@ -22,6 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.rcp.dlg.provider.PlayerContentProvider;
 import de.jacavi.rcp.dlg.provider.PlayerLabelProvider;
@@ -35,11 +36,12 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
 
     private static TableViewer tableViewer;
 
-    private final PlayerTableModel model;
+    private final ArrayList<Player> model;
 
+    @SuppressWarnings("unchecked")
     public PlayerOverviewDialog(Shell parentShell) {
         super(parentShell);
-        model = new PlayerTableModel();
+        model = (ArrayList<Player>) ContextLoader.getBean("playersBean");
     }
 
     @Override
@@ -88,6 +90,8 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             tc.setText(colName);
             tc.setWidth(100);
         }
+        // HACK: Connectors Column needs often more space
+        playerTable.getColumns()[2].setWidth(280);
 
         playerTable.addSelectionListener(new SelectionAdapter() {});
         playerTable.addMouseListener(new MouseAdapter() {
@@ -121,7 +125,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 Player newPlayer = new Player();
-                model.addPlayer(newPlayer);
+                model.add(newPlayer);
                 openPlayerSettingsDialog(parent, newPlayer);
                 tableViewer.refresh();
             }
@@ -141,7 +145,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent e) {
                 Player player = (Player) ((IStructuredSelection) tableViewer.getSelection()).getFirstElement();
                 if(player != null) {
-                    model.removePlayer(player.getId());
+                    model.remove(player);
                     tableViewer.refresh();
                 }
             }
@@ -182,6 +186,6 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
     }
 
     public ArrayList<Player> getPlayer() {
-        return model.getPlayer();
+        return model;
     }
 }
