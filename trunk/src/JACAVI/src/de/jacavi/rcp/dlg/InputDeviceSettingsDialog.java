@@ -10,7 +10,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -82,7 +81,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    if(inputDeviceManager.isIdValid(deviceID))
+                    if(!progressBar.isDisposed() && inputDeviceManager.isIdValid(deviceID))
                         progressBar.setSelection(inputDeviceManager.getDevice(deviceID).poll().getSpeed());
                 }
             });
@@ -116,6 +115,23 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     @Override
+    public boolean close() {
+        if(wiimotePreviewUpdater != null)
+            wiimotePreviewUpdater.cancel();
+        if(gameControllerPreviewUpdater != null)
+            gameControllerPreviewUpdater.cancel();
+
+        // FIXME: just a hack to make some changes available for testing
+        inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
+        for(Button b: checkboxesKeyboardConfigs) {
+            if(b.getSelection())
+                inputDeviceManager.addInputDevice(new KeyboardDevice(b.getText()));
+        }
+
+        return super.close();
+    }
+
+    @Override
     protected void setDescriptionTexts() {
         getShell().setText("Input Device Settings");
         setTitle("Initialize and configure input devices");
@@ -145,7 +161,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     private void createMouseSection(Composite groupMouse) {
-        groupMouse.setLayout(new FillLayout());
+        FormLayout layout = new FormLayout();
+        layout.marginTop = 5;
+        layout.marginRight = 5;
+        layout.marginBottom = 5;
+        layout.marginLeft = 5;
+        groupMouse.setLayout(layout);
         Label labelMouse = new Label(groupMouse, SWT.WRAP);
         labelMouse.setText("The mouse cannot be configured and is always available.");
     }
@@ -423,23 +444,6 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         } else {
             wiimoteThrustGauge.setSelection(0);
         }
-    }
-
-    @Override
-    protected void okPressed() {
-        if(wiimotePreviewUpdater != null)
-            wiimotePreviewUpdater.cancel();
-        if(gameControllerPreviewUpdater != null)
-            gameControllerPreviewUpdater.cancel();
-
-        // FIXME: just a hack to make some changes available for testing
-        inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
-        for(Button b: checkboxesKeyboardConfigs) {
-            if(b.getSelection())
-                inputDeviceManager.addInputDevice(new KeyboardDevice(b.getText()));
-        }
-
-        super.okPressed();
     }
 
     @Override
