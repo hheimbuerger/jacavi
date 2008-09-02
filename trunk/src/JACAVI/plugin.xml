@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-
    <extension
          id="application"
          point="org.eclipse.core.runtime.applications">
-      <application>
+      <application
+            icon="icons/jacavi_logo.png"
+            visible="true">
          <run
                class="de.jacavi.rcp.Application">
          </run>
@@ -212,5 +213,21 @@
                id="JACAVI.raceActionSet">
          </actionSet>
       </perspectiveExtension>
+   </extension>
+   <extension
+         id="product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="JACAVI.application"
+            name="JaCaVi">
+         <property
+               name="appName"
+               value="JaCaVi">
+         </property>
+         <property
+               name="windowImages"
+               value="icons/jacavi_logo.png">
+         </property>
+      </product>
    </extension>
 </plugin>
