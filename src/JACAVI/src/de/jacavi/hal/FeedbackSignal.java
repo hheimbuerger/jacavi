@@ -2,21 +2,29 @@ package de.jacavi.hal;
 
 public class FeedbackSignal {
 
-    private final String lastCheckpoint;
+    private String lastCheckpoint;
 
-    private final String accelerationData;
+    private Gforce gforce = null;
 
-    public FeedbackSignal(String accelerationData, String lastCheckpoint) {
-        this.accelerationData = accelerationData;
+    public FeedbackSignal(Gforce gforce, String lastCheckpoint) {
         this.lastCheckpoint = lastCheckpoint;
+        this.gforce = gforce;
+    }
+
+    public Gforce getGforce() {
+        return gforce;
     }
 
     public String getLastCheckpoint() {
         return lastCheckpoint;
     }
 
-    public String getAccelerationData() {
-        return accelerationData;
+    public void setLastCheckpoint(String lastCheckpoint) {
+        this.lastCheckpoint = lastCheckpoint;
+    }
+
+    public void setGforce(Gforce gforce) {
+        this.gforce = gforce;
     }
 
 }

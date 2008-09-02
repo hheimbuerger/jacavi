@@ -2,12 +2,9 @@ package de.jacavi.hal.bluerider;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 
 import de.jacavi.hal.SlotCarSpeedAdjuster;
 import de.jacavi.rcp.util.Check;
-import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
@@ -33,6 +30,8 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
 
     private ComManager comManager = null;
 
+    private String comPort = "";
+
     @SuppressWarnings("unused")
     private boolean isConnected = false;
 
@@ -40,12 +39,14 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
 
     private int currentSpeed;
 
-    public BlueriderDriveConnectorAdapter() {
+    public BlueriderDriveConnectorAdapter(String comPort) {
+        Check.Require(comPort != null && !comPort.isEmpty(), "comPort may not be null or empty");
+        this.comPort = comPort;
         comManager = ComManager.getInstanceOfCM();
     }
 
     @Override
-    public void connectBlueRider(String comPort) {
+    public boolean connectBlueRider() {
         Check.Require(comPort != null && !comPort.isEmpty(), "comPort may not be null or empty");
         try {
             log.info("Try to connect to Bluerider via bluetooth on port: " + comPort);
@@ -54,9 +55,13 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
             comManager.addComListener(this, ComManager.FIX_0);
             isConnected = true;
         } catch(Exception e) {
+            log.error("Could not connect to Bluerider on port" + comPort, e);
+            /*
             ExceptionHandler.handleException(e, log, "error on connecting to bluerider on port: " + comPort, true,
                     "Bluerider connection Problem", new Status(IStatus.ERROR, "JACAVI", e.toString()));
+            */
         }
+        return isConnected;
     }
 
     @Override
@@ -112,6 +117,12 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
     @Override
     public void msgReceived(Message m, int index) {
 
+    }
+
+    @Override
+    public boolean isConnected() {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }
