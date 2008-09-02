@@ -268,189 +268,27 @@
                 <line length="33" x1="16" y1="49" x2="-16" y2="49" />
             </lane>
         </tile>
-        <tile id="change1" name="Change 1">
+        <tile id="change1" name="Change1">
             <filename>change1.png</filename>
             <entryPoint x="99" y="0" />
             <exitPoint x="-99" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
+                <line length="33" x1="16" y1="-47" x2="-16" y2="-47" />
             </lane>
             <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
+                <line length="33" x1="16" y1="-16" x2="-16" y2="-16" />
             </lane>
             <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
+                <line length="33" x1="16" y1="17" x2="-16" y2="17" />
             </lane>
             <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change2" name="Change 2">
-            <filename>change2.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change3" name="Change 3">
-            <filename>change3.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change4" name="Change 4">
-            <filename>change4.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change5" name="Change 5">
-            <filename>change5.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change6" name="Change 6">
-            <filename>change6.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change7" name="Change 7">
-            <filename>change7.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change8" name="Change 8">
-            <filename>change8.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change9" name="Change 9">
-            <filename>change9.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
-            </lane>
-        </tile>
-        <tile id="change10" name="Change 10">
-            <filename>change10.png</filename>
-            <entryPoint x="99" y="0" />
-            <exitPoint x="-99" y="0" />
-            <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="98" y1="-47" x2="-98" y2="-47" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="-16" x2="-98" y2="-16" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="17" x2="-98" y2="17" />
-            </lane>
-            <lane>
-                <line length="99" x1="98" y1="49" x2="-98" y2="49" />
+                <line length="33" x1="16" y1="49" x2="-16" y2="49" />
             </lane>
         </tile>
         <tile id="turn60deg" name="60° turn">
             <filename>turn60deg.png</filename>
-            <entryPoint x="70" y="-13" />
+            <entryPoint x="71" y="-13" />
             <exitPoint x="-22" y="42" />
             <entryToExitAngle>-60</entryToExitAngle>
             <lane>
@@ -466,11 +304,47 @@
                 <line length="1" x1="0" y1="0" x2="0" y2="0" />
             </lane>
         </tile>
+        <tile id="turn60deg2" name="60° turn test">
+            <filename>turn60deg.png</filename>
+            <entryPoint x="-22" y="42" />
+            <exitPoint x="71" y="-13" />
+            <entryToExitAngle>180</entryToExitAngle>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+        </tile>
         <tile id="turn30deg" name="30° turn">
             <filename>turn30deg.png</filename>
-            <entryPoint x="38" y="-4" />
-            <exitPoint x="-14" y="12" />
+            <entryPoint x="41" y="-4" />
+            <exitPoint x="-13" y="11" />
             <entryToExitAngle>-30</entryToExitAngle>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+            <lane>
+                <line length="1" x1="0" y1="0" x2="0" y2="0" />
+            </lane>
+        </tile>
+        <tile id="turn15deg" name="15° turn">
+            <filename>turn15deg.png</filename>
+            <entryPoint x="21" y="-2" />
+            <exitPoint x="-7" y="2" />
+            <entryToExitAngle>-15</entryToExitAngle>
             <lane>
                 <line length="1" x1="0" y1="0" x2="0" y2="0" />
             </lane>
