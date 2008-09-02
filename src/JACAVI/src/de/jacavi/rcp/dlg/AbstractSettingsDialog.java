@@ -91,7 +91,7 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
 
     @Override
     protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
     }
 
     @Override
@@ -201,6 +201,15 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
     protected final void updateDeviceList() {
         listDevices.removeAll();
         fillDeviceList(listDevices);
+    }
+
+    @Override
+    protected void buttonPressed(int buttonId) {
+        // handle the click on the 'Close' button
+        if(buttonId == IDialogConstants.CLOSE_ID)
+            close();
+
+        super.buttonPressed(buttonId);
     }
 
     abstract protected void setDescriptionTexts();
