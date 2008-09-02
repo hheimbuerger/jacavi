@@ -10,6 +10,7 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.LookupOp;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -27,7 +28,10 @@ public class MultiStyleImage {
     private BufferedImage highlightedImage = null;
 
     public MultiStyleImage(String filename) throws IOException {
-        colorImage = ImageIO.read(Activator.getResourceAsStream(filename));
+        InputStream resourceAsStream = Activator.getResourceAsStream(filename);
+        if(resourceAsStream == null)
+            throw new IllegalArgumentException("The image resource " + filename + " could not be loaded.");
+        colorImage = ImageIO.read(resourceAsStream);
         if(!(colorImage.getColorModel() instanceof ComponentColorModel))
             throw new IllegalArgumentException("Image " + filename
                     + " uses a color model that is not supported. Only images with a component"

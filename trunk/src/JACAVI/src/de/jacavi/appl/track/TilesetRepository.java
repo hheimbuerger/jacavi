@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -26,12 +24,8 @@ import de.jacavi.rcp.Activator;
 
 public class TilesetRepository {
 
-    public enum TileSet {
-        DEBUG, ANALOGUE, DIGITAL;
-    }
-
     @SuppressWarnings("serial")
-    public class TilesetRepositoryInitializationFailedException extends Exception {
+    public static class TilesetRepositoryInitializationFailedException extends Exception {
         public TilesetRepositoryInitializationFailedException(Exception e) {
             super(e);
         }
@@ -41,16 +35,12 @@ public class TilesetRepository {
         }
     }
 
-    private final Map<TileSet, SortedMap<String, Tile>> tiles = new HashMap<TileSet, SortedMap<String, Tile>>();
+    private final Map<String, Tileset> tilesets = new HashMap<String, Tileset>();
 
     public TilesetRepository(String configurationFile) throws TilesetRepositoryInitializationFailedException {
         try {
             // parse the XML file
             Document document = parseConfigurationFile(configurationFile);
-
-            // prepare the tileset maps
-            for(TileSet tileset: TileSet.values())
-                tiles.put(tileset, new TreeMap<String, Tile>());
 
             // iterate over all tilesets
             NodeList tilesets = document.getElementsByTagName("tileset");
@@ -72,32 +62,21 @@ public class TilesetRepository {
 
     private void importTileset(Element tilesetElement) throws TilesetRepositoryInitializationFailedException,
             IOException {
-        // try to find the enum entry for this tileset
+        // create a new tileset instance
         String tilesetID = tilesetElement.getAttribute("id");
-        TileSet tilesetType = TileSet.valueOf(tilesetID.toUpperCase());
-        if(tilesetType == null)
-            throw new TilesetRepositoryInitializationFailedException("Unknown tileset ID: " + tilesetID);
+        int laneCount = Integer.valueOf(tilesetElement.getAttribute("laneCount"));
+        Tileset tileset = new Tileset(tilesetID, laneCount);
 
         // iterate over all tiles in this tileset
         NodeList tileNodes = tilesetElement.getElementsByTagName("tile");
         for(int i = 0; i < tileNodes.getLength(); i++)
-            importTile(tilesetType, (Element) tileNodes.item(i));
+            importTile(tileset, (Element) tileNodes.item(i));
 
-        // make sure exactly one of the tiles is marked as the initial tile
-        boolean initialTileFound = false;
-        for(Tile t: tiles.get(tilesetType).values())
-            if(t.isInitial())
-                if(initialTileFound)
-                    throw new TilesetRepositoryInitializationFailedException("The tileset " + tilesetID
-                            + " contains at least two different tiles marked as initial.");
-                else
-                    initialTileFound = true;
-        if(!initialTileFound)
-            throw new TilesetRepositoryInitializationFailedException("The tileset " + tilesetID
-                    + " is missing a tile marked as initial");
+        tileset.validate();
+        tilesets.put(tilesetID, tileset);
     }
 
-    private void importTile(TileSet tileset, Element tileElement) throws IOException,
+    private void importTile(Tileset tileset, Element tileElement) throws IOException,
             TilesetRepositoryInitializationFailedException {
         // read the data for this tile from the XML
         String tileID = tileElement.getAttribute("id");
@@ -115,7 +94,7 @@ public class TilesetRepository {
             if(tileDataNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element tileDataElement = (Element) tileDataNodes.item(i);
                 if(tileDataElement.getNodeName().equals("filename")) {
-                    filename = "/tiles/" + tileset.toString().toLowerCase() + "/" + tileDataElement.getTextContent();
+                    filename = "/tiles/" + tileset.getName() + "/" + tileDataElement.getTextContent();
                 } else if(tileDataElement.getNodeName().equals("entryPoint")) {
                     entryPoint = new Point(Integer.valueOf(tileDataElement.getAttribute("x")), Integer
                             .valueOf(tileDataElement.getAttribute("y")));
@@ -133,13 +112,11 @@ public class TilesetRepository {
             }
         }
 
-        tiles.get(tileset).put(
-                tileID,
-                new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, lanes
-                        .toArray(new Lane[lanes.size()])));
+        tileset.add(tileID, new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle,
+                lanes.toArray(new Lane[lanes.size()])));
     }
 
-    private Lane importLane(TileSet tileset, Element tileDataElement)
+    private Lane importLane(Tileset tileset, Element tileDataElement)
             throws TilesetRepositoryInitializationFailedException {
         Lane lane = new Lane();
 
@@ -169,38 +146,7 @@ public class TilesetRepository {
         return lane;
     }
 
-    public Tile getTile(TileSet tileSet, String id) {
-        return tiles.get(tileSet).get(id);
+    public Tileset getTileset(String id) {
+        return tilesets.get(id);
     }
-
-    /**
-     * Returns a list of all available tiles of a specific tileset.
-     * <p>
-     * Note that the list returned by this method returns some tiles multiple times in case they can be used from
-     * different directions.
-     */
-    public Map<String, Tile> getAvailableTiles(TileSet tileset) {
-        // TODO: implement returning inverted tiles
-    	SortedMap<String, Tile> result = new TreeMap<String, Tile>(tiles.get(tileset));
-
-    	
-    	
-        // remove the initial tile
-        for(String tileID: result.keySet())
-            if(result.get(tileID).isInitial()) {
-                result.remove(tileID);
-                break;
-            }
-
-        return result;
-    }
-
-    public Tile getInitialTile(TileSet tileset) {
-        for(Tile t: tiles.get(tileset).values())
-            if(t.isInitial())
-                return t;
-        throw new RuntimeException(
-                "Unexpected point in code reached: no initial tile was found in a tileset in TilesetRepository.getInitialTile()");
-    }
-
 }

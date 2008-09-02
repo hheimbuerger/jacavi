@@ -29,7 +29,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import de.jacavi.appl.ContextLoader;
-import de.jacavi.appl.track.TilesetRepository.TileSet;
 
 
 
@@ -48,6 +47,10 @@ public class Track {
      */
     @SuppressWarnings("serial")
     public class TrackLoadingException extends Exception {
+        public TrackLoadingException(String message) {
+            super(message);
+        }
+
         public TrackLoadingException(Exception e) {
             super(e);
         }
@@ -72,7 +75,7 @@ public class Track {
     }
 
     /** The tile set used for this track. */
-    private TileSet tileset;
+    private Tileset tileset;
 
     /** The list of sections (tiles) this track consists of. */
     private final List<TrackSection> sections = new LinkedList<TrackSection>();
@@ -98,11 +101,10 @@ public class Track {
      * @param tileset
      *            the tileset to be used for the track
      */
-    public Track(TileSet tileset) {
+    public Track(Tileset tileset) {
         this();
         this.tileset = tileset;
-        TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
-        sections.add(new TrackSection(tilesetRepository.getInitialTile(tileset)));
+        sections.add(new TrackSection(tileset.getInitialTile()));
     }
 
     /**
@@ -153,7 +155,7 @@ public class Track {
             l.handleTrackModified();
     }
 
-    public TileSet getTileset() {
+    public Tileset getTileset() {
         return tileset;
     }
 
@@ -296,22 +298,38 @@ public class Track {
         return domBuilder.parse(is);
     }
 
-    private void loadFromXml(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException {
-        TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
+    private void loadFromXml(InputStream inputStream) throws ParserConfigurationException, SAXException, IOException,
+            TrackLoadingException {
+        TilesetRepository tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepositoryBean");
 
         // parse the XML file
         Document document = parseTrackFile(inputStream);
         trackName = document.getDocumentElement().getAttribute("name");
         String tilesetID = document.getDocumentElement().getAttribute("tileset");
-        tileset = TileSet.valueOf(tilesetID.toUpperCase());
+        tileset = tilesetRepository.getTileset(tilesetID);
+        if(tileset == null)
+            throw new TrackLoadingException("The track " + trackName + " uses the unknown tileset " + tilesetID + ".");
 
         // read the sections
+        boolean containsInitial = false;
         sections.clear();
         NodeList sectionNodes = document.getElementsByTagName("section");
         for(int i = 0; i < sectionNodes.getLength(); i++) {
             Element sectionElement = (Element) sectionNodes.item(i);
             String tileID = sectionElement.getAttribute("id");
-            sections.add(new TrackSection(tilesetRepository.getTile(tileset, tileID)));
+            Tile tile = tileset.getTile(tileID);
+            if(tile == null)
+                throw new TrackLoadingException("The track " + trackName + " referenced the unknown tile " + tileID
+                        + " of tileset " + tilesetID + " at position " + i);
+            if(tile.isInitial() && containsInitial)
+                throw new TrackLoadingException("The track " + trackName + " contains two initial tiles.");
+            else if(tile.isInitial())
+                containsInitial = true;
+            sections.add(new TrackSection(tile));
         }
+
+        // make sure there's one initial tile in the track
+        if(!containsInitial)
+            throw new TrackLoadingException("The track " + trackName + " contains no initial tile.");
     }
 }

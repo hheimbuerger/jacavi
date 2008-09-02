@@ -5,8 +5,8 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 
+import de.jacavi.appl.track.Tileset;
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.rcp.actions.OpenTrackDesignerAction;
 import de.jacavi.rcp.wizards.pages.CreateTrackPageOne;
 
@@ -14,7 +14,7 @@ import de.jacavi.rcp.wizards.pages.CreateTrackPageOne;
 
 public class NewTrackWizard extends Wizard implements INewWizard {
 
-    private static TileSet tileSet;
+    private final Tileset tileset;
 
     @SuppressWarnings("unused")
     private IWorkbench workbench;
@@ -24,9 +24,9 @@ public class NewTrackWizard extends Wizard implements INewWizard {
 
     private CreateTrackPageOne one;
 
-    public NewTrackWizard(TileSet set) {
+    public NewTrackWizard(Tileset tileset) {
         super();
-        tileSet = set;
+        this.tileset = tileset;
         setNeedsProgressMonitor(true);
     }
 
@@ -38,7 +38,7 @@ public class NewTrackWizard extends Wizard implements INewWizard {
 
     @Override
     public boolean performFinish() {
-        Track track = new Track(tileSet);
+        Track track = new Track(tileset);
         track.setTrackName(one.getText1());
         new OpenTrackDesignerAction(track).run();
         return true;
