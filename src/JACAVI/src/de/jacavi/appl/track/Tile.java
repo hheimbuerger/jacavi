@@ -23,7 +23,7 @@ public class Tile {
     private final Point exitPoint;
 
     private final Angle entryToExitAngle;
-    
+
     private final boolean isInitial;
 
     private final Lane[] lanes;
@@ -69,12 +69,16 @@ public class Tile {
     public Angle getEntryToExitAngle() {
         return entryToExitAngle;
     }
-    
+
     public boolean isInitial() {
         return isInitial;
     }
 
     public Lane getLane(int index) {
         return lanes[index];
+    }
+
+    public int getLaneCount() {
+        return lanes.length;
     }
 }

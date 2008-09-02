@@ -39,7 +39,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         super.postStartup();
         TrackDesignerInput editorInput;
         try {
-            editorInput = new TrackDesignerInput(new Track(new File("tracks/demo.track.xml")));
+            editorInput = new TrackDesignerInput(new Track(new File("tracks/demo_crossing.track.xml")));
 
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 

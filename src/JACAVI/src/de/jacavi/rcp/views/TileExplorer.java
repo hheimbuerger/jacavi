@@ -22,11 +22,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
-import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.track.Tile;
-import de.jacavi.appl.track.TilesetRepository;
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.TilesetRepository.TileSet;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.editors.TrackDesigner;
 
@@ -40,8 +37,6 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
 
     private static final double TILE_IMAGE_SCALE = 0.5;
 
-    private final TilesetRepository tilesetRepository;
-
     private Track currentTrack;
 
     private final List<Image> usedImages = new ArrayList<Image>();
@@ -54,7 +49,6 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         window.getPartService().addPartListener(this);
         // this.addListenerObject(this);
-        tilesetRepository = (TilesetRepository) ContextLoader.getBean("tilesetRepository");
     }
 
     @Override
@@ -73,7 +67,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         innerComposite.setLayout(gd);
 
         if(currentTrack != null) {
-            final Map<String, Tile> tileMap = tilesetRepository.getAvailableTiles(currentTrack.getTileset());
+            final Map<String, Tile> tileMap = currentTrack.getTileset().getTiles();
 
             for(String tileID: tileMap.keySet()) {
                 Tile tile = tileMap.get(tileID);
@@ -92,8 +86,9 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
                 tileButton.setImage(scaledImage);
                 tileButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-                // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be scaled
-                if(currentTrack.getTileset().equals(TileSet.DEBUG)) {
+                // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be scaled.
+                // Why doesn't this just scale to a maximum width and height?
+                if(currentTrack.getTileset().getName().equals("debug")) {
                     tileButton.setImage(image);
                 } else {
                     tileButton.setImage(scaledImage);

@@ -1,12 +1,13 @@
 package de.jacavi.rcp.wizards;
 
-import de.jacavi.appl.track.TilesetRepository.TileSet;
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.track.TilesetRepository;
 
 
 
 public class NewDigitalTrackWizard extends NewTrackWizard {
 
     public NewDigitalTrackWizard() {
-        super(TileSet.DIGITAL);
+        super(((TilesetRepository) ContextLoader.getBean("tilesetRepositoryBean")).getTileset("digital"));
     }
 }

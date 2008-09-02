@@ -2,9 +2,9 @@
 
 <tiles>
 
-    <tileset id="debug">
-        <tile id="finishing_straight" name="finishing straight" isInitial="true">
-            <filename>straight.png</filename>
+    <tileset id="debug" laneCount="2">
+        <tile id="finishingStraight" name="finishing straight" isInitial="true">
+            <filename>finishing_straight.png</filename>
             <entryPoint x="-53" y="6" />
             <exitPoint x="53" y="6" />
             <entryToExitAngle>0</entryToExitAngle>
@@ -77,7 +77,7 @@
         </tile>
     </tileset>
 
-    <tileset id="digital">
+    <tileset id="digital" laneCount="2">
         <tile id="finishingStraight" name="finishing straight" isInitial="true">
             <filename>straight.png</filename>
             <entryPoint x="49" y="0" />
@@ -213,7 +213,7 @@
     </tileset>
 
 
-    <tileset id="analogue">
+    <tileset id="analogue" laneCount="4">
      <tile id="finishingStraight" name="finishing straight" isInitial="true">
             <filename>straight.png</filename>
             <entryPoint x="49" y="0" />
