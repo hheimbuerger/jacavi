@@ -87,4 +87,8 @@ public class Tileset {
 
         return result;
     }
+
+    public int getLaneCount() {
+        return laneCount;
+    }
 }

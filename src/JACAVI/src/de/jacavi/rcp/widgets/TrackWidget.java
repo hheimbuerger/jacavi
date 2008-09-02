@@ -749,7 +749,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         int lane1Pos = DEBUGanimationStep % lane1Length;
         TrackPosition car0Position = track.determineSectionFromPosition(0, lane0Pos);
         TrackPosition car1Position = track.determineSectionFromPosition(1, lane1Pos);
-        
+
         // iterate over all track sections of the currently displayed track
         for(TrackSection s: track.getSections()) {
 
@@ -797,15 +797,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
             lanePlacementTransformation.rotate(currentAngle.getRadians());
             lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
-            g.setColor(Color.YELLOW);
-            for(LaneSection ls: s.getLane(0).getLaneSections())
-                g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-            g.setColor(Color.BLUE);
-            for(LaneSection ls: s.getLane(1).getLaneSections())
-                g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-                 
-            // DEBUG: draw the current track position
-            // markPoint(g, currentTrackPos, Color.GREEN);
+            final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
+            if(track.getTileset().getLaneCount() > 4)
+                throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
+            for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
+                g.setColor(laneColors[laneIndex]);
+                for(LaneSection ls: s.getLane(laneIndex).getLaneSections())
+                    g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+            }
 
             // DEBUG: draw the current 'car' position
             if(widgetMode == TrackWidgetMode.RACE_MODE) {
@@ -818,9 +817,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     DirectedPoint directedPoint = car1Position.point;
                     Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
                     drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
-                }                
+                }
             }
-            
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
             // bounding box -- that way we'll get a bounding box for the whole track in the end
@@ -839,11 +837,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // store that shape, we'll need it later on to do hit detection
             lastTileShapeList.add(viewportTransformation.createTransformedShape(tileShape));
 
-            // if the current image is selected, draw its shape to indicate the selection to the user
-            /*            g.setColor(Color.YELLOW);
-                        if(counter++ == selectedTile)
-                            g.draw(tileShape);*/
-
             // calculate the new track position by taking current track position and applying the
             // entryToExitPointTransformation
             AffineTransform entryToExitPointTransformation = entryToExitPointVector.getTransform();
@@ -855,10 +848,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         // restore the old transformation
         g.setTransform(originalTransformation);
-
-        // DEBUG: draw the track bounding box in red
-        g.setColor(Color.RED);
-        g.draw(lastTrackBoundingBox);
     }
 
     private void drawCar(Graphics2D g, Point2D position, Angle carDirection) {
