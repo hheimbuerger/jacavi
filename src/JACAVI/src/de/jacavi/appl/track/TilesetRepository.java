@@ -181,8 +181,10 @@ public class TilesetRepository {
      */
     public Map<String, Tile> getAvailableTiles(TileSet tileset) {
         // TODO: implement returning inverted tiles
-        SortedMap<String, Tile> result = new TreeMap<String, Tile>(tiles.get(tileset));
+    	SortedMap<String, Tile> result = new TreeMap<String, Tile>(tiles.get(tileset));
 
+    	
+    	
         // remove the initial tile
         for(String tileID: result.keySet())
             if(result.get(tileID).isInitial()) {
