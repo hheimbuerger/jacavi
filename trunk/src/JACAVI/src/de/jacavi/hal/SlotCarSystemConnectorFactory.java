@@ -21,9 +21,8 @@ public class SlotCarSystemConnectorFactory implements ConnectorFactory {
     public SlotCarSystemConnector createBlueriderConnector(String name, String comPort,
             InetSocketAddress analogueDeviceAdress) {
         // Blueride can only run on analogue track so he can use the analogue light barrier sensor detection
-        // TODO:
-        return new SlotCarSystemConnector(name, new BlueriderDriveConnectorAdapter(),
-                new AnalogueFeedbackConnectorAdapter());
+        return new SlotCarSystemConnector(name, new BlueriderDriveConnectorAdapter(comPort),
+                new AnalogueFeedbackConnectorAdapter(analogueDeviceAdress));
     }
 
     public SlotCarSystemConnector createAnalogueConnector(String name, int lane, InetSocketAddress analogueDeviceAdress) {
