@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <extension-point id="splashExtension" name="Splash Extensions" schema="schema/splashExtension.exsd"/>
    <extension
          id="application"
          point="org.eclipse.core.runtime.applications">
       <application
-            icon="icons/jacavi_logo.png"
+            icon="icons/jacavi_logo/jacavi_logo.png"
             visible="true">
          <run
                class="de.jacavi.rcp.Application">
@@ -226,7 +227,27 @@
          </property>
          <property
                name="windowImages"
-               value="icons/jacavi_logo.png">
+               value="icons/jacavi_logo/jacavi_logo.png">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+         <property
+               name="aboutImage"
+               value="icons/jacavi_logo/JaCaVi_Logo_500x246.png">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="000000">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="7,252,445,20">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="5,275,445,15">
          </property>
       </product>
    </extension>
