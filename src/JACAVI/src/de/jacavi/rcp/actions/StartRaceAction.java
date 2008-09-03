@@ -9,7 +9,7 @@ import org.eclipse.ui.WorkbenchException;
 
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.PartFromIDResolver;
-import de.jacavi.rcp.views.TrackView;
+import de.jacavi.rcp.views.RaceView;
 
 
 
@@ -57,7 +57,7 @@ public class StartRaceAction extends RaceControlAction {
             e.printStackTrace();
         }
 
-        TrackView trackView = (TrackView) PartFromIDResolver.resolveView(TrackView.ID);
+        RaceView trackView = (RaceView) PartFromIDResolver.resolveView(RaceView.ID);
         log.debug("Starting RaceEngine");
         raceEngine.startRaceTimer(trackView);
 
