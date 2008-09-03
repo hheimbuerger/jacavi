@@ -46,6 +46,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.DirectedPoint;
@@ -243,25 +244,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private int frameCounter = 0;
 
-    private Timer DEBUGanimationTimer;
-
-    private int DEBUGanimationStep = 0;
-
     private final TrackWidgetMode widgetMode;
 
-    private class AnimationTimerHandler extends TimerTask {
-        @Override
-        public void run() {
-            TrackWidget.this.DEBUGanimationStep++;
-            Display.getDefault().asyncExec(new Runnable() {
-                @Override
-                public void run() {
-                    if(!TrackWidget.this.isDisposed())
-                        TrackWidget.this.repaint();
-                }
-            });
-        }
-    }
+    private List<Player> playersBean;
 
     private class ClickEventRepetitionHandler extends TimerTask {
         private final InnerControlID heldControl;
@@ -319,6 +304,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         if(graphics2DFactoryClassName.equals("org.holongate.j2d.SWTGraphics2DFactory"))
             logger
                     .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
+
+        // get the players bean needed to display the cars if we're in race mode
+        if(widgetMode == TrackWidgetMode.RACE_MODE)
+            playersBean = (List<Player>) ContextLoader.getBean("playersBean");
 
         // prepare the font
         widgetFont = new Font("Arial", Font.BOLD, 10);
@@ -420,12 +409,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
             // register listener on the new track
             this.track.addListener(this);
-
-            // DEBUG: start the animation timer
-            if((widgetMode == TrackWidgetMode.RACE_MODE) && (DEBUGanimationTimer == null)) {
-                DEBUGanimationTimer = new Timer("DEBUG-animation");
-                DEBUGanimationTimer.schedule(new AnimationTimerHandler(), 50, 50);
-            }
         }
 
         // remove the current selection (will also trigger a repaint!)
@@ -465,8 +448,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private void handleDisposeEvent(DisposeEvent e) {
         if(track != null)
             track.removeListener(this);
-        if(DEBUGanimationTimer != null)
-            DEBUGanimationTimer.cancel();
         if(clickEventRepetitionTimer != null)
             clickEventRepetitionTimer.cancel();
     }
@@ -742,13 +723,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // initialize a counter (used for detected the selected tile)
         int counter = 0;
 
-        // DEBUG: prepare drawing the 'cars'
-        int lane0Length = track.getLaneLength(0);
-        int lane1Length = track.getLaneLength(1);
-        int lane0Pos = DEBUGanimationStep % lane0Length;
-        int lane1Pos = DEBUGanimationStep % lane1Length;
-        TrackPosition car0Position = track.determineSectionFromPosition(0, lane0Pos);
-        TrackPosition car1Position = track.determineSectionFromPosition(1, lane1Pos);
+        // prepare drawing the 'cars'
+        TrackPosition carPosition[] = null;
+        if(widgetMode == TrackWidgetMode.RACE_MODE) {
+            carPosition = new TrackPosition[playersBean.size()];
+            for(int i = 0; i < playersBean.size(); i++) {
+                Player p = playersBean.get(i);
+                carPosition[i] = track.determineSectionFromPosition(i, p.getPosition());
+            }
+        }
 
         // iterate over all track sections of the currently displayed track
         for(TrackSection s: track.getSections()) {
@@ -806,17 +789,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
             }
 
-            // DEBUG: draw the current 'car' position
+            // draw the current car position
             if(widgetMode == TrackWidgetMode.RACE_MODE) {
-                if(s == car0Position.section) {
-                    DirectedPoint directedPoint = car0Position.point;
-                    Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                    drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
-                }
-                if(s == car1Position.section) {
-                    DirectedPoint directedPoint = car1Position.point;
-                    Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                    drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+                for(int i = 0; i < playersBean.size(); i++) {
+                    if(carPosition[i] != null && s == carPosition[i].section) {
+                        DirectedPoint directedPoint = carPosition[i].point;
+                        Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
+                        drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+                    }
                 }
             }
 
