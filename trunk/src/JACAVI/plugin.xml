@@ -42,7 +42,7 @@
       </view>
       <view
             allowMultiple="false"
-            class="de.jacavi.rcp.views.TrackView"
+            class="de.jacavi.rcp.views.RaceView"
             icon="icons/cars-16x16.png"
             id="JACAVI.trackView"
             name="Track View">
