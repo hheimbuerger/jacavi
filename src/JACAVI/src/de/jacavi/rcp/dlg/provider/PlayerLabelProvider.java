@@ -39,14 +39,16 @@ public class PlayerLabelProvider implements ITableLabelProvider {
 
                 break;
             case 2:
-                if(player.getSlotCarSystemConnector().getDriveConnector() instanceof AnalogueDriveConnector) {
-                    return usedImages.get("analog");
-                }
-                if(player.getSlotCarSystemConnector().getDriveConnector() instanceof Lib42DriveConnector) {
-                    return usedImages.get("digital");
-                }
-                if(player.getSlotCarSystemConnector().getDriveConnector() instanceof BlueriderConnector) {
-                    return usedImages.get("bluerider");
+                if(player.getSlotCarSystemConnector() != null) {
+                    if(player.getSlotCarSystemConnector().getDriveConnector() instanceof AnalogueDriveConnector) {
+                        return usedImages.get("analog");
+                    }
+                    if(player.getSlotCarSystemConnector().getDriveConnector() instanceof Lib42DriveConnector) {
+                        return usedImages.get("digital");
+                    }
+                    if(player.getSlotCarSystemConnector().getDriveConnector() instanceof BlueriderConnector) {
+                        return usedImages.get("bluerider");
+                    }
                 }
                 break;
 

@@ -7,6 +7,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
+import de.jacavi.rcp.dlg.RaceValidationDialog;
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.PartFromIDResolver;
 import de.jacavi.rcp.views.RaceView;
@@ -43,11 +44,11 @@ public class StartRaceAction extends RaceControlAction {
         // # Show the staging lights, and wait until they are done.
         // # Start the RaceEngine.
 
-        // if(new RaceValidationDialog(window.getShell(), race).open() == RaceValidationDialog.OK)
-        // log.debug("Race validated successfull");
-        // else {
-        // return;
-        // }
+        if(new RaceValidationDialog(window.getShell(), race).open() == RaceValidationDialog.OK)
+            log.debug("Race validated successfull");
+        else {
+            return;
+        }
 
         try {
             log.debug("Opening Race Perspective");
