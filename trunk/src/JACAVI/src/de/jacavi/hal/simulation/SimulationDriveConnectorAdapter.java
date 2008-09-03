@@ -6,6 +6,12 @@ import de.jacavi.hal.SlotCarSystemDriveConnector;
 
 public class SimulationDriveConnectorAdapter implements SlotCarSystemDriveConnector {
 
+    private String name = "";
+
+    public SimulationDriveConnectorAdapter(String name) {
+        this.name = name;
+    }
+
     @Override
     public void fullBreak() {
     // TODO Auto-generated method stub

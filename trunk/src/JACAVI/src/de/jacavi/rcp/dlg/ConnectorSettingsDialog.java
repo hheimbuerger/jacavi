@@ -21,6 +21,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.ConnectorFactory;
 import de.jacavi.hal.SlotCarSystemConnector;
+import de.jacavi.hal.bluerider.BlueriderConnector;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.widgets.controls.validators.IPV4ValidatedText;
 import de.jacavi.rcp.widgets.controls.validators.RangeValidatedText;
@@ -176,6 +177,9 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         comboBlueriderComPort.add("COM7");
         comboBlueriderComPort.add("COM9");
         comboBlueriderComPort.add("COM10");
+        comboBlueriderComPort.add("COM16");
+        comboBlueriderComPort.add("COM17");
+
         comboBlueriderComPort.setText("COM1");
 
         // create analogue feedback shit
@@ -260,13 +264,12 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
             SlotCarSystemConnector blueriderConnector = connectorFactory.createBlueriderConnector(name,
                     comboBlueriderComPort.getText(), new InetSocketAddress(textBlueriderHost.getText(), Integer
                             .valueOf(textBlueriderPort.getText())));
-            /*TODO: connect bluerider
-            connect analogue track
-            set analoguetrack speed to max
-            
-            */
-            connectorManager.addConnector(blueriderConnector);
-            connectorManager.testSystemConnector(blueriderConnector);
+            if(((BlueriderConnector) blueriderConnector.getDriveConnector()).connectBlueRider()) {
+                connectorManager.addConnector(blueriderConnector);
+                connectorManager.testSystemConnector(blueriderConnector);
+            } else {
+                blueriderValidationGroup.setText("Could not connect to Bluerider");
+            }
         }
         updateDeviceList();
     }

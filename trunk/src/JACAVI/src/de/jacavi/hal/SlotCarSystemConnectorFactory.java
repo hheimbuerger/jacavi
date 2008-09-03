@@ -32,7 +32,7 @@ public class SlotCarSystemConnectorFactory implements ConnectorFactory {
 
     public SlotCarSystemConnector createSimulatedConnector(String name) {
         // TODO:
-        return new SlotCarSystemConnector(name, new SimulationDriveConnectorAdapter(),
-                new SimulationFeedbackConnectorAdapter());
+        return new SlotCarSystemConnector(name, new SimulationDriveConnectorAdapter(name),
+                new SimulationFeedbackConnectorAdapter(name));
     }
 }

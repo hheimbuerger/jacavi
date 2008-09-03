@@ -9,13 +9,13 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.analogue.AnalogueDriveConnectorAdapter;
 import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
 import de.jacavi.hal.simulation.SimulationDriveConnectorAdapter;
-import de.jacavi.hal.simulation.SimulationFeedbackConnectorAdapter;
 import de.jacavi.test.hal.connectors.TestAnalogueDriveConnectorAdapter;
 import de.jacavi.test.hal.connectors.TestBlueriderDriveConnectorAdapter;
 import de.jacavi.test.hal.connectors.TestLib42DriveConnectorAdapter;
@@ -33,9 +33,10 @@ public class ConnectorConfigurationManager {
     public ConnectorConfigurationManager() {
         // FIXME: Added by Henrik without knowing what I'm doing. :) I just needed an adapter to show up in the menu so
         // I can test the track widget in race mode.
-        SlotCarSystemConnector connector = new SlotCarSystemConnector("simulation",
-                new SimulationDriveConnectorAdapter(), new SimulationFeedbackConnectorAdapter());
-        connectors.put(connector.getId(), connector);
+        ConnectorFactory connectorFactory = (ConnectorFactory) ContextLoader.getBean("slotCarSystemConnectorFactory");
+        SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
+        addConnector(simulatedConnector);
+        // connectors.put(connector.getId(), connector);
     }
 
     public void addConnector(SlotCarSystemConnector connector) {
