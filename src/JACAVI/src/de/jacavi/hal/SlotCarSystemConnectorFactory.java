@@ -7,7 +7,7 @@ import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42FeedbackConnectorAdapter;
 import de.jacavi.hal.simulation.SimulationDriveConnectorAdapter;
-import de.jacavi.hal.simulation.SimulationFeddbackConnectorAdapter;
+import de.jacavi.hal.simulation.SimulationFeedbackConnectorAdapter;
 
 
 
@@ -33,6 +33,6 @@ public class SlotCarSystemConnectorFactory implements ConnectorFactory {
     public SlotCarSystemConnector createSimulatedConnector(String name) {
         // TODO:
         return new SlotCarSystemConnector(name, new SimulationDriveConnectorAdapter(),
-                new SimulationFeddbackConnectorAdapter());
+                new SimulationFeedbackConnectorAdapter());
     }
 }
