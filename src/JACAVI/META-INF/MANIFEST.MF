@@ -20,6 +20,7 @@ Bundle-ClassPath: .,
  libs/spring-2.5.5.jar,
  libs/j2d4swt-2.3.0.jar,
  libs/wiiusej.jar,
- libs/javajoystick-0.7.jar
+ libs/javajoystick-0.7.jar,
+ libs/RXTXcomm.jar
 Bundle-Vendor: JaCaVi - Team
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

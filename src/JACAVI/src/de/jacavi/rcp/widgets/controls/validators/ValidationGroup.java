@@ -78,4 +78,8 @@ public class ValidationGroup extends Composite {
         innerLabel.setText(errorMessage);
         return retVal;
     }
+
+    public void setText(String text) {
+        innerLabel.setText(text);
+    }
 }

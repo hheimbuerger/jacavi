@@ -1,10 +1,10 @@
 package de.jacavi.test.hal.connectors;
 
-import de.jacavi.hal.SlotCarSystemDriveConnector;
+import de.jacavi.hal.bluerider.BlueriderConnector;
 
 
 
-public class TestBlueriderDriveConnectorAdapter implements SlotCarSystemDriveConnector {
+public class TestBlueriderDriveConnectorAdapter implements BlueriderConnector {
 
     public TestBlueriderDriveConnectorAdapter(String comPort) {
     // TODO Auto-generated constructor stub
@@ -39,7 +39,20 @@ public class TestBlueriderDriveConnectorAdapter implements SlotCarSystemDriveCon
         // TODO Auto-generated method stub
         return 0;
     }
+
     /**
      * @author Florian Roth
      */
+
+    @Override
+    public boolean connectBlueRider() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isConnected() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }
