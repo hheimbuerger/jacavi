@@ -7,6 +7,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -70,5 +71,16 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     public void initialize(IWorkbenchConfigurer configurer) {
         configurer.setSaveAndRestore(true);
         super.initialize(configurer);
+    }
+
+    @Override
+    public boolean preShutdown() {
+        try {
+            PlatformUI.getWorkbench().showPerspective(EditorPerspective.ID,
+                    PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+        } catch(WorkbenchException e) {
+            e.printStackTrace();
+        }
+        return super.preShutdown();
     }
 }
