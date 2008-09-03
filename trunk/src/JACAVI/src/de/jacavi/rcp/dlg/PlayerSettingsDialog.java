@@ -58,9 +58,17 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private ComboViewer comboConnectorsViewer;
 
+    private SlotCarSystemConnector connector;
+
+    private CarController controller;
+
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
         this.player = player;
+
+        connector = player.getSlotCarSystemConnector();
+
+        controller = player.getController();
 
         inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
 
@@ -116,7 +124,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                 if(!value.equals("")) {
                     if(((Combo) event.getSource()).getText().equals(inputs[1])) {
                         comboDevices.setEnabled(false);
-                        player.setController(new DrivingAgentExample());
+                        controller = new DrivingAgentExample();
                     } else {
                         comboDevices.setEnabled(true);
                     }
@@ -141,7 +149,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 int selected = ((Combo) event.getSource()).getSelectionIndex();
-                player.setController((DeviceController) comboDevicesViewer.getElementAt(selected));
+                controller = (DeviceController) comboDevicesViewer.getElementAt(selected);
             }
         });
 
@@ -158,7 +166,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
             @Override
             public void widgetSelected(SelectionEvent event) {
                 int selected = ((Combo) event.getSource()).getSelectionIndex();
-                player.setSlotCarSystemConnector((SlotCarSystemConnector) comboConnectorsViewer.getElementAt(selected));
+                connector = (SlotCarSystemConnector) comboConnectorsViewer.getElementAt(selected);
             }
         });
 
@@ -175,6 +183,8 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     @Override
     protected void okPressed() {
         player.setName(playerName.getText());
+        player.setSlotCarSystemConnector(connector);
+        player.setController(controller);
         super.okPressed();
         comboInput.dispose();
         comboDevices.dispose();

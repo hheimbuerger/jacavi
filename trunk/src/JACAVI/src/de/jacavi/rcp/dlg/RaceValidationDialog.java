@@ -1,6 +1,7 @@
 package de.jacavi.rcp.dlg;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
@@ -13,7 +14,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
 import de.jacavi.appl.racelogic.Race;
@@ -38,6 +41,8 @@ public class RaceValidationDialog extends TitleAreaDialog {
 
     private Button okButton;
 
+    private final RaceValidator validator;
+
     private boolean readyForStart = true;
 
     public RaceValidationDialog(Shell parentShell, Race race) {
@@ -45,6 +50,7 @@ public class RaceValidationDialog extends TitleAreaDialog {
         this.race = race;
         this.valid = Activator.getImageDescriptor("/icons/famfamfam-silk/accept.png").createImage();
         this.invalid = Activator.getImageDescriptor("/icons/famfamfam-silk/exclamation.png").createImage();
+        this.validator = new RaceValidator();
     }
 
     @Override
@@ -58,35 +64,32 @@ public class RaceValidationDialog extends TitleAreaDialog {
     @Override
     protected Control createDialogArea(Composite parent) {
         parent.getShell().setText("Pre Startup Validation");
-
-        GridData gdInputs = new GridData();
-        gdInputs.widthHint = 150;
+        GridLayout parentlayout = new GridLayout();
+        parent.setLayout(parentlayout);
 
         GridLayout layout = new GridLayout();
         layout.marginHeight = 20;
-        layout.numColumns = 2;
+        layout.numColumns = 3;
         layout.verticalSpacing = 10;
         layout.horizontalSpacing = 10;
 
-        GridLayout parentlayout = new GridLayout();
-        // parentlayout.numColumns = 2;
-        parent.setLayout(parentlayout);
-
-        // Player 1
         Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
         group.setLayout(layout);
         group.setText("Validation Results");
         group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        for(int i = 0; i < RaceValidator.class.getDeclaredMethods().length; i++) {
+        List errorMessagesList = null;
+        for(Method validationMethod: RaceValidator.class.getDeclaredMethods()) {
+
+            if(!validationMethod.getName().startsWith("validate")) {
+                continue;
+            }
 
             CLabel validationTask = new CLabel(group, SWT.NONE);
-            validationTask.setText(RaceValidator.class.getDeclaredMethods()[i]
-                    .getAnnotation(ValidatationTaskName.class).description());
+            validationTask.setText(validationMethod.getAnnotation(ValidatationTaskName.class).description());
 
             try {
-                Boolean valid = (Boolean) RaceValidator.class.getDeclaredMethods()[i].invoke(null, race);
-                System.out.println(valid);
+                Boolean valid = (Boolean) validationMethod.invoke(validator, race);
 
                 CLabel isValidLabel = new CLabel(group, SWT.NONE);
                 if(valid) {
@@ -98,7 +101,12 @@ public class RaceValidationDialog extends TitleAreaDialog {
                     readyForStart = false;
                     setErrorMessage("Please fix the following errors in your settings.");
                 }
-
+                if(errorMessagesList == null) {
+                    errorMessagesList = new List(group, SWT.SINGLE | SWT.BORDER);
+                    GridData errorsGd = new GridData(GridData.FILL_BOTH);
+                    errorsGd.verticalSpan = RaceValidator.class.getDeclaredMethods().length - 1;
+                    errorMessagesList.setLayoutData(errorsGd);
+                }
             } catch(IllegalArgumentException e) {
                 e.printStackTrace();
             } catch(SecurityException e) {
@@ -110,6 +118,11 @@ public class RaceValidationDialog extends TitleAreaDialog {
             }
         }
 
+        for(String error: validator.getErrorMessages()) {
+            errorMessagesList.add(error);
+        }
+        if(!readyForStart)
+            Display.getCurrent().beep();
         return parent;
     }
 
