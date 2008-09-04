@@ -32,7 +32,6 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
 
     private String comPort = "";
 
-    @SuppressWarnings("unused")
     private boolean isConnected = false;
 
     private final int maxHALSpeed = 255;

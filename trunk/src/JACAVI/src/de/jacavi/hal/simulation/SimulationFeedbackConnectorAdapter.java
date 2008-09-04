@@ -17,4 +17,8 @@ public class SimulationFeedbackConnectorAdapter implements SlotCarFeedbackConnec
     public FeedbackSignal pollFeedback() {
         return new FeedbackSignal(null, null);
     }
+
+    public String getName() {
+        return name;
+    }
 }
