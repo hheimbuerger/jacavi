@@ -42,4 +42,7 @@ public class SimulationDriveConnectorAdapter implements SlotCarSystemDriveConnec
         return 0;
     }
 
+    public String getName() {
+        return name;
+    }
 }

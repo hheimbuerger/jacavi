@@ -3,6 +3,7 @@ package de.jacavi.rcp.actions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -44,7 +45,7 @@ public class StartRaceAction extends RaceControlAction {
         // # Show the staging lights, and wait until they are done.
         // # Start the RaceEngine.
 
-        if(new RaceValidationDialog(window.getShell(), race).open() == RaceValidationDialog.OK)
+        if(new RaceValidationDialog(window.getShell(), race).open() == Window.OK)
             log.debug("Race validated successfull");
         else {
             return;

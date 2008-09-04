@@ -282,6 +282,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      * @throws IOException
      *             if one of the bitmaps can't be loaded
      */
+    @SuppressWarnings("unchecked")
     public TrackWidget(Composite parent, Track track, TrackWidgetMode widgetMode) throws IOException {
         // call the J2DCanvas constructor, then register us as the IPaintable
         super(parent, SWT.NONE, null);
