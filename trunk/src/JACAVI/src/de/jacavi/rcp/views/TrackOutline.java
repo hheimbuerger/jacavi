@@ -1,12 +1,11 @@
 package de.jacavi.rcp.views;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -17,6 +16,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPropertyListener;
@@ -38,17 +38,18 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
 
     public static final String ID = "JACAVI.trackOutline";
 
-    private final List<Image> usedImages = new ArrayList<Image>();
-
     private TrackDesigner activeEditor;
 
     private Track currentTrack;
 
     private TableViewer tilesTableViewer;
 
+    private final ImageRegistry imageRegistry;
+
     public TrackOutline() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         window.getPartService().addPartListener(this);
+        imageRegistry = new ImageRegistry();
         // this.addListenerObject(this);
     }
 
@@ -68,11 +69,14 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         tilesTableViewer.setLabelProvider(new LabelProvider() {
             @Override
             public Image getImage(Object element) {
-                Image image = Activator.getImageDescriptor(((TrackSection) element).getTile().getFilename())
-                        .createImage();
-                Image scaledImage = new Image(null, image.getImageData().scaledTo(16, 16));
-                usedImages.add(image);
-                usedImages.add(scaledImage);
+                String tileFileName = ((TrackSection) element).getTile().getFilename();
+                Image scaledImage = imageRegistry.get(tileFileName);
+                if(scaledImage == null) {
+                    Image image = Activator.getImageDescriptor(tileFileName).createImage();
+                    scaledImage = new Image(Display.getCurrent(), image.getImageData().scaledTo(16, 16));
+                    imageRegistry.put(((TrackSection) element).getTile().getFilename(), scaledImage);
+                    image.dispose();
+                }
                 return scaledImage;
             }
 
@@ -180,7 +184,6 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     @Override
     public void dispose() {
         super.dispose();
-        for(Image image: usedImages)
-            image.dispose();
+        imageRegistry.dispose();
     }
 }
