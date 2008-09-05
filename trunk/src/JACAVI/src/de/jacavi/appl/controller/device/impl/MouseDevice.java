@@ -7,7 +7,6 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
-import de.jacavi.rcp.widgets.TrackWidget;
 
 
 
@@ -15,12 +14,27 @@ public class MouseDevice extends DeviceController implements Listener {
 
     private final ControllerSignal currentControllerSignal;
 
+    private boolean isLeftMouseButtonPressed = false;
+
+    private int lastYCoords = 0;
+
+    private int lastSpeed = 0;
+
     public MouseDevice(String name) {
         super(name);
 
         currentControllerSignal = new ControllerSignal();
+    }
 
-        // TODO: Listener has to be added in initialize method
+    @Override
+    public void unhookListener() {
+        Display.getCurrent().removeFilter(SWT.MouseDown, this);
+        Display.getCurrent().removeFilter(SWT.MouseMove, this);
+        Display.getCurrent().removeFilter(SWT.MouseUp, this);
+    }
+
+    @Override
+    public void hookListener() {
         Display.getCurrent().addFilter(SWT.MouseDown, this);
         Display.getCurrent().addFilter(SWT.MouseMove, this);
         Display.getCurrent().addFilter(SWT.MouseUp, this);
@@ -28,7 +42,6 @@ public class MouseDevice extends DeviceController implements Listener {
 
     @Override
     public boolean initialize() {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -38,64 +51,45 @@ public class MouseDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void cleanup() {
-        Display.getCurrent().removeFilter(SWT.MouseDown, this);
-    }
+    public void cleanup() {}
 
     @Override
     public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
         return 0;
     }
 
-    private boolean pressed1 = false;
-
-    private int lastY = 0;
-
-    private int lastSpeed = 0;
-
     @Override
     public void handleEvent(Event event) {
-        // TODO HACK:under some untraceable circumstances, a focus on a combo in the PlayerSettingsDialog fires an
-        // event and results a
-        // strange behavior --> EventListener(or Filter) has to be added when race starts
+        switch(event.button) {
+            // left mouse button
+            case 1:
+                if(!isLeftMouseButtonPressed) {
+                    isLeftMouseButtonPressed = true;
+                    lastYCoords = event.y;
+                } else if(isLeftMouseButtonPressed) {
+                    isLeftMouseButtonPressed = false;
+                    lastSpeed = currentControllerSignal.getSpeed();
+                }
+                break;
 
-        if(event.widget instanceof TrackWidget) {
+            // middle mouse button
+            case 2:
+                break;
 
-            switch(event.button) {
-                // left mouse
-                case 1:
-                    if(!pressed1) {
-                        pressed1 = true;
-                        lastY = event.y;
-                        System.out.println(lastY);
-                        System.out.println(event.widget);
-                    } else if(pressed1) {
-                        pressed1 = false;
-                        lastSpeed = currentControllerSignal.getSpeed();
+            // right mouse button
+            case 3:
+                handleTrigger();
+                break;
+
+            default:
+                if(isLeftMouseButtonPressed) {
+                    if(lastYCoords > event.y)
+                        handleSpeed(lastSpeed + Math.abs(event.y - lastYCoords) - 1);
+                    else {
+                        handleSpeed(lastSpeed - Math.abs(event.y - lastYCoords) - 1);
                     }
-
-                    break;
-
-                // middle mouse
-                case 2:
-
-                    break;
-
-                // right mouse
-                case 3:
-                    handleTrigger();
-                    break;
-
-                default:
-                    if(pressed1) {
-                        if(lastY > event.y)
-                            handleSpeed(lastSpeed + Math.abs(event.y - lastY) - 1);
-                        else {
-                            handleSpeed(lastSpeed - Math.abs(event.y - lastY) - 1);
-                        }
-                    }
-                    break;
-            }
+                }
+                break;
         }
     }
 
@@ -109,7 +103,7 @@ public class MouseDevice extends DeviceController implements Listener {
             speed = 100;
         if(speed < 0)
             speed = 0;
-        System.out.println("speed:" + speed);
         currentControllerSignal.setSpeed(speed);
     }
+
 }
