@@ -26,6 +26,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
         currentControllerSignal = new ControllerSignal();
 
         Display.getCurrent().addFilter(SWT.KeyDown, this);
+        Display.getCurrent().addFilter(SWT.KeyUp, this);
 
         // TODO: Listener has to be added in initialize method
         keyboardLayout = KeyboardLayout.Default;
@@ -34,6 +35,8 @@ public class KeyboardDevice extends DeviceController implements Listener {
     @Override
     public void cleanup() {
         Display.getCurrent().removeFilter(SWT.KeyDown, this);
+        Display.getCurrent().removeFilter(SWT.KeyUp, this);
+
     }
 
     @Override
@@ -74,11 +77,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     private void handleTrigger(boolean trigger) {
-        if(trigger)
-            currentControllerSignal.setTrigger(false);
-        else {
-            currentControllerSignal.setTrigger(true);
-        }
+        currentControllerSignal.setTrigger(!trigger);
     }
 
     private void handleBrake(int speed) {
