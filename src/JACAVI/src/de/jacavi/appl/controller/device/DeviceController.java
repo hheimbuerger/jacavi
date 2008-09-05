@@ -33,4 +33,17 @@ public abstract class DeviceController extends CarController {
      */
     abstract public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal);
 
+    /**
+     * Add listeners before race starts
+     * <p>
+     * In comparison to the initialize method this one may be called when the race perspective has opened and the race
+     * has started
+     */
+    abstract public void hookListener();
+
+    /**
+     * Remove listeners when race has finished
+     */
+    abstract public void unhookListener();
+
 }

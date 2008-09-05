@@ -25,19 +25,31 @@ public class KeyboardDevice extends DeviceController implements Listener {
         super(name);
         currentControllerSignal = new ControllerSignal();
 
-        Display.getCurrent().addFilter(SWT.KeyDown, this);
-        Display.getCurrent().addFilter(SWT.KeyUp, this);
-
-        // TODO: Listener has to be added in initialize method
+        // TODO: constructor argument
         keyboardLayout = KeyboardLayout.Default;
     }
 
+    public KeyboardDevice(String name, KeyboardLayout keyboardLayout) {
+        super(name);
+        currentControllerSignal = new ControllerSignal();
+
+        this.keyboardLayout = keyboardLayout;
+    }
+
     @Override
-    public void cleanup() {
+    public void unhookListener() {
         Display.getCurrent().removeFilter(SWT.KeyDown, this);
         Display.getCurrent().removeFilter(SWT.KeyUp, this);
-
     }
+
+    @Override
+    public void hookListener() {
+        Display.getCurrent().addFilter(SWT.KeyDown, this);
+        Display.getCurrent().addFilter(SWT.KeyUp, this);
+    }
+
+    @Override
+    public void cleanup() {}
 
     @Override
     public boolean initialize() {
@@ -93,4 +105,5 @@ public class KeyboardDevice extends DeviceController implements Listener {
             speed = 100;
         currentControllerSignal.setSpeed(speed);
     }
+
 }

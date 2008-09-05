@@ -5,6 +5,7 @@ import java.util.TimerTask;
 
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
+import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
 import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSystemConnector;
@@ -52,6 +53,11 @@ public class RaceEngine {
             raceTimer = new Timer();
             raceTimer.schedule(new RaceTimerTask(), 0, raceTimerInterval);
             isTimerRunning = true;
+
+            // prepare devices
+            for(Player player: race.getPlayers()) {
+                ((DeviceController) player.getController()).hookListener();
+            }
         }
     }
 
@@ -60,6 +66,10 @@ public class RaceEngine {
      */
     public void stopRaceTimer() {
         if(isTimerRunning) {
+            // disorganize devices
+            for(Player player: race.getPlayers()) {
+                ((DeviceController) player.getController()).unhookListener();
+            }
             raceTimer.cancel();
             isTimerRunning = false;
         }

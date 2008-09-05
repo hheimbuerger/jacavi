@@ -88,6 +88,18 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     }
 
     @Override
+    public void unhookListener() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void hookListener() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
     public void onButtonsEvent(WiimoteButtonsEvent arg0) {
         // TODO: Check the other options
         if(arg0.isButtonBJustPressed())
