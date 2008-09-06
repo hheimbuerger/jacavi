@@ -1,14 +1,11 @@
 package de.jacavi.appl.track;
 
-
-
-
-public class TrackPosition {
+public class CarScreenPosition {
     public TrackSection section;
 
     public DirectedPoint point;
 
-    public TrackPosition(TrackSection section, DirectedPoint point) {
+    public CarScreenPosition(TrackSection section, DirectedPoint point) {
         this.section = section;
         this.point = point;
     }

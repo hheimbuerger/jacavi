@@ -15,17 +15,17 @@ import org.eclipse.ui.part.ViewPart;
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.Messages;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.appl.racelogic.Race;
 
 
 
 public class LapView extends ViewPart {
     public static final String ID = "JACAVI.lapView"; //$NON-NLS-1$
 
-    private ArrayList<Player> players;
+    private final ArrayList<Player> players;
 
+    @SuppressWarnings("unchecked")
     public LapView() {
-        players = (ArrayList<Player>) ((Race) ContextLoader.getBean("raceBean")).getPlayers(); //$NON-NLS-1$
+        players = (ArrayList<Player>) ContextLoader.getBean("playersBean");
     }
 
     Table table;

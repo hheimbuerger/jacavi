@@ -178,4 +178,8 @@ public class TrackDesigner extends EditorPart {
     public TrackWidget getTrackWidget() {
         return trackWidget;
     }
+
+    public Track getTrack() {
+        return currentTrack;
+    }
 }

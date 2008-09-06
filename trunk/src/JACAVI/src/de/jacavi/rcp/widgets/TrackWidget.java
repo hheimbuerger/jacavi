@@ -49,10 +49,10 @@ import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
+import de.jacavi.appl.track.CarScreenPosition;
 import de.jacavi.appl.track.DirectedPoint;
 import de.jacavi.appl.track.LaneSection;
 import de.jacavi.appl.track.Track;
-import de.jacavi.appl.track.TrackPosition;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.Track.TrackModificationListener;
 import de.jacavi.rcp.widgets.controls.ImageButtonControl;
@@ -725,12 +725,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         int counter = 0;
 
         // prepare drawing the 'cars'
-        TrackPosition carPosition[] = null;
+        CarScreenPosition carPosition[] = null;
         if(widgetMode == TrackWidgetMode.RACE_MODE) {
-            carPosition = new TrackPosition[playersBean.size()];
+            carPosition = new CarScreenPosition[playersBean.size()];
             for(int i = 0; i < playersBean.size(); i++) {
                 Player p = playersBean.get(i);
-                carPosition[i] = track.determineSectionFromPosition(i, p.getPosition());
+                carPosition[i] = track.determineScreenPositionFromPosition(p.getPosition());
             }
         }
 

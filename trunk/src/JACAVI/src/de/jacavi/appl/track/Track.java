@@ -217,12 +217,12 @@ public class Track {
         return length;
     }
 
-    public TrackPosition determineSectionFromPosition(int laneIndex, int position) {
+    public CarScreenPosition determineScreenPositionFromPosition(CarPosition position) {
         int length = 0;
         for(TrackSection s: sections) {
-            Lane lane = s.getLane(laneIndex);
-            if(position < length + lane.getLength())
-                return new TrackPosition(s, lane.getStepPoint(position - length));
+            Lane lane = s.getLane(position.currentLane);
+            if(position.stepsFromStart < length + lane.getLength())
+                return new CarScreenPosition(s, lane.getStepPoint(position.stepsFromStart - length));
             length += lane.getLength();
         }
         return null;

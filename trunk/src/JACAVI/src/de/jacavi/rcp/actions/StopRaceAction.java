@@ -25,6 +25,6 @@ public class StopRaceAction extends RaceControlAction {
     }
 
     private void cleanup() {
-        raceEngine.stopRaceTimer();
+        raceEngine.stopRace();
     }
 }
