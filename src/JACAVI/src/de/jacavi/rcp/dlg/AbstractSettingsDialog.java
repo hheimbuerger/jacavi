@@ -122,8 +122,10 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         tabFolder.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
-                if(e.item != null)
+                if(e.item != null) {
+                    AbstractSettingsDialog.this.handleTabSelection(e);
                     ((CTabItem) e.item).getControl().setFocus();
+                }
             }
         });
 
@@ -213,6 +215,8 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
     }
 
     abstract protected void setDescriptionTexts();
+
+    protected void handleTabSelection(SelectionEvent e) {}
 
     abstract protected void createTabItems(CTabFolder tabFolder);
 

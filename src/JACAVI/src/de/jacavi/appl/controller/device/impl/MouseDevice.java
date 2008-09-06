@@ -35,6 +35,9 @@ public class MouseDevice extends DeviceController implements Listener {
 
     @Override
     public void hookListener() {
+        isLeftMouseButtonPressed = false;
+        lastYCoords = 0;
+        lastSpeed = 0;
         Display.getCurrent().addFilter(SWT.MouseDown, this);
         Display.getCurrent().addFilter(SWT.MouseMove, this);
         Display.getCurrent().addFilter(SWT.MouseUp, this);
@@ -99,11 +102,7 @@ public class MouseDevice extends DeviceController implements Listener {
     }
 
     private void handleSpeed(int speed) {
-        if(speed > 100)
-            speed = 100;
-        if(speed < 0)
-            speed = 0;
-        currentControllerSignal.setSpeed(speed);
+        currentControllerSignal.setSpeed(Math.min(Math.max(speed, 0), 100));
     }
 
 }
