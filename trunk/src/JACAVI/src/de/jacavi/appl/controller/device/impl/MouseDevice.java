@@ -25,7 +25,7 @@ public class MouseDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void preRace() {
+    public void activate() {
         isLeftMouseButtonPressed = false;
         lastYCoords = 0;
         lastSpeed = 0;
@@ -36,24 +36,16 @@ public class MouseDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void postRace() {
+    public void deactivate() {
         Display.getCurrent().removeFilter(SWT.MouseDown, this);
         Display.getCurrent().removeFilter(SWT.MouseMove, this);
         Display.getCurrent().removeFilter(SWT.MouseUp, this);
     }
 
     @Override
-    public boolean initialize() {
-        return false;
-    }
-
-    @Override
     public ControllerSignal poll() {
         return currentControllerSignal;
     }
-
-    @Override
-    public void cleanup() {}
 
     @Override
     public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {

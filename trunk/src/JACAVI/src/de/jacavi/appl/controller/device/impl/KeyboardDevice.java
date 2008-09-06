@@ -33,7 +33,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void preRace() {
+    public void activate() {
         currentControllerSignal.setSpeed(0);
         currentControllerSignal.setTrigger(false);
         Display.getCurrent().addFilter(SWT.KeyDown, this);
@@ -41,18 +41,9 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void postRace() {
+    public void deactivate() {
         Display.getCurrent().removeFilter(SWT.KeyDown, this);
         Display.getCurrent().removeFilter(SWT.KeyUp, this);
-    }
-
-    @Override
-    public void cleanup() {}
-
-    @Override
-    public boolean initialize() {
-        // Display.getCurrent().addFilter(SWT.KeyDown, this);
-        return true;
     }
 
     @Override

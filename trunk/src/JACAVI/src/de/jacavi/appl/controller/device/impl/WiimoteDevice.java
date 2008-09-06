@@ -49,18 +49,6 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     }
 
     @Override
-    public void cleanup() {
-    // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean initialize() {
-        // TODO: do really need this
-        return true;
-    }
-
-    @Override
     public ControllerSignal poll() {
         return currentControllerSignal;
     }

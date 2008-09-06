@@ -21,11 +21,6 @@ public class GameControllerDevice extends DeviceController {
     }
 
     @Override
-    public boolean initialize() {
-        return true;
-    }
-
-    @Override
     public ControllerSignal poll() {
         device.poll();
 
@@ -33,9 +28,6 @@ public class GameControllerDevice extends DeviceController {
         boolean mainButtonDown = device.isButtonDown(Joystick.BUTTON1);
         return new ControllerSignal(speed, mainButtonDown);
     }
-
-    @Override
-    public void cleanup() {}
 
     @Override
     public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {

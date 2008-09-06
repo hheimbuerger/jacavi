@@ -506,7 +506,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         if(previewUpdater != null)
             previewUpdater.cancel();
         if(currentKeyboardLayout != null)
-            currentKeyboardLayout.postRace();
+            currentKeyboardLayout.deactivate();
         currentKeyboardLayout = null;
 
         int selectionIndex = listKeyboardLayouts.getSelectionIndex();
@@ -526,7 +526,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             if(previewUpdater != null)
                 previewUpdater.cancel();
             if(currentKeyboardLayout != null)
-                currentKeyboardLayout.postRace();
+                currentKeyboardLayout.deactivate();
             currentKeyboardLayout = null;
             keyboardThrustGauge.setSelection(0);
             buttonTestKeyboardLayout.setText("Preview");
@@ -536,7 +536,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                     .getInputDevicesByType(KeyboardDevice.class);
             if(selectionIndex >= 0 && selectionIndex <= keyboardDevices.size()) {
                 currentKeyboardLayout = (KeyboardDevice) keyboardDevices.get(selectionIndex);
-                currentKeyboardLayout.preRace();
+                currentKeyboardLayout.activate();
                 previewUpdater = new Timer("previewUpdater");
                 previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, currentKeyboardLayout.getId(),
                         keyboardThrustGauge), 50, 50);
@@ -550,7 +550,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             if(previewUpdater != null)
                 previewUpdater.cancel();
             if(currentMouse != null)
-                currentMouse.postRace();
+                currentMouse.deactivate();
             currentMouse = null;
             mouseThrustGauge.setSelection(0);
             buttonTestMouseLayout.setText("Preview");
@@ -558,7 +558,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             java.util.List<DeviceController> mouseDevices = inputDeviceManager.getInputDevicesByType(MouseDevice.class);
             if(mouseDevices.size() > 0) {
                 currentMouse = (MouseDevice) mouseDevices.get(0);
-                currentMouse.preRace();
+                currentMouse.activate();
                 previewUpdater = new Timer("previewUpdater");
                 previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, currentMouse.getId(),
                         mouseThrustGauge), 50, 50);

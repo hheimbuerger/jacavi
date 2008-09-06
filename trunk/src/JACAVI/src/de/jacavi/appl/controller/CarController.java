@@ -14,11 +14,11 @@ public abstract class CarController implements Comparable<CarController> {
         this.name = name;
     }
 
-    abstract public boolean initialize();
-
     abstract public ControllerSignal poll();
 
-    abstract public void cleanup();
+    public void cleanup() {
+        deactivate();
+    }
 
     @Override
     public int compareTo(CarController o) {
@@ -44,10 +44,13 @@ public abstract class CarController implements Comparable<CarController> {
      * In comparison to the initialize method this one may be called when the race perspective has opened and the race
      * has started
      */
-    public void preRace() {}
+    public void activate() {}
 
     /**
      * Do what needs to be done after the race has finished.
+     * <p>
+     * Must have no effect if called multiple times. The default implementation of {@link cleanup()} calls this for good
+     * measure.
      */
-    public void postRace() {}
+    public void deactivate() {}
 }
