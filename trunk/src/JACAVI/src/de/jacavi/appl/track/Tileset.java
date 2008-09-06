@@ -74,7 +74,7 @@ public class Tileset {
      * Note that the list returned by this method returns some tiles multiple times in case they can be used from
      * different directions.
      */
-    public Map<String, Tile> getAvailableTiles() {
+    public Map<String, Tile> getUsableTiles() {
         // TODO: implement returning inverted tiles
         SortedMap<String, Tile> result = new TreeMap<String, Tile>(tiles);
 
