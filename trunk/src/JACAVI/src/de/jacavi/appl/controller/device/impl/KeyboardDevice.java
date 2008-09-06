@@ -59,7 +59,6 @@ public class KeyboardDevice extends DeviceController implements Listener {
     @Override
     public void handleEvent(Event event) {
         int speed = currentControllerSignal.getSpeed();
-        boolean trigger = currentControllerSignal.isTrigger();
 
         // accelerate
         if(event.keyCode == keyboardLayout.getAccelerationButton()) {
@@ -73,12 +72,12 @@ public class KeyboardDevice extends DeviceController implements Listener {
 
         // trigger
         if(event.keyCode == keyboardLayout.getTriggerButton()) {
-            handleTrigger(trigger);
+            handleTrigger(event.type);
         }
     }
 
-    private void handleTrigger(boolean trigger) {
-        currentControllerSignal.setTrigger(!trigger);
+    private void handleTrigger(int eventType) {
+        currentControllerSignal.setTrigger(eventType == SWT.KeyDown);
     }
 
     private void handleBrake(int speed) {
