@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
-import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
@@ -71,9 +70,8 @@ public class RaceEngine {
                 player.getPosition().reset(i++ % track.getTileset().getLaneCount());
 
             // prepare devices
-            for(Player player: players) {
-                ((DeviceController) player.getController()).hookListener();
-            }
+            for(Player player: players)
+                player.getController().preRace();
         } else {
             logger.error("RaceEngine.startRace() was invoked but timer was already running. Race was *not* started!");
         }
@@ -86,7 +84,7 @@ public class RaceEngine {
         if(isTimerRunning) {
             // disorganize devices
             for(Player player: players) {
-                ((DeviceController) player.getController()).unhookListener();
+                player.getController().postRace();
             }
             raceTimer.cancel();
             isTimerRunning = false;

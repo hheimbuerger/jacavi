@@ -56,16 +56,4 @@ public class GameControllerDevice extends DeviceController {
     public String[] getCapabilities() {
         return descriptor.capabilities;
     }
-
-    @Override
-    public void unhookListener() {
-    // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void hookListener() {
-    // TODO Auto-generated method stub
-
-    }
 }

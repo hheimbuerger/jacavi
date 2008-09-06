@@ -33,17 +33,17 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void unhookListener() {
-        Display.getCurrent().removeFilter(SWT.KeyDown, this);
-        Display.getCurrent().removeFilter(SWT.KeyUp, this);
-    }
-
-    @Override
-    public void hookListener() {
+    public void preRace() {
         currentControllerSignal.setSpeed(0);
         currentControllerSignal.setTrigger(false);
         Display.getCurrent().addFilter(SWT.KeyDown, this);
         Display.getCurrent().addFilter(SWT.KeyUp, this);
+    }
+
+    @Override
+    public void postRace() {
+        Display.getCurrent().removeFilter(SWT.KeyDown, this);
+        Display.getCurrent().removeFilter(SWT.KeyUp, this);
     }
 
     @Override

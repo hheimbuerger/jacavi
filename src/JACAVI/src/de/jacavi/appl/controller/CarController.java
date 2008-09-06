@@ -37,4 +37,17 @@ public abstract class CarController implements Comparable<CarController> {
     public String toString() {
         return name;
     }
+
+    /**
+     * Prepare for the race that's going to start soon.
+     * <p>
+     * In comparison to the initialize method this one may be called when the race perspective has opened and the race
+     * has started
+     */
+    public void preRace() {}
+
+    /**
+     * Do what needs to be done after the race has finished.
+     */
+    public void postRace() {}
 }

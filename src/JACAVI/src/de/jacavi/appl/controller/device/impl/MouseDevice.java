@@ -27,20 +27,20 @@ public class MouseDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void unhookListener() {
-        Display.getCurrent().removeFilter(SWT.MouseDown, this);
-        Display.getCurrent().removeFilter(SWT.MouseMove, this);
-        Display.getCurrent().removeFilter(SWT.MouseUp, this);
-    }
-
-    @Override
-    public void hookListener() {
+    public void preRace() {
         isLeftMouseButtonPressed = false;
         lastYCoords = 0;
         lastSpeed = 0;
         Display.getCurrent().addFilter(SWT.MouseDown, this);
         Display.getCurrent().addFilter(SWT.MouseMove, this);
         Display.getCurrent().addFilter(SWT.MouseUp, this);
+    }
+
+    @Override
+    public void postRace() {
+        Display.getCurrent().removeFilter(SWT.MouseDown, this);
+        Display.getCurrent().removeFilter(SWT.MouseMove, this);
+        Display.getCurrent().removeFilter(SWT.MouseUp, this);
     }
 
     @Override
