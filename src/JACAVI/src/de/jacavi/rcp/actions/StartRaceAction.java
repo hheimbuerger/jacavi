@@ -8,7 +8,9 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
+import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.dlg.RaceValidationDialog;
+import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.PartFromIDResolver;
 import de.jacavi.rcp.views.RaceView;
@@ -45,12 +47,19 @@ public class StartRaceAction extends RaceControlAction {
         // # Show the staging lights, and wait until they are done.
         // # Start the RaceEngine.
 
-        if(new RaceValidationDialog(window.getShell(), race).open() == Window.OK)
+        // show the RaceValidationDialog (which will automatically do the actual validation)
+        if(new RaceValidationDialog(window.getShell(), players).open() == Window.OK)
             log.debug("Race validated successfull");
         else {
             return;
         }
 
+        // determine the current track from the active editor
+        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+        Track activeTrack = activeEditor.getTrack();
+
+        // switch to the race perspective
         try {
             log.debug("Opening Race Perspective");
             PlatformUI.getWorkbench().showPerspective(RacePerspective.ID, window);
@@ -59,10 +68,12 @@ public class StartRaceAction extends RaceControlAction {
             e.printStackTrace();
         }
 
-        RaceView trackView = (RaceView) PartFromIDResolver.resolveView(RaceView.ID);
-        log.debug("Starting RaceEngine");
-        raceEngine.startRaceTimer(trackView);
+        // get the raceView
+        RaceView raceView = (RaceView) PartFromIDResolver.resolveView(RaceView.ID);
 
+        // tell the RaceEngine to start the race
+        log.debug("Starting RaceEngine");
+        raceEngine.startRace(activeTrack, raceView);
     }
 
 }

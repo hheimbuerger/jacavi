@@ -1,12 +1,16 @@
 package de.jacavi.appl.racelogic;
 
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import org.apache.log4j.Logger;
 
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
+import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.rcp.util.Check;
@@ -18,8 +22,10 @@ import de.jacavi.rcp.views.RaceView;
  * @author fro
  */
 public class RaceEngine {
-
-    private Race race = null;
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = Logger.getLogger(RaceEngine.class);
 
     private RaceView raceView = null;
 
@@ -29,13 +35,14 @@ public class RaceEngine {
 
     boolean isTimerRunning = false;
 
-    public RaceEngine(Race race) {
-        // preconditions
-        Check.Require(race != null, "race may not be null");
+    private Track track;
 
-        // needs
-        this.race = race;
+    private List<Player> players;
 
+    public RaceEngine() {}
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
     }
 
     public void setRaceTimerInterval(int raceTimerInterval) {
@@ -45,33 +52,46 @@ public class RaceEngine {
     /**
      * Start the RaceTimerTask
      */
-    public void startRaceTimer(RaceView raceView) {
+    public void startRace(Track activeTrack, RaceView raceView) {
+        Check.Require(activeTrack != null, "activeTrack may not be null");
         Check.Require(raceView != null, "raceView may not be null");
+
         if(!isTimerRunning) {
+            this.track = activeTrack;
             this.raceView = raceView;
+
             // create new timer feed with RaceTimerTask and start it
             raceTimer = new Timer();
             raceTimer.schedule(new RaceTimerTask(), 0, raceTimerInterval);
             isTimerRunning = true;
 
+            // TODO: assign all cars to their starting position
+            int i = 0;
+            for(Player player: players)
+                player.getPosition().reset(i++ % track.getTileset().getLaneCount());
+
             // prepare devices
-            for(Player player: race.getPlayers()) {
+            for(Player player: players) {
                 ((DeviceController) player.getController()).hookListener();
             }
+        } else {
+            logger.error("RaceEngine.startRace() was invoked but timer was already running. Race was *not* started!");
         }
     }
 
     /**
      * Stop the RaceTimerTask
      */
-    public void stopRaceTimer() {
+    public void stopRace() {
         if(isTimerRunning) {
             // disorganize devices
-            for(Player player: race.getPlayers()) {
+            for(Player player: players) {
                 ((DeviceController) player.getController()).unhookListener();
             }
             raceTimer.cancel();
             isTimerRunning = false;
+        } else {
+            logger.error("RaceEngine.stopRace() was invoked but timer was not running. Race was *not* stopped!");
         }
     }
 
@@ -88,7 +108,7 @@ public class RaceEngine {
 
         @Override
         public void run() {
-            for(Player player: race.getPlayers()) {
+            for(Player player: players) {
                 // get the players CarController
                 CarController carController = player.getController();
                 // get players hal connector
@@ -104,18 +124,11 @@ public class RaceEngine {
                 slotCarSystemConnector.setSpeed(controllerSignal.getSpeed());
                 // invoke the TDA
                 TrackDataApproximator tda = player.getTda();
-                player.setPosition(tda.determineNewPosition(gametick, player.getPosition(), controllerSignal,
-                        feedbackSignal));
+                tda.updatePosition(player.getPosition(), gametick, track, controllerSignal, feedbackSignal);
                 // repaint the RaceView
                 raceView.repaint();
             }
             gametick++;
         }
-
     }
-
-    public Race getRace() {
-        return race;
-    }
-
 }

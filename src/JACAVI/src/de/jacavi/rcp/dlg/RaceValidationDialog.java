@@ -19,7 +19,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 
-import de.jacavi.appl.racelogic.Race;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.actions.validator.RaceValidator;
 import de.jacavi.rcp.actions.validator.ValidatationTaskName;
@@ -33,8 +33,6 @@ public class RaceValidationDialog extends TitleAreaDialog {
 
     // private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
 
-    private final Race race;
-
     private final Image valid;
 
     private final Image invalid;
@@ -45,9 +43,11 @@ public class RaceValidationDialog extends TitleAreaDialog {
 
     private boolean readyForStart = true;
 
-    public RaceValidationDialog(Shell parentShell, Race race) {
+    private final java.util.List<Player> players;
+
+    public RaceValidationDialog(Shell parentShell, java.util.List<Player> players) {
         super(parentShell);
-        this.race = race;
+        this.players = players;
         this.valid = Activator.getImageDescriptor("/icons/famfamfam-silk/accept.png").createImage();
         this.invalid = Activator.getImageDescriptor("/icons/famfamfam-silk/exclamation.png").createImage();
         this.validator = new RaceValidator();
@@ -89,7 +89,7 @@ public class RaceValidationDialog extends TitleAreaDialog {
             validationTask.setText(validationMethod.getAnnotation(ValidatationTaskName.class).description());
 
             try {
-                Boolean valid = (Boolean) validationMethod.invoke(validator, race);
+                Boolean valid = (Boolean) validationMethod.invoke(validator, players);
 
                 CLabel isValidLabel = new CLabel(group, SWT.NONE);
                 if(valid) {

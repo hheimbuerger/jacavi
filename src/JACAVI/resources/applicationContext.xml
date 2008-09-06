@@ -2,24 +2,18 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
 	<import resource="configurationBeans.xml"/>
-	<bean id="applicationManager" class="de.jacavi.appl.ApplicationManager">
-		<property name="race" ref="raceBean" />
-	</bean>
+
+	<bean id="applicationManager" class="de.jacavi.appl.ApplicationManager" />
 	
-	<bean id="raceBean" class="de.jacavi.appl.racelogic.Race">
-		<!-- <property name="track" ref="track1Bean"/> -->
-		<property name="players" ref="playersBean" />
-	</bean>
-	
-	<!-- <bean id="track1Bean" class="de.jacavi.appl.valueobjects.Track" /> -->
 	<bean id="tilesetRepositoryBean" class="de.jacavi.appl.track.TilesetRepository">
 		<constructor-arg type="java.lang.String" value="/tiles/tiles.xml" />
 	</bean>
 	
 	<bean id="raceEngineBean" class="de.jacavi.appl.racelogic.RaceEngine"> 
-		<constructor-arg ref="raceBean"></constructor-arg>
-		<property name="raceTimerInterval" ref="raceTimerIntervalValueBean"></property>
+        <property name="players" ref="playersBean" />
+		<property name="raceTimerInterval" ref="raceTimerIntervalValueBean" />
 	</bean>
 
     <bean id="inputDeviceManagerBean" class="de.jacavi.appl.controller.device.InputDeviceManager" />

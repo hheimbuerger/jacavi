@@ -1,12 +1,14 @@
 package de.jacavi.rcp.actions;
 
+import java.util.List;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
 import de.jacavi.appl.ContextLoader;
-import de.jacavi.appl.racelogic.Race;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.racelogic.RaceEngine;
 
 
@@ -17,11 +19,12 @@ public abstract class RaceControlAction implements IWorkbenchWindowActionDelegat
 
     protected final RaceEngine raceEngine;
 
-    protected final Race race;
+    protected final List<Player> players;
 
+    @SuppressWarnings("unchecked")
     public RaceControlAction() {
         raceEngine = (RaceEngine) ContextLoader.getBean("raceEngineBean");
-        race = raceEngine.getRace();
+        players = (List<Player>) ContextLoader.getBean("playersBean");
     }
 
     /**
