@@ -1,6 +1,5 @@
 package de.jacavi.rcp.dlg;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -28,6 +27,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
+import de.jacavi.appl.controller.device.impl.MouseDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
 import de.jacavi.rcp.Activator;
 
@@ -36,8 +36,6 @@ import de.jacavi.rcp.Activator;
 public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private final InputDeviceManager inputDeviceManager;
-
-    private final ArrayList<Button> checkboxesKeyboardConfigs = new ArrayList<Button>();
 
     private Label labelGameControllerName;
 
@@ -53,15 +51,27 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private ProgressBar gameControllerThrustGauge;
 
-    private Timer gameControllerPreviewUpdater;
+    private Timer previewUpdater;
 
     private List listConnectedWiimotes;
 
     private ProgressBar wiimoteThrustGauge;
 
-    private Timer wiimotePreviewUpdater;
-
     private java.util.List<DeviceController> wiimotes;
+
+    private ProgressBar keyboardThrustGauge;
+
+    private List listKeyboardLayouts;
+
+    private KeyboardDevice currentKeyboardLayout;
+
+    private Button buttonTestKeyboardLayout;
+
+    private ProgressBar mouseThrustGauge;
+
+    private Button buttonTestMouseLayout;
+
+    private MouseDevice currentMouse;
 
     private static class DevicePreviewUpdater extends TimerTask {
         private final UUID deviceID;
@@ -104,29 +114,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         imageManager.put("imageWiimoteButtons", Activator.getImageDescriptor("/icons/wiimote_buttons.png")
                 .createImage());
         imageManager.put("icon", Activator.getImageDescriptor("/icons/famfamfam-silk/controller.png").createImage());
-
-        /*imageManager.put("imageKeyboard", new Image(Display.getDefault(), "icons/input_devices/keyboard.png"));
-        imageManager.put("imageMouse", new Image(Display.getDefault(), "icons/input_devices/mouse.png"));
-        imageManager.put("imageGameController", new Image(Display.getDefault(),
-                "icons/input_devices/game_controller.png"));
-        imageManager.put("imageWiimote", new Image(Display.getDefault(), "icons/input_devices/wiimote.png"));
-        imageManager.put("imageWiimoteButtons", new Image(Display.getDefault(), "icons/wiimote_buttons.png"));
-        imageManager.put("icon", new Image(Display.getDefault(), "icons/famfamfam-silk/controller.png"));*/
     }
 
     @Override
     public boolean close() {
-        if(wiimotePreviewUpdater != null)
-            wiimotePreviewUpdater.cancel();
-        if(gameControllerPreviewUpdater != null)
-            gameControllerPreviewUpdater.cancel();
-
-        // FIXME: just a hack to make some changes available for testing
-        inputDeviceManager.removeInputDevicesByType(KeyboardDevice.class);
-        for(Button b: checkboxesKeyboardConfigs) {
-            if(b.getSelection())
-                inputDeviceManager.addInputDevice(new KeyboardDevice(b.getText()));
-        }
+        if(previewUpdater != null)
+            previewUpdater.cancel();
 
         return super.close();
     }
@@ -147,28 +140,118 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         createWiimoteSection(prepareTabItem("Wiimote", imageManager.get("icon"), imageManager.get("imageWiimote")));
     }
 
-    private void createKeyboardSection(Composite groupKeyboard) {
-        groupKeyboard.setLayout(new GridLayout(1, false));
-        for(DeviceController d: inputDeviceManager.getInputDevicesByType(KeyboardDevice.class)) {
-            Button checkboxKeyboard = new Button(groupKeyboard, SWT.CHECK);
-            checkboxKeyboard.setText(d.getName());
-            checkboxKeyboard.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, true, false));
-            checkboxKeyboard.setData(d.getId());
-            checkboxKeyboard.setSelection(true);
-            checkboxesKeyboardConfigs.add(checkboxKeyboard);
-        }
-        groupKeyboard.pack();
+    private void createKeyboardSection(Composite c) {
+        // create the layout manager for laying out the inner widgets
+        c.setLayout(new FormLayout());
+
+        // create the "Connected devices:" label
+        Label labelConnectedDevices = new Label(c, SWT.WRAP);
+        FormData fd1 = new FormData();
+        fd1.top = new FormAttachment(0, 5);
+        fd1.left = new FormAttachment(0, 5);
+        labelConnectedDevices.setLayoutData(fd1);
+        labelConnectedDevices.setText("Keyboard layouts:");
+
+        keyboardThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
+        FormData fd5 = new FormData();
+        fd5.top = new FormAttachment(labelConnectedDevices, 10);
+        fd5.right = new FormAttachment(100, -20);
+        fd5.width = SWT.DEFAULT;
+        keyboardThrustGauge.setLayoutData(fd5);
+
+        // create the list of detected devices
+        listKeyboardLayouts = new List(c, SWT.BORDER);
+        FormData fd2 = new FormData();
+        fd2.top = new FormAttachment(labelConnectedDevices, 10);
+        fd2.left = new FormAttachment(labelConnectedDevices, 0, SWT.LEFT);
+        fd2.right = new FormAttachment(keyboardThrustGauge, -30);
+        fd2.height = 80;
+        listKeyboardLayouts.setLayoutData(fd2);
+        listKeyboardLayouts.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                InputDeviceSettingsDialog.this.handleSelectionKeyboardLayout(e);
+            }
+        });
+
+        // create the label "Preview:"
+        Label labelThrustGauge = new Label(c, SWT.WRAP);
+        FormData fd6 = new FormData();
+        fd6.left = new FormAttachment(keyboardThrustGauge, 0, SWT.CENTER);
+        fd6.bottom = new FormAttachment(keyboardThrustGauge, -10);
+        labelThrustGauge.setLayoutData(fd6);
+        labelThrustGauge.setText("Preview:");
+
+        // create the preview/stop previewing button
+        buttonTestKeyboardLayout = new Button(c, SWT.PUSH);
+        FormData fd7 = new FormData();
+        fd7.left = new FormAttachment(listKeyboardLayouts, 0, SWT.LEFT);
+        fd7.top = new FormAttachment(listKeyboardLayouts, 10, SWT.BOTTOM);
+        fd7.width = 150;
+        buttonTestKeyboardLayout.setLayoutData(fd7);
+        buttonTestKeyboardLayout.setText("Preview");
+        buttonTestKeyboardLayout.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                InputDeviceSettingsDialog.this.handleClickPreviewKeyboardLayout(e);
+            }
+        });
+
+        // create a placeholder for future controls
+        Label labelDEBUGPlaceholder = new Label(c, SWT.WRAP);
+        FormData fd8 = new FormData();
+        fd8.left = new FormAttachment(buttonTestKeyboardLayout, 0, SWT.LEFT);
+        fd8.top = new FormAttachment(buttonTestKeyboardLayout, 10, SWT.BOTTOM);
+        labelDEBUGPlaceholder.setLayoutData(fd8);
+        labelDEBUGPlaceholder.setText("[CONTROLS FOR ADDING/REMOVING/MODIFYING KEYBOARD LAYOUTS GO HERE]");
+
+        // fill the list with the initial layouts
+        for(DeviceController d: inputDeviceManager.getInputDevicesByType(KeyboardDevice.class))
+            listKeyboardLayouts.add(d.getName());
     }
 
-    private void createMouseSection(Composite groupMouse) {
-        FormLayout layout = new FormLayout();
-        layout.marginTop = 5;
-        layout.marginRight = 5;
-        layout.marginBottom = 5;
-        layout.marginLeft = 5;
-        groupMouse.setLayout(layout);
-        Label labelMouse = new Label(groupMouse, SWT.WRAP);
+    private void createMouseSection(Composite c) {
+        // create the layout manager for laying out the inner widgets
+        c.setLayout(new FormLayout());
+
+        // create the "Connected devices:" label
+        Label labelMouse = new Label(c, SWT.WRAP);
+        FormData fd1 = new FormData();
+        fd1.top = new FormAttachment(0, 5);
+        fd1.left = new FormAttachment(0, 5);
+        labelMouse.setLayoutData(fd1);
         labelMouse.setText("The mouse cannot be configured and is always available.");
+
+        // create the preview gauge
+        mouseThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
+        FormData fd5 = new FormData();
+        fd5.top = new FormAttachment(labelMouse, 10);
+        fd5.right = new FormAttachment(100, -20);
+        fd5.width = SWT.DEFAULT;
+        mouseThrustGauge.setLayoutData(fd5);
+
+        // create the label "Preview:"
+        Label labelThrustGauge = new Label(c, SWT.WRAP);
+        FormData fd6 = new FormData();
+        fd6.left = new FormAttachment(mouseThrustGauge, 0, SWT.CENTER);
+        fd6.bottom = new FormAttachment(mouseThrustGauge, -10);
+        labelThrustGauge.setLayoutData(fd6);
+        labelThrustGauge.setText("Preview:");
+
+        // create the preview/stop previewing button
+        buttonTestMouseLayout = new Button(c, SWT.PUSH);
+        FormData fd7 = new FormData();
+        fd7.left = new FormAttachment(labelMouse, 0, SWT.LEFT);
+        fd7.top = new FormAttachment(labelMouse, 10, SWT.BOTTOM);
+        fd7.width = 150;
+        buttonTestMouseLayout.setLayoutData(fd7);
+        buttonTestMouseLayout.setText("Preview");
+        buttonTestMouseLayout.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                InputDeviceSettingsDialog.this.handleClickPreviewMouse(e, false);
+            }
+        });
     }
 
     private void createGameControllerSection(Composite c) {
@@ -372,8 +455,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     protected void handleClickGameControllerDetection(SelectionEvent e) {
         // cancel the timer
-        if(gameControllerPreviewUpdater != null)
-            gameControllerPreviewUpdater.cancel();
+        if(previewUpdater != null)
+            previewUpdater.cancel();
 
         // start the redetection
         inputDeviceManager.redetectGameControllers();
@@ -389,8 +472,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     protected void handleClickWiimoteDetection(SelectionEvent e) {
         // cancel the timer
-        if(wiimotePreviewUpdater != null)
-            wiimotePreviewUpdater.cancel();
+        if(previewUpdater != null)
+            previewUpdater.cancel();
 
         // start the redetection
         inputDeviceManager.redetectWiimotes();
@@ -404,9 +487,74 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         handleSelectionDetectedWiimote(e);
     }
 
+    protected void handleSelectionKeyboardLayout(SelectionEvent e) {
+        if(previewUpdater != null)
+            previewUpdater.cancel();
+        if(currentKeyboardLayout != null)
+            currentKeyboardLayout.unhookListener();
+        currentKeyboardLayout = null;
+
+        int selectionIndex = listKeyboardLayouts.getSelectionIndex();
+        java.util.List<DeviceController> keyboardDevices = inputDeviceManager
+                .getInputDevicesByType(KeyboardDevice.class);
+        if(selectionIndex >= 0 && selectionIndex <= keyboardDevices.size()) {
+            buttonTestKeyboardLayout.setEnabled(true);
+        } else {
+            buttonTestKeyboardLayout.setEnabled(false);
+        }
+        buttonTestKeyboardLayout.setText("Preview");
+        keyboardThrustGauge.setSelection(0);
+    }
+
+    protected void handleClickPreviewKeyboardLayout(SelectionEvent e) {
+        if(currentKeyboardLayout != null) { // user clicked 'stop previewing'
+            if(previewUpdater != null)
+                previewUpdater.cancel();
+            if(currentKeyboardLayout != null)
+                currentKeyboardLayout.unhookListener();
+            currentKeyboardLayout = null;
+            keyboardThrustGauge.setSelection(0);
+            buttonTestKeyboardLayout.setText("Preview");
+        } else { // user clicked 'preview'
+            int selectionIndex = listKeyboardLayouts.getSelectionIndex();
+            java.util.List<DeviceController> keyboardDevices = inputDeviceManager
+                    .getInputDevicesByType(KeyboardDevice.class);
+            if(selectionIndex >= 0 && selectionIndex <= keyboardDevices.size()) {
+                currentKeyboardLayout = (KeyboardDevice) keyboardDevices.get(selectionIndex);
+                currentKeyboardLayout.hookListener();
+                previewUpdater = new Timer("previewUpdater");
+                previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, currentKeyboardLayout.getId(),
+                        keyboardThrustGauge), 50, 50);
+                buttonTestKeyboardLayout.setText("Stop previewing");
+            }
+        }
+    }
+
+    protected void handleClickPreviewMouse(SelectionEvent e, boolean forceStop) {
+        if(currentMouse != null || forceStop) { // user clicked 'stop previewing'
+            if(previewUpdater != null)
+                previewUpdater.cancel();
+            if(currentMouse != null)
+                currentMouse.unhookListener();
+            currentMouse = null;
+            mouseThrustGauge.setSelection(0);
+            buttonTestMouseLayout.setText("Preview");
+        } else { // user clicked 'preview'
+            java.util.List<DeviceController> mouseDevices = inputDeviceManager.getInputDevicesByType(MouseDevice.class);
+            if(mouseDevices.size() > 0) {
+                currentMouse = (MouseDevice) mouseDevices.get(0);
+                currentMouse.hookListener();
+                previewUpdater = new Timer("previewUpdater");
+                previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, currentMouse.getId(),
+                        mouseThrustGauge), 50, 50);
+                buttonTestMouseLayout.setText("Stop previewing");
+            }
+        }
+    }
+
     protected void handleSelectionDetectedGameController(SelectionEvent e) {
-        if(gameControllerPreviewUpdater != null)
-            gameControllerPreviewUpdater.cancel();
+        if(previewUpdater != null)
+            previewUpdater.cancel();
         int selectionIndex = listConnectedGameControllers.getSelectionIndex();
         if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.size()) {
             GameControllerDevice gameController = (GameControllerDevice) gameControllers.get(selectionIndex);
@@ -420,8 +568,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                 capabilities.append(capability);
             }
             labelCapabilities.setText(capabilities.toString());
-            gameControllerPreviewUpdater = new Timer("gameControllerPreviewUpdater");
-            gameControllerPreviewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, gameController.getId(),
+            previewUpdater = new Timer("previewUpdater");
+            previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, gameController.getId(),
                     gameControllerThrustGauge), 50, 50);
         } else {
             labelGameControllerName.setText("");
@@ -433,17 +581,35 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     protected void handleSelectionDetectedWiimote(SelectionEvent e) {
-        if(wiimotePreviewUpdater != null)
-            wiimotePreviewUpdater.cancel();
+        if(previewUpdater != null)
+            previewUpdater.cancel();
         int selectionIndex = listConnectedWiimotes.getSelectionIndex();
         if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= wiimotes.size()) {
             WiimoteDevice wiimote = (WiimoteDevice) wiimotes.get(selectionIndex);
-            wiimotePreviewUpdater = new Timer("wiimotePreviewUpdater");
-            wiimotePreviewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, wiimote.getId(),
-                    wiimoteThrustGauge), 50, 50);
+            previewUpdater = new Timer("wiimotePreviewUpdater");
+            previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, wiimote.getId(), wiimoteThrustGauge),
+                    50, 50);
         } else {
             wiimoteThrustGauge.setSelection(0);
         }
+    }
+
+    @Override
+    protected void handleTabSelection(SelectionEvent e) {
+        // cancel the timer
+        if(previewUpdater != null)
+            previewUpdater.cancel();
+
+        // remove all selections
+        listKeyboardLayouts.setSelection(-1);
+        listConnectedGameControllers.setSelection(-1);
+        listConnectedWiimotes.setSelection(-1);
+
+        // trigger the event handlers
+        handleSelectionKeyboardLayout(null);
+        handleClickPreviewMouse(null, true);
+        handleSelectionDetectedGameController(null);
+        handleSelectionDetectedWiimote(null);
     }
 
     @Override
@@ -451,12 +617,4 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         for(DeviceController dc: inputDeviceManager.getInputDevices())
             deviceList.add(dc.getName());
     }
-
-    /*public static void main(String[] args) {
-        Display display = new Display();
-        Shell shell = new Shell(display);
-        InputDeviceSettingsDialog dlg = new InputDeviceSettingsDialog(shell);
-        dlg.open();
-        display.dispose();
-    }*/
 }

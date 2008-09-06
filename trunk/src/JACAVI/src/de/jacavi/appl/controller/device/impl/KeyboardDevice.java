@@ -22,11 +22,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
     private final int speedStepConstant = 5;
 
     public KeyboardDevice(String name) {
-        super(name);
-        currentControllerSignal = new ControllerSignal();
-
-        // TODO: constructor argument
-        keyboardLayout = KeyboardLayout.Default;
+        this(name, KeyboardLayout.Default);
     }
 
     public KeyboardDevice(String name, KeyboardLayout keyboardLayout) {
@@ -44,6 +40,8 @@ public class KeyboardDevice extends DeviceController implements Listener {
 
     @Override
     public void hookListener() {
+        currentControllerSignal.setSpeed(0);
+        currentControllerSignal.setTrigger(false);
         Display.getCurrent().addFilter(SWT.KeyDown, this);
         Display.getCurrent().addFilter(SWT.KeyUp, this);
     }
@@ -93,17 +91,11 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     private void handleBrake(int speed) {
-        speed = speed - speedStepConstant;
-        if(speed < 0)
-            speed = 0;
-        currentControllerSignal.setSpeed(speed);
+        currentControllerSignal.setSpeed(Math.max(speed - speedStepConstant, 0));
     }
 
     private void handleAcceleration(int speed) {
-        speed = speed + speedStepConstant;
-        if(speed > 100)
-            speed = 100;
-        currentControllerSignal.setSpeed(speed);
+        currentControllerSignal.setSpeed(Math.min(speed + speedStepConstant, 100));
     }
 
 }
