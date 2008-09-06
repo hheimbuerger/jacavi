@@ -83,7 +83,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
 
     @Override
     public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-        String labelShell = ApplicationWorkbenchWindowAdvisor.appliacationTitle + " - " + perspective.getLabel();
+        String labelShell = ApplicationWorkbenchWindowAdvisor.applicationTitle + " - " + perspective.getLabel();
         PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setText(labelShell);
         if(perspective.getId().equals(RacePerspective.ID)) {
             saveTrackAction.setEnabled(false);
