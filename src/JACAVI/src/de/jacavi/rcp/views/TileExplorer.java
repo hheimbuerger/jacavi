@@ -67,7 +67,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         innerComposite.setLayout(gd);
 
         if(currentTrack != null) {
-            final Map<String, Tile> tileMap = currentTrack.getTileset().getTiles();
+            final Map<String, Tile> tileMap = currentTrack.getTileset().getUsableTiles();
 
             for(String tileID: tileMap.keySet()) {
                 Tile tile = tileMap.get(tileID);
