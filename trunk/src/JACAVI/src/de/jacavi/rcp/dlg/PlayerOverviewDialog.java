@@ -90,7 +90,6 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             tc.setText(colName);
             tc.setWidth(100);
         }
-        // HACK: Connectors Column needs often more space
         playerTable.getColumns()[2].setWidth(280);
 
         playerTable.addSelectionListener(new SelectionAdapter() {});
@@ -178,6 +177,12 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
         if(dlg.open() == Window.OK) {
             tableViewer.refresh();
         }
+    }
+
+    @Override
+    public boolean close() {
+        tableViewer.getTable().dispose();
+        return super.close();
     }
 
     @Override

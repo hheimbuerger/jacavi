@@ -133,4 +133,12 @@ public class RaceValidationDialog extends TitleAreaDialog {
         okButton.setText("Start Race");
         okButton.setEnabled(readyForStart);
     }
+
+    @Override
+    public boolean close() {
+        valid.dispose();
+        invalid.dispose();
+        return super.close();
+    }
+
 }
