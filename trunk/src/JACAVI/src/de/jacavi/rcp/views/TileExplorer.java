@@ -1,11 +1,10 @@
 package de.jacavi.rcp.views;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -39,7 +38,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
 
     private Track currentTrack;
 
-    private final List<Image> usedImages = new ArrayList<Image>();
+    private final ImageRegistry imageRegistry;
 
     private ScrolledComposite scrolledComposite;
 
@@ -49,6 +48,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         window.getPartService().addPartListener(this);
         // this.addListenerObject(this);
+        imageRegistry = new ImageRegistry();
     }
 
     @Override
@@ -71,28 +71,34 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
 
             for(String tileID: tileMap.keySet()) {
                 Tile tile = tileMap.get(tileID);
-                Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
-                usedImages.add(image);
 
-                // Scale images
-                int width = image.getBounds().width;
-                int height = image.getBounds().height;
-                Image scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
-                        (int) (height * TILE_IMAGE_SCALE)));
-                usedImages.add(scaledImage);
+                Image scaledImage = imageRegistry.get(tile.getFilename());
+                if(scaledImage == null) {
+                    Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
+                    int width = image.getBounds().width;
+                    int height = image.getBounds().height;
+                    scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
+                            (int) (height * TILE_IMAGE_SCALE)));
+                    imageRegistry.put(tile.getFilename(), scaledImage);
+                    image.dispose();
+                }
 
+                GridData buttonGd = new GridData();
+                buttonGd.heightHint = 120;
+                buttonGd.widthHint = 120;
                 Button tileButton = new Button(innerComposite, SWT.PUSH);
+                tileButton.setLayoutData(buttonGd);
                 tileButton.setToolTipText(tile.getName());
                 tileButton.setImage(scaledImage);
-                tileButton.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-                // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be scaled.
-                // Why doesn't this just scale to a maximum width and height?
-                if(currentTrack.getTileset().getName().equals("debug")) {
-                    tileButton.setImage(image);
-                } else {
-                    tileButton.setImage(scaledImage);
-                }
+                // // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be
+                // scaled.
+                // // Why doesn't this just scale to a maximum width and height?
+                // if(currentTrack.getTileset().getName().equals("debug")) {
+                // tileButton.setImage(image);
+                // } else {
+                // tileButton.setImage(scaledImage);
+                // }
 
                 tileButton.addSelectionListener(new SelectionAdapter() {
                     @Override
@@ -108,10 +114,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     }
 
     @Override
-    public void setFocus() {
-    // TODO Auto-generated method stub
-
-    }
+    public void setFocus() {}
 
     @Override
     public void partActivated(IWorkbenchPartReference partRef) {
@@ -124,46 +127,25 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     }
 
     @Override
-    public void partBroughtToTop(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partBroughtToTop(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partClosed(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partClosed(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partDeactivated(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partDeactivated(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partHidden(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partHidden(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partInputChanged(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partInputChanged(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partOpened(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partOpened(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partVisible(IWorkbenchPartReference partRef) {
-    // TODO Auto-generated method stub
-
-    }
+    public void partVisible(IWorkbenchPartReference partRef) {}
 
     private void invokeInsertion(final Map<String, Tile> tileMap, SelectionEvent e) {
         Button selected = (Button) e.widget;
@@ -183,8 +165,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     @Override
     public void dispose() {
         super.dispose();
-        for(Image image: usedImages)
-            image.dispose();
+        imageRegistry.dispose();
     }
 
 }
