@@ -73,7 +73,6 @@ public class InputDeviceManager {
      */
     public void addInputDevice(DeviceController controller) {
         inputDevices.put(controller.getId(), controller);
-        controller.initialize();
     }
 
     /**

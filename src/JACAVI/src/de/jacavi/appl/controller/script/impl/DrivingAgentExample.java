@@ -12,18 +12,6 @@ public class DrivingAgentExample extends DrivingAgentController {
     }
 
     @Override
-    public void cleanup() {
-    // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public boolean initialize() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
     public ControllerSignal poll() {
         return new ControllerSignal(50, false);
     }

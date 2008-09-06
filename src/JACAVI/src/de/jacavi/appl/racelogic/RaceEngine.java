@@ -71,7 +71,7 @@ public class RaceEngine {
 
             // prepare devices
             for(Player player: players)
-                player.getController().preRace();
+                player.getController().activate();
         } else {
             logger.error("RaceEngine.startRace() was invoked but timer was already running. Race was *not* started!");
         }
@@ -84,7 +84,7 @@ public class RaceEngine {
         if(isTimerRunning) {
             // disorganize devices
             for(Player player: players) {
-                player.getController().postRace();
+                player.getController().deactivate();
             }
             raceTimer.cancel();
             isTimerRunning = false;
