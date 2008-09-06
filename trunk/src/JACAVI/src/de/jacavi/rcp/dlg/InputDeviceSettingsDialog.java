@@ -23,6 +23,7 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
@@ -91,8 +92,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    if(!progressBar.isDisposed() && inputDeviceManager.isIdValid(deviceID))
-                        progressBar.setSelection(inputDeviceManager.getDevice(deviceID).poll().getSpeed());
+                    if(!progressBar.isDisposed() && inputDeviceManager.isIdValid(deviceID)) {
+                        ControllerSignal signal = inputDeviceManager.getDevice(deviceID).poll();
+                        progressBar.setSelection(signal.getSpeed());
+                        progressBar.setForeground(signal.isTrigger() ? Display.getDefault().getSystemColor(
+                                SWT.COLOR_DARK_MAGENTA) : null);
+                    }
                 }
             });
         }
@@ -225,10 +230,20 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         // create the preview gauge
         mouseThrustGauge = new ProgressBar(c, SWT.BORDER | SWT.SMOOTH | SWT.VERTICAL);
         FormData fd5 = new FormData();
-        fd5.top = new FormAttachment(labelMouse, 10);
+        fd5.top = new FormAttachment(labelMouse, 10, SWT.BOTTOM);
         fd5.right = new FormAttachment(100, -20);
         fd5.width = SWT.DEFAULT;
         mouseThrustGauge.setLayoutData(fd5);
+
+        // create the "Connected devices:" label
+        Label labelMouseDescription = new Label(c, SWT.WRAP);
+        FormData fd2 = new FormData();
+        fd2.top = new FormAttachment(labelMouse, 10, SWT.BOTTOM);
+        fd2.left = new FormAttachment(labelMouse, 0, SWT.LEFT);
+        fd2.right = new FormAttachment(mouseThrustGauge, -30, SWT.LEFT);
+        labelMouseDescription.setLayoutData(fd2);
+        labelMouseDescription
+                .setText("Hold the left mouse button while moving the mouse up or down to change the thrust. Hold the right mouse button to activate the lane change trigger.");
 
         // create the label "Preview:"
         Label labelThrustGauge = new Label(c, SWT.WRAP);
@@ -241,8 +256,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         // create the preview/stop previewing button
         buttonTestMouseLayout = new Button(c, SWT.PUSH);
         FormData fd7 = new FormData();
-        fd7.left = new FormAttachment(labelMouse, 0, SWT.LEFT);
-        fd7.top = new FormAttachment(labelMouse, 10, SWT.BOTTOM);
+        fd7.left = new FormAttachment(labelMouseDescription, 0, SWT.LEFT);
+        fd7.top = new FormAttachment(labelMouseDescription, 10, SWT.BOTTOM);
         fd7.width = 150;
         buttonTestMouseLayout.setLayoutData(fd7);
         buttonTestMouseLayout.setText("Preview");
