@@ -12,6 +12,11 @@ import de.jacavi.hal.simulation.SimulationFeedbackConnectorAdapter;
 
 
 
+/**
+ * Use this to create families of SlotCarSystemConnectors.
+ * <p>
+ * To create own new {@link SlotCarSystemConnector}s implement there creation in this factory.
+ */
 public class SlotCarSystemConnectorFactory implements ConnectorFactory {
 
     public SlotCarSystemConnector createLib42Connector(String name, int carID) {

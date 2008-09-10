@@ -22,6 +22,12 @@ import de.jacavi.test.hal.connectors.TestLib42DriveConnectorAdapter;
 
 
 
+/**
+ * Represents the management of configured {@link SlotCarSystemConnector}s.
+ * <p>
+ * Every by {@link SlotCarSystemConnectorFactory} created {@link SlotCarSystemConnector} will be managed here drung his
+ * life time.
+ */
 public class ConnectorConfigurationManager {
     /**
      * Logger for this class
@@ -31,16 +37,22 @@ public class ConnectorConfigurationManager {
     private final Map<UUID, SlotCarSystemConnector> connectors = new TreeMap<UUID, SlotCarSystemConnector>();
 
     public ConnectorConfigurationManager() {
-        // FIXME: Added by Henrik without knowing what I'm doing. :) I just needed an adapter to show up in the menu so
-        // I can test the track widget in race mode.
+        logger.info("instantiating ConnectorConfigurationManager.");
+        // create one simulated connector (dummy)
+        // TODO: create three more if other players want to play simulated
         ConnectorFactory connectorFactory = (ConnectorFactory) ContextLoader.getBean("slotCarSystemConnectorFactory");
         SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
         addConnector(simulatedConnector);
-        // connectors.put(connector.getId(), connector);
     }
 
+    /**
+     * adds an {@link SlotCarSystemConnector} to the managment.
+     * 
+     * @param connector
+     */
     public void addConnector(SlotCarSystemConnector connector) {
 
+        logger.info(connector.getName() + " is now under connector management");
         Class<?> c = connector.getDriveConnector().getClass();
 
         if((c == TestLib42DriveConnectorAdapter.class) || (c == Lib42DriveConnectorAdapter.class)) {
@@ -56,6 +68,9 @@ public class ConnectorConfigurationManager {
         connectors.put(connector.getId(), connector);
     }
 
+    /**
+     * @return a sorted list of managed {@link SlotCarSystemConnector}s
+     */
     public List<SlotCarSystemConnector> getConnectors() {
         List<SlotCarSystemConnector> result = new ArrayList<SlotCarSystemConnector>();
         for(SlotCarSystemConnector connector: connectors.values())
@@ -64,6 +79,11 @@ public class ConnectorConfigurationManager {
         return result;
     }
 
+    /**
+     * Removes the {@link SlotCarSystemConnector} by UUID
+     * 
+     * @param id
+     */
     public void removeInputDevice(UUID id) {
         if(connectors.containsKey(id)) {
             connectors.remove(id);
@@ -72,6 +92,10 @@ public class ConnectorConfigurationManager {
 
     }
 
+    /**
+     * @param type
+     * @return a sorted list with {@link SlotCarSystemConnector}s with class type
+     */
     public List<SlotCarSystemConnector> getByDriveConnectorType(Class<?> type) {
         List<SlotCarSystemConnector> result = new ArrayList<SlotCarSystemConnector>();
         for(SlotCarSystemConnector connector: connectors.values())
@@ -81,10 +105,18 @@ public class ConnectorConfigurationManager {
         return result;
     }
 
+    /**
+     * @param id
+     * @return true if id is valid otherwise false
+     */
     public boolean isIdValid(UUID id) {
         return connectors.containsKey(id);
     }
 
+    /**
+     * @param id
+     * @return the connector with the given id
+     */
     public SlotCarSystemConnector getConnector(UUID id) {
         return connectors.get(id);
     }
@@ -94,6 +126,11 @@ public class ConnectorConfigurationManager {
     // TODO:
     }
 
+    /**
+     * Removes an on the same lane existing analogue connector.
+     * 
+     * @param analogueConnector
+     */
     private void reconnectAnalogueConnector(SlotCarSystemConnector analogueConnector) {
         // get the test adapters
         List<SlotCarSystemConnector> list = getByDriveConnectorType(TestAnalogueDriveConnectorAdapter.class);
@@ -108,6 +145,11 @@ public class ConnectorConfigurationManager {
         }
     }
 
+    /**
+     * Removes an existing bluerider connector from the management
+     * 
+     * @param blueriderConnector
+     */
     private void reconnectBlueriderConnector(SlotCarSystemConnector blueriderConnector) {
         // get the test adapters
         List<SlotCarSystemConnector> list = getByDriveConnectorType(TestBlueriderDriveConnectorAdapter.class);
@@ -118,6 +160,11 @@ public class ConnectorConfigurationManager {
         }
     }
 
+    /**
+     * Removes existing lib42 connectors with the same carID as given lib42Connector.
+     * 
+     * @param lib42Connector
+     */
     private void reconnectLib42Connector(SlotCarSystemConnector lib42Connector) {
 
         // get the test adapters
@@ -133,6 +180,11 @@ public class ConnectorConfigurationManager {
         }
     }
 
+    /**
+     * Lets the car move a bit to let the user see that the connector works fine
+     * 
+     * @param connector
+     */
     public void testSystemConnector(SlotCarSystemConnector connector) {
         connector.setSpeed(30);
         try {

@@ -1,9 +1,7 @@
 package de.jacavi.hal;
 
 /**
- * Currently this is only a marker interface for the backchannels of the diffrent SlotCarSystems
- * 
- * @author fro
+ * Feedback interface.
  */
 public interface SlotCarFeedbackConnector {
     FeedbackSignal pollFeedback();

@@ -6,6 +6,15 @@ import de.jacavi.rcp.util.Check;
 
 
 
+/**
+ * Adapts all the functionality to control and get feedback of a car during race.
+ * <p>
+ * {@link SlotCarSystemConnector} holds an {@link SlotCarSystemDriveConnector} and an {@link SlotCarFeedbackConnector}
+ * and delegates to them.
+ * <p>
+ * {@link SlotCarSystemConnector}s are created by {@link SlotCarSystemConnectorFactory} and managed by
+ * {@link ConnectorConfigurationManager}
+ */
 public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCarSystemDriveConnector,
         Comparable<SlotCarSystemConnector> {
 
