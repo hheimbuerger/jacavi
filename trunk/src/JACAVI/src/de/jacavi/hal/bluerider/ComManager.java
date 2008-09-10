@@ -153,8 +153,8 @@ public class ComManager implements SerialPortEventListener, Runnable {
                         }
 
                         if(myCMM.failsafe_time != 0) {
-                            myCMM.cmg.printLog("Falisafe took " + (System.currentTimeMillis() - myCMM.failsafe_time)
-                                    + "ms");
+                            // myCMM.cmg.printLog("Falisafe took " + (System.currentTimeMillis() - myCMM.failsafe_time)
+                            // + "ms");
                             myCMM.failsafe_time = 0;
                             myCMM.failsafe_reason = null;
                         }
@@ -163,7 +163,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                         myCMM.distributeMessage(msc);
 
                         // Response Time in GUI schreiben
-                        myCMM.cmg.setResponseTime((int) (System.currentTimeMillis() - myCMM.time));
+                        // myCMM.cmg.setResponseTime((int) (System.currentTimeMillis() - myCMM.time));
 
                         buffer = new byte[32];
 
@@ -370,7 +370,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
 
     public static int FIX_7 = 14;
 
-    ComGUI cmg;
+    // ComGUI cmg;
 
     private Lock tx_lock, rx_lock;
 
@@ -407,8 +407,8 @@ public class ComManager implements SerialPortEventListener, Runnable {
 
         fix_data_tx = new byte[9];
 
-        cmg = new ComGUI();
-        cmg.setVisible(true);
+        // cmg = new ComGUI();
+        // cmg.setVisible(true);
 
         respawn = null;
 
@@ -488,9 +488,9 @@ public class ComManager implements SerialPortEventListener, Runnable {
             if(((m.flagfield >> (7 - i)) & (byte) 1) == 1) {
 
                 // Die FIX_DATA progress bars updaten
-                short a = (short) (0x00FF & m.fd[i]);
+                // short a = (short) (0x00FF & m.fd[i]);
 
-                cmg.setFixDataInput(i, a);
+                // cmg.setFixDataInput(i, a);
 
                 //
                 try {
@@ -539,9 +539,9 @@ public class ComManager implements SerialPortEventListener, Runnable {
             fix_data_tx[0] |= (1 << (7 - (index - 7)));
 
             // progress bars updaten
-            short a = (short) (0x00FF & b);
+            // short a = (short) (0x00FF & b);
 
-            cmg.setFixDataOutput(index - 7, a);
+            // cmg.setFixDataOutput(index - 7, a);
         }
     }
 
@@ -590,9 +590,9 @@ public class ComManager implements SerialPortEventListener, Runnable {
                         fix_data_tx[0] |= (1 << (7 - (index - 7)));
 
                         // progress bars updaten
-                        short a = (short) (0x00FF & 0);
+                        // short a = (short) (0x00FF & 0);
 
-                        cmg.setFixDataOutput(index - 7, a);
+                        // cmg.setFixDataOutput(index - 7, a);
                     }
                 }
 
@@ -608,7 +608,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                 this.serialPort.close();
                 // System.out.println("port close");
 
-                cmg.printLog("FAILSAFE because of " + failsafe_reason);
+                // cmg.printLog("FAILSAFE because of " + failsafe_reason);
 
                 while(true) {
                     try {

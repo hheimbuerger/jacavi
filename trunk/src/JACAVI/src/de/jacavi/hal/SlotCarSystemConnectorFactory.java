@@ -4,6 +4,7 @@ import java.net.InetSocketAddress;
 
 import de.jacavi.hal.analogue.AnalogueFeedbackConnectorAdapter;
 import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
+import de.jacavi.hal.bluerider.BlueriderFeedbackConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
 import de.jacavi.hal.lib42.Lib42FeedbackConnectorAdapter;
 import de.jacavi.hal.simulation.SimulationDriveConnectorAdapter;
@@ -22,7 +23,7 @@ public class SlotCarSystemConnectorFactory implements ConnectorFactory {
             InetSocketAddress analogueDeviceAdress) {
         // Blueride can only run on analogue track so he can use the analogue light barrier sensor detection
         return new SlotCarSystemConnector(name, new BlueriderDriveConnectorAdapter(comPort),
-                new AnalogueFeedbackConnectorAdapter(analogueDeviceAdress));
+                new BlueriderFeedbackConnectorAdapter(new AnalogueFeedbackConnectorAdapter(analogueDeviceAdress)));
     }
 
     public SlotCarSystemConnector createAnalogueConnector(String name, int lane, InetSocketAddress analogueDeviceAdress) {
