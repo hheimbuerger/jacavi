@@ -36,6 +36,10 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
 
     private final int maxHALSpeed = 255;
 
+    private boolean frontLight = true;
+
+    private boolean backLight = true;
+
     private int currentSpeed;
 
     public BlueriderDriveConnectorAdapter(String comPort) {
@@ -128,4 +132,61 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
         return isConnected;
     }
 
+    @Override
+    public void switchBackLight() {
+        Message m = new Message();
+        if(backLight) {
+            m.header = 2;
+            m.payload[0] = 0;
+            try {
+                comManager.sendMessage(m, ComManager.MSG_0);
+                backLight = false;
+            } catch(ComException e1) {
+                log.error(e1.getMessage());
+            }
+        } else {
+            m.header = 2;
+            m.payload[0] = 1;
+            try {
+                comManager.sendMessage(m, ComManager.MSG_0);
+                backLight = true;
+            } catch(ComException e1) {
+                log.error(e1.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public void switchFrontLight() {
+        Message m = new Message();
+        if(frontLight) {
+            m.header = 1;
+            m.payload[0] = 0;
+            try {
+                comManager.sendMessage(m, ComManager.MSG_0);
+                frontLight = false;
+            } catch(ComException e1) {
+                log.error(e1.getMessage());
+            }
+        } else {
+            m.header = 1;
+            m.payload[0] = 1;
+            try {
+                comManager.sendMessage(m, ComManager.MSG_0);
+                frontLight = true;
+            } catch(ComException e1) {
+                log.error(e1.getMessage());
+            }
+        }
+    }
+
+    @Override
+    public boolean isBackLightOn() {
+        return backLight;
+    }
+
+    @Override
+    public boolean isFrontLightOn() {
+        return frontLight;
+    }
 }

@@ -15,4 +15,11 @@ public interface SlotCarSystemDriveConnector {
 
     void fullBreak();
 
+    void switchFrontLight();
+
+    void switchBackLight();
+
+    boolean isFrontLightOn();
+
+    boolean isBackLightOn();
 }

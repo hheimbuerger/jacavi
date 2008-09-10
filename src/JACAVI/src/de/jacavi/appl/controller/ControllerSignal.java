@@ -15,15 +15,37 @@ public class ControllerSignal {
 
     private boolean trigger = false;
 
+    private boolean switchFrontLight = false;
+
+    private boolean switchBackLight = false;
+
+    public boolean isSwitchBackLight() {
+        return switchBackLight;
+    }
+
+    public void setSwitchBackLight(boolean switchBackLight) {
+        this.switchBackLight = switchBackLight;
+    }
+
+    public void setSwitchFrontLight(boolean switchFrontLight) {
+        this.switchFrontLight = switchFrontLight;
+    }
+
     public ControllerSignal() {
         speed = 0;
         trigger = false;
+        switchFrontLight = false;
+        switchBackLight = false;
     }
 
     public void setSpeed(int speed) {
         // Check preconditions speed must be between 0 and 100 included
         Check.Require(speed >= 0 && speed <= 100, "speed must be between (included) 0 and 100");
         this.speed = speed;
+    }
+
+    public boolean isSwitchFrontLight() {
+        return switchFrontLight;
     }
 
     public void setTrigger(boolean trigger) {

@@ -47,4 +47,29 @@ public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
         // TODO Auto-generated method stub
         return 0;
     }
+
+    @Override
+    public void switchBackLight() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void switchFrontLight() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean isBackLightOn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isFrontLightOn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }

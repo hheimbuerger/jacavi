@@ -77,11 +77,16 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     @Override
     public void onButtonsEvent(WiimoteButtonsEvent arg0) {
-        // TODO: Check the other options
+        // set trigger
         if(arg0.isButtonBJustPressed())
             currentControllerSignal.setTrigger(true);
-        else
-            currentControllerSignal.setTrigger(false);
+        // switch front light on/off
+        if(arg0.isButtonOneJustPressed())
+            currentControllerSignal.setSwitchFrontLight(true);
+        // set back light on/off
+        if(arg0.isButtonTwoJustPressed())
+            currentControllerSignal.setSwitchBackLight(true);
+
     }
 
     @Override

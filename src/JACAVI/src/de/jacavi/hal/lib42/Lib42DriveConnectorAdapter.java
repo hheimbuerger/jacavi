@@ -153,4 +153,28 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
         return carID;
     }
 
+    @Override
+    public void switchBackLight() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void switchFrontLight() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean isBackLightOn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isFrontLightOn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
 }
