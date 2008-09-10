@@ -9,4 +9,5 @@ public interface BlueriderConnector extends SlotCarSystemDriveConnector {
     boolean connectBlueRider();
 
     boolean isConnected();
+
 }

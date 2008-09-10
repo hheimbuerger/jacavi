@@ -115,9 +115,24 @@ public class RaceEngine {
                 ControllerSignal controllerSignal = carController.poll();
                 // get the hal feedback signal
                 FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
+                // Signals like change track and lights on off must be save and not be lost so we set the signal only
+                // back if its detected
+
                 // change track
-                if(controllerSignal.isTrigger())
+                if(controllerSignal.isTrigger()) {
                     slotCarSystemConnector.toggleSwitch();
+                    controllerSignal.setTrigger(false);
+                }
+                // switch front Light
+                if(controllerSignal.isSwitchFrontLight()) {
+                    slotCarSystemConnector.switchFrontLight();
+                    controllerSignal.setSwitchFrontLight(false);
+                }
+                // switch back light
+                if(controllerSignal.isSwitchBackLight()) {
+                    slotCarSystemConnector.switchBackLight();
+                    controllerSignal.setSwitchBackLight(false);
+                }
                 // set new speed
                 slotCarSystemConnector.setSpeed(controllerSignal.getSpeed());
                 // invoke the TDA

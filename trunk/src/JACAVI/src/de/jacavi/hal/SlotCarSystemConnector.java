@@ -85,4 +85,25 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
         return name;
     }
 
+    @Override
+    public void switchBackLight() {
+        driveConnector.switchBackLight();
+
+    }
+
+    @Override
+    public void switchFrontLight() {
+        driveConnector.switchFrontLight();
+    }
+
+    @Override
+    public boolean isBackLightOn() {
+        return driveConnector.isBackLightOn();
+    }
+
+    @Override
+    public boolean isFrontLightOn() {
+        return driveConnector.isFrontLightOn();
+    }
+
 }

@@ -54,4 +54,28 @@ public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector
     public int getLane() {
         return lane;
     }
+
+    @Override
+    public boolean isBackLightOn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean isFrontLightOn() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void switchBackLight() {
+    // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void switchFrontLight() {
+    // TODO Auto-generated method stub
+
+    }
 }
