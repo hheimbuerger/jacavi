@@ -4,6 +4,9 @@ import java.net.InetSocketAddress;
 
 
 
+/**
+ * Interface for connector creation.
+ */
 public interface ConnectorFactory {
     SlotCarSystemConnector createLib42Connector(String name, int carID);
 
