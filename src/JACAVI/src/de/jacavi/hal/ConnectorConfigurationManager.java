@@ -134,14 +134,12 @@ public class ConnectorConfigurationManager {
     }
 
     public void testSystemConnector(SlotCarSystemConnector connector) {
-        connector.setSpeed(50);
+        connector.setSpeed(30);
         try {
             Thread.currentThread();
-            // TODO: progress dialogue
-            // TODO: test this and externalize this time
-            Thread.sleep(2000);
+            Thread.sleep(600);
         } catch(InterruptedException e) {
-            logger.error("something went wrong during lib42 thread sleep", e);
+            logger.error("something went wrong during thread sleep", e);
         }
         connector.setSpeed(0);
     }

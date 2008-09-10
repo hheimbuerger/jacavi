@@ -8,6 +8,13 @@ import de.jacavi.rcp.util.Check;
 
 
 
+/**
+ * @author flo
+ *         <p>
+ *         The BlueriderFeedbackConnectorAdapter includes an AnalogueFeedbackConnector to get sensor information of the
+ *         analogue course. Gforce information from bluerider is given by subscribing it as ComListener on the gForce
+ *         ports.
+ */
 public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnector, ComListener {
 
     private AnalogueFeedbackConnectorAdapter analogueSensorDetection = null;
@@ -16,7 +23,7 @@ public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnect
 
     private double currentYAcceleration;
 
-    private Integer log;
+    private Integer log = new Integer(0);
 
     public BlueriderFeedbackConnectorAdapter(AnalogueFeedbackConnectorAdapter analogFeedback) {
         Check.Require(analogFeedback != null, "AnalogueFeedbackConnector may not be null");

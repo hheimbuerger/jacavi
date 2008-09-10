@@ -16,9 +16,7 @@ public class AnalogueFeedbackConnectorAdapter implements SlotCarFeedbackConnecto
     @Override
     public FeedbackSignal pollFeedback() {
         // TODO Auto-generated method stub
-        return null;
+        return new FeedbackSignal(null, "not implemented");
     }
-    /**
-     * @author Florian Roth
-     */
+
 }
