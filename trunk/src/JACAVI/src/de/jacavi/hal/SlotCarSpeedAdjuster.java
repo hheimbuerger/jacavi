@@ -23,11 +23,11 @@ public class SlotCarSpeedAdjuster {
     public static int normalizeSpeed(int deviceAdjustedSpeed, int maxHALSpeed) {
         Check.Require(deviceAdjustedSpeed >= 0 && deviceAdjustedSpeed <= 100,
                 "speed may be between (included) 0 and 100");
-        int tmpSpeed = deviceAdjustedSpeed * 100;
-        int tmpMaxHALSpeed = maxHALSpeed * 100;
-        int retVal = 0;
-        retVal = (tmpSpeed / 100) * tmpMaxHALSpeed;
-        return retVal / 100;
+        double retVal;
+        double tmpDeviceAdjustedSpeed = deviceAdjustedSpeed;
+        double tmpMaxHALSpeed = maxHALSpeed;
+        retVal = (tmpDeviceAdjustedSpeed / 100) * tmpMaxHALSpeed;
+        return (int) Math.round(retVal);
     }
 
     /**
@@ -41,10 +41,11 @@ public class SlotCarSpeedAdjuster {
      */
     public static int denormalizeSpeed(int specificHardwareAdjustedSpeed, int maxHALSpeed) {
         Check.Require(maxHALSpeed > 0, "maxHALSpeed may be greater that 0");
-        int tmpSpeed = specificHardwareAdjustedSpeed * 100;
-        int tmpMaxHALSpeed = maxHALSpeed * 100;
-        int retVal = 0;
-        retVal = (tmpSpeed / tmpMaxHALSpeed) * 100;
-        return retVal / 100;
+        double retVal;
+        double tmpSpecificSpeed = specificHardwareAdjustedSpeed;
+        double tmpMaxHALSpeed = maxHALSpeed;
+
+        retVal = (tmpSpecificSpeed / tmpMaxHALSpeed) * 100;
+        return (int) Math.round(retVal);
     }
 }

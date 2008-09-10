@@ -1,10 +1,17 @@
 package de.jacavi.test.hal.connectors;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import de.jacavi.hal.SlotCarSpeedAdjuster;
 import de.jacavi.hal.bluerider.BlueriderConnector;
+import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 
 
 
 public class TestBlueriderDriveConnectorAdapter implements BlueriderConnector {
+
+    private static Log log = LogFactory.getLog(BlueriderDriveConnectorAdapter.class);
 
     public TestBlueriderDriveConnectorAdapter(String comPort) {
     // TODO Auto-generated constructor stub
@@ -30,8 +37,9 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderConnector {
 
     @Override
     public void setSpeed(int speed) {
-    // TODO Auto-generated method stub
-
+        log.debug("Bluerider in speed: " + speed);
+        int adjustedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, 255);
+        log.debug("Bluerider adjusted speed: " + adjustedSpeed);
     }
 
     @Override
@@ -40,19 +48,15 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderConnector {
         return 0;
     }
 
-    /**
-     * @author Florian Roth
-     */
-
     @Override
     public boolean connectBlueRider() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override
     public boolean isConnected() {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 }

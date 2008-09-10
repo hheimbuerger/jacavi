@@ -70,13 +70,14 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
             comManager.setFixData(ComManager.FIX_0, (byte) 0);
         } catch(ComException e) {
             if(e.getReason() == ComException.FAILSAFE) {
-                // TODO: ???
+                log.error("Bluerider FAILSAFE");
             }
         }
     }
 
     @Override
     public int getSpeed() {
+        Check.Ensure(currentSpeed >= 0 && currentSpeed <= maxHALSpeed, "currentSpeed is in the wrong Range");
         return SlotCarSpeedAdjuster.denormalizeSpeed(currentSpeed, maxHALSpeed);
     }
 
@@ -88,14 +89,18 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
 
     @Override
     public void setSpeed(int speed) {
+        Check.Require(speed >= 0 && speed <= maxHALSpeed, "Speed is int the wrong range");
+
+        log.debug("Bluerider speed in: " + speed);
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
+        log.debug("Bluerider adjusted speed: " + normalizedSpeed);
         byte value = (byte) normalizedSpeed;
 
         try {
             comManager.setFixData(ComManager.FIX_0, value);
         } catch(ComException e) {
             if(e.getReason() == ComException.FAILSAFE) {
-                // TODO:
+                log.error("Bluerider FAILSAFE");
             }
         }
     }
@@ -120,8 +125,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComLi
 
     @Override
     public boolean isConnected() {
-        // TODO Auto-generated method stub
-        return false;
+        return isConnected;
     }
 
 }
