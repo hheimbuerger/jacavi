@@ -1,6 +1,7 @@
 package de.jacavi.hal.lib42;
 
 import de.jacavi.hal.SlotCarSpeedAdjuster;
+import de.jacavi.rcp.util.Check;
 
 
 
@@ -20,7 +21,9 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
 
     @Override
     public int getSpeed() {
-        int speed = SlotCarSpeedAdjuster.denormalizeSpeed(lib42.getSpeed(carID), maxHALSpeed);
+        int halSpeed = lib42.getSpeed(carID);
+        Check.Ensure(halSpeed >= 0 && halSpeed <= maxHALSpeed, "Speed is in the wrong range");
+        int speed = SlotCarSpeedAdjuster.denormalizeSpeed(halSpeed, maxHALSpeed);
         return speed;
     }
 
@@ -31,6 +34,7 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
 
     @Override
     public void setSpeed(int speed) {
+        Check.Require(speed >= 0 && speed <= maxHALSpeed, "speed is in the wrong range");
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
         lib42.setSpeed(carID, normalizedSpeed);
     }

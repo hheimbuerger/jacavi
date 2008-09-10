@@ -25,6 +25,11 @@ public class TestHALSpeedNormalizer {
         int speed = 80;
 
         int resultNormalize = SlotCarSpeedAdjuster.normalizeSpeed(speed, TestGlobals.lib42MaxHalSpeed);
+        System.out.println("" + resultNormalize);
+
+        Assert
+                .assertTrue("" + resultNormalize, resultNormalize <= TestGlobals.lib42MaxHalSpeed
+                        && resultNormalize >= 0);
 
         int resultDenormalize = SlotCarSpeedAdjuster.denormalizeSpeed(resultNormalize, TestGlobals.lib42MaxHalSpeed);
 
@@ -37,8 +42,11 @@ public class TestHALSpeedNormalizer {
         int speed = 70;
 
         int resultNormalize = SlotCarSpeedAdjuster.normalizeSpeed(speed, TestGlobals.blueriderMaxHalSpeed);
+        Assert.assertTrue("" + resultNormalize, resultNormalize <= TestGlobals.blueriderMaxHalSpeed
+                && resultNormalize >= 0);
 
-        int resultDenormalize = SlotCarSpeedAdjuster.denormalizeSpeed(resultNormalize, TestGlobals.blueriderMaxHalSpeed);
+        int resultDenormalize = SlotCarSpeedAdjuster
+                .denormalizeSpeed(resultNormalize, TestGlobals.blueriderMaxHalSpeed);
 
         Assert.assertEquals(speed, resultDenormalize);
 
