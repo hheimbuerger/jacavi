@@ -1,10 +1,6 @@
 package de.jacavi.hal.simulation;
 
-import de.jacavi.hal.SlotCarSystemDriveConnector;
-
-
-
-public class SimulationDriveConnectorAdapter implements SlotCarSystemDriveConnector {
+public class SimulationDriveConnectorAdapter implements SimulationDriveConnector {
 
     private String name = "";
 

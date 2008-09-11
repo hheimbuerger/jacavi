@@ -1,6 +1,7 @@
 package de.jacavi.hal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -11,14 +12,9 @@ import org.apache.log4j.Logger;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
-import de.jacavi.hal.analogue.AnalogueDriveConnectorAdapter;
-import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
+import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
-import de.jacavi.hal.lib42.Lib42DriveConnectorAdapter;
-import de.jacavi.hal.simulation.SimulationDriveConnectorAdapter;
-import de.jacavi.test.hal.connectors.TestAnalogueDriveConnectorAdapter;
-import de.jacavi.test.hal.connectors.TestBlueriderDriveConnectorAdapter;
-import de.jacavi.test.hal.connectors.TestLib42DriveConnectorAdapter;
+import de.jacavi.hal.simulation.SimulationDriveConnector;
 
 
 
@@ -53,15 +49,16 @@ public class ConnectorConfigurationManager {
     public void addConnector(SlotCarSystemConnector connector) {
 
         logger.info(connector.getName() + " is now under connector management");
-        Class<?> c = connector.getDriveConnector().getClass();
 
-        if((c == TestLib42DriveConnectorAdapter.class) || (c == Lib42DriveConnectorAdapter.class)) {
+        List<Class<?>> connectorsInterfaces = Arrays.asList(connector.getDriveConnector().getClass().getInterfaces());
+
+        if(connectorsInterfaces.contains(Lib42DriveConnector.class)) {
             reconnectLib42Connector(connector);
-        } else if(c == BlueriderDriveConnectorAdapter.class || (c == TestBlueriderDriveConnectorAdapter.class)) {
+        } else if(connectorsInterfaces.contains(BlueriderDriveConnector.class)) {
             reconnectBlueriderConnector(connector);
-        } else if(c == AnalogueDriveConnectorAdapter.class || (c == TestAnalogueDriveConnectorAdapter.class)) {
+        } else if(connectorsInterfaces.contains(AnalogueDriveConnector.class)) {
             reconnectAnalogueConnector(connector);
-        } else if(c == SimulationDriveConnectorAdapter.class) {
+        } else if(connectorsInterfaces.contains(SimulationDriveConnector.class)) {
             reconnectSimulationConnector(connector);
         }
 
@@ -94,14 +91,16 @@ public class ConnectorConfigurationManager {
 
     /**
      * @param type
-     * @return a sorted list with {@link SlotCarSystemConnector}s with class type
+     * @return a sorted list with {@link SlotCarSystemConnector}s with interface class type
      */
-    public List<SlotCarSystemConnector> getByDriveConnectorType(Class<?> type) {
+    public List<SlotCarSystemConnector> getByDriveConnectorInterface(Class<?> type) {
         List<SlotCarSystemConnector> result = new ArrayList<SlotCarSystemConnector>();
-        for(SlotCarSystemConnector connector: connectors.values())
-            if(connector.getDriveConnector().getClass() == type)
+        for(SlotCarSystemConnector connector: connectors.values()) {
+            List<Class<?>> interfaces = Arrays.asList(connector.getDriveConnector().getClass().getInterfaces());
+            if(interfaces.contains(type)) {
                 result.add(connector);
-        Collections.sort(result);
+            }
+        }
         return result;
     }
 
@@ -132,10 +131,8 @@ public class ConnectorConfigurationManager {
      * @param analogueConnector
      */
     private void reconnectAnalogueConnector(SlotCarSystemConnector analogueConnector) {
-        // get the test adapters
-        List<SlotCarSystemConnector> list = getByDriveConnectorType(TestAnalogueDriveConnectorAdapter.class);
-        // get the real adapters
-        list.addAll(getByDriveConnectorType(AnalogueDriveConnectorAdapter.class));
+        // get the connectors
+        List<SlotCarSystemConnector> list = getByDriveConnectorInterface(AnalogueDriveConnector.class);
         for(SlotCarSystemConnector slotCarSystemConnector: list) {
             // there exists an lib42Connector with the same carID so remove
             if(((AnalogueDriveConnector) slotCarSystemConnector.getDriveConnector()).getLane() == ((AnalogueDriveConnector) analogueConnector
@@ -151,10 +148,8 @@ public class ConnectorConfigurationManager {
      * @param blueriderConnector
      */
     private void reconnectBlueriderConnector(SlotCarSystemConnector blueriderConnector) {
-        // get the test adapters
-        List<SlotCarSystemConnector> list = getByDriveConnectorType(TestBlueriderDriveConnectorAdapter.class);
-        // get the real adapters
-        list.addAll(getByDriveConnectorType(BlueriderDriveConnectorAdapter.class));
+        // get the connectors
+        List<SlotCarSystemConnector> list = getByDriveConnectorInterface(BlueriderDriveConnector.class);
         if(list.size() == 1) {
             removeInputDevice(list.get(0).getId());
         }
@@ -167,10 +162,8 @@ public class ConnectorConfigurationManager {
      */
     private void reconnectLib42Connector(SlotCarSystemConnector lib42Connector) {
 
-        // get the test adapters
-        List<SlotCarSystemConnector> list = getByDriveConnectorType(TestLib42DriveConnectorAdapter.class);
-        // get the real adapters
-        list.addAll(getByDriveConnectorType(Lib42DriveConnectorAdapter.class));
+        // get the connectors
+        List<SlotCarSystemConnector> list = getByDriveConnectorInterface(Lib42DriveConnector.class);
         for(SlotCarSystemConnector slotCarSystemConnector: list) {
             // there exists an lib42Connector with the same carID so remove
             if(((Lib42DriveConnector) slotCarSystemConnector.getDriveConnector()).getCarID() == ((Lib42DriveConnector) lib42Connector
