@@ -24,7 +24,7 @@ import de.jacavi.rcp.util.Check;
 /**
  * @author fro
  */
-public class BlueriderDriveConnectorAdapter implements BlueriderConnector, ComListener {
+public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, ComListener {
 
     private static Log log = LogFactory.getLog(BlueriderDriveConnectorAdapter.class);
 

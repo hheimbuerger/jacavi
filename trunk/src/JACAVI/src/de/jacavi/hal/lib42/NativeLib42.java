@@ -10,6 +10,7 @@ public class NativeLib42 {
     private static NativeLib42 instance = null;
 
     static {
+
         System.loadLibrary("Clib42");
     }
 

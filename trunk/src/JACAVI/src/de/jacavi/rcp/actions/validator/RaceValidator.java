@@ -1,14 +1,24 @@
 package de.jacavi.rcp.actions.validator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import org.eclipse.ui.PlatformUI;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.script.DrivingAgentController;
 import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Track;
+import de.jacavi.hal.ConnectorConfigurationManager;
+import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.hal.SlotCarSystemDriveConnector;
+import de.jacavi.hal.analogue.AnalogueDriveConnector;
+import de.jacavi.hal.bluerider.BlueriderDriveConnector;
+import de.jacavi.hal.lib42.Lib42DriveConnector;
+import de.jacavi.rcp.editors.TrackDesigner;
 
 
 
@@ -66,18 +76,85 @@ public class RaceValidator {
         return valid;
     }
 
-    @ValidatationTaskName(description = "Validating Player Technologies...")
-    public boolean validatePlayerTechnologies(List<Player> players) {
+    /**
+     * Validates each players connector that its:
+     * <ul>
+     * <li>not null</li>
+     * <li>an valid uuid</li>
+     * <li>the right combination of current focused track type and connector</li>
+     * </ul>
+     * <p>
+     * Available Track types are analogue,digital and debug.
+     * <p>
+     * Lib42 can only be combined with digital. Analogue and Bluerider can only be combined with analogue. Simulation
+     * can be combined with every track. All connectors can be combined with debug.
+     * 
+     * @param players
+     * @return true if its valid otherwise false
+     */
+    @ValidatationTaskName(description = "Validating players connector...")
+    public boolean validatePlayersConnectorAgainstTrack(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0)
             return false;
 
+        // determine the current track from the active editor
+        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+        Track activeTrack = activeEditor.getTrack();
+        /* available track types are
+         * analogue,digital and debug
+         */
+        String currentTrackType = activeTrack.getTileset().getName();
+
+        // get the ConnectorCOnfigurationManager
+        ConnectorConfigurationManager connectionManager = (ConnectorConfigurationManager) ContextLoader
+                .getBean("connectorManager");
         for(int i = 0; i < players.size(); i++) {
-            SlotCarSystemDriveConnector systemConnector = players.get(i).getSlotCarSystemConnector();
-            if(systemConnector == null) {// TODO check also an ID ???
-                errorMessages.add("Player No. " + (i + 1)
-                        + " has an invalid connector! Please check your player and connector settings.");
+            // get the connector
+            SlotCarSystemConnector systemConnector = players.get(i).getSlotCarSystemConnector();
+
+            // check if the id of the connector is valid and if its not null
+            if(systemConnector == null) {
                 valid = false;
+                errorMessages.add("Player No. " + (i + 1) + " has no connector selected.");
+                continue;
+            }
+            if(!connectionManager.isIdValid(systemConnector.getId())) {
+                valid = false;
+                errorMessages.add("Player No. " + (i + 1)
+                        + " has an invalid connector. The UUID of the connector has expired.");
+                continue;
+            }
+
+            // get the drive connector
+            SlotCarSystemDriveConnector driveConnector = systemConnector.getDriveConnector();
+
+            // get the interfaces of the DriveConnector
+            List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());
+
+            /*
+             * on digital track only lib42
+             * on analogue track all except lib42
+             * on debug track all?
+             * SimulatedDriveConnector on all?
+             */
+            if(currentTrackType.equals("digital")) {
+                if(interfaces.contains(BlueriderDriveConnector.class)) {
+                    valid = false;
+                    errorMessages.add("Player No. " + (i + 1)
+                            + " has an invalid connector. Can not combine BlueriderConnector with digital track.");
+                } else if(interfaces.contains(AnalogueDriveConnector.class)) {
+                    valid = false;
+                    errorMessages.add("Player No. " + (i + 1)
+                            + " has an invalid connector. Can not combine AnalogueConnector with digital track.");
+                }
+            } else if(currentTrackType.equals("analogue")) {
+                if(interfaces.contains(Lib42DriveConnector.class)) {
+                    valid = false;
+                    errorMessages.add("Player No. " + (i + 1)
+                            + " has an invalid connector. Can not combine Lib42Connector with analogue track.");
+                }
             }
         }
         return valid;
@@ -86,4 +163,5 @@ public class RaceValidator {
     public List<String> getErrorMessages() {
         return errorMessages;
     }
+
 }

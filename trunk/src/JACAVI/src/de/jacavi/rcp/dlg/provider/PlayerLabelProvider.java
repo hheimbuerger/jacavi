@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Image;
 
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
-import de.jacavi.hal.bluerider.BlueriderConnector;
+import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
 import de.jacavi.rcp.Activator;
 
@@ -46,7 +46,7 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                     if(player.getSlotCarSystemConnector().getDriveConnector() instanceof Lib42DriveConnector) {
                         return usedImages.get("digital");
                     }
-                    if(player.getSlotCarSystemConnector().getDriveConnector() instanceof BlueriderConnector) {
+                    if(player.getSlotCarSystemConnector().getDriveConnector() instanceof BlueriderDriveConnector) {
                         return usedImages.get("bluerider");
                     }
                 }
