@@ -4,12 +4,12 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import de.jacavi.hal.SlotCarSpeedAdjuster;
-import de.jacavi.hal.bluerider.BlueriderConnector;
+import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 
 
 
-public class TestBlueriderDriveConnectorAdapter implements BlueriderConnector {
+public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnector {
 
     private static Log log = LogFactory.getLog(BlueriderDriveConnectorAdapter.class);
 

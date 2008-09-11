@@ -16,13 +16,4 @@
 		</constructor-arg>
 	</bean>
  	
- 	<!-- This Bean is to configure all non windows technologies see de.jacavi.hal.CarreraLibraryType -->
-	<bean id="noWindowsHALTechnologiesBean"
-		class="org.springframework.beans.factory.config.ListFactoryBean">
-		<property name="sourceList">
-			<list value-type="java.lang.String">
-				<value>lib42</value>
-			</list>
-		</property>
-	</bean>
 </beans>

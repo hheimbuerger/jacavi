@@ -21,7 +21,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.ConnectorFactory;
 import de.jacavi.hal.SlotCarSystemConnector;
-import de.jacavi.hal.bluerider.BlueriderConnector;
+import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.widgets.controls.validators.IPV4ValidatedText;
 import de.jacavi.rcp.widgets.controls.validators.RangeValidatedText;
@@ -264,7 +264,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
             SlotCarSystemConnector blueriderConnector = connectorFactory.createBlueriderConnector(name,
                     comboBlueriderComPort.getText(), new InetSocketAddress(textBlueriderHost.getText(), Integer
                             .valueOf(textBlueriderPort.getText())));
-            if(((BlueriderConnector) blueriderConnector.getDriveConnector()).connectBlueRider()) {
+            if(((BlueriderDriveConnector) blueriderConnector.getDriveConnector()).connectBlueRider()) {
                 connectorManager.addConnector(blueriderConnector);
                 connectorManager.testSystemConnector(blueriderConnector);
             } else {

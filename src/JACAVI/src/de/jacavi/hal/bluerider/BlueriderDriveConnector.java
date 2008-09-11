@@ -4,7 +4,7 @@ import de.jacavi.hal.SlotCarSystemDriveConnector;
 
 
 
-public interface BlueriderConnector extends SlotCarSystemDriveConnector {
+public interface BlueriderDriveConnector extends SlotCarSystemDriveConnector {
 
     boolean connectBlueRider();
 
