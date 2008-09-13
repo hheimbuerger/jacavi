@@ -30,7 +30,7 @@ public class RaceValidator {
         errorMessages = new ArrayList<String>();
     }
 
-    @ValidatationTaskName(description = "Validating Number of Player...")
+    @ValidatationDesription("Validating Number of Player...")
     public boolean validateNumberOfPlayer(List<Player> players) {
         if(players.size() != 0) {
             return true;
@@ -40,7 +40,7 @@ public class RaceValidator {
         }
     }
 
-    @ValidatationTaskName(description = "Validating Player Names...")
+    @ValidatationDesription("Validating Player Names...")
     public boolean validatePlayerNames(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0)
@@ -55,7 +55,7 @@ public class RaceValidator {
         return valid;
     }
 
-    @ValidatationTaskName(description = "Validating Player Controller...")
+    @ValidatationDesription("Validating Player Controller...")
     public boolean validatePlayerController(List<Player> players) {
         InputDeviceManager deviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
         boolean valid = true;
@@ -84,6 +84,8 @@ public class RaceValidator {
      * <li>the right combination of current focused track type and connector</li>
      * </ul>
      * <p>
+     * It is also validated, if no editor is open.
+     * <p>
      * Available Track types are analogue,digital and debug.
      * <p>
      * Lib42 can only be combined with digital. Analogue and Bluerider can only be combined with analogue. Simulation
@@ -92,7 +94,7 @@ public class RaceValidator {
      * @param players
      * @return true if its valid otherwise false
      */
-    @ValidatationTaskName(description = "Validating players connector...")
+    @ValidatationDesription("Validating players connector against track...")
     public boolean validatePlayersConnectorAgainstTrack(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0)
@@ -101,9 +103,15 @@ public class RaceValidator {
         // determine the current track from the active editor
         TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
                 .getActivePage().getActiveEditor();
+
+        if(activeEditor == null) {
+            errorMessages.add("Invalid track! Please create a new or import an existing track.");
+            return false;
+        }
+
         Track activeTrack = activeEditor.getTrack();
-        /* available track types are
-         * analogue,digital and debug
+        /*
+         * available track types are analogue,digital and debug
          */
         String currentTrackType = activeTrack.getTileset().getName();
 
@@ -134,9 +142,7 @@ public class RaceValidator {
             List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());
 
             /*
-             * on digital track only lib42
-             * on analogue track all except lib42
-             * on debug track all?
+             * on digital track only lib42 on analogue track all except lib42 on debug track all?
              * SimulatedDriveConnector on all?
              */
             if(currentTrackType.equals("digital")) {
