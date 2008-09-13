@@ -133,7 +133,20 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     }
 
     @Override
-    public void partClosed(IWorkbenchPartReference partRef) {}
+    public void partClosed(IWorkbenchPartReference partRef) {
+        if(partRef.getId().equals(TrackDesigner.ID)) {
+            activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
+            if(activeEditor == null) {
+                log.debug(partRef.getPartName() + " closed");
+                clear();
+            }
+        }
+    }
+
+    private void clear() {
+        tilesTableViewer.getTable().clearAll();
+        tilesTableViewer.getTable().setEnabled(false);
+    }
 
     @Override
     public void partDeactivated(IWorkbenchPartReference partRef) {}
@@ -173,6 +186,8 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         currentTrack = source.getTrackWidget().getTrack();
         tilesTableViewer.setInput(currentTrack.getSections());
         tilesTableViewer.refresh();
+        if(!tilesTableViewer.getTable().isEnabled())
+            tilesTableViewer.getTable().setEnabled(true);
         log.debug("TableViewer inside the TrackOutlineView refreshed");
     }
 
