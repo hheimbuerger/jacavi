@@ -119,7 +119,6 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     @Override
     public void partActivated(IWorkbenchPartReference partRef) {
         if(partRef.getId().equals(TrackDesigner.ID)) {
-            log.debug(partRef.getPartName() + " activated");
             activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
             currentTrack = activeEditor.getTrackWidget().getTrack();
             paintAndRefresh();
@@ -130,7 +129,13 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     public void partBroughtToTop(IWorkbenchPartReference partRef) {}
 
     @Override
-    public void partClosed(IWorkbenchPartReference partRef) {}
+    public void partClosed(IWorkbenchPartReference partRef) {
+        if(partRef.getId().equals(TrackDesigner.ID)) {
+            activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
+            if(activeEditor == null)
+                scrolledComposite.getContent().dispose();
+        }
+    }
 
     @Override
     public void partDeactivated(IWorkbenchPartReference partRef) {}
