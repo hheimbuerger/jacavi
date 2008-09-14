@@ -11,7 +11,7 @@
         </tilesets>
         <acceleration>5</acceleration>
         <mass>5</mass>
-        <top-speed>20</top-speed>
+        <top-speed>200</top-speed>
         <inertia>5</inertia>
     </car>    
 

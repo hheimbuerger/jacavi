@@ -19,18 +19,18 @@ public class Car {
 
     private final List<Tileset> tilesets;
 
-    private final int acceleration;
+    private final double acceleration;
 
-    private final int mass;
+    private final double mass;
 
-    private final int topSpeed;
+    private final double topSpeed;
 
-    private final int inertia;
+    private final double inertia;
 
     private final Image image;
 
-    public Car(String filename, List<Tileset> tilesets, int acceleration, int inertia, int mass, int topSpeed)
-            throws IOException {
+    public Car(String filename, List<Tileset> tilesets, double acceleration, double mass, double topSpeed,
+            double inertia) throws IOException {
         this.filename = filename;
         this.tilesets = tilesets;
         this.acceleration = acceleration;
@@ -53,19 +53,19 @@ public class Car {
         return tilesets;
     }
 
-    public int getAcceleration() {
+    public double getAcceleration() {
         return acceleration;
     }
 
-    public int getMass() {
+    public double getMass() {
         return mass;
     }
 
-    public int getTopSpeed() {
+    public double getTopSpeed() {
         return topSpeed;
     }
 
-    public int getInertia() {
+    public double getInertia() {
         return inertia;
     }
 

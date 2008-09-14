@@ -61,10 +61,10 @@ public class CarRepository {
     private void importCar(Element parentItem) throws IOException {
         String bitmap = null;
         List<Tileset> tilesets = null;
-        int acceleration = 0;
-        int mass = 0;
-        int topSpeed = 0;
-        int inertia = 0;
+        double acceleration = 0;
+        double mass = 0;
+        double topSpeed = 0;
+        double inertia = 0;
 
         NodeList carNodes = parentItem.getChildNodes();
         for(int i = 0; i < carNodes.getLength(); i++) {
@@ -75,13 +75,13 @@ public class CarRepository {
                 else if(carProperty.getNodeName().equals("tilesets"))
                     tilesets = importAssociatedTilesets(carProperty);
                 else if(carProperty.getNodeName().equals("acceleration"))
-                    acceleration = Integer.valueOf(carProperty.getTextContent());
+                    acceleration = Double.valueOf(carProperty.getTextContent());
                 else if(carProperty.getNodeName().equals("mass"))
-                    mass = Integer.valueOf(carProperty.getTextContent());
+                    mass = Double.valueOf(carProperty.getTextContent());
                 else if(carProperty.getNodeName().equals("top-speed"))
-                    topSpeed = Integer.valueOf(carProperty.getTextContent());
+                    topSpeed = Double.valueOf(carProperty.getTextContent());
                 else if(carProperty.getNodeName().equals("inertia"))
-                    inertia = Integer.valueOf(carProperty.getTextContent());
+                    inertia = Double.valueOf(carProperty.getTextContent());
             }
         }
 

@@ -26,4 +26,10 @@ public class CarPosition {
         isOnTrack = true;
         lap = 0;
     }
+
+    public void moveSteps(int stepsToMove, int laneLength) {
+        if(stepsFromStart > laneLength)
+            lap++;
+        stepsFromStart = stepsFromStart % laneLength;
+    }
 }
