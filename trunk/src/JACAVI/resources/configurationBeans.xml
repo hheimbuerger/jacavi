@@ -12,7 +12,7 @@
 	
 	<bean id="raceTimerIntervalValueBean" class="java.lang.Integer">
 		<constructor-arg>
-			<value>30</value>
+			<value>50</value>
 		</constructor-arg>
 	</bean>
  	
