@@ -2,6 +2,7 @@ package de.jacavi.appl.racelogic;
 
 import org.eclipse.swt.graphics.Color;
 
+import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.racelogic.tda.DebugTDA;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
@@ -25,6 +26,8 @@ public class Player {
     private final CarPosition position;
 
     private Color color;
+
+    private Car car;
 
     public Player() {
         this(0, "Player", null);
@@ -84,6 +87,14 @@ public class Player {
 
     public Color getColor() {
         return color;
+    }
+
+    public Car getCar() {
+        return car;
+    }
+
+    public void setCar(Car car) {
+        this.car = car;
     }
 
 }

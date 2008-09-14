@@ -10,6 +10,11 @@
 	<bean id="tilesetRepositoryBean" class="de.jacavi.appl.track.TilesetRepository">
 		<constructor-arg type="java.lang.String" value="/tiles/tiles.xml" />
 	</bean>
+    
+    <bean id="carRepositoryBean" class="de.jacavi.appl.car.CarRepository">
+        <constructor-arg type="java.lang.String" value="/cars/cars.xml" />
+        <constructor-arg ref="tilesetRepositoryBean" />
+    </bean>
 	
 	<bean id="raceEngineBean" class="de.jacavi.appl.racelogic.RaceEngine"> 
         <property name="players" ref="playersBean" />

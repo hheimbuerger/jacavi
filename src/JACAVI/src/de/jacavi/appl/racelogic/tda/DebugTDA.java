@@ -16,9 +16,12 @@ public class DebugTDA extends TrackDataApproximator {
     @Override
     public void updatePosition(CarPosition carPosition, int gametick, Track track, ControllerSignal controllerSignal,
             FeedbackSignal feedbackSignal) {
-        logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint() + " GForce: " + feedbackSignal.getGforce().getX()
-                + " " + feedbackSignal.getGforce().getY());
-        carPosition.stepsFromStart = (carPosition.stepsFromStart + 1) % track.getLaneLength(carPosition.currentLane);
+        if(feedbackSignal.getGforce() != null)
+            logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint() + " GForce: "
+                    + feedbackSignal.getGforce().getX() + " " + feedbackSignal.getGforce().getY());
+        else
+            logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint());
+        carPosition.stepsFromStart = (carPosition.stepsFromStart + 2) % track.getLaneLength(carPosition.currentLane);
     }
 
 }

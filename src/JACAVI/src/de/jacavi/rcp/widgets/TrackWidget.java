@@ -8,7 +8,6 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
@@ -43,6 +42,7 @@ import org.holongate.j2d.J2DRegistry;
 import org.holongate.j2d.J2DUtilities;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.racelogic.Player;
@@ -795,7 +795,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     if(carPosition[i] != null && s == carPosition[i].section) {
                         DirectedPoint directedPoint = carPosition[i].point;
                         Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                        drawCar(g, lanePlacementTransformation.transform(directedPoint.point, null), carDirection);
+                        drawCar(g, playersBean.get(i).getCar(), lanePlacementTransformation.transform(
+                                directedPoint.point, null), carDirection);
                     }
                 }
             }
@@ -830,17 +831,20 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         g.setTransform(originalTransformation);
     }
 
-    private void drawCar(Graphics2D g, Point2D position, Angle carDirection) {
-        GeneralPath car = new GeneralPath();
+    private void drawCar(Graphics2D g, Car car, Point2D position, Angle carDirection) {
+        /*GeneralPath car = new GeneralPath();
         car.moveTo(-5, 0);
-        car.lineTo(5, 0);
+        car.lineTo(5, 0);*/
 
         AffineTransform carRotationTransformation = new AffineTransform();
         carRotationTransformation.translate(position.getX(), position.getY());
         carRotationTransformation.rotate(carDirection.getRadians());
-        Shape rotatedCar = carRotationTransformation.createTransformedShape(car);
+        carRotationTransformation.translate(-car.getImage().getWidth(null) / 2, -car.getImage().getHeight(null) / 2);
+
+        /* Shape rotatedCar = carRotationTransformation.createTransformedShape(car.getImage());
         g.setColor(Color.RED);
-        g.draw(rotatedCar);
+        g.draw(rotatedCar);*/
+        g.drawImage(car.getImage(), carRotationTransformation, null);
     }
 
     private void drawThrustGauges(Graphics2D g) {

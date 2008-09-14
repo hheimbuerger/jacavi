@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.car.CarRepository;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.InputDeviceManager;
@@ -62,6 +63,8 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private CarController controller;
 
+    private final CarRepository carRepository;
+
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
         this.player = player;
@@ -74,6 +77,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         connectorManager = (ConnectorConfigurationManager) ContextLoader.getBean("connectorManager");
 
+        carRepository = (CarRepository) ContextLoader.getBean("carRepositoryBean");
     }
 
     @Override
@@ -185,6 +189,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         player.setName(playerName.getText());
         player.setSlotCarSystemConnector(connector);
         player.setController(controller);
+        player.setCar(carRepository.getCars().get(0));
         super.okPressed();
         comboInput.dispose();
         comboDevices.dispose();
