@@ -28,8 +28,8 @@ public class CarPosition {
     }
 
     public void moveSteps(int stepsToMove, int laneLength) {
-        if(stepsFromStart > laneLength)
+        if(stepsFromStart + stepsToMove > laneLength)
             lap++;
-        stepsFromStart = stepsFromStart % laneLength;
+        stepsFromStart = (stepsFromStart + stepsToMove) % laneLength;
     }
 }
