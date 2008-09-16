@@ -3,5 +3,5 @@
 <track name="demo_digital" tileset="digital" >
 
     <section id="finishingStraight" />
-    
+	<section id="turn60deg2" />    
 </track>
