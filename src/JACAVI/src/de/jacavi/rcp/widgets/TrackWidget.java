@@ -49,6 +49,7 @@ import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.CarScreenPosition;
+import de.jacavi.appl.track.Checkpoint;
 import de.jacavi.appl.track.DirectedPoint;
 import de.jacavi.appl.track.LaneSection;
 import de.jacavi.appl.track.Track;
@@ -686,15 +687,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     /**
-     * Helper method for drawing a point on the screen. Mostly used for debugging purposes.
-     */
-    /*private void markPoint(Graphics2D g, Point2D currentTrackPos, Color color) {
-        g.setColor(color);
-        g.drawRect(new Double(currentTrackPos.getX() - 1).intValue(),
-                new Double(currentTrackPos.getY() - 1).intValue(), 3, 3);
-    }*/
-
-    /**
      * Renders the currently displayed track.
      * <p>
      * This method assumes that the viewport transformations are already activated on the given Graphics2D object.
@@ -787,6 +779,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 g.setColor(laneColors[laneIndex]);
                 for(LaneSection ls: s.getLane(laneIndex).getLaneSections())
                     g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+                for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
+                    g.draw(lanePlacementTransformation.createTransformedShape(new Rectangle2D.Double(
+                            c.getPoint().x - 1, c.getPoint().y - 1, 3, 3)));
             }
 
             // draw the current car position

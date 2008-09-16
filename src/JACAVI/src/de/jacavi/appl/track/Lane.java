@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.jacavi.rcp.widgets.TrackWidget;
+
 
 
 /**
@@ -27,6 +29,9 @@ public class Lane {
 
     /** The list of lane sections this lane consists of. */
     private final List<LaneSection> laneSections = new ArrayList<LaneSection>();
+
+    /** The list of checkpoints this lane has. */
+    private final List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 
     /**
      * Appends a new linear lane section at the end of the lane.
@@ -76,12 +81,35 @@ public class Lane {
     }
 
     /**
+     * Adds a new checkpoint to this lane's checkpoint list.
+     * 
+     * @param id
+     *            the identifier of this checkpoint
+     * @param x
+     *            the x-coordinate of the checkpoint
+     * @param y
+     *            the y-coordinate of the checkpoint
+     */
+    public void addCheckpoint(String id, int x, int y) {
+        checkpoints.add(new Checkpoint(id, new Point(x, y)));
+    }
+
+    /**
      * Returns the list of all lane sections of this lane.
      * 
      * @return a list of all lane sections of this lane
      */
     public List<LaneSection> getLaneSections() {
         return laneSections;
+    }
+
+    /**
+     * Returns the list of all checkpoints defined for this lane.
+     * 
+     * @return a list of all checkpoints of this lane
+     */
+    public List<Checkpoint> getCheckpoints() {
+        return checkpoints;
     }
 
     /**
@@ -121,4 +149,5 @@ public class Lane {
         }
         return null;
     }
+
 }
