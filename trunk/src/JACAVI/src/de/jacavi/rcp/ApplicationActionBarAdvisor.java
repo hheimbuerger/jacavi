@@ -29,13 +29,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
 
     private MenuManager infoMenu;
 
-    private IWorkbenchAction exitAction;
-
     private IWorkbenchAction saveTrackAction;
 
     private IWorkbenchAction newTrackAction;
 
+    private IWorkbenchAction preferencesAction;
+
     private IWorkbenchAction aboutAction;
+
+    private IWorkbenchAction exitAction;
 
     public ApplicationActionBarAdvisor(IActionBarConfigurer configurer) {
         super(configurer);
@@ -52,6 +54,9 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
         saveTrackAction.setText("Save");
         register(saveTrackAction);
 
+        preferencesAction = ActionFactory.PREFERENCES.create(window);
+        register(preferencesAction);
+
         aboutAction = ActionFactory.ABOUT.create(window);
         register(aboutAction);
 
@@ -63,6 +68,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
     protected void fillMenuBar(IMenuManager menuBar) {
         fileMenu = new MenuManager("&File", "fileMenu");
         menuBar.add(fileMenu);
+        fileMenu.add(preferencesAction);
+        fileMenu.add(new Separator());
         fileMenu.add(exitAction);
 
         trackMenu = new MenuManager("&Track", "trackMenu");

@@ -250,4 +250,12 @@
          </property>
       </product>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="de.jacavi.rcp.preferences.MainPage"
+            id="JACAVI.mainPreferencePage"
+            name="JaCaVi preferences">
+      </page>
+   </extension>
 </plugin>

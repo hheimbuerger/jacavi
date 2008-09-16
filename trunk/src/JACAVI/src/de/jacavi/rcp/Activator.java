@@ -2,6 +2,7 @@ package de.jacavi.rcp;
 
 import java.io.InputStream;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
@@ -52,6 +53,15 @@ public class Activator extends AbstractUIPlugin {
      */
     public static Activator getDefault() {
         return plugin;
+    }
+
+    /**
+     * Convenience method to access the plugins preference store.
+     * 
+     * @return the preference store
+     */
+    public static final IPreferenceStore getStore() {
+        return getDefault().getPreferenceStore();
     }
 
     /**
