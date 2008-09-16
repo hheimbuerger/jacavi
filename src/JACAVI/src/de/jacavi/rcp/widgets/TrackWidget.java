@@ -55,6 +55,8 @@ import de.jacavi.appl.track.LaneSection;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.Track.TrackModificationListener;
+import de.jacavi.rcp.Activator;
+import de.jacavi.rcp.preferences.MainPage;
 import de.jacavi.rcp.widgets.controls.ImageButtonControl;
 import de.jacavi.rcp.widgets.controls.InnerControl;
 import de.jacavi.rcp.widgets.controls.ScrollerControl;
@@ -772,16 +774,18 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
             lanePlacementTransformation.rotate(currentAngle.getRadians());
             lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
-            final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
-            if(track.getTileset().getLaneCount() > 4)
-                throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
-            for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
-                g.setColor(laneColors[laneIndex]);
-                for(LaneSection ls: s.getLane(laneIndex).getLaneSections())
-                    g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-                for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
-                    g.draw(lanePlacementTransformation.createTransformedShape(new Rectangle2D.Double(
-                            c.getPoint().x - 1, c.getPoint().y - 1, 3, 3)));
+            if(Activator.getStore().getBoolean(MainPage.PREF_SHOW_LANES)) {
+                final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
+                if(track.getTileset().getLaneCount() > 4)
+                    throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
+                for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
+                    g.setColor(laneColors[laneIndex]);
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSections())
+                        g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+                    for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
+                        g.draw(lanePlacementTransformation.createTransformedShape(new Rectangle2D.Double(
+                                c.getPoint().x - 1, c.getPoint().y - 1, 3, 3)));
+                }
             }
 
             // draw the current car position
