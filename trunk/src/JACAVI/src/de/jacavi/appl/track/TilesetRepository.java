@@ -136,6 +136,9 @@ public class TilesetRepository {
                                     .valueOf(laneSection.getAttribute("y2")), Integer.valueOf(laneSection
                                     .getAttribute("x3")), Integer.valueOf(laneSection.getAttribute("y3")), Integer
                                     .valueOf(laneSection.getAttribute("entryToExitAngle")));
+                } else if(laneSection.getNodeName().equals("checkpoint")) {
+                    lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection.getAttribute("x")),
+                            Integer.valueOf(laneSection.getAttribute("y")));
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid lane section in lane: "
                             + laneSection.getNodeName());
