@@ -8,25 +8,14 @@
  */
 JNIEXPORT jint JNICALL Java_de_jacavi_hal_lib42_NativeLib42_initLib42(JNIEnv *env, jobject o, jint mode)
 {
-
+	//TODO: implement mode
 	int retVal=0;
-	switch(mode)
-	{
-		case 1:
-			retVal=initLib42(LIB42_COLLISION_DETECTION);
-			break;
-		case 2:
-			retVal=initLib42(LIB42_LAP_COUNT);
-			break;
-		case 4:
-			break;
-			retVal=initLib42(LIB42_SENSOR_QUEUEING);
-		case 8:
-			retVal=initLib42(LIB42_SENSOR_LOGGING);
-			break;
-	}
+
+	retVal=initLib42(LIB42_SENSOR_LOGGING);
+
 	return retVal;
 }
+
 
 /*
  * Class:     de_jacavi_hal_nat_JNativeLib42
