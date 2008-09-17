@@ -15,12 +15,12 @@ import de.jacavi.rcp.util.Check;
  * {@link SlotCarSystemConnector}s are created by {@link SlotCarSystemConnectorFactory} and managed by
  * {@link ConnectorConfigurationManager}
  */
-public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCarSystemDriveConnector,
+public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCarDriveConnector,
         Comparable<SlotCarSystemConnector> {
 
     private final UUID id;
 
-    public SlotCarSystemDriveConnector getDriveConnector() {
+    public SlotCarDriveConnector getDriveConnector() {
         return driveConnector;
     }
 
@@ -30,11 +30,11 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
 
     private final String name;
 
-    private SlotCarSystemDriveConnector driveConnector = null;
+    private SlotCarDriveConnector driveConnector = null;
 
     private SlotCarFeedbackConnector feedbackConnector = null;
 
-    public SlotCarSystemConnector(String name, SlotCarSystemDriveConnector driveConnector,
+    public SlotCarSystemConnector(String name, SlotCarDriveConnector driveConnector,
             SlotCarFeedbackConnector feedbackConnector) {
         super();
         Check.Require(driveConnector != null && feedbackConnector != null,

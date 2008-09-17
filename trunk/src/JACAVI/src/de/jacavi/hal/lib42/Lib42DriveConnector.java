@@ -1,13 +1,13 @@
 package de.jacavi.hal.lib42;
 
-import de.jacavi.hal.SlotCarSystemDriveConnector;
+import de.jacavi.hal.SlotCarDriveConnector;
 
 
 
 /*
  * This interface has extra Clib42 functionality for example to program a cars id
  */
-public interface Lib42DriveConnector extends SlotCarSystemDriveConnector {
+public interface Lib42DriveConnector extends SlotCarDriveConnector {
     // HANDLE PIT STOP
     void setPitstop(int pitstop);
 
