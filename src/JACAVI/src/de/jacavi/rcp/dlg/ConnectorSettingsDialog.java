@@ -168,18 +168,9 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         fd1.left = new FormAttachment(comPortLabel, 0, SWT.LEFT);
         fd1.right = new FormAttachment(comPortLabel, 0, SWT.RIGHT);
         comboBlueriderComPort.setLayoutData(fd1);
-        comboBlueriderComPort.add("COM1");
-        comboBlueriderComPort.add("COM2");
-        comboBlueriderComPort.add("COM3");
-        comboBlueriderComPort.add("COM4");
-        comboBlueriderComPort.add("COM5");
-        comboBlueriderComPort.add("COM6");
-        comboBlueriderComPort.add("COM7");
-        comboBlueriderComPort.add("COM9");
-        comboBlueriderComPort.add("COM10");
-        comboBlueriderComPort.add("COM16");
-        comboBlueriderComPort.add("COM17");
-
+        for(int i = 1; i <= 20; i++) {
+            comboBlueriderComPort.add("COM" + i);
+        }
         comboBlueriderComPort.setText("COM1");
 
         // create analogue feedback shit

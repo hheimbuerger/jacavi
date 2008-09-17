@@ -14,7 +14,7 @@ import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.SlotCarSystemConnector;
-import de.jacavi.hal.SlotCarSystemDriveConnector;
+import de.jacavi.hal.SlotCarDriveConnector;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
@@ -136,7 +136,7 @@ public class RaceValidator {
             }
 
             // get the drive connector
-            SlotCarSystemDriveConnector driveConnector = systemConnector.getDriveConnector();
+            SlotCarDriveConnector driveConnector = systemConnector.getDriveConnector();
 
             // get the interfaces of the DriveConnector
             List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());

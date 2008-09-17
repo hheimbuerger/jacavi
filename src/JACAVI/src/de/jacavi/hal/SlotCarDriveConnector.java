@@ -5,7 +5,7 @@ package de.jacavi.hal;
  * <p>
  * If they don't leaf implementation empty.
  */
-public interface SlotCarSystemDriveConnector {
+public interface SlotCarDriveConnector {
 
     void setSpeed(int speed);
 

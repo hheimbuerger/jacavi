@@ -2,11 +2,11 @@ package de.jacavi.hal.analogue;
 
 import java.net.InetSocketAddress;
 
-import de.jacavi.hal.SlotCarSystemDriveConnector;
+import de.jacavi.hal.SlotCarDriveConnector;
 
 
 
-public interface AnalogueDriveConnector extends SlotCarSystemDriveConnector {
+public interface AnalogueDriveConnector extends SlotCarDriveConnector {
 
     int getLane();
 
