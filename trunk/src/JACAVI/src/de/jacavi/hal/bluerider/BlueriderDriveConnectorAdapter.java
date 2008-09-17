@@ -8,7 +8,7 @@ import de.jacavi.rcp.util.Check;
 
 
 
-//Kanal Hinkanal Rückkanal
+//Kanal Hinkanal Rï¿½ckkanal
 //--------------------------------------------------------------------
 //FixData_0 Motorleistung Motorleistung
 //FixData_1 nicht belegt G-Kraft Y-Achse
@@ -19,7 +19,7 @@ import de.jacavi.rcp.util.Check;
 //FixData_6 nicht belegt nicht belegt
 //FixData_7 nicht belegt nicht belegt
 //MSG_0 Frontlicht & Hecklicht nicht belegt
-//Restliche Message-Kanäle sind frei
+//Restliche Message-Kanï¿½le sind frei
 
 /**
  * @author fro
@@ -93,10 +93,10 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
 
     @Override
     public void setSpeed(int speed) {
-        Check.Require(speed >= 0 && speed <= maxHALSpeed, "Speed is int the wrong range");
-
         log.debug("Bluerider speed in: " + speed);
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
+        Check.Require(normalizedSpeed >= 0 && normalizedSpeed <= maxHALSpeed, "Speed is int the wrong range");
+
         log.debug("Bluerider adjusted speed: " + normalizedSpeed);
         byte value = (byte) normalizedSpeed;
 

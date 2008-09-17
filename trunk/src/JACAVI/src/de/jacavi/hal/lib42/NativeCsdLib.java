@@ -11,7 +11,7 @@ import de.jacavi.rcp.util.Check;
  */
 public class NativeCsdLib {
 
-    private Lib42FeedbackManager feedbackManager = null;
+    private static Lib42FeedbackManager feedbackManager = null;
 
     private static NativeCsdLib instance = null;
 
@@ -22,12 +22,12 @@ public class NativeCsdLib {
     /**
      * @param feedbackManager
      */
-    public static void startLib42Sensordetection(Lib42FeedbackManager feedbackManager) {
+    public static void startLib42Sensordetection(Lib42FeedbackManager infeedbackManager) {
         if(instance == null) {
-            Check.Require(feedbackManager != null, "feedbackManager may not be null");
+            Check.Require(infeedbackManager != null, "feedbackManager may not be null");
             instance = new NativeCsdLib();
-            instance.initSensorDetection();
-            instance.feedbackManager = feedbackManager;
+            instance.initSensorDetection("callback");
+            feedbackManager= infeedbackManager;
         }
     }
 
@@ -40,7 +40,7 @@ public class NativeCsdLib {
      * 
      * @return
      */
-    public native int initSensorDetection();
+    public native int initSensorDetection(String callbackFunctionName);
 
     /**
      * Release the native sensor detection library
@@ -57,7 +57,7 @@ public class NativeCsdLib {
      * @param carID
      * @param sensorID
      */
-    public void callback(int carID, int sensorID) {
+    public static void callback(int carID, int sensorID) {
         feedbackManager.distributeFeedback(carID, sensorID);
     }
 

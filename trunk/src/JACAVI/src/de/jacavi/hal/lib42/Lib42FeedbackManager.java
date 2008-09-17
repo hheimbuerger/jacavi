@@ -29,9 +29,11 @@ public class Lib42FeedbackManager {
      */
     public void addFeedbackListener(Lib42FeedbackConnector feedbackConnector) {
         Check.Require(feedbackConnector != null, "feedbackConnector may not be null");
-        Check.Require(!feedbackConnectors.containsKey(feedbackConnector.getCarID() + ""),
-                "something went wrong there already exists an feedbackConnector with key"
-                        + feedbackConnector.getCarID() + "");
+        //if there already exists a feedbackConnector kill him
+        if(feedbackConnectors.containsKey(feedbackConnector.getCarID()+""))
+        {
+            feedbackConnectors.remove(feedbackConnector.getCarID()+"");  
+        }
         // add the new feedback listener
         feedbackConnectors.put(feedbackConnector.getCarID() + "", feedbackConnector);
     }

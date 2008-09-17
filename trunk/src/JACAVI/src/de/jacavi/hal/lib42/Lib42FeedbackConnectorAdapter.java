@@ -1,7 +1,11 @@
 package de.jacavi.hal.lib42;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.FeedbackSignal;
+import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 
 
 
@@ -12,13 +16,14 @@ import de.jacavi.hal.FeedbackSignal;
  * @author fro
  */
 public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
+    private static Log log = LogFactory.getLog(Lib42FeedbackConnectorAdapter.class);
 
     private int carID;
 
     private Lib42FeedbackManager feedbackManager = null;
 
     // The latest received feedback
-    private FeedbackSignal latestFeedback = null;
+    private FeedbackSignal latestFeedback = new FeedbackSignal(null,"0");
 
     public Lib42FeedbackConnectorAdapter(int carID) {
         this.carID = carID;
@@ -39,6 +44,7 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
      */
     @Override
     public void sensorCallback(int sensorID) {
+        log.debug("Sensor callback for car id: "+carID+ " sensor: "+sensorID);
         latestFeedback = new FeedbackSignal(null, sensorID + "");
     }
 
