@@ -85,6 +85,8 @@ public class RaceEngine {
             // disorganize devices
             for(Player player: players) {
                 player.getController().deactivate();
+                //all cars stop when the game stops
+                player.getSlotCarSystemConnector().getDriveConnector().fullBreak();
             }
             raceTimer.cancel();
             isTimerRunning = false;
