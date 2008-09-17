@@ -6,69 +6,80 @@ import org.eclipse.ui.IPersistableElement;
 
 import de.jacavi.appl.track.Track;
 
+
+
 public class TrackDesignerInput implements IEditorInput {
 
-	private Track track;
+    private Track track;
 
-	public TrackDesignerInput(Track track) {
-		this.track = track;
-	}
+    private String filename;
 
-	public boolean exists() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    public TrackDesignerInput(String filename, Track track) {
+        this.filename = filename;
+        this.track = track;
+    }
 
-	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public boolean exists() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
-	public String getName() {
-		// TODO Auto-generated method stub
-		return track.getTrackName();
-	}
+    public ImageDescriptor getImageDescriptor() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	public IPersistableElement getPersistable() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getName() {
+        // TODO Auto-generated method stub
+        return track.getTrackName();
+    }
 
-	public String getToolTipText() {
-		return "Track Editor";
-	}
+    public IPersistableElement getPersistable() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-	@SuppressWarnings("unchecked")
-	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+    public String getToolTipText() {
+        return "Track Editor";
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (super.equals(obj)) {
-			return true;
-		}
+    @SuppressWarnings("unchecked")
+    public Object getAdapter(Class adapter) {
+        // TODO Auto-generated method stub
+        return null;
+    }
 
-		if (obj instanceof TrackDesignerInput) {
-			return track.getTrackName().equals(
-					((TrackDesignerInput) obj).getName());
-		}
-		return false;
+    @Override
+    public boolean equals(Object obj) {
+        if(super.equals(obj)) {
+            return true;
+        }
 
-	}
+        if(obj instanceof TrackDesignerInput) {
+            return track.getTrackName().equals(((TrackDesignerInput) obj).getName());
+        }
+        return false;
 
-	@Override
-	public int hashCode() {
-		return track.getTrackName().hashCode();
-	}
+    }
 
-	public void setTrack(Track track) {
-		this.track = track;
-	}
+    @Override
+    public int hashCode() {
+        return track.getTrackName().hashCode();
+    }
 
-	public Track getTrack() {
-		return track;
-	}
+    public void setTrack(Track track) {
+        this.track = track;
+    }
 
+    public Track getTrack() {
+        return track;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
 }

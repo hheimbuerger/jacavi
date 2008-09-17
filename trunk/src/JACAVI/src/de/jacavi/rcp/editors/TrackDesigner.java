@@ -71,6 +71,7 @@ public class TrackDesigner extends EditorPart {
         dlg.setFilterExtensions(filterExt);
         String selected = dlg.open();
         try {
+            ((TrackDesignerInput) getEditorInput()).setFilename(selected);
             currentTrack.saveToXml(selected);
 
             log.info("Track saved to " + selected);
@@ -181,5 +182,9 @@ public class TrackDesigner extends EditorPart {
 
     public Track getTrack() {
         return currentTrack;
+    }
+
+    public String getFilename() {
+        return ((TrackDesignerInput) getEditorInput()).getFilename();
     }
 }
