@@ -10,30 +10,34 @@ import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 
+
+
 public class OpenTrackDesignerAction extends Action {
 
-	private final Track track;
+    private final Track track;
 
-	public OpenTrackDesignerAction(Track track) {
-		this.track = track;
-	}
+    private final String filename;
 
-	public void run() {
+    public OpenTrackDesignerAction(String filename, Track track) {
+        this.filename = filename;
+        this.track = track;
+    }
 
-		TrackDesignerInput editorInput = new TrackDesignerInput(track);
+    @Override
+    public void run() {
 
-		IWorkbenchPage page = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
-		try {
+        TrackDesignerInput editorInput = new TrackDesignerInput(filename, track);
 
-			page.openEditor(editorInput, TrackDesigner.ID);
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        try {
 
-			IWorkbenchPart active = page.getActivePart();
-			active.setFocus();
+            page.openEditor(editorInput, TrackDesigner.ID);
 
-		} catch (PartInitException e) {
-			// TODO: handle exception
-		}
-	}
+            IWorkbenchPart active = page.getActivePart();
+            active.setFocus();
 
+        } catch(PartInitException e) {
+            // TODO: handle exception
+        }
+    }
 }

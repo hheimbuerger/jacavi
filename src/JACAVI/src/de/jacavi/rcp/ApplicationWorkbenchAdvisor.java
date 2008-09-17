@@ -4,6 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -48,11 +51,20 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         super.postStartup();
         TrackDesignerInput editorInput;
         try {
-            editorInput = new TrackDesignerInput(new Track(new File("tracks/demo_analogue.track.xml")));
-
+            // get the workbench page
             IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 
-            page.openEditor(editorInput, TrackDesigner.ID);
+            // retrieve the last opened editors from the preferences and reopen them
+            final IPreferenceStore store = Activator.getStore();
+            int i = 0;
+            while(true) {
+                String filename = store.getString("editor" + i);
+                if(filename.equals(""))
+                    break;
+                editorInput = new TrackDesignerInput(filename, new Track(new File(filename)));
+                page.openEditor(editorInput, TrackDesigner.ID);
+                i++;
+            }
 
             IWorkbenchPart active = page.getActivePart();
             active.setFocus();
@@ -95,12 +107,30 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
     @Override
     public boolean preShutdown() {
+        // switch back to the designer perspective
         try {
             PlatformUI.getWorkbench().showPerspective(EditorPerspective.ID,
                     PlatformUI.getWorkbench().getActiveWorkbenchWindow());
         } catch(WorkbenchException e) {
             e.printStackTrace();
         }
+
+        // store the list of open editors
+        final IPreferenceStore store = Activator.getStore();
+        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+        IEditorReference[] editorReferences = page.getEditorReferences();
+        int i = 0;
+        for(IEditorReference editorReference: editorReferences) {
+            IEditorPart editor = editorReference.getEditor(false);
+            if(editor instanceof TrackDesigner) {
+                TrackDesigner designer = (TrackDesigner) editor;
+                store.setValue("editor" + i, designer.getFilename());
+                i++;
+            }
+        }
+        store.setToDefault("editor" + i); // remove the following entry from the preferences store so the next loading
+                                          // will stop here
+
         return super.preShutdown();
     }
 }

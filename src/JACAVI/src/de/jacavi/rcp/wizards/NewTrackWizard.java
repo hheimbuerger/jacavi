@@ -40,7 +40,7 @@ public class NewTrackWizard extends Wizard implements INewWizard {
     public boolean performFinish() {
         Track track = new Track(tileset);
         track.setTrackName(one.getText1());
-        new OpenTrackDesignerAction(track).run();
+        new OpenTrackDesignerAction(one.getText1(), track).run();
         return true;
     }
 
