@@ -1,4 +1,4 @@
-#include "de_jacavi_hal_nat_JNativeCsdLib.h"
+#include "de_jacavi_hal_lib42_NativeCsdLib.h"
 #include "csdlib.h"
 #include <stdio.h>
 #include <pthread.h>
@@ -23,20 +23,21 @@ static void doCallback(int carID,int sensor)
 	}
 }
 
-
 /*
  * Class:     de_jacavi_hal_nat_JNativeCsdLib
  * Method:    initSensorDetection
  * Signature: ()I
  */
-JNIEXPORT jint JNICALL Java_de_jacavi_hal_nat_JNativeCsdLib_initSensorDetection(JNIEnv *env, jobject o)
+JNIEXPORT jint JNICALL Java_de_jacavi_hal_lib42_NativeCsdLib_initSensorDetection(JNIEnv *env, jobject o,jstring callbackName)
 {
+	//get the callback function name and get the cstring
+	const char *callbackFunction = (*env)->GetStringUTFChars(env, callbackName, 0);
 	//get the vm and cache it local
 	(*env)->GetJavaVM(env,&jvm);
 	//get the jclass
 	cls = (*env)->GetObjectClass(env, o);
 	//get the java callback method
-	callbackID = (*env)->GetStaticMethodID(env, cls, "callback", "(II)V");
+	callbackID = (*env)->GetStaticMethodID(env, cls, callbackFunction, "(II)V");
 	//register c callback function
 	return initializeSensorDetection(doCallback);
 }
@@ -47,7 +48,7 @@ JNIEXPORT jint JNICALL Java_de_jacavi_hal_nat_JNativeCsdLib_initSensorDetection(
  * Method:    releaseSensorDetection
  * Signature: ()V
  */
-JNIEXPORT void JNICALL Java_de_jacavi_hal_nat_JNativeCsdLib_releaseSensorDetection(JNIEnv *env, jobject o)
+JNIEXPORT void JNICALL Java_de_jacavi_hal_lib42_NativeCsdLib_releaseSensorDetection(JNIEnv *env, jobject o)
 {
 	releaseSensonrDetection();
 }
