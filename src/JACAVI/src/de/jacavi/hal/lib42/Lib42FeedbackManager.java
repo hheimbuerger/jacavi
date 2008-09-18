@@ -3,6 +3,9 @@ package de.jacavi.hal.lib42;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import de.jacavi.rcp.util.Check;
 
 
@@ -14,6 +17,7 @@ import de.jacavi.rcp.util.Check;
  * @author fro
  */
 public class Lib42FeedbackManager {
+    private static Log log = LogFactory.getLog(Lib42FeedbackManager.class);
 
     private Map<String, Lib42FeedbackConnector> feedbackConnectors = new TreeMap<String, Lib42FeedbackConnector>();
 
@@ -29,10 +33,9 @@ public class Lib42FeedbackManager {
      */
     public void addFeedbackListener(Lib42FeedbackConnector feedbackConnector) {
         Check.Require(feedbackConnector != null, "feedbackConnector may not be null");
-        //if there already exists a feedbackConnector kill him
-        if(feedbackConnectors.containsKey(feedbackConnector.getCarID()+""))
-        {
-            feedbackConnectors.remove(feedbackConnector.getCarID()+"");  
+        // if there already exists a feedbackConnector kill him
+        if(feedbackConnectors.containsKey(feedbackConnector.getCarID() + "")) {
+            feedbackConnectors.remove(feedbackConnector.getCarID() + "");
         }
         // add the new feedback listener
         feedbackConnectors.put(feedbackConnector.getCarID() + "", feedbackConnector);
@@ -60,6 +63,7 @@ public class Lib42FeedbackManager {
      * @param sensorID
      */
     public void distributeFeedback(int carID, int sensorID) {
+        log.debug("FeedbackManager distributes feedback to carid: " + carID + " of sensor" + sensorID);
         if(feedbackConnectors.containsKey(carID + ""))
             feedbackConnectors.get(carID + "").sensorCallback(sensorID);
     }
