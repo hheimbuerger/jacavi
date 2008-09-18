@@ -2,6 +2,7 @@ package de.jacavi.hal;
 
 import java.util.UUID;
 
+import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
 import de.jacavi.rcp.util.Check;
 
 
@@ -20,29 +21,36 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
 
     private final UUID id;
 
-    public SlotCarDriveConnector getDriveConnector() {
-        return driveConnector;
-    }
-
-    public SlotCarFeedbackConnector getFeedbackConnector() {
-        return feedbackConnector;
-    }
-
     private final String name;
 
     private SlotCarDriveConnector driveConnector = null;
 
     private SlotCarFeedbackConnector feedbackConnector = null;
 
+    private TrackDataApproximator tda = null;
+
     public SlotCarSystemConnector(String name, SlotCarDriveConnector driveConnector,
-            SlotCarFeedbackConnector feedbackConnector) {
+            SlotCarFeedbackConnector feedbackConnector, TrackDataApproximator tda) {
         super();
-        Check.Require(driveConnector != null && feedbackConnector != null,
-                "driveConnector and feedbackConnector may not be null");
+        Check.Require(driveConnector != null && feedbackConnector != null && tda != null,
+                "driveConnector and feedbackConnector and tda may not be null");
         this.id = UUID.randomUUID();
         this.name = name;
         this.driveConnector = driveConnector;
         this.feedbackConnector = feedbackConnector;
+        this.tda = tda;
+    }
+
+    public TrackDataApproximator getTda() {
+        return tda;
+    }
+
+    public SlotCarDriveConnector getDriveConnector() {
+        return driveConnector;
+    }
+
+    public SlotCarFeedbackConnector getFeedbackConnector() {
+        return feedbackConnector;
     }
 
     @Override
