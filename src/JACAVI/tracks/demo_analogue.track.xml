@@ -2,6 +2,6 @@
 
 <track name="demo_analogue" tileset="analogue" >
 	
-	
+    <section id="finishingStraight" />
     
 </track>
