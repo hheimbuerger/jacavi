@@ -209,23 +209,26 @@ public class Track {
         invokeListeners();
     }
 
-    public int getLaneLength(int index) {
+    /*public int getLaneLength(int index) {
         int length = 0;
         for(TrackSection s: sections)
             for(LaneSection ls: s.getLane(index).getLaneSections())
                 length += ls.length;
         return length;
-    }
+    }*/
 
     public CarScreenPosition determineScreenPositionFromPosition(CarPosition position) {
-        int length = 0;
+        /*int length = 0;
         for(TrackSection s: sections) {
             Lane lane = s.getLane(position.currentLane);
             if(position.stepsFromStart < length + lane.getLength())
                 return new CarScreenPosition(s, lane.getStepPoint(position.stepsFromStart - length));
             length += lane.getLength();
         }
-        return null;
+        return null;*/
+        TrackSection section = sections.get(position.trackSectionIndex);
+        Lane lane = section.getLane(position.currentLane);
+        return new CarScreenPosition(section, lane.getStepPoint(position));
     }
 
     public List<TrackSection> getSections() {
@@ -331,5 +334,9 @@ public class Track {
         // make sure there's one initial tile in the track
         if(!containsInitial)
             throw new TrackLoadingException("The track " + trackName + " contains no initial tile.");
+    }
+
+    public TrackSection getInitialSection() {
+        return sections.get(0);
     }
 }

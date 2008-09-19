@@ -18,6 +18,14 @@ import de.jacavi.rcp.widgets.TrackWidget;
  * This helps describing the lane as different lane part types can be used, most notably line (a straight point A to
  * point B connection) and quad-bezier (using a Beziér curve to describe a curved part of the lane).
  * <p>
+ * Optionally, the lane sections can be separated into three groups:
+ * <ul>
+ * <li><strong>common</strong> lane sections are always taken
+ * <li><strong>regular</strong> lane sections are taken after the common ones if the car does not take the lane change
+ * path
+ * <li><strong>change</strong> lane sections are taken after the common ones if the car does take the lane change path
+ * </ul>
+ * <p>
  * Instances of this class are created by the {@link TilesetRepository} during initialization and used by the
  * {@link TrackWidget} to draw the cars on the track.
  * <p>
@@ -27,58 +35,17 @@ import de.jacavi.rcp.widgets.TrackWidget;
  */
 public class Lane {
 
-    /** The list of lane sections this lane consists of. */
-    private final List<LaneSection> laneSections = new ArrayList<LaneSection>();
+    /** The list of base lane sections this lane consists of. */
+    private final LaneSectionList laneSectionsCommon = new LaneSectionList();
+
+    /** The list of regular lane sections this lane consists of. */
+    private final LaneSectionList laneSectionsRegular = new LaneSectionList();
+
+    /** The list of change lane sections this lane consists of. */
+    private final LaneSectionList laneSectionsChange = new LaneSectionList();
 
     /** The list of checkpoints this lane has. */
     private final List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
-
-    /**
-     * Appends a new linear lane section at the end of the lane.
-     * 
-     * @param length
-     *            the number of steps a car has to take over this lane section
-     * @param x1
-     *            the x-coordinate of the starting point of the lane section
-     * @param y1
-     *            the y-coordinate of the starting point of the lane section
-     * @param x2
-     *            the x-coordinate of the ending point of the lane section
-     * @param y2
-     *            the y-coordinate of the ending point of the lane section
-     */
-    public void addLine(int length, int x1, int y1, int x2, int y2) {
-        Point entryPoint = new Point(x1, y1);
-        Point exitPoint = new Point(x2, y2);
-        laneSections.add(new LaneSectionLine(length, entryPoint, exitPoint));
-    }
-
-    /**
-     * Appends a new quadratic Beziér curve lane section at the end of the lane.
-     * 
-     * @param length
-     *            the number of steps a car has to take over this lane section
-     * @param x1
-     *            the x-coordinate of the starting point of the lane section
-     * @param y1
-     *            the y-coordinate of the starting point of the lane section
-     * @param x2
-     *            the x-coordinate of the control point of the lane section
-     * @param y2
-     *            the y-coordinate of the control point of the lane section
-     * @param x3
-     *            the x-coordinate of the ending point of the lane section
-     * @param y3
-     *            the y-coordinate of the ending point of the lane section
-     * @param entryToExitAngle
-     *            the difference between the car's angle at the entry point and the exit point of the lane section
-     */
-    public void addQuadBezier(int length, int x1, int y1, int x2, int y2, int x3, int y3, int entryToExitAngle) {
-        Point entryPoint = new Point(x1, y1);
-        Point controlPoint = new Point(x2, y2);
-        Point exitPoint = new Point(x3, y3);
-        laneSections.add(new LaneSectionQuadBezier(length, entryPoint, controlPoint, exitPoint, entryToExitAngle));
-    }
 
     /**
      * Adds a new checkpoint to this lane's checkpoint list.
@@ -94,13 +61,16 @@ public class Lane {
         checkpoints.add(new Checkpoint(id, new Point(x, y)));
     }
 
-    /**
-     * Returns the list of all lane sections of this lane.
-     * 
-     * @return a list of all lane sections of this lane
-     */
-    public List<LaneSection> getLaneSections() {
-        return laneSections;
+    public LaneSectionList getLaneSectionsCommon() {
+        return laneSectionsCommon;
+    }
+
+    public LaneSectionList getLaneSectionsRegular() {
+        return laneSectionsRegular;
+    }
+
+    public LaneSectionList getLaneSectionsChange() {
+        return laneSectionsChange;
     }
 
     /**
@@ -119,12 +89,12 @@ public class Lane {
      * 
      * @return the total length (number of steps) of this lane
      */
-    public int getLength() {
-        int length = 0;
-        for(LaneSection ls: laneSections)
-            length += ls.length;
-        return length;
-    }
+    /*    public int getLength() {
+            int length = 0;
+            for(LaneSection ls: laneSections)
+                length += ls.length;
+            return length;
+        }*/
 
     /**
      * Returns a {@link DirectedPoint} describing the relative point and the angle of a car at the given position.
@@ -135,12 +105,12 @@ public class Lane {
      *            the position (step index) to determine the step point of
      * @return a {@link DirectedPoint} describing the relative point and the angle of a car at the given position
      */
-    public DirectedPoint getStepPoint(int position) {
+    public DirectedPoint getStepPoint(CarPosition position) {
         int currentPos = 0;
         Angle currentAngle = new Angle(0);
-        for(LaneSection ls: laneSections) {
-            if(position < currentPos + ls.length) {
-                DirectedPoint stepPoint = ls.getStepPoint(position - currentPos);
+        for(LaneSection ls: laneSectionsCommon) {
+            if(position.stepsInTile < currentPos + ls.length) {
+                DirectedPoint stepPoint = ls.getStepPoint(position.stepsInTile - currentPos);
                 stepPoint.angle.turn(currentAngle);
                 return stepPoint;
             }
@@ -149,5 +119,4 @@ public class Lane {
         }
         return null;
     }
-
 }

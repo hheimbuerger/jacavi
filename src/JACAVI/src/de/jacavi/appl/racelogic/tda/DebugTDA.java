@@ -35,11 +35,11 @@ public class DebugTDA extends TrackDataApproximator {
         // determine the new position;
         int stepsToMove = ((int) speed) / 10;
 
-        logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove
-                + "), topSpeed (" + car.getTopSpeed() + ")");
+        /*logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove
+                + "), topSpeed (" + car.getTopSpeed() + ")");*/
 
         // move
-        carPosition.moveSteps(stepsToMove, track.getLaneLength(carPosition.currentLane));
+        carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
 
         lastGametick = gametick;
     }

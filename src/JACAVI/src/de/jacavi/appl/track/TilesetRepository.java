@@ -119,34 +119,63 @@ public class TilesetRepository {
     private Lane importLane(Tileset tileset, Element tileDataElement)
             throws TilesetRepositoryInitializationFailedException {
         Lane lane = new Lane();
+        boolean isChangeLane = tileDataElement.hasAttribute("isChangeLane")
+                && tileDataElement.getAttribute("isChangeLane").equals("true");
 
         NodeList laneSectionNodes = tileDataElement.getChildNodes();
+
+        if(isChangeLane) {
+            for(int i = 0; i < laneSectionNodes.getLength(); i++) {
+                if(laneSectionNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                    Element laneSection = (Element) laneSectionNodes.item(i);
+                    if(laneSection.getNodeName().equals("common")) {
+                        importLaneSections(lane, lane.getLaneSectionsCommon(), laneSection.getChildNodes());
+                    } else if(laneSection.getNodeName().equals("regular")) {
+                        importLaneSections(lane, lane.getLaneSectionsRegular(), laneSection.getChildNodes());
+                    } else if(laneSection.getNodeName().equals("change")) {
+                        importLaneSections(lane, lane.getLaneSectionsChange(), laneSection.getChildNodes());
+                    } else if(laneSection.getNodeName().equals("checkpoint")) {
+                        lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection
+                                .getAttribute("x")), Integer.valueOf(laneSection.getAttribute("y")));
+                    } else {
+                        throw new TilesetRepositoryInitializationFailedException("Invalid lane section in lane: "
+                                + laneSection.getNodeName());
+                    }
+                }
+            }
+        } else
+            importLaneSections(lane, lane.getLaneSectionsCommon(), laneSectionNodes);
+
+        return lane;
+    }
+
+    private void importLaneSections(Lane lane, LaneSectionList laneSectionsCommon, NodeList laneSectionNodes)
+            throws TilesetRepositoryInitializationFailedException {
         for(int i = 0; i < laneSectionNodes.getLength(); i++) {
             if(laneSectionNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element laneSection = (Element) laneSectionNodes.item(i);
                 if(laneSection.getNodeName().equals("line")) {
-                    lane.addLine(Integer.valueOf(laneSection.getAttribute("length")), Integer.valueOf(laneSection
-                            .getAttribute("x1")), Integer.valueOf(laneSection.getAttribute("y1")), Integer
-                            .valueOf(laneSection.getAttribute("x2")), Integer.valueOf(laneSection.getAttribute("y2")));
+                    laneSectionsCommon.addLine(Integer.valueOf(laneSection.getAttribute("length")), Integer
+                            .valueOf(laneSection.getAttribute("x1")), Integer.valueOf(laneSection.getAttribute("y1")),
+                            Integer.valueOf(laneSection.getAttribute("x2")), Integer.valueOf(laneSection
+                                    .getAttribute("y2")));
                 } else if(laneSection.getNodeName().equals("quad-bezier")) {
-                    lane
-                            .addQuadBezier(Integer.valueOf(laneSection.getAttribute("length")), Integer
-                                    .valueOf(laneSection.getAttribute("x1")), Integer.valueOf(laneSection
-                                    .getAttribute("y1")), Integer.valueOf(laneSection.getAttribute("x2")), Integer
-                                    .valueOf(laneSection.getAttribute("y2")), Integer.valueOf(laneSection
-                                    .getAttribute("x3")), Integer.valueOf(laneSection.getAttribute("y3")), Integer
-                                    .valueOf(laneSection.getAttribute("entryToExitAngle")));
+                    laneSectionsCommon.addQuadBezier(Integer.valueOf(laneSection.getAttribute("length")), Integer
+                            .valueOf(laneSection.getAttribute("x1")), Integer.valueOf(laneSection.getAttribute("y1")),
+                            Integer.valueOf(laneSection.getAttribute("x2")), Integer.valueOf(laneSection
+                                    .getAttribute("y2")), Integer.valueOf(laneSection.getAttribute("x3")), Integer
+                                    .valueOf(laneSection.getAttribute("y3")), Integer.valueOf(laneSection
+                                    .getAttribute("entryToExitAngle")));
                 } else if(laneSection.getNodeName().equals("checkpoint")) {
                     lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection.getAttribute("x")),
                             Integer.valueOf(laneSection.getAttribute("y")));
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid lane section in lane: "
                             + laneSection.getNodeName());
+
                 }
             }
         }
-
-        return lane;
     }
 
     public Tileset getTileset(String id) {
