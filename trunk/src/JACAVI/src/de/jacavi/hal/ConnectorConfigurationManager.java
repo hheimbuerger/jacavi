@@ -29,14 +29,13 @@ public class ConnectorConfigurationManager {
      */
     private static final Logger logger = Logger.getLogger(ConnectorConfigurationManager.class);
 
+    private ConnectorFactory connectorFactory = null;
+
     private final Map<UUID, SlotCarSystemConnector> connectors = new TreeMap<UUID, SlotCarSystemConnector>();
 
     public ConnectorConfigurationManager(ConnectorFactory connectorFactory) {
         logger.info("instantiating ConnectorConfigurationManager.");
-        // create one simulated connector (dummy)
-        // TODO: create three more if other players want to play simulated
-        SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
-        addConnector(simulatedConnector);
+        this.connectorFactory = connectorFactory;
     }
 
     /**
@@ -61,6 +60,18 @@ public class ConnectorConfigurationManager {
         }
 
         connectors.put(connector.getId(), connector);
+    }
+
+    /**
+     * Initialize default connectors here.
+     * <p>
+     * On spring bean creation this method is called
+     */
+    public void createDefaultConnectors() {
+        // create one simulated connector (dummy)
+        // TODO: create three more if other players want to play simulated
+        SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
+        addConnector(simulatedConnector);
     }
 
     /**
