@@ -15,7 +15,9 @@
 	<bean id="tilesetRepositoryBean" class="de.jacavi.appl.track.TilesetRepository" lazy-init="true">
 		<constructor-arg type="java.lang.String" value="${de.jacavi.appl.track.TilesetRepository.definition-path}" />
 	</bean>
-
+	
+	<bean id="tdaInjectorFactory" class="de.jacavi.appl.racelogic.tda.TDAInjectorFactory"/>
+	
     <bean id="carRepositoryBean" class="de.jacavi.appl.car.CarRepository" lazy-init="true">
         <constructor-arg type="java.lang.String" value="${de.jacavi.appl.track.CarRepository.definition-path}" />
         <constructor-arg ref="tilesetRepositoryBean" />
