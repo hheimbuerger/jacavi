@@ -26,7 +26,9 @@ public class GameControllerDevice extends DeviceController {
 
         int speed = normaliseSpeedSignal(device.getY());
         boolean mainButtonDown = device.isButtonDown(Joystick.BUTTON1);
-        return new ControllerSignal(speed, mainButtonDown);
+        boolean frontLightButton = device.isButtonDown(Joystick.BUTTON2);
+        boolean backLighButton = device.isButtonDown(Joystick.BUTTON3);
+        return new ControllerSignal(speed, mainButtonDown, frontLightButton, backLighButton);
     }
 
     @Override

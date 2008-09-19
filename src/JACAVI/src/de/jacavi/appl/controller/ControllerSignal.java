@@ -57,6 +57,13 @@ public class ControllerSignal {
         this.trigger = trigger;
     }
 
+    public ControllerSignal(int speed, boolean trigger, boolean frontLight, boolean backLight) {
+        this.speed = speed;
+        this.trigger = trigger;
+        this.switchFrontLight = frontLight;
+        this.switchBackLight = backLight;
+    }
+
     public int getSpeed() {
         return speed;
     }
