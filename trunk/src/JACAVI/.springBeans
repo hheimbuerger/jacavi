@@ -8,7 +8,6 @@
 	<enableImports><![CDATA[true]]></enableImports>
 	<configs>
 		<config>resources/applicationContext.xml</config>
-		<config>resources/configurationBeans.xml</config>
 	</configs>
 	<configSets>
 	</configSets>

@@ -10,7 +10,6 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
-import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
@@ -32,11 +31,10 @@ public class ConnectorConfigurationManager {
 
     private final Map<UUID, SlotCarSystemConnector> connectors = new TreeMap<UUID, SlotCarSystemConnector>();
 
-    public ConnectorConfigurationManager() {
+    public ConnectorConfigurationManager(ConnectorFactory connectorFactory) {
         logger.info("instantiating ConnectorConfigurationManager.");
         // create one simulated connector (dummy)
         // TODO: create three more if other players want to play simulated
-        ConnectorFactory connectorFactory = (ConnectorFactory) ContextLoader.getBean("slotCarSystemConnectorFactory");
         SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
         addConnector(simulatedConnector);
     }
