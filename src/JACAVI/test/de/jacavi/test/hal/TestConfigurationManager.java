@@ -7,7 +7,9 @@ import junit.framework.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.ConnectorConfigurationManager;
+import de.jacavi.hal.ConnectorFactory;
 import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.hal.SlotCarSystemConnectorFactory;
 
@@ -21,7 +23,8 @@ public class TestConfigurationManager {
 
     @Before
     public void setUp() throws Exception {
-        connectorManager = new ConnectorConfigurationManager();
+        connectorManager = new ConnectorConfigurationManager((ConnectorFactory) ContextLoader
+                .getBean("slotCarSystemConnectorFactory"));
         factory = new SlotCarSystemConnectorFactory();
     }
 
