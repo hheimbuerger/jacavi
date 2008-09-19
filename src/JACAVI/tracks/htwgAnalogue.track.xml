@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<track name="analogTEST" tileset="analogue" >
+<track name="HTWG Analogue Track" tileset="analogue" >
 
     <section id="finishingStraight" />
 	<section id="straight"/>
