@@ -73,12 +73,14 @@ public class Player {
 
     public void setSlotCarSystemConnector(SlotCarSystemConnector slotCarSystemConnector) {
         this.slotCarSystemConnector = slotCarSystemConnector;
-        // get the tda from the SlotCarSystemConnector and set it
-        this.tda = slotCarSystemConnector.getTda();
     }
 
     public TrackDataApproximator getTda() {
         return tda;
+    }
+
+    public void setTda(TrackDataApproximator tda) {
+        this.tda = tda;
     }
 
     public void setColor(Color color) {

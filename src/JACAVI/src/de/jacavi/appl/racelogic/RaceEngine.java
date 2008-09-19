@@ -6,8 +6,10 @@ import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
+import de.jacavi.appl.racelogic.tda.TDAInjectorFactory;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
@@ -38,7 +40,7 @@ public class RaceEngine {
 
     private List<Player> players;
 
-    public RaceEngine() {}
+    private RaceEngine() {}
 
     public void setPlayers(List<Player> players) {
         this.players = players;
@@ -55,23 +57,30 @@ public class RaceEngine {
         Check.Require(activeTrack != null, "activeTrack may not be null");
         Check.Require(raceView != null, "raceView may not be null");
 
+        logger.debug("###RaceTimerInterval " + raceTimerInterval);
+
         if(!isTimerRunning) {
             this.track = activeTrack;
             this.raceView = raceView;
 
-            // create new timer feed with RaceTimerTask and start it
-            raceTimer = new Timer();
-            raceTimer.schedule(new RaceTimerTask(), 0, raceTimerInterval);
-            isTimerRunning = true;
+            // get the tda injector factory
+            TDAInjectorFactory tdaInjector = (TDAInjectorFactory) ContextLoader.getBean("tdaInjectorFactory");
 
             // TODO: assign all cars to their starting position
             int i = 0;
-            for(Player player: players)
+            for(Player player: players) {
                 player.getPosition().reset(i++ % track.getTileset().getLaneCount());
-
-            // prepare devices
-            for(Player player: players)
+                // inject each player with an specific tda
+                tdaInjector.initializeTDA(player);
+                // prepare devices
                 player.getController().activate();
+            }
+            isTimerRunning = true;
+
+            // create new timer feed with RaceTimerTask and start it
+            raceTimer = new Timer();
+            raceTimer.schedule(new RaceTimerTask(), 0, raceTimerInterval);
+
         } else {
             logger.error("RaceEngine.startRace() was invoked but timer was already running. Race was *not* started!");
         }
@@ -85,7 +94,7 @@ public class RaceEngine {
             // disorganize devices
             for(Player player: players) {
                 player.getController().deactivate();
-                //all cars stop when the game stops
+                // all cars stop when the game stops
                 player.getSlotCarSystemConnector().getDriveConnector().fullBreak();
             }
             raceTimer.cancel();
