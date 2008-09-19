@@ -88,6 +88,7 @@ public class TilesetRepository {
         Point exitPoint = null;
         int entryToExitAngle = 0;
         List<Lane> lanes = new ArrayList<Lane>();
+        int laneIndex = 0;
 
         NodeList tileDataNodes = tileElement.getChildNodes();
         for(int i = 0; i < tileDataNodes.getLength(); i++) {
@@ -104,7 +105,8 @@ public class TilesetRepository {
                 } else if(tileDataElement.getNodeName().equals("entryToExitAngle")) {
                     entryToExitAngle = Integer.valueOf(Integer.valueOf(tileDataElement.getTextContent()));
                 } else if(tileDataElement.getNodeName().equals("lane")) {
-                    lanes.add(importLane(tileset, tileDataElement));
+                    lanes.add(importLane(tileset, tileDataElement, laneIndex));
+                    laneIndex++;
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid element in tile: "
                             + tileDataElement.getNodeName());
@@ -116,11 +118,14 @@ public class TilesetRepository {
                 lanes.toArray(new Lane[lanes.size()])));
     }
 
-    private Lane importLane(Tileset tileset, Element tileDataElement)
+    private Lane importLane(Tileset tileset, Element tileDataElement, int laneIndex)
             throws TilesetRepositoryInitializationFailedException {
         Lane lane = new Lane();
         boolean isChangeLane = tileDataElement.hasAttribute("isChangeLane")
                 && tileDataElement.getAttribute("isChangeLane").equals("true");
+        int regularExit = tileDataElement.hasAttribute("exitLane") ? Integer.valueOf(tileDataElement
+                .getAttribute("exitLane")) : laneIndex;
+        int changeExit = laneIndex;
 
         NodeList laneSectionNodes = tileDataElement.getChildNodes();
 
@@ -131,8 +136,12 @@ public class TilesetRepository {
                     if(laneSection.getNodeName().equals("common")) {
                         importLaneSections(lane, lane.getLaneSectionsCommon(), laneSection.getChildNodes());
                     } else if(laneSection.getNodeName().equals("regular")) {
+                        if(laneSection.hasAttribute("exitLane"))
+                            regularExit = Integer.valueOf(laneSection.getAttribute("exitLane"));
                         importLaneSections(lane, lane.getLaneSectionsRegular(), laneSection.getChildNodes());
                     } else if(laneSection.getNodeName().equals("change")) {
+                        if(laneSection.hasAttribute("exitLane"))
+                            changeExit = Integer.valueOf(laneSection.getAttribute("exitLane"));
                         importLaneSections(lane, lane.getLaneSectionsChange(), laneSection.getChildNodes());
                     } else if(laneSection.getNodeName().equals("checkpoint")) {
                         lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection
@@ -145,6 +154,8 @@ public class TilesetRepository {
             }
         } else
             importLaneSections(lane, lane.getLaneSectionsCommon(), laneSectionNodes);
+
+        lane.setExits(regularExit, changeExit);
 
         return lane;
     }

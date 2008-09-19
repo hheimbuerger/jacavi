@@ -47,6 +47,12 @@ public class Lane {
     /** The list of checkpoints this lane has. */
     private final List<Checkpoint> checkpoints = new ArrayList<Checkpoint>();
 
+    /** The lane index this lane ends on in the regular case. */
+    private int regularExitLaneIndex;
+
+    /** The lane index this land ends on in the lane change case. */
+    private int changeExitLaneIndex;
+
     /**
      * Adds a new checkpoint to this lane's checkpoint list.
      * 
@@ -82,19 +88,18 @@ public class Lane {
         return checkpoints;
     }
 
-    /**
-     * Returns the total length (number of steps) this lane consists of.
-     * <p>
-     * The length of a lane is always equal to the sum of all the lengths of all the lane's sections.
-     * 
-     * @return the total length (number of steps) of this lane
-     */
-    /*    public int getLength() {
-            int length = 0;
-            for(LaneSection ls: laneSections)
-                length += ls.length;
-            return length;
-        }*/
+    public void setExits(int regularExit, int changeExit) {
+        regularExitLaneIndex = regularExit;
+        changeExitLaneIndex = changeExit;
+    }
+
+    public int getRegularExitLaneIndex() {
+        return regularExitLaneIndex;
+    }
+
+    public int getChangeExitLaneIndex() {
+        return changeExitLaneIndex;
+    }
 
     /**
      * Returns a {@link DirectedPoint} describing the relative point and the angle of a car at the given position.
@@ -102,7 +107,7 @@ public class Lane {
      * The point is given relative to the tile's center.
      * 
      * @param position
-     *            the position (step index) to determine the step point of
+     *            the position to determine the step point of
      * @return a {@link DirectedPoint} describing the relative point and the angle of a car at the given position
      */
     public DirectedPoint getStepPoint(CarPosition position) {
@@ -119,4 +124,5 @@ public class Lane {
         }
         return null;
     }
+
 }
