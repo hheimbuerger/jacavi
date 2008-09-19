@@ -29,6 +29,26 @@
                 <checkpoint id="cp2" x="-26" y="8" />
             </lane>
         </tile>
+        <tile id="crossover" name="crossover">
+            <filename>crossover.png</filename>
+            <entryPoint x="-26" y="0" />
+            <exitPoint x="26" y="0" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane exitLane="1">
+                <line length="15" x1="-26" y1="-5" x2="-11" y2="-5" />
+                <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                     and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                <line length="20" x1="-11" y1="-5" x2="11" y2="5" />
+                <line length="25" x1="11" y1="5" x2="26" y2="5" />
+            </lane>
+            <lane exitLane="0">
+                <line length="15" x1="-26" y1="5" x2="-11" y2="5" />
+                <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                     and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                <line length="20" x1="-11" y1="5" x2="11" y2="-5" />
+                <line length="25" x1="11" y1="-5" x2="26" y2="-5" />
+            </lane>
+        </tile>
         <tile id="lane_change_lr" name="lane change L->R">
             <filename>lane_change_lr.png</filename>
             <entryPoint x="-26" y="0" />
@@ -38,10 +58,10 @@
                 <common>
                     <line length="15" x1="-26" y1="-5" x2="-11" y2="-5" />
                 </common>
-                <regular>
+                <regular exitLane="0">
                     <line length="35" x1="-11" y1="-5" x2="26" y2="-5" />
                 </regular>
-                <change>
+                <change exitLane="1">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
                     <line length="20" x1="-11" y1="-5" x2="11" y2="5" />
@@ -64,10 +84,10 @@
                 <common>
                     <line length="15" x1="-26" y1="5" x2="-11" y2="5" />
                 </common>
-                <regular>
+                <regular exitLane="1">
                     <line length="35" x1="-11" y1="5" x2="26" y2="5" />
                 </regular>
-                <change>
+                <change exitLane="0">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
                     <line length="20" x1="-11" y1="5" x2="11" y2="-5" />

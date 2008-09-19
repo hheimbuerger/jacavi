@@ -39,7 +39,8 @@ public class CarPosition {
     }
 
     private int moveOverTile(Track track, int remainingSteps, Tile currentTile) {
-        LaneSectionList laneSectionsCommon = currentTile.getLane(currentLane).getLaneSectionsCommon();
+        Lane lane = currentTile.getLane(currentLane);
+        LaneSectionList laneSectionsCommon = lane.getLaneSectionsCommon();
 
         int commonSteps = laneSectionsCommon.getLength();
         if(remainingSteps < commonSteps - stepsInTile) {
@@ -47,6 +48,7 @@ public class CarPosition {
             return 0;
         } else {
             stepsInTile = 0;
+            currentLane = isOnLaneChange ? lane.getChangeExitLaneIndex() : lane.getRegularExitLaneIndex();
             trackSectionIndex++;
             if(trackSectionIndex >= track.getSections().size()) {
                 trackSectionIndex = 0;
