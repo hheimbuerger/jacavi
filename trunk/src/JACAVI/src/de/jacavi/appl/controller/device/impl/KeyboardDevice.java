@@ -74,6 +74,16 @@ public class KeyboardDevice extends DeviceController implements Listener {
         if(event.keyCode == keyboardLayout.getTriggerButton()) {
             handleTrigger(event.type);
         }
+
+        // frontLight
+        if(event.keyCode == keyboardLayout.getFrontLightButton()) {
+            handleFrontLight(event.type);
+        }
+
+        // backLight
+        if(event.keyCode == keyboardLayout.getBackLightButton()) {
+            handleBackLight(event.type);
+        }
     }
 
     private void handleTrigger(int eventType) {
@@ -88,4 +98,13 @@ public class KeyboardDevice extends DeviceController implements Listener {
         currentControllerSignal.setSpeed(Math.min(speed + speedStepConstant, 100));
     }
 
+    private void handleFrontLight(int eventType) {
+        System.out.println("front light");
+        currentControllerSignal.setSwitchFrontLight(eventType == SWT.KeyDown);
+    }
+
+    private void handleBackLight(int eventType) {
+        System.out.println("back light");
+        currentControllerSignal.setSwitchBackLight(eventType == SWT.KeyDown);
+    }
 }
