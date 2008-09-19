@@ -253,7 +253,7 @@
 
     <tileset id="analogue" laneCount="4">
      <tile id="finishingStraight" name="finishing straight" isInitial="true">
-            <filename>straight.png</filename>
+            <filename>straightTEST.png</filename>
             <entryPoint x="49" y="0" />
             <exitPoint x="-49" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
@@ -271,9 +271,9 @@
             </lane>
         </tile>
         <tile id="straight" name="Straight">
-            <filename>straight.png</filename>
-            <entryPoint x="49" y="0" />
-            <exitPoint x="-49" y="0" />
+            <filename>straightTEST.png</filename>
+            <entryPoint x="51" y="0" />
+            <exitPoint x="-50" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="99" x1="49" y1="-47" x2="-49" y2="-47" />
@@ -289,9 +289,9 @@
             </lane>
         </tile>
         <tile id="straightShort" name="Straight (short)">
-            <filename>straightShort.png</filename>
-            <entryPoint x="16" y="0" />
-            <exitPoint x="-16" y="0" />
+            <filename>straightShortTEST.png</filename>
+            <entryPoint x="14" y="0" />
+            <exitPoint x="-14" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="33" x1="16" y1="-47" x2="-16" y2="-47" />
@@ -363,7 +363,7 @@
         <tile id="turn30deg460TEST" name="30° turn460 TEST">
             <filename>kurve_460px.png</filename>
             <entryPoint x="71" y="-12" />
-            <exitPoint x="-43" y="19" />
+            <exitPoint x="-42" y="18" />
             <entryToExitAngle>-30</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="42" y1="-51" x2="5" y2="-52" x3="-36" y3="-30" entryToExitAngle="30" />
@@ -381,7 +381,7 @@
         <tile id="turn30deg460_2TEST" name="30° turn2_460 TEST">
             <filename>kurve_460px2.png</filename>
             <entryPoint x="71" y="12" />
-            <exitPoint x="-43" y="-19" />
+            <exitPoint x="-42" y="-18" />
             <entryToExitAngle>30</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="42" y1="-44" x2="24" y2="-45" x3="12" y3="-52" entryToExitAngle="-30" />
@@ -399,7 +399,7 @@
         <tile id="turn30deg336TEST" name="30° turn336 TEST">
             <filename>kurve_336px.png</filename>
             <entryPoint x="57" y="-8" />
-            <exitPoint x="-27" y="15" />
+            <exitPoint x="-26" y="15" />
             <entryToExitAngle>-30</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="42" y1="-51" x2="5" y2="-52" x3="-36" y3="-30" entryToExitAngle="30" />
@@ -435,7 +435,7 @@
         <tile id="turn30deg230TEST" name="30° turn230 TEST">
             <filename>kurve_230px.png</filename>
             <entryPoint x="42" y="-4" />
-            <exitPoint x="-15" y="12" />
+            <exitPoint x="-14" y="11" />
             <entryToExitAngle>-30</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="42" y1="-51" x2="5" y2="-52" x3="-36" y3="-30" entryToExitAngle="30" />
@@ -453,7 +453,7 @@
         <tile id="turn30deg230_2TEST" name="30° turn2_230 TEST">
             <filename>kurve_230px2.png</filename>
             <entryPoint x="42" y="4" />
-            <exitPoint x="-15" y="-12" />
+            <exitPoint x="-14" y="-11" />
             <entryToExitAngle>30</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="42" y1="-44" x2="24" y2="-45" x3="12" y3="-52" entryToExitAngle="-30" />
