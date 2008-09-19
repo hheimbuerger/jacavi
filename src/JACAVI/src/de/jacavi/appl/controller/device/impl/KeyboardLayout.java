@@ -15,20 +15,27 @@ public class KeyboardLayout {
 
     private int triggerButton;
 
+    private int frontLightButton;
+
+    private int backLightButton;
+
     // possible would be also a handbrake or boost button, because the handling with the keyboard isn't the best in
     // comparison to wiimote or gamepad
-
-    public static KeyboardLayout Default = new KeyboardLayout(SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.CONTROL);
+    // 121 is y and 120 is x
+    public static KeyboardLayout Default = new KeyboardLayout(SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.CONTROL, 121, 120);
 
     /**
      * @param accelerationButton
      * @param brakeButton
-     *      Please use SWT Constants like <code>SWT.ARROW_UP</code> for key specification
+     *            Please use SWT Constants like <code>SWT.ARROW_UP</code> for key specification
      */
-    public KeyboardLayout(int accelerationButton, int brakeButton, int triggerButton) {
+    public KeyboardLayout(int accelerationButton, int brakeButton, int triggerButton, int frontLightButton,
+            int backLightButton) {
         this.accelerationButton = accelerationButton;
         this.brakeButton = brakeButton;
         this.triggerButton = triggerButton;
+        this.frontLightButton = frontLightButton;
+        this.backLightButton = backLightButton;
     }
 
     public int getAccelerationButton() {
@@ -53,6 +60,22 @@ public class KeyboardLayout {
 
     public void setTriggerButton(int triggerButton) {
         this.triggerButton = triggerButton;
+    }
+
+    public int getFrontLightButton() {
+        return frontLightButton;
+    }
+
+    public void setFrontLightButton(int frontLightButton) {
+        this.frontLightButton = frontLightButton;
+    }
+
+    public int getBackLightButton() {
+        return backLightButton;
+    }
+
+    public void setBackLightButton(int backLightButton) {
+        this.backLightButton = backLightButton;
     }
 
 }
