@@ -780,7 +780,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
                 for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
                     g.setColor(laneColors[laneIndex]);
-                    for(LaneSection ls: s.getLane(laneIndex).getLaneSections())
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsCommon())
+                        g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsRegular())
+                        g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsChange())
                         g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
                     for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
                         g.draw(lanePlacementTransformation.createTransformedShape(new Rectangle2D.Double(

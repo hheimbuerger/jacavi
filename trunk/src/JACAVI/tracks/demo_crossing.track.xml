@@ -9,7 +9,7 @@
     <section id="turn90deg" />
     <section id="turn30deg" />
     <section id="straight" />
-    <section id="straight" />
+    <section id="lane_change_lr" />
     <section id="straight" />
     <section id="straight" />
     <section id="straight" />
@@ -22,7 +22,7 @@
     <section id="turn90deg" />
     <section id="turn30deg" />
     <section id="turn30deg" />
-    <section id="straight" />
+    <section id="lane_change_rl" />
     <section id="straight" />
 
 </track>
