@@ -36,7 +36,7 @@ public class StartRaceAction extends RaceControlAction {
     public void run(IAction action) {
         // TODO
         // # Check if all players have a non-empty name and a selected car. Abort and report if not.
-        // # Check if all players have an input device that is connected (InputDeviceManager has to be asked for the ID)
+        // # Check if all players have an input device that is connected (CarControllerManager has to be asked for the ID)
         // . Abort and report if not.
         // # Check if all players have a technology that is connected and configured (TechnologyConfigurationManager has
         // to be asked for the ID). Abort and report if not.

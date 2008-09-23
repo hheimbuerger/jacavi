@@ -23,9 +23,9 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.Shell;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.controller.CarControllerManager;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
-import de.jacavi.appl.controller.device.InputDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 import de.jacavi.appl.controller.device.impl.MouseDevice;
@@ -36,7 +36,7 @@ import de.jacavi.rcp.Activator;
 
 public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
-    private final InputDeviceManager inputDeviceManager;
+    private final CarControllerManager carControllerManager;
 
     private Label labelGameControllerName;
 
@@ -79,10 +79,10 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
         private final ProgressBar progressBar;
 
-        private final InputDeviceManager inputDeviceManager;
+        private final CarControllerManager carControllerManager;
 
-        public DevicePreviewUpdater(InputDeviceManager inputDeviceManager, UUID deviceID, ProgressBar progressBar) {
-            this.inputDeviceManager = inputDeviceManager;
+        public DevicePreviewUpdater(CarControllerManager inputDeviceManager, UUID deviceID, ProgressBar progressBar) {
+            this.carControllerManager = inputDeviceManager;
             this.deviceID = deviceID;
             this.progressBar = progressBar;
         }
@@ -92,8 +92,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    if(!progressBar.isDisposed() && inputDeviceManager.isIdValid(deviceID)) {
-                        ControllerSignal signal = inputDeviceManager.getDevice(deviceID).poll();
+                    if(!progressBar.isDisposed() && carControllerManager.isIdValid(deviceID)) {
+                        ControllerSignal signal = carControllerManager.getDevice(deviceID).poll();
                         progressBar.setSelection(signal.getSpeed());
                         progressBar.setForeground(signal.isTrigger() ? Display.getDefault().getSystemColor(
                                 SWT.COLOR_DARK_MAGENTA) : null);
@@ -106,7 +106,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     public InputDeviceSettingsDialog(Shell parentShell) {
         super(parentShell);
 
-        inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
+        carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
 
         // prepare the images
         imageManager.put("imageKeyboard", Activator.getImageDescriptor("/icons/input_devices/keyboard.png")
@@ -211,7 +211,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         labelDEBUGPlaceholder.setText("[CONTROLS FOR ADDING/REMOVING/MODIFYING KEYBOARD LAYOUTS GO HERE]");
 
         // fill the list with the initial layouts
-        for(DeviceController d: inputDeviceManager.getInputDevicesByType(KeyboardDevice.class))
+        for(DeviceController d: carControllerManager.getInputDevicesByType(KeyboardDevice.class))
             listKeyboardLayouts.add(d.getName());
     }
 
@@ -273,7 +273,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         // create the layout manager for laying out the inner widgets
         c.setLayout(new FormLayout());
 
-        if(inputDeviceManager.isGameControllerSupportAvailable()) {
+        if(carControllerManager.isGameControllerSupportAvailable()) {
             // create the "Connected devices:" label
             Label labelConnectedDevices = new Label(c, SWT.WRAP);
             FormData fd1 = new FormData();
@@ -380,7 +380,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         // create the layout manager for laying out the inner widgets
         c.setLayout(new FormLayout());
 
-        if(inputDeviceManager.isWiimoteSupportAvailable()) {
+        if(carControllerManager.isWiimoteSupportAvailable()) {
             // create the "Connected devices:" label
             Label labelConnectedDevices = new Label(c, SWT.WRAP);
             FormData fd1 = new FormData();
@@ -474,9 +474,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             previewUpdater.cancel();
 
         // start the redetection
-        inputDeviceManager.redetectGameControllers();
+        carControllerManager.redetectGameControllers();
         updateDeviceList();
-        gameControllers = inputDeviceManager.getInputDevicesByType(GameControllerDevice.class);
+        gameControllers = carControllerManager.getInputDevicesByType(GameControllerDevice.class);
 
         // update the list
         listConnectedGameControllers.removeAll();
@@ -491,13 +491,13 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             previewUpdater.cancel();
 
         // start the redetection
-        inputDeviceManager.redetectWiimotes();
+        carControllerManager.redetectWiimotes();
         updateDeviceList();
-        wiimotes = inputDeviceManager.getInputDevicesByType(WiimoteDevice.class);
+        wiimotes = carControllerManager.getInputDevicesByType(WiimoteDevice.class);
 
         // update the list
         listConnectedWiimotes.removeAll();
-        for(DeviceController d: inputDeviceManager.getInputDevicesByType(WiimoteDevice.class))
+        for(DeviceController d: carControllerManager.getInputDevicesByType(WiimoteDevice.class))
             listConnectedWiimotes.add(d.getName());
         handleSelectionDetectedWiimote(e);
     }
@@ -510,7 +510,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         currentKeyboardLayout = null;
 
         int selectionIndex = listKeyboardLayouts.getSelectionIndex();
-        java.util.List<DeviceController> keyboardDevices = inputDeviceManager
+        java.util.List<DeviceController> keyboardDevices = carControllerManager
                 .getInputDevicesByType(KeyboardDevice.class);
         if(selectionIndex >= 0 && selectionIndex <= keyboardDevices.size()) {
             buttonTestKeyboardLayout.setEnabled(true);
@@ -532,13 +532,13 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             buttonTestKeyboardLayout.setText("Preview");
         } else { // user clicked 'preview'
             int selectionIndex = listKeyboardLayouts.getSelectionIndex();
-            java.util.List<DeviceController> keyboardDevices = inputDeviceManager
+            java.util.List<DeviceController> keyboardDevices = carControllerManager
                     .getInputDevicesByType(KeyboardDevice.class);
             if(selectionIndex >= 0 && selectionIndex <= keyboardDevices.size()) {
                 currentKeyboardLayout = (KeyboardDevice) keyboardDevices.get(selectionIndex);
                 currentKeyboardLayout.activate();
                 previewUpdater = new Timer("previewUpdater");
-                previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, currentKeyboardLayout.getId(),
+                previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, currentKeyboardLayout.getId(),
                         keyboardThrustGauge), 50, 50);
                 buttonTestKeyboardLayout.setText("Stop previewing");
             }
@@ -555,12 +555,13 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             mouseThrustGauge.setSelection(0);
             buttonTestMouseLayout.setText("Preview");
         } else { // user clicked 'preview'
-            java.util.List<DeviceController> mouseDevices = inputDeviceManager.getInputDevicesByType(MouseDevice.class);
+            java.util.List<DeviceController> mouseDevices = carControllerManager
+                    .getInputDevicesByType(MouseDevice.class);
             if(mouseDevices.size() > 0) {
                 currentMouse = (MouseDevice) mouseDevices.get(0);
                 currentMouse.activate();
                 previewUpdater = new Timer("previewUpdater");
-                previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, currentMouse.getId(),
+                previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, currentMouse.getId(),
                         mouseThrustGauge), 50, 50);
                 buttonTestMouseLayout.setText("Stop previewing");
             }
@@ -584,7 +585,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             }
             labelCapabilities.setText(capabilities.toString());
             previewUpdater = new Timer("previewUpdater");
-            previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, gameController.getId(),
+            previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, gameController.getId(),
                     gameControllerThrustGauge), 50, 50);
         } else {
             labelGameControllerName.setText("");
@@ -602,8 +603,8 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= wiimotes.size()) {
             WiimoteDevice wiimote = (WiimoteDevice) wiimotes.get(selectionIndex);
             previewUpdater = new Timer("wiimotePreviewUpdater");
-            previewUpdater.schedule(new DevicePreviewUpdater(inputDeviceManager, wiimote.getId(), wiimoteThrustGauge),
-                    50, 50);
+            previewUpdater.schedule(
+                    new DevicePreviewUpdater(carControllerManager, wiimote.getId(), wiimoteThrustGauge), 50, 50);
         } else {
             wiimoteThrustGauge.setSelection(0);
         }
@@ -629,7 +630,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     @Override
     protected void fillDeviceList(List deviceList) {
-        for(DeviceController dc: inputDeviceManager.getInputDevices())
+        for(DeviceController dc: carControllerManager.getInputDevices())
             deviceList.add(dc.getName());
     }
 }

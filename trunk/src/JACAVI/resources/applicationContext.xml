@@ -28,7 +28,7 @@
 		<property name="raceTimerInterval" value="${raceTimerInterval}" />
 	</bean>
 
-    <bean id="inputDeviceManagerBean" class="de.jacavi.appl.controller.device.InputDeviceManager" />
+    <bean id="carControllerManagerBean" class="de.jacavi.appl.controller.CarControllerManager" />
 
 	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.hal.SlotCarSystemConnectorFactory" /> 
 
