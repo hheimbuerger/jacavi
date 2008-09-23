@@ -3,10 +3,16 @@ package de.jacavi.rcp.dlg;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
+import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
@@ -28,6 +34,7 @@ import org.eclipse.swt.widgets.TreeItem;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarControllerManager;
+import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.ExceptionHandler;
@@ -35,6 +42,10 @@ import de.jacavi.rcp.util.ExceptionHandler;
 
 
 public class AgentSettingsDialog extends TitleAreaDialog {
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = Logger.getLogger(AgentSettingsDialog.class);
 
     private Tree treeAgents;
 
@@ -109,19 +120,110 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         fd3.top = new FormAttachment(treeAgents, 0, SWT.TOP);
         fd3.left = new FormAttachment(treeAgents, 10, SWT.RIGHT);
         fd3.right = new FormAttachment(100);
-        fd3.bottom = new FormAttachment(buttonRefresh, 0, SWT.BOTTOM);
+        fd3.bottom = new FormAttachment(treeAgents, 0, SWT.BOTTOM);
         textSourceCode.setLayoutData(fd3);
         textSourceCode.setFont(sourceCodeFont);
+
+        Button buttonCheck = new Button(c, SWT.PUSH);
+        FormData fd4 = new FormData();
+        fd4.top = new FormAttachment(textSourceCode, 10, SWT.BOTTOM);
+        fd4.left = new FormAttachment(textSourceCode, 0, SWT.LEFT);
+        fd4.bottom = new FormAttachment(100);
+        buttonCheck.setLayoutData(fd4);
+        buttonCheck.setText("Test run");
+        buttonCheck.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                AgentSettingsDialog.this.handleTestRunClick(e);
+            }
+        });
+
+        Button buttonSave = new Button(c, SWT.PUSH);
+        FormData fd5 = new FormData();
+        fd5.top = new FormAttachment(textSourceCode, 10, SWT.BOTTOM);
+        fd5.left = new FormAttachment(buttonCheck, 10, SWT.RIGHT);
+        fd5.bottom = new FormAttachment(100);
+        buttonSave.setLayoutData(fd5);
+        buttonSave.setText("Save");
+        buttonSave.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                AgentSettingsDialog.this.handleSaveClick(e);
+            }
+        });
 
         retrieveAvailableAgents();
 
         return c;
     }
 
+    protected void handleSaveClick(SelectionEvent e) {
+        if(treeAgents.getSelectionCount() > 0) {
+            DrivingAgentController agentController = (DrivingAgentController) treeAgents.getSelection()[0].getData();
+            File agentFile = agentController.getAgentFile();
+            try {
+                FileWriter fileWriter = new FileWriter(agentFile);
+                fileWriter.write(textSourceCode.getText());
+                fileWriter.close();
+            } catch(IOException exc) {
+                ExceptionHandler.handleException(exc, true);
+            }
+        }
+        retrieveAvailableAgents();
+    }
+
+    protected void handleTestRunClick(SelectionEvent e) {
+        if(treeAgents.getSelectionCount() > 0) {
+            DrivingAgentController agentController = (DrivingAgentController) treeAgents.getSelection()[0].getData();
+            try {
+                agentController.activate();
+                ControllerSignal signal = agentController.poll();
+                agentController.deactivate();
+                MessageDialog.openInformation(getParentShell(), "Script test",
+                        "Script completed successfully and returned: ControllerSignal(" + signal.getSpeed() + ", "
+                                + signal.isTrigger() + ")");
+            } catch(Exception exc) {
+                logger.warn("Running script failed.", exc);
+                final Writer writer = new StringWriter();
+                exc.printStackTrace(new PrintWriter(writer));
+                MessageDialog.openError(getParentShell(), "Script test", "Script raised exception: "
+                        + System.getProperty("line.separator") + writer.toString());
+            }
+        }
+    }
+
+    @Override
+    protected Control createButtonBar(Composite parent) {
+        getShell().setText("Driving Agent Settings");
+        setTitle("Review available driving agents");
+        setMessage("Review the driving agents you have installed.", IMessageProvider.INFORMATION);
+        return super.createButtonBar(parent);
+    }
+
+    @Override
+    protected Control createContents(Composite parent) {
+        getShell().setSize(800, 600);
+        return super.createContents(parent);
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
+    }
+
+    @Override
+    protected void buttonPressed(int buttonId) {
+        // handle the click on the 'Close' button
+        if(buttonId == IDialogConstants.CLOSE_ID)
+            close();
+
+        super.buttonPressed(buttonId);
+    }
+
     protected void handleAgentSelection(SelectionEvent e) {
         if(e != null && e.item instanceof TreeItem) {
             TreeItem selectedItem = (TreeItem) e.item;
-            File agentFile = (File) selectedItem.getData();
+            File agentFile = ((DrivingAgentController) selectedItem.getData()).getAgentFile();
 
             StringBuilder contents = new StringBuilder();
 
@@ -171,35 +273,8 @@ public class AgentSettingsDialog extends TitleAreaDialog {
                     throw new RuntimeException("Unexpected script type.");
             }
             item.setText(dac.getName());
-            item.setData(dac.getAgentFile());
+            item.setData(dac);
         }
     }
 
-    @Override
-    protected Control createButtonBar(Composite parent) {
-        getShell().setText("Driving Agent Settings");
-        setTitle("Review available driving agents");
-        setMessage("Review the driving agents you have installed.", IMessageProvider.INFORMATION);
-        return super.createButtonBar(parent);
-    }
-
-    @Override
-    protected Control createContents(Composite parent) {
-        getShell().setSize(800, 600);
-        return super.createContents(parent);
-    }
-
-    @Override
-    protected void createButtonsForButtonBar(Composite parent) {
-        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
-    }
-
-    @Override
-    protected void buttonPressed(int buttonId) {
-        // handle the click on the 'Close' button
-        if(buttonId == IDialogConstants.CLOSE_ID)
-            close();
-
-        super.buttonPressed(buttonId);
-    }
 }

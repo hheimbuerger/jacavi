@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="libs/groovy-all-1.5.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="libs/jython-2.2.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/javajoystick-0.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="libs/spring-2.5.5.jar"/>
