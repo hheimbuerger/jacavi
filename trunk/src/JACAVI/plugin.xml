@@ -113,6 +113,15 @@
                tooltip="Start Race">
          </action>
          <action
+               class="de.jacavi.rcp.actions.AgentSettingsAction"
+               icon="icons/famfamfam-silk/vcard.png"
+               id="JACAVI.AgentSettingsAction"
+               label="Configure Driving Agents..."
+               menubarPath="settingsMenu/settingsGroup"
+               style="push"
+               toolbarPath="settingsGroup">
+         </action>
+         <action
                class="de.jacavi.rcp.actions.OpenConnectorSettingsAction"
                icon="icons/famfamfam-silk/connect.png"
                id="JACAVI.OpenConnectorSettingsDialog"
