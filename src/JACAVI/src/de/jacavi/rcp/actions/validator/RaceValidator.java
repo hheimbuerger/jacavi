@@ -8,13 +8,13 @@ import org.eclipse.ui.PlatformUI;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
-import de.jacavi.appl.controller.device.InputDeviceManager;
-import de.jacavi.appl.controller.script.DrivingAgentController;
+import de.jacavi.appl.controller.CarControllerManager;
+import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.ConnectorConfigurationManager;
-import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.hal.SlotCarDriveConnector;
+import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
@@ -57,7 +57,7 @@ public class RaceValidator {
 
     @ValidatationDesription("Validating Player Controller...")
     public boolean validatePlayerController(List<Player> players) {
-        InputDeviceManager deviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
+        CarControllerManager deviceManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
         boolean valid = true;
         if(players.size() == 0)
             return false;

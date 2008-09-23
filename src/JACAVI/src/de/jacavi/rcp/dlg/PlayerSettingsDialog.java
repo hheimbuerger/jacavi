@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.AbstractListViewer;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -22,10 +23,9 @@ import org.eclipse.swt.widgets.Text;
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.car.CarRepository;
 import de.jacavi.appl.controller.CarController;
+import de.jacavi.appl.controller.CarControllerManager;
+import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.controller.device.DeviceController;
-import de.jacavi.appl.controller.device.InputDeviceManager;
-import de.jacavi.appl.controller.script.DrivingAgentController;
-import de.jacavi.appl.controller.script.impl.DrivingAgentExample;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.SlotCarSystemConnector;
@@ -39,7 +39,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     // private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
 
-    private final String[] inputs = new String[] { "Device", "DrivingAgentExample" };
+    private final String[] inputs = new String[] { "Input Device", "Driving Agent" };
 
     private final Player player;
 
@@ -51,7 +51,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private Combo comboConnectors;
 
-    private final InputDeviceManager inputDeviceManager;
+    private final CarControllerManager carControllerManager;
 
     private final ConnectorConfigurationManager connectorManager;
 
@@ -65,6 +65,10 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
     private final CarRepository carRepository;
 
+    private Combo comboAgents;
+
+    private AbstractListViewer comboAgentsViewer;
+
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
         this.player = player;
@@ -73,7 +77,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
 
         controller = player.getController();
 
-        inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
+        carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
 
         connectorManager = (ConnectorConfigurationManager) ContextLoader.getBean("connectorManager");
 
@@ -127,10 +131,14 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                 String value = ((Combo) event.getSource()).getText();
                 if(!value.equals("")) {
                     if(((Combo) event.getSource()).getText().equals(inputs[1])) {
-                        comboDevices.setEnabled(false);
-                        controller = new DrivingAgentExample();
+                        // comboDevices.setEnabled(false);
+                        // controller = null;
+                        comboDevices.setVisible(false);
+                        comboAgents.setVisible(true);
                     } else {
-                        comboDevices.setEnabled(true);
+                        // comboDevices.setEnabled(true);
+                        comboDevices.setVisible(true);
+                        comboAgents.setVisible(false);
                     }
                 }
 
@@ -143,17 +151,33 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         labelDevice1.setText("Devices:");
 
         comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-        comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
+        // comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
+        comboDevices.setVisible(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
         comboDevicesViewer = new ComboViewer(comboDevices);
-        comboDevicesViewer.add(inputDeviceManager.getInputDevices().toArray(
-                new Object[inputDeviceManager.getInputDevices().size()]));
+        comboDevicesViewer.add(carControllerManager.getInputDevices().toArray(
+                new Object[carControllerManager.getInputDevices().size()]));
         comboDevices.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent event) {
                 int selected = ((Combo) event.getSource()).getSelectionIndex();
                 controller = (DeviceController) comboDevicesViewer.getElementAt(selected);
+            }
+        });
+
+        comboAgents = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
+        comboAgents.setVisible(comboInput.getSelectionIndex() == 1);
+        comboAgents.setLayoutData(gdInputs);
+        comboAgentsViewer = new ComboViewer(comboAgents);
+        comboAgentsViewer.add(carControllerManager.getDrivingAgents().toArray(
+                new Object[carControllerManager.getDrivingAgents().size()]));
+        comboAgents.addSelectionListener(new SelectionAdapter() {
+
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                int selected = ((Combo) event.getSource()).getSelectionIndex();
+                controller = (DrivingAgentController) comboAgentsViewer.getElementAt(selected);
             }
         });
 
@@ -208,7 +232,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
             comboDevices.setEnabled(false);
         }
 
-        List<DeviceController> availableController = inputDeviceManager.getInputDevices();
+        List<DeviceController> availableController = carControllerManager.getInputDevices();
         if(player.getController() != null) {
             for(int i = 0; i < availableController.size(); i++) {
                 if(availableController.get(i).getId() == player.getController().getId())

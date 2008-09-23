@@ -19,7 +19,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.car.CarRepository;
-import de.jacavi.appl.controller.device.InputDeviceManager;
+import de.jacavi.appl.controller.CarControllerManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.track.Track;
@@ -82,13 +82,14 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         // add a player to simplify testing
         List<Player> players = (List<Player>) ContextLoader.getBean("playersBean");
         CarRepository carRepository = (CarRepository) ContextLoader.getBean("carRepositoryBean");
-        InputDeviceManager inputDeviceManager = (InputDeviceManager) ContextLoader.getBean("inputDeviceManagerBean");
+        CarControllerManager carControllerManager = (CarControllerManager) ContextLoader
+                .getBean("carControllerManagerBean");
         ConnectorConfigurationManager connectorManager = (ConnectorConfigurationManager) ContextLoader
                 .getBean("connectorManager");
         Player initial = new Player();
         initial.setName("DEBUG");
         initial.setCar(carRepository.getCars().get(0));
-        initial.setController(inputDeviceManager.getInputDevicesByType(KeyboardDevice.class).get(0));
+        initial.setController(carControllerManager.getInputDevicesByType(KeyboardDevice.class).get(0));
         initial.setSlotCarSystemConnector(connectorManager.getConnectors().get(0));
         players.add(initial);
     }
@@ -129,7 +130,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
             }
         }
         store.setToDefault("editor" + i); // remove the following entry from the preferences store so the next loading
-                                          // will stop here
+        // will stop here
 
         return super.preShutdown();
     }

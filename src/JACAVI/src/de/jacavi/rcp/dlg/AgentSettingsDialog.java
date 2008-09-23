@@ -26,6 +26,9 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.controller.CarControllerManager;
+import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.ExceptionHandler;
 
@@ -41,8 +44,13 @@ public class AgentSettingsDialog extends TitleAreaDialog {
 
     private final ImageRegistry imageRegistry;
 
+    private final CarControllerManager carControllerManager;
+
     public AgentSettingsDialog(Shell parentShell) {
         super(parentShell);
+
+        carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
+
         imageRegistry = new ImageRegistry();
         imageRegistry.put("python", Activator.getImageDescriptor("/icons/agent_types/python.png"));
         imageRegistry.put("groovy", Activator.getImageDescriptor("/icons/agent_types/groovy.png"));
@@ -118,17 +126,9 @@ public class AgentSettingsDialog extends TitleAreaDialog {
             StringBuilder contents = new StringBuilder();
 
             try {
-                // use buffering, reading one line at a time
-                // FileReader always assumes default encoding is OK!
                 BufferedReader input = new BufferedReader(new FileReader(agentFile));
                 try {
-                    String line = null; // not declared within while loop
-                    /*
-                    * readLine is a bit quirky :
-                    * it returns the content of a line MINUS the newline.
-                    * it returns null only for the END of the stream.
-                    * it returns an empty String if two newlines appear in a row.
-                    */
+                    String line = null;
                     while((line = input.readLine()) != null) {
                         contents.append(line);
                         contents.append(System.getProperty("line.separator"));
@@ -136,31 +136,42 @@ public class AgentSettingsDialog extends TitleAreaDialog {
                 } finally {
                     input.close();
                 }
+
+                textSourceCode.setText(contents.toString());
             } catch(IOException ex) {
                 ExceptionHandler.handleException(ex, true);
+                textSourceCode.setText("");
             }
-
-            textSourceCode.setText(contents.toString());
         } else {
             textSourceCode.setText("");
         }
     }
 
     private void retrieveAvailableAgents() {
+        carControllerManager.redetectAgents();
+        refreshAgentList();
+    }
+
+    private void refreshAgentList() {
         // remove all current entries and remove the selection
         treeAgents.removeAll();
         handleAgentSelection(null);
 
         // add the new entries
-        File agentsDir = new File("agents/");
-        for(File agentFile: agentsDir.listFiles()) {
-            if(agentFile.getName().endsWith(".py") || agentFile.getName().endsWith(".groovy")) {
-                TreeItem item = new TreeItem(treeAgents, SWT.NONE);
-                item.setImage(agentFile.getName().endsWith(".py") ? imageRegistry.get("python") : imageRegistry
-                        .get("groovy"));
-                item.setText(agentFile.getName());
-                item.setData(agentFile);
+        for(DrivingAgentController dac: carControllerManager.getDrivingAgents()) {
+            TreeItem item = new TreeItem(treeAgents, SWT.NONE);
+            switch(dac.getScriptType()) {
+                case PYTHON:
+                    item.setImage(imageRegistry.get("python"));
+                    break;
+                case GROOVY:
+                    item.setImage(imageRegistry.get("groovy"));
+                    break;
+                default:
+                    throw new RuntimeException("Unexpected script type.");
             }
+            item.setText(dac.getName());
+            item.setData(dac.getAgentFile());
         }
     }
 

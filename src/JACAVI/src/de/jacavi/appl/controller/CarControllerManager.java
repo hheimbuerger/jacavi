@@ -1,5 +1,6 @@
-package de.jacavi.appl.controller.device;
+package de.jacavi.appl.controller;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +10,8 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import de.jacavi.appl.controller.agent.DrivingAgentController;
+import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
@@ -19,28 +22,28 @@ import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameCon
 
 
 
-public class InputDeviceManager {
+public class CarControllerManager {
     /**
      * Logger for this class
      */
-    private static final Logger logger = Logger.getLogger(InputDeviceManager.class);
+    private static final Logger logger = Logger.getLogger(CarControllerManager.class);
 
-    private final Map<UUID, DeviceController> inputDevices = new TreeMap<UUID, DeviceController>();
+    private final Map<UUID, CarController> controllers = new TreeMap<UUID, CarController>();
 
     private GameControllerDeviceManager gameControllerDeviceManager;
 
     private WiimoteDeviceManager wiimoteDeviceManager;
 
-    public InputDeviceManager() {
+    public CarControllerManager() {
         // TODO: should be read from configuration, just inserting some for testing here
         KeyboardDevice k1 = new KeyboardDevice("Keyboard 1");
         KeyboardDevice k2 = new KeyboardDevice("Keyboard 2");
-        inputDevices.put(k1.getId(), k1);
-        inputDevices.put(k2.getId(), k2);
+        controllers.put(k1.getId(), k1);
+        controllers.put(k2.getId(), k2);
 
         // a mouse is assumed to be always available
         MouseDevice m1 = new MouseDevice("Mouse");
-        inputDevices.put(m1.getId(), m1);
+        controllers.put(m1.getId(), m1);
 
         // game controllers have to be detected
         try {
@@ -63,16 +66,19 @@ public class InputDeviceManager {
                     e);
             wiimoteDeviceManager = null;
         }
+
+        // also find out which driving agents are installed
+        redetectAgents();
     }
 
     /**
-     * Adds a new device controller to the internal list and initializes it.
+     * Adds a new controller to the internal list.
      * 
      * @param controller
-     *            the device controller to add
+     *            the controller to add
      */
-    public void addInputDevice(DeviceController controller) {
-        inputDevices.put(controller.getId(), controller);
+    public void addController(CarController controller) {
+        controllers.put(controller.getId(), controller);
     }
 
     /**
@@ -82,8 +88,23 @@ public class InputDeviceManager {
      */
     public List<DeviceController> getInputDevices() {
         List<DeviceController> result = new ArrayList<DeviceController>();
-        for(DeviceController dc: inputDevices.values())
-            result.add(dc);
+        for(CarController dc: controllers.values())
+            if(dc instanceof DeviceController)
+                result.add((DeviceController) dc);
+        Collections.sort(result);
+        return result;
+    }
+
+    /**
+     * Returns a list of all driving agents, sorted by name in alphabetical order.
+     * 
+     * @return a sorted list of driving agents
+     */
+    public List<DrivingAgentController> getDrivingAgents() {
+        List<DrivingAgentController> result = new ArrayList<DrivingAgentController>();
+        for(CarController dc: controllers.values())
+            if(dc instanceof DrivingAgentController)
+                result.add((DrivingAgentController) dc);
         Collections.sort(result);
         return result;
     }
@@ -97,9 +118,9 @@ public class InputDeviceManager {
      */
     public List<DeviceController> getInputDevicesByType(Class<?> type) {
         List<DeviceController> result = new ArrayList<DeviceController>();
-        for(DeviceController dc: inputDevices.values())
-            if(dc.getClass() == type)
-                result.add(dc);
+        for(CarController dc: controllers.values())
+            if(dc.getClass() == type && dc instanceof DeviceController)
+                result.add((DeviceController) dc);
         Collections.sort(result);
         return result;
     }
@@ -111,9 +132,9 @@ public class InputDeviceManager {
      *            the ID of the device to remove
      */
     public void removeInputDevice(UUID id) {
-        if(inputDevices.containsKey(id)) {
-            inputDevices.get(id).cleanup();
-            inputDevices.remove(id);
+        if(controllers.containsKey(id)) {
+            controllers.get(id).cleanup();
+            controllers.remove(id);
         } else
             throw new IllegalArgumentException("tried removing an ID that does not exist!");
     }
@@ -124,10 +145,10 @@ public class InputDeviceManager {
      * @param type
      *            the class of input devices to remove (XyzDevice)
      */
-    public void removeInputDevicesByType(Class<?> type) {
+    public void removeControllersByType(Class<?> type) {
         List<UUID> toRemove = new ArrayList<UUID>();
-        for(UUID id: inputDevices.keySet())
-            if(inputDevices.get(id).getClass() == type)
+        for(UUID id: controllers.keySet())
+            if(controllers.get(id).getClass() == type)
                 toRemove.add(id);
         for(UUID id: toRemove)
             removeInputDevice(id);
@@ -141,7 +162,7 @@ public class InputDeviceManager {
      * @return true if the given ID is valid (corresponds to an available input device), false otherwise
      */
     public boolean isIdValid(UUID id) {
-        return inputDevices.containsKey(id);
+        return controllers.containsKey(id);
     }
 
     /**
@@ -170,13 +191,13 @@ public class InputDeviceManager {
      */
     public void redetectGameControllers() {
         // run the detection
-        removeInputDevicesByType(GameControllerDevice.class);
+        removeControllersByType(GameControllerDevice.class);
         GameControllerDescriptor[] gameControllers = gameControllerDeviceManager.scanForGameControllers();
 
         // add the detected devices to the device manager
         if(gameControllers != null)
             for(GameControllerDescriptor gameController: gameControllers)
-                addInputDevice(new GameControllerDevice(gameController.name, gameControllerDeviceManager
+                addController(new GameControllerDevice(gameController.name, gameControllerDeviceManager
                         .getGameController(gameController), gameController));
     }
 
@@ -188,15 +209,33 @@ public class InputDeviceManager {
      */
     public void redetectWiimotes() {
         // run the detection
-        removeInputDevicesByType(WiimoteDevice.class);
+        removeControllersByType(WiimoteDevice.class);
         int numWiimotesConnected = wiimoteDeviceManager.scanForWiimotes();
 
         // add the detected devices to the device manager
         for(int i = 1; i <= numWiimotesConnected; i++)
-            addInputDevice(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager.getWiimote(i)));
+            addController(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager.getWiimote(i)));
     }
 
-    public DeviceController getDevice(UUID id) {
-        return inputDevices.get(id);
+    public void redetectAgents() {
+        removeControllersByType(DrivingAgentController.class);
+
+        // FIXME: should be made more flexible and not rely on a hardcoded path and hardcoded file extensions
+        File agentsDir = new File("agents/");
+        for(File agentFile: agentsDir.listFiles()) {
+            if(agentFile.getName().endsWith(".py")) {
+                addController(new DrivingAgentController(agentFile.getName().substring(0,
+                        agentFile.getName().length() - 3)
+                        + " (Python)", agentFile));
+            } else if(agentFile.getName().endsWith(".groovy")) {
+                addController(new DrivingAgentController(agentFile.getName().substring(0,
+                        agentFile.getName().length() - 7)
+                        + " (Groovy)", agentFile));
+            }
+        }
+    }
+
+    public CarController getDevice(UUID id) {
+        return controllers.get(id);
     }
 }
