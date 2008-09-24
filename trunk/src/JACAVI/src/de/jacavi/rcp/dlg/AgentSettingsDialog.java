@@ -5,17 +5,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.Writer;
 
-import org.apache.log4j.Logger;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -23,12 +23,13 @@ import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -36,26 +37,36 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarControllerManager;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
+import de.jacavi.appl.controller.agent.DrivingAgentController.ScriptExecutionException;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
 public class AgentSettingsDialog extends TitleAreaDialog {
-    /**
-     * Logger for this class
-     */
-    private static final Logger logger = Logger.getLogger(AgentSettingsDialog.class);
+    private final Font sourceCodeFont;
+
+    private final Font resultsFont;
+
+    private final ImageRegistry imageRegistry;
+
+    private final CarControllerManager carControllerManager;
 
     private Tree treeAgents;
 
     private Text textSourceCode;
 
-    private final Font sourceCodeFont;
+    private Text textResults;
 
-    private final ImageRegistry imageRegistry;
+    private ToolItem toolItemSave;
 
-    private final CarControllerManager carControllerManager;
+    private ToolItem toolItemDryRun;
+
+    private boolean editReady = false;
+
+    private boolean dirty = false;
+
+    private DrivingAgentController openScript;
 
     public AgentSettingsDialog(Shell parentShell) {
         super(parentShell);
@@ -65,11 +76,22 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         imageRegistry = new ImageRegistry();
         imageRegistry.put("python", Activator.getImageDescriptor("/icons/agent_types/python.png"));
         imageRegistry.put("groovy", Activator.getImageDescriptor("/icons/agent_types/groovy.png"));
+        imageRegistry.put("famfamfam_disk", Activator.getImageDescriptor("/icons/famfamfam-silk/disk.png"));
+        imageRegistry.put("famfamfam_arrow_refresh", Activator
+                .getImageDescriptor("/icons/famfamfam-silk/arrow_refresh.png"));
+        imageRegistry.put("famfamfam_flag_green", Activator.getImageDescriptor("/icons/famfamfam-silk/flag_green.png"));
         sourceCodeFont = new Font(Display.getDefault(), "Courier New", 10, SWT.NONE);
+        resultsFont = new Font(Display.getDefault(), "Courier New", 8, SWT.BOLD);
     }
 
     @Override
     public boolean close() {
+        if(dirty)
+            if(!MessageDialog.openQuestion(getParentShell(), "Unsaved modifications",
+                    "The current script has unsaved modifications, do you want to proceed without saving these?")) {
+                return false;
+            }
+
         imageRegistry.dispose();
         sourceCodeFont.dispose();
         return super.close();
@@ -77,9 +99,11 @@ public class AgentSettingsDialog extends TitleAreaDialog {
 
     @Override
     protected Control createDialogArea(Composite parent) {
-        Composite c = new Composite(parent, SWT.NONE);
+        // create the composite holding all components
+        final Composite c = new Composite(parent, SWT.NONE);
         c.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+        // create the layout manager
         FormLayout layout = new FormLayout();
         layout.marginTop = 10;
         layout.marginRight = 10;
@@ -87,26 +111,61 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         layout.marginLeft = 10;
         c.setLayout(layout);
 
-        Button buttonRefresh = new Button(c, SWT.PUSH);
-        FormData fd2 = new FormData();
-        fd2.left = new FormAttachment(0);
-        fd2.width = 200;
-        fd2.bottom = new FormAttachment(100);
-        buttonRefresh.setLayoutData(fd2);
-        buttonRefresh.setText("Refresh");
-        buttonRefresh.addSelectionListener(new SelectionAdapter() {
+        // create the toolbar
+        ToolBar toolbar = new ToolBar(c, SWT.HORIZONTAL | SWT.FLAT);
+        FormData fd6 = new FormData();
+        fd6.top = new FormAttachment(0);
+        fd6.left = new FormAttachment(0);
+        toolbar.setLayoutData(fd6);
+
+        // add the 'refresh' button to the toolbar
+        ToolItem toolItemRefresh = new ToolItem(toolbar, SWT.NONE);
+        toolItemRefresh.setText("Refresh");
+        toolItemRefresh.setToolTipText("Updates the list of available agents.");
+        toolItemRefresh.setImage(imageRegistry.get("famfamfam_arrow_refresh"));
+        toolItemRefresh.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
                 AgentSettingsDialog.this.retrieveAvailableAgents();
             }
         });
 
+        // add a separator
+        new ToolItem(toolbar, SWT.SEPARATOR);
+
+        // add the 'save' button to the toolbar
+        toolItemSave = new ToolItem(toolbar, SWT.NONE);
+        toolItemSave.setText("Save");
+        toolItemSave.setToolTipText("Saves the modifications to disk. (Ctrl-S)");
+        toolItemSave.setImage(imageRegistry.get("famfamfam_disk"));
+        toolItemSave.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                AgentSettingsDialog.this.handleSaveClick(e);
+            }
+        });
+        toolItemSave.setEnabled(false);
+
+        // add the 'dry run' button to the toolbar
+        toolItemDryRun = new ToolItem(toolbar, SWT.NONE);
+        toolItemDryRun.setText("Dry run");
+        toolItemDryRun.setToolTipText("Runs the agent once with null parameters -- not supported by all agents. (F5)");
+        toolItemDryRun.setImage(imageRegistry.get("famfamfam_flag_green"));
+        toolItemDryRun.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                AgentSettingsDialog.this.handleTestRunClick(e);
+            }
+        });
+        toolItemDryRun.setEnabled(false);
+
+        // create the tree listing the agents
         treeAgents = new Tree(c, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
         FormData fd1 = new FormData();
-        fd1.top = new FormAttachment(0);
-        fd1.left = new FormAttachment(buttonRefresh, 0, SWT.LEFT);
-        fd1.right = new FormAttachment(buttonRefresh, 0, SWT.RIGHT);
-        fd1.bottom = new FormAttachment(buttonRefresh, -10, SWT.TOP);
+        fd1.top = new FormAttachment(toolbar, 10, SWT.BOTTOM);
+        fd1.left = new FormAttachment(0);
+        fd1.width = 200;
+        fd1.bottom = new FormAttachment(100);
         treeAgents.setLayoutData(fd1);
         treeAgents.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -115,81 +174,51 @@ public class AgentSettingsDialog extends TitleAreaDialog {
             }
         });
 
+        // create the text field showing the source code
         textSourceCode = new Text(c, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-        FormData fd3 = new FormData();
-        fd3.top = new FormAttachment(treeAgents, 0, SWT.TOP);
-        fd3.left = new FormAttachment(treeAgents, 10, SWT.RIGHT);
-        fd3.right = new FormAttachment(100);
-        fd3.bottom = new FormAttachment(treeAgents, 0, SWT.BOTTOM);
-        textSourceCode.setLayoutData(fd3);
+        FormData fd2 = new FormData();
+        fd2.top = new FormAttachment(treeAgents, 0, SWT.TOP);
+        fd2.left = new FormAttachment(treeAgents, 10, SWT.RIGHT);
+        fd2.right = new FormAttachment(100);
+        fd2.bottom = new FormAttachment(70);
+        textSourceCode.setLayoutData(fd2);
         textSourceCode.setFont(sourceCodeFont);
-
-        Button buttonCheck = new Button(c, SWT.PUSH);
-        FormData fd4 = new FormData();
-        fd4.top = new FormAttachment(textSourceCode, 10, SWT.BOTTOM);
-        fd4.left = new FormAttachment(textSourceCode, 0, SWT.LEFT);
-        fd4.bottom = new FormAttachment(100);
-        buttonCheck.setLayoutData(fd4);
-        buttonCheck.setText("Test run");
-        buttonCheck.addSelectionListener(new SelectionAdapter() {
+        textSourceCode.addModifyListener(new ModifyListener() {
             @Override
-            public void widgetSelected(SelectionEvent e) {
-                AgentSettingsDialog.this.handleTestRunClick(e);
+            public void modifyText(ModifyEvent e) {
+                if(editReady)
+                    setDirty(true);
+            }
+        });
+        textSourceCode.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 's')) {
+                    if(toolItemSave.getEnabled())
+                        AgentSettingsDialog.this.handleSaveClick(null);
+                    e.doit = false;
+                } else if(e.keyCode == SWT.F5) {
+                    if(toolItemDryRun.getEnabled())
+                        AgentSettingsDialog.this.handleTestRunClick(null);
+                    e.doit = false;
+                }
             }
         });
 
-        Button buttonSave = new Button(c, SWT.PUSH);
-        FormData fd5 = new FormData();
-        fd5.top = new FormAttachment(textSourceCode, 10, SWT.BOTTOM);
-        fd5.left = new FormAttachment(buttonCheck, 10, SWT.RIGHT);
-        fd5.bottom = new FormAttachment(100);
-        buttonSave.setLayoutData(fd5);
-        buttonSave.setText("Save");
-        buttonSave.addSelectionListener(new SelectionAdapter() {
-            @Override
-            public void widgetSelected(SelectionEvent e) {
-                AgentSettingsDialog.this.handleSaveClick(e);
-            }
-        });
+        // create the text field holding the compilation/dry run results
+        textResults = new Text(c, SWT.MULTI | SWT.WRAP | SWT.V_SCROLL | SWT.BORDER | SWT.READ_ONLY);
+        FormData fd3 = new FormData();
+        fd3.top = new FormAttachment(textSourceCode, 10, SWT.BOTTOM);
+        fd3.left = new FormAttachment(textSourceCode, 0, SWT.LEFT);
+        fd3.right = new FormAttachment(textSourceCode, 0, SWT.RIGHT);
+        fd3.bottom = new FormAttachment(100);
+        textResults.setLayoutData(fd3);
+        textResults.setFont(resultsFont);
 
+        // fill the tree with all known agents
         retrieveAvailableAgents();
 
         return c;
-    }
-
-    protected void handleSaveClick(SelectionEvent e) {
-        if(treeAgents.getSelectionCount() > 0) {
-            DrivingAgentController agentController = (DrivingAgentController) treeAgents.getSelection()[0].getData();
-            File agentFile = agentController.getAgentFile();
-            try {
-                FileWriter fileWriter = new FileWriter(agentFile);
-                fileWriter.write(textSourceCode.getText());
-                fileWriter.close();
-            } catch(IOException exc) {
-                ExceptionHandler.handleException(exc, true);
-            }
-        }
-        retrieveAvailableAgents();
-    }
-
-    protected void handleTestRunClick(SelectionEvent e) {
-        if(treeAgents.getSelectionCount() > 0) {
-            DrivingAgentController agentController = (DrivingAgentController) treeAgents.getSelection()[0].getData();
-            try {
-                agentController.activate();
-                ControllerSignal signal = agentController.poll();
-                agentController.deactivate();
-                MessageDialog.openInformation(getParentShell(), "Script test",
-                        "Script completed successfully and returned: ControllerSignal(" + signal.getSpeed() + ", "
-                                + signal.isTrigger() + ")");
-            } catch(Exception exc) {
-                logger.warn("Running script failed.", exc);
-                final Writer writer = new StringWriter();
-                exc.printStackTrace(new PrintWriter(writer));
-                MessageDialog.openError(getParentShell(), "Script test", "Script raised exception: "
-                        + System.getProperty("line.separator") + writer.toString());
-            }
-        }
     }
 
     @Override
@@ -202,7 +231,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
 
     @Override
     protected Control createContents(Composite parent) {
-        getShell().setSize(800, 600);
+        getShell().setSize(800, 700);
         return super.createContents(parent);
     }
 
@@ -220,10 +249,21 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         super.buttonPressed(buttonId);
     }
 
+    private void setDirty(boolean dirty) {
+        this.dirty = dirty;
+        toolItemSave.setEnabled(dirty);
+    }
+
     protected void handleAgentSelection(SelectionEvent e) {
         if(e != null && e.item instanceof TreeItem) {
+            if(dirty)
+                if(MessageDialog.openQuestion(getParentShell(), "Unsaved modifications",
+                        "The current script has unsaved modifications, do you want to save before proceeding?"))
+                    handleSaveClick(e);
+
             TreeItem selectedItem = (TreeItem) e.item;
-            File agentFile = ((DrivingAgentController) selectedItem.getData()).getAgentFile();
+            openScript = (DrivingAgentController) selectedItem.getData();
+            File agentFile = openScript.getAgentFile();
 
             StringBuilder contents = new StringBuilder();
 
@@ -239,13 +279,50 @@ public class AgentSettingsDialog extends TitleAreaDialog {
                     input.close();
                 }
 
+                editReady = false;
+
                 textSourceCode.setText(contents.toString());
+                toolItemDryRun.setEnabled(true);
+                setDirty(false);
+                textResults.setText("");
+                editReady = true;
+                return;
             } catch(IOException ex) {
                 ExceptionHandler.handleException(ex, true);
-                textSourceCode.setText("");
             }
-        } else {
-            textSourceCode.setText("");
+        }
+
+        editReady = false;
+        openScript = null;
+        textSourceCode.setText("");
+        textResults.setText("");
+        toolItemDryRun.setEnabled(false);
+        setDirty(false);
+    }
+
+    protected void handleSaveClick(SelectionEvent e) {
+        if(openScript != null) {
+            File agentFile = openScript.getAgentFile();
+            try {
+                FileWriter fileWriter = new FileWriter(agentFile);
+                fileWriter.write(textSourceCode.getText());
+                fileWriter.close();
+                setDirty(false);
+            } catch(IOException exc) {
+                ExceptionHandler.handleException(exc, true);
+            }
+        }
+    }
+
+    protected void handleTestRunClick(SelectionEvent e) {
+        if(openScript != null) {
+            try {
+                ControllerSignal signal = openScript.dryRun();
+                textResults.setText("Script completed successfully and returned: ControllerSignal(" + signal.getSpeed()
+                        + ", " + signal.isTrigger() + ")");
+            } catch(ScriptExecutionException exc) {
+                textResults.setText(exc.getMessage());
+            }
         }
     }
 
