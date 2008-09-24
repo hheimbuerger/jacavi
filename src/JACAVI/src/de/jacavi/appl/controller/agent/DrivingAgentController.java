@@ -6,6 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 import org.python.core.PyClass;
@@ -19,6 +22,13 @@ import de.jacavi.rcp.util.ExceptionHandler;
 
 
 public class DrivingAgentController extends CarController {
+    @SuppressWarnings("serial")
+    public class ScriptExecutionException extends Exception {
+        public ScriptExecutionException(String message) {
+            super(message);
+        }
+    }
+
     public enum ScriptType {
         PYTHON, GROOVY
     }
@@ -58,19 +68,27 @@ public class DrivingAgentController extends CarController {
     public void activate() {
         if(scriptObject == null)
             try {
-                switch(scriptType) {
-                    case PYTHON:
-                        scriptObject = getPythonImplementation(agentFile);
-                        break;
-                    case GROOVY:
-                        scriptObject = getGroovyImplementation(agentFile);
-                        break;
-                    default:
-                        throw new RuntimeException("unknown script type");
-                }
+                scriptObject = parseScript();
             } catch(Exception e) {
                 ExceptionHandler.handleException(e, true);
             }
+    }
+
+    private DrivingAgent parseScript() throws Exception {
+        switch(scriptType) {
+            case PYTHON:
+                return getPythonImplementation(agentFile);
+            case GROOVY:
+                return getGroovyImplementation(agentFile);
+            default:
+                throw new RuntimeException("unknown script type");
+        }
+    }
+
+    @Override
+    public void deactivate() {
+        if(scriptObject != null)
+            scriptObject = null;
     }
 
     private static DrivingAgent getGroovyImplementation(File scriptFile) throws CompilationFailedException,
@@ -96,5 +114,15 @@ public class DrivingAgentController extends CarController {
         Object wrapperObject = agentInstance.__tojava__(DrivingAgent.class);
         DrivingAgent script = (DrivingAgent) wrapperObject;
         return script;
+    }
+
+    public ControllerSignal dryRun() throws ScriptExecutionException {
+        try {
+            return parseScript().poll();
+        } catch(Exception exc) {
+            final Writer writer = new StringWriter();
+            exc.printStackTrace(new PrintWriter(writer));
+            throw new ScriptExecutionException(exc.toString());
+        }
     }
 }
