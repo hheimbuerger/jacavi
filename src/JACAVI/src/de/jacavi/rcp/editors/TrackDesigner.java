@@ -6,8 +6,6 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -76,10 +74,9 @@ public class TrackDesigner extends EditorPart {
 
             log.info("Track saved to " + selected);
         } catch(FileNotFoundException e) {
-            ExceptionHandler.handleException(e, log, "File could not be found", true, "Error", new Status(
-                    IStatus.ERROR, "JACAVI", e.toString()));
+            ExceptionHandler.handleException(this, e, true);
         } catch(Exception e) {
-            ExceptionHandler.handleException(e, true);
+            ExceptionHandler.handleException(this, e, true);
         }
 
         monitor.done();
@@ -162,11 +159,9 @@ public class TrackDesigner extends EditorPart {
             log.debug("Delete Tile on Position " + selectedPosition);
             fireTrackModified();
         } catch(IndexOutOfBoundsException e) {
-            ExceptionHandler.handleException(e, log, "IndexOutOfBoundsException caught in handleDeletion()", true,
-                    "Error", new Status(IStatus.ERROR, "JACAVI", e.toString()));
+            ExceptionHandler.handleException(this, e, true);
         } catch(InitialTileMayNotBeRemoved e) {
-            ExceptionHandler.handleException(e, log, "Initial tile could not be removed!", true, "Error", new Status(
-                    IStatus.WARNING, "JACAVI", e.toString()));
+            ExceptionHandler.handleException(this, "Initial tile could not be removed!", e, true);
         }
     }
 

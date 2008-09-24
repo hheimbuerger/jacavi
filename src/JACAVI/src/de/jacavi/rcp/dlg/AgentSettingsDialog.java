@@ -288,7 +288,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
                 editReady = true;
                 return;
             } catch(IOException ex) {
-                ExceptionHandler.handleException(ex, true);
+                ExceptionHandler.handleException(this, ex, true);
             }
         }
 
@@ -309,7 +309,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
                 fileWriter.close();
                 setDirty(false);
             } catch(IOException exc) {
-                ExceptionHandler.handleException(exc, true);
+                ExceptionHandler.handleException(this, exc, true);
             }
         }
     }

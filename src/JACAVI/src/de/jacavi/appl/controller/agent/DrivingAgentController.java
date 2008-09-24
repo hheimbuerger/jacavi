@@ -70,7 +70,7 @@ public class DrivingAgentController extends CarController {
             try {
                 scriptObject = parseScript();
             } catch(Exception e) {
-                ExceptionHandler.handleException(e, true);
+                ExceptionHandler.handleException(this, e, true);
             }
     }
 

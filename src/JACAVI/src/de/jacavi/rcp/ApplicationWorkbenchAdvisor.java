@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.List;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -16,6 +20,8 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.car.CarRepository;
@@ -28,11 +34,13 @@ import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 import de.jacavi.rcp.perspectives.EditorPerspective;
-import de.jacavi.rcp.util.ExceptionHandler;
+import de.jacavi.rcp.util.JacaviErrorHandler;
 
 
 
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
+
+    private AbstractStatusHandler workbenchErrorHandler = null;
 
     @Override
     public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(IWorkbenchWindowConfigurer configurer) {
@@ -96,14 +104,24 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
     @Override
     public void eventLoopException(Throwable exception) {
-        ExceptionHandler.handleException(exception, true);
-        super.eventLoopException(exception);
+        if(exception == null)
+            return;
+        // we log the exception
+        Log log = LogFactory.getLog(this.getClass());
+        log.error("Unhandelt event loop exception", exception);
+        // and we show an dialogue
+        StatusManager.getManager().handle(
+                new Status(IStatus.ERROR, "JACAVI", "Unhandelt event loop exception", exception), StatusManager.SHOW);
     }
 
     @Override
     public synchronized org.eclipse.ui.statushandlers.AbstractStatusHandler getWorkbenchErrorHandler() {
-
-        return super.getWorkbenchErrorHandler();
+        // here we create a new ErrorHandler if there is none
+        // we use our own implementation of WorkbenchErrorHandler (extends AbstractStatusHandler)
+        // so we are more flexible see
+        if(workbenchErrorHandler == null)
+            workbenchErrorHandler = new JacaviErrorHandler();
+        return workbenchErrorHandler;
     }
 
     @Override

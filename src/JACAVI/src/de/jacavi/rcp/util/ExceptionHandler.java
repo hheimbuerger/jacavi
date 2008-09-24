@@ -4,8 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 
 
@@ -15,40 +14,50 @@ import org.eclipse.ui.PlatformUI;
  *         This Handler writes an occured Exception into a logger and shows an ErrorDialog (optional)
  */
 public class ExceptionHandler {
+
     /**
-     * @param t
-     *            the thrown exception
-     *            <p>
-     * @param logger
-     *            the class specific Apache logger <br>
-     *            often created by <code>LogFactory.getLog(YourClass.class)</code>
+     * Call this to handle all kinds of exceptions
+     * 
+     * @param occurrence
+     *            The object where the exception occured for better log reading
      *            <p>
      * @param message
-     *            the message wich is filled into the logging message and shown in the ErrorDialog
+     *            An extra message to show if an exceptionoccures
+     *            <p>
+     * @param t
+     *            The thrown exception
      *            <p>
      * @param showErrorDialog
-     *            value if an ErrorDialog may be shown
+     *            If true show an error dialogue otherwise show not
      *            <p>
-     * @param title
-     *            the title, shown in the Dialog shell<br>
-     *            if <code>showErrorDialog==false</code> this parameter will be ignored (set to null)
-     *            <p>
-     * @param status
-     *            the status of the dialog (Warning,Error,...)<br>
-     *            if <code>showErrorDialog==false</code> this parameter will be ignored (set to null)
      */
-    public static void handleException(Throwable t, Log logger, String message, boolean showErrorDialog, String title,
-            IStatus status) {
-        logger.error(message, t);
+    public static void handleException(Object occurrence, String message, Throwable t, boolean showErrorDialog) {
 
-        if(showErrorDialog) {
-            ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), title, message,
-                    status);
-        }
+        Log log = LogFactory.getLog(occurrence.getClass());
+        log.error(message, t);
+
+        if(showErrorDialog)
+            StatusManager.getManager().handle(new Status(IStatus.ERROR, "JACAVI", message, t), StatusManager.SHOW);
+        else
+            StatusManager.getManager().handle(new Status(IStatus.ERROR, "JACAVI", message, t), StatusManager.NONE);
+
     }
 
-    public static void handleException(Throwable t, boolean showErrorDialog) {
-        handleException(t, LogFactory.getLog("unknown"), t.getMessage(), showErrorDialog, "Error", new Status(
-                IStatus.ERROR, "JaCaVi", t.toString()));
+    /**
+     * Call this to handle all kinds of exceptions
+     * 
+     * @param occurrence
+     *            The object where the exception occured for better log reading
+     *            <p>
+     * @param t
+     *            The thrown exception
+     *            <p>
+     * @param showErrorDialog
+     *            If true show an error dialogue otherwise show not
+     *            <p>
+     */
+    public static void handleException(Object occurrence, Throwable t, boolean showErrorDialog) {
+        handleException(occurrence, "Error", t, showErrorDialog);
     }
+
 }
