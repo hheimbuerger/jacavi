@@ -67,7 +67,7 @@ public class ConnectorConfigurationManager {
      * <p>
      * On spring bean creation this method is called
      */
-    public void createDefaultConnectors() {
+    protected void createDefaultConnectors() {
         // create one simulated connector (dummy)
         // TODO: create three more if other players want to play simulated
         SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
