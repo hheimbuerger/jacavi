@@ -37,51 +37,45 @@ import de.jacavi.hal.SlotCarSystemConnector;
  */
 public class PlayerSettingsDialog extends TitleAreaDialog {
 
-    // private static Log log = LogFactory.getLog(PlayerSettingsDialog.class);
-
     private final String[] inputs = new String[] { "Input Device", "Driving Agent" };
 
-    private final Player player;
-
-    private Text playerName;
-
-    private Combo comboInput;
-
-    private Combo comboDevices;
-
-    private Combo comboConnectors;
-
+    // models / managers
     private final CarControllerManager carControllerManager;
 
     private final ConnectorConfigurationManager connectorManager;
 
+    private final Player player;
+
+    // view controlls
+    private Text playerName;
+
+    private Combo comboController;
+
+    private Combo comboDevices;
+
     private ComboViewer comboDevicesViewer;
-
-    private ComboViewer comboConnectorsViewer;
-
-    private SlotCarSystemConnector connector;
-
-    private CarController controller;
-
-    private final CarRepository carRepository;
 
     private Combo comboAgents;
 
     private AbstractListViewer comboAgentsViewer;
 
+    private Combo comboConnectors;
+
+    private ComboViewer comboConnectorsViewer;
+
+    private final CarRepository carRepository;
+
     public PlayerSettingsDialog(Shell parentShell, Player player) {
         super(parentShell);
+        // set the models
         this.player = player;
-
-        connector = player.getSlotCarSystemConnector();
-
-        controller = player.getController();
 
         carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
 
         connectorManager = (ConnectorConfigurationManager) ContextLoader.getBean("connectorManager");
 
         carRepository = (CarRepository) ContextLoader.getBean("carRepositoryBean");
+
     }
 
     @Override
@@ -108,79 +102,57 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         // parentlayout.numColumns = 2;
         parent.setLayout(parentlayout);
 
-        // Player 1
+        // Player configuration group
         Group group = new Group(parent, SWT.SHADOW_ETCHED_IN);
         group.setLayout(layout);
         group.setText("Player Settings");
         group.setLayoutData(new GridData(GridData.FILL_BOTH));
 
+        // player name
         CLabel lPlayer1 = new CLabel(group, SWT.NONE);
         lPlayer1.setText("Name:");
 
         playerName = new Text(group, SWT.BORDER);
         playerName.setLayoutData(gdInputs);
 
+        // The input controller
         CLabel labelInput1 = new CLabel(group, SWT.NONE);
-        labelInput1.setText("Input:");
+        labelInput1.setText("Controller:");
 
-        comboInput = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
-        comboInput.addSelectionListener(new SelectionAdapter() {
+        comboController = new Combo(group, SWT.BORDER | SWT.READ_ONLY);
+        comboController.addSelectionListener(new SelectionAdapter() {
 
             @Override
             public void widgetSelected(SelectionEvent event) {
-                String value = ((Combo) event.getSource()).getText();
-                if(!value.equals("")) {
-                    if(((Combo) event.getSource()).getText().equals(inputs[1])) {
-                        // comboDevices.setEnabled(false);
-                        // controller = null;
-                        comboDevices.setVisible(false);
-                        comboAgents.setVisible(true);
-                    } else {
-                        // comboDevices.setEnabled(true);
-                        comboDevices.setVisible(true);
-                        comboAgents.setVisible(false);
-                    }
-                }
-
+                PlayerSettingsDialog.this.switchDeviceAgentVisibility(event);
             }
         });
-        comboInput.setLayoutData(gdInputs);
-        comboInput.setItems(inputs);
+        comboController.setLayoutData(gdInputs);
+        comboController.setItems(inputs);
 
+        // device
         CLabel labelDevice1 = new CLabel(group, SWT.NONE);
-        labelDevice1.setText("Devices:");
+        labelDevice1.setText("Device:");
 
         comboDevices = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-        // comboDevices.setEnabled(comboInput.getSelectionIndex() != 1);
-        comboDevices.setVisible(comboInput.getSelectionIndex() != 1);
+        // comboDevices.setVisible(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
         comboDevicesViewer = new ComboViewer(comboDevices);
         comboDevicesViewer.add(carControllerManager.getInputDevices().toArray(
                 new Object[carControllerManager.getInputDevices().size()]));
-        comboDevices.addSelectionListener(new SelectionAdapter() {
 
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                int selected = ((Combo) event.getSource()).getSelectionIndex();
-                controller = (DeviceController) comboDevicesViewer.getElementAt(selected);
-            }
-        });
+        // agents
+        CLabel labelAgent = new CLabel(group, SWT.NONE);
+        labelAgent.setText("Agent:");
 
         comboAgents = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
-        comboAgents.setVisible(comboInput.getSelectionIndex() == 1);
+        // comboAgents.setVisible(comboInput.getSelectionIndex() == 1);
         comboAgents.setLayoutData(gdInputs);
         comboAgentsViewer = new ComboViewer(comboAgents);
         comboAgentsViewer.add(carControllerManager.getDrivingAgents().toArray(
                 new Object[carControllerManager.getDrivingAgents().size()]));
-        comboAgents.addSelectionListener(new SelectionAdapter() {
 
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                int selected = ((Combo) event.getSource()).getSelectionIndex();
-                controller = (DrivingAgentController) comboAgentsViewer.getElementAt(selected);
-            }
-        });
-
+        // connectors
         CLabel labelProtocol1 = new CLabel(group, SWT.NONE);
         labelProtocol1.setText("Connector:");
 
@@ -189,15 +161,7 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboConnectorsViewer = new ComboViewer(comboConnectors);
         comboConnectorsViewer.add(connectorManager.getConnectors().toArray(
                 new Object[connectorManager.getConnectors().size()]));
-        comboConnectors.addSelectionListener(new SelectionAdapter() {
-
-            @Override
-            public void widgetSelected(SelectionEvent event) {
-                int selected = ((Combo) event.getSource()).getSelectionIndex();
-                connector = (SlotCarSystemConnector) comboConnectorsViewer.getElementAt(selected);
-            }
-        });
-
+        // cars
         CLabel labelColor = new CLabel(group, SWT.NONE);
         labelColor.setText("Car:");
 
@@ -208,38 +172,79 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         return parent;
     }
 
+    protected void switchDeviceAgentVisibility(SelectionEvent event) {
+        int selectedControllerIndex = ((Combo) event.getSource()).getSelectionIndex();
+        String selectedControllerType = comboController.getItem(selectedControllerIndex);
+
+        // Device is selected
+        if(selectedControllerType.equals(inputs[0])) {
+            comboAgents.setEnabled(false);
+            comboDevices.setEnabled(true);
+        } else {
+            comboAgents.setEnabled(true);
+            comboDevices.setEnabled(false);
+
+        }
+    }
+
     @Override
     protected void okPressed() {
+        // set player name
         player.setName(playerName.getText());
-        player.setSlotCarSystemConnector(connector);
+        // set players CarController
+        CarController controller = null;
+        if(comboController.getSelectionIndex() == 0) {
+            controller = (CarController) comboDevicesViewer.getElementAt(comboDevices.getSelectionIndex());
+        } else if(comboController.getSelectionIndex() == 1) {
+            controller = (CarController) comboAgentsViewer.getElementAt(comboAgents.getSelectionIndex());
+        }
         player.setController(controller);
+
+        // set connector
+        SlotCarSystemConnector connector = (SlotCarSystemConnector) comboConnectorsViewer.getElementAt(comboConnectors
+                .getSelectionIndex());
+        player.setSlotCarSystemConnector(connector);
+        // Set the car
         player.setCar(carRepository.getCars().get(0));
         super.okPressed();
-        comboInput.dispose();
+        comboController.dispose();
         comboDevices.dispose();
         comboConnectors.dispose();
+        comboAgents.dispose();
 
     }
 
+    /**
+     * Set the content of the selected player
+     */
     private void setContent() {
         playerName.setText(player.getName());
 
         CarController controller = player.getController();
-        if(controller instanceof DeviceController) {
-            comboInput.select(0);
-        } else if(controller instanceof DrivingAgentController) {
-            comboInput.select(1);
-            comboDevices.setEnabled(false);
-        }
 
-        List<DeviceController> availableController = carControllerManager.getInputDevices();
-        if(player.getController() != null) {
-            for(int i = 0; i < availableController.size(); i++) {
-                if(availableController.get(i).getId() == player.getController().getId())
-                    comboDevices.select(i);
+        // DeviceController or DrivingAgentController get and set
+        if(controller instanceof DeviceController) {
+            comboController.select(0);
+            comboAgents.setEnabled(false);
+            List<DeviceController> availableController = carControllerManager.getInputDevices();
+            if(player.getController() != null) {
+                for(int i = 0; i < availableController.size(); i++) {
+                    if(availableController.get(i).getId() == player.getController().getId())
+                        comboDevices.select(i);
+                }
+            }
+        } else if(controller instanceof DrivingAgentController) {
+            comboController.select(1);
+            comboDevices.setEnabled(false);
+            List<DrivingAgentController> availableController = carControllerManager.getDrivingAgents();
+            if(player.getController() != null) {
+                for(int i = 0; i < availableController.size(); i++) {
+                    if(availableController.get(i).getId() == player.getController().getId())
+                        comboAgents.select(i);
+                }
             }
         }
-
+        // connector selection
         List<SlotCarSystemConnector> availableConnectors = connectorManager.getConnectors();
         if(player.getSlotCarSystemConnector() != null) {
             for(int i = 0; i < availableConnectors.size(); i++) {
@@ -248,4 +253,5 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
             }
         }
     }
+
 }

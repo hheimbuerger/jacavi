@@ -1,7 +1,5 @@
 package de.jacavi.appl.racelogic;
 
-import org.eclipse.swt.graphics.Color;
-
 import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
@@ -12,39 +10,21 @@ import de.jacavi.hal.SlotCarSystemConnector;
 
 public class Player {
 
-    private int id;
-
     private String name;
 
-    private CarController carController;
+    private CarController carController = null;
 
-    private SlotCarSystemConnector slotCarSystemConnector;
+    private SlotCarSystemConnector slotCarSystemConnector = null;
 
-    private TrackDataApproximator tda;
+    private TrackDataApproximator tda = null;
 
     private final CarPosition position;
-
-    private Color color;
 
     private Car car;
 
     public Player() {
-        this(0, "Player", null);
-    }
-
-    public Player(int id, String name, CarController controller) {
-        this.id = id;
-        this.name = name;
-        this.carController = controller;
+        this.name = "New Player";
         this.position = new CarPosition();
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public void setController(CarController controller) {
@@ -83,14 +63,6 @@ public class Player {
         this.tda = tda;
     }
 
-    public void setColor(Color color) {
-        this.color = color;
-    }
-
-    public Color getColor() {
-        return color;
-    }
-
     public Car getCar() {
         return car;
     }
@@ -99,4 +71,8 @@ public class Player {
         this.car = car;
     }
 
+    @Override
+    public String toString() {
+        return name;
+    }
 }
