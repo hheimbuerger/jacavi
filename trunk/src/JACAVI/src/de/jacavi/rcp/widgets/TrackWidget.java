@@ -46,7 +46,6 @@ import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.CarScreenPosition;
 import de.jacavi.appl.track.Checkpoint;
