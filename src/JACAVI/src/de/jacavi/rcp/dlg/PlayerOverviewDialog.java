@@ -90,7 +90,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             tc.setText(colName);
             tc.setWidth(100);
         }
-        playerTable.getColumns()[2].setWidth(280);
+        playerTable.getColumns()[2].setWidth(180);
 
         playerTable.addSelectionListener(new SelectionAdapter() {});
         playerTable.addMouseListener(new MouseAdapter() {

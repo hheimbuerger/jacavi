@@ -17,7 +17,7 @@ import de.jacavi.rcp.Activator;
 
 public class PlayerLabelProvider implements ITableLabelProvider {
 
-    public static String[] COLUMNNNAMES = { "Player Name", "Controller", "Connector" };
+    public static String[] COLUMNNNAMES = { "Player Name", "Controller", "Connector", "Car" };
 
     private final Map<String, Image> usedImages = new HashMap<String, Image>();
 
@@ -51,7 +51,10 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                     }
                 }
                 break;
-
+            case 3:
+                if(player.getCar() != null) {
+                    return player.getCar().getSwtImage();
+                }
             default:
                 break;
         }
@@ -76,8 +79,8 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                     result = p.getSlotCarSystemConnector().toString();
                 break;
             case 3:
-                // if (p.getColor() != null)
-                // result = p.getColor().toString();
+                if(p.getCar() != null)
+                    result = p.getCar().getName();
                 break;
             default:
                 result = "UNKNOWN";

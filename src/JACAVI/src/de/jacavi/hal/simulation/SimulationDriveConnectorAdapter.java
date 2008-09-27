@@ -1,41 +1,68 @@
 package de.jacavi.hal.simulation;
 
+import org.apache.log4j.Logger;
+
+import de.jacavi.hal.ConnectorConfigurationManager;
+import de.jacavi.rcp.util.Check;
+
+
+
 public class SimulationDriveConnectorAdapter implements SimulationDriveConnector {
+
+    /**
+     * Logger for this class
+     */
+    private static final Logger logger = Logger.getLogger(ConnectorConfigurationManager.class);
 
     private String name = "";
 
+    private int currentSpeed = 0;
+
+    private int currentSwitchState = 0;
+
+    private boolean backLight = true;
+
+    private boolean frontLight = true;
+
+    private String debugName;
+
     public SimulationDriveConnectorAdapter(String name) {
+        Check.Require(name != null && !name.equals(""), "name may not be null or empty");
         this.name = name;
+        debugName = this.getClass().toString() + " with name " + name;
+        logger.debug("Created " + debugName);
     }
 
     @Override
     public void fullBreak() {
-    // TODO Auto-generated method stub
-
+        logger.debug("fullbreak on " + debugName);
     }
 
     @Override
     public int getSpeed() {
-        // TODO Auto-generated method stub
-        return 0;
+        return currentSpeed;
     }
 
     @Override
     public int getSwitch() {
-        // TODO Auto-generated method stub
-        return 0;
+        return currentSwitchState;
     }
 
     @Override
     public void setSpeed(int speed) {
-    // TODO Auto-generated method stub
+        logger.debug("Setting speed on " + debugName + " to " + speed);
+        currentSpeed = speed;
 
     }
 
     @Override
     public int toggleSwitch() {
-        // TODO Auto-generated method stub
-        return 0;
+        if(currentSwitchState == 0)
+            currentSwitchState = 1;
+        else
+            currentSwitchState = 0;
+
+        return currentSwitchState;
     }
 
     public String getName() {
@@ -44,26 +71,30 @@ public class SimulationDriveConnectorAdapter implements SimulationDriveConnector
 
     @Override
     public boolean isBackLightOn() {
-        // TODO Auto-generated method stub
-        return false;
+        return backLight;
     }
 
     @Override
     public boolean isFrontLightOn() {
-        // TODO Auto-generated method stub
-        return false;
+        return frontLight;
     }
 
     @Override
     public void switchBackLight() {
-    // TODO Auto-generated method stub
-
+        logger.debug("Switching backlight on " + debugName);
+        if(backLight)
+            backLight = false;
+        else
+            backLight = true;
     }
 
     @Override
     public void switchFrontLight() {
-    // TODO Auto-generated method stub
-
+        logger.debug("Switching frontlight on " + debugName);
+        if(frontLight)
+            frontLight = false;
+        else
+            frontLight = true;
     }
 
 }
