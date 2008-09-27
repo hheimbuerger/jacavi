@@ -75,6 +75,7 @@ public class RaceEngine {
                 // prepare devices
                 player.getController().activate();
             }
+            // set running flag
             isTimerRunning = true;
 
             // create new timer feed with RaceTimerTask and start it
@@ -118,6 +119,7 @@ public class RaceEngine {
         @Override
         public void run() {
             for(Player player: players) {
+
                 // get the players CarController
                 CarController carController = player.getController();
                 // get players hal connector
