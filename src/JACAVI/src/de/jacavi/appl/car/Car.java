@@ -15,6 +15,8 @@ import de.jacavi.rcp.Activator;
 public class Car {
     private final String CAR_BITMAP_PATH_PREFIX = "/cars/";
 
+    private final String name;
+
     private final String filename;
 
     private final List<Tileset> tilesets;
@@ -29,8 +31,11 @@ public class Car {
 
     private final Image image;
 
-    public Car(String filename, List<Tileset> tilesets, double acceleration, double mass, double topSpeed,
+    private final org.eclipse.swt.graphics.Image swtImage;
+
+    public Car(String name, String filename, List<Tileset> tilesets, double acceleration, double mass, double topSpeed,
             double inertia) throws IOException {
+        this.name = name;
         this.filename = filename;
         this.tilesets = tilesets;
         this.acceleration = acceleration;
@@ -43,6 +48,11 @@ public class Car {
             throw new IllegalArgumentException("The image resource " + CAR_BITMAP_PATH_PREFIX + filename
                     + " could not be loaded.");
         image = ImageIO.read(resourceAsStream);
+        swtImage = Activator.getImageDescriptor(CAR_BITMAP_PATH_PREFIX + filename).createImage();
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getFilename() {
@@ -72,4 +82,14 @@ public class Car {
     public Image getImage() {
         return image;
     }
+
+    public org.eclipse.swt.graphics.Image getSwtImage() {
+        return swtImage;
+    }
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
 }

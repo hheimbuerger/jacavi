@@ -10,17 +10,20 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.car.Car;
 import de.jacavi.appl.car.CarRepository;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.CarControllerManager;
@@ -29,6 +32,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.SlotCarSystemConnector;
+import de.jacavi.rcp.widgets.controls.ImageCombo;
 
 
 
@@ -62,6 +66,10 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     private Combo comboConnectors;
 
     private ComboViewer comboConnectorsViewer;
+
+    private ImageCombo comboCar;
+
+    private Label carImagePreview;
 
     private final CarRepository carRepository;
 
@@ -161,15 +169,39 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboConnectorsViewer = new ComboViewer(comboConnectors);
         comboConnectorsViewer.add(connectorManager.getConnectors().toArray(
                 new Object[connectorManager.getConnectors().size()]));
+
         // cars
         CLabel labelColor = new CLabel(group, SWT.NONE);
         labelColor.setText("Car:");
 
-        final Button carButton = new Button(group, SWT.NONE);
-        carButton.setText("Select a Car...(Debug)");
-        carButton.setLayoutData(gdInputs);
+        // create a composite of the car IMageCombo and a preview image
+        Composite c = new Composite(group, SWT.NONE);
+        GridLayout cl = new GridLayout();
+        cl.numColumns = 2;
+        cl.marginWidth = 0;
+        c.setLayout(cl);
+        comboCar = new ImageCombo(c, SWT.READ_ONLY | SWT.BORDER);
+        comboCar.setLayoutData(gdInputs);
+        // fill ImageCombo
+        for(Car car: carRepository.getCars()) {
+            // hack to rotate the img 180 dec because its on head :-) why?
+            comboCar.add(car.getName(), car.getSwtImage());
+        }
+        comboCar.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent event) {
+                PlayerSettingsDialog.this.carSelectionChanged(event);
+            }
+        });
+        // set an car preview imagebox
+        carImagePreview = new Label(c, SWT.IMAGE_PNG);
+        // setting players choice
         setContent();
         return parent;
+    }
+
+    protected void carSelectionChanged(SelectionEvent event) {
+        carImagePreview.setImage(carRepository.getCarByID(comboCar.getText()).getSwtImage());
     }
 
     protected void switchDeviceAgentVisibility(SelectionEvent event) {
@@ -183,7 +215,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         } else {
             comboAgents.setEnabled(true);
             comboDevices.setEnabled(false);
-
         }
     }
 
@@ -205,13 +236,13 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                 .getSelectionIndex());
         player.setSlotCarSystemConnector(connector);
         // Set the car
-        player.setCar(carRepository.getCars().get(0));
+        player.setCar(carRepository.getCarByID(comboCar.getText()));
         super.okPressed();
         comboController.dispose();
         comboDevices.dispose();
         comboConnectors.dispose();
         comboAgents.dispose();
-
+        comboCar.dispose();
     }
 
     /**
@@ -221,7 +252,6 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         playerName.setText(player.getName());
 
         CarController controller = player.getController();
-
         // DeviceController or DrivingAgentController get and set
         if(controller instanceof DeviceController) {
             comboController.select(0);
@@ -252,6 +282,61 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
                     comboConnectors.select(i);
             }
         }
-    }
 
+        // car selection
+        if(player.getCar() != null) {
+            for(TableItem item: comboCar.getItems()) {
+                if(item.getText().equals(player.getCar().getName())) {
+                    comboCar.setText(player.getCar().getName());
+                    Image carImg = carRepository.getCarByID(comboCar.getText()).getSwtImage();
+                    carImagePreview.setImage(carImg);
+                }
+            }
+        } else {
+            Car defaultCar = carRepository.getCars().get(0);
+            comboCar.setText(defaultCar.getName());
+            carImagePreview.setImage(defaultCar.getSwtImage());
+        }
+
+    }
+    /*
+        // hack because car images are on head
+        private static ImageData rotate(ImageData srcData, int direction) {
+            int bytesPerPixel = srcData.bytesPerLine / srcData.width;
+            int destBytesPerLine = (direction == SWT.DOWN) ? srcData.width * bytesPerPixel : srcData.height * bytesPerPixel;
+            byte[] newData = new byte[srcData.data.length];
+            int width = 0, height = 0;
+            for(int srcY = 0; srcY < srcData.height; srcY++) {
+                for(int srcX = 0; srcX < srcData.width; srcX++) {
+                    int destX = 0, destY = 0, destIndex = 0, srcIndex = 0;
+                    switch(direction) {
+                        case SWT.LEFT: // left 90 degrees
+                            destX = srcY;
+                            destY = srcData.width - srcX - 1;
+                            width = srcData.height;
+                            height = srcData.width;
+                            break;
+                        case SWT.RIGHT: // right 90 degrees
+                            destX = srcData.height - srcY - 1;
+                            destY = srcX;
+                            width = srcData.height;
+                            height = srcData.width;
+                            break;
+                        case SWT.DOWN: // 180 degrees
+                            destX = srcData.width - srcX - 1;
+                            destY = srcData.height - srcY - 1;
+                            width = srcData.width;
+                            height = srcData.height;
+                            break;
+                    }
+                    destIndex = (destY * destBytesPerLine) + (destX * bytesPerPixel);
+                    srcIndex = (srcY * srcData.bytesPerLine) + (srcX * bytesPerPixel);
+                    System.arraycopy(srcData.data, srcIndex, newData, destIndex, bytesPerPixel);
+                }
+            }
+            // destBytesPerLine is used as scanlinePad to ensure that no padding is
+            // required
+            return new ImageData(width, height, srcData.depth, srcData.palette, destBytesPerLine, newData);
+        }
+    */
 }

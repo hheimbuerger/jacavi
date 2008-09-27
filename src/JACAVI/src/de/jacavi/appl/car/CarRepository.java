@@ -65,6 +65,7 @@ public class CarRepository {
         double mass = 0;
         double topSpeed = 0;
         double inertia = 0;
+        String carName = parentItem.getAttribute("id");
 
         NodeList carNodes = parentItem.getChildNodes();
         for(int i = 0; i < carNodes.getLength(); i++) {
@@ -85,7 +86,7 @@ public class CarRepository {
             }
         }
 
-        cars.add(new Car(bitmap, tilesets, acceleration, mass, topSpeed, inertia));
+        cars.add(new Car(carName, bitmap, tilesets, acceleration, mass, topSpeed, inertia));
     }
 
     private List<Tileset> importAssociatedTilesets(Element carProperty) {
@@ -113,4 +114,23 @@ public class CarRepository {
         }
         return result;
     }
+
+    /**
+     * Returns the car by given id/name witch is specified as car attribute id in xml
+     * <p>
+     * 
+     * @param id
+     *            The id of the car
+     *            <p>
+     * @return The car if found else null
+     */
+    public Car getCarByID(String id) {
+        Car retVal = null;
+        for(Car car: cars) {
+            if(car.getName().equals(id))
+                retVal = car;
+        }
+        return retVal;
+    }
+
 }
