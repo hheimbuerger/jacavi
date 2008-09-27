@@ -15,7 +15,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
-import de.jacavi.appl.controller.device.impl.MouseDevice;
+import de.jacavi.appl.controller.device.impl.MouseKeyboardDeviceAdapter;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameControllerDescriptor;
@@ -42,7 +42,7 @@ public class CarControllerManager {
         controllers.put(k2.getId(), k2);
 
         // a mouse is assumed to be always available
-        MouseDevice m1 = new MouseDevice("Mouse");
+        MouseKeyboardDeviceAdapter m1 = new MouseKeyboardDeviceAdapter("Mouse");
         controllers.put(m1.getId(), m1);
 
         // game controllers have to be detected
