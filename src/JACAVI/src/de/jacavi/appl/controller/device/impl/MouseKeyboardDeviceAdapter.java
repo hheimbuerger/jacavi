@@ -10,13 +10,10 @@ public class MouseKeyboardDeviceAdapter extends DeviceController {
 
     private KeyboardDevice keyboardDevice = null;
 
-    private ControllerSignal currentControllerSignal = null;
-
     public MouseKeyboardDeviceAdapter(String name) {
         super(name);
         mouseDevice = new MouseDevice(name);
         keyboardDevice = new KeyboardDevice(name);
-        currentControllerSignal = new ControllerSignal();
     }
 
     @Override
@@ -35,11 +32,8 @@ public class MouseKeyboardDeviceAdapter extends DeviceController {
     public ControllerSignal poll() {
         ControllerSignal mouse = mouseDevice.poll();
         ControllerSignal keyboard = keyboardDevice.poll();
-        currentControllerSignal.setSpeed(mouse.getSpeed());
-        currentControllerSignal.setTrigger(mouse.isTrigger());
-        currentControllerSignal.setSwitchBackLight(keyboard.isSwitchBackLight());
-        currentControllerSignal.setSwitchFrontLight(keyboard.isSwitchFrontLight());
-        return currentControllerSignal;
+        return new ControllerSignal(mouse.getSpeed(), mouse.isTrigger(), keyboard.isSwitchFrontLight(), keyboard
+                .isSwitchBackLight());
     }
 
     @Override

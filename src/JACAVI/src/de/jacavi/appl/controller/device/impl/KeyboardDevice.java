@@ -12,7 +12,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 
 public class KeyboardDevice extends DeviceController implements Listener {
 
-    private final ControllerSignal currentControllerSignal;
+    private ControllerSignal currentControllerSignal;
 
     private final KeyboardLayout keyboardLayout;
 
@@ -34,8 +34,6 @@ public class KeyboardDevice extends DeviceController implements Listener {
 
     @Override
     public void activate() {
-        currentControllerSignal.setSpeed(0);
-        currentControllerSignal.setTrigger(false);
         Display.getCurrent().addFilter(SWT.KeyDown, this);
     }
 
@@ -46,7 +44,9 @@ public class KeyboardDevice extends DeviceController implements Listener {
 
     @Override
     public ControllerSignal poll() {
-        return currentControllerSignal;
+        ControllerSignal retVal = currentControllerSignal;
+        currentControllerSignal = new ControllerSignal(currentControllerSignal.getSpeed(), false);
+        return retVal;
     }
 
     @Override
