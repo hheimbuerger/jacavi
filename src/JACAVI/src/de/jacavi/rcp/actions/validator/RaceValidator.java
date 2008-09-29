@@ -3,13 +3,13 @@ package de.jacavi.rcp.actions.validator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 import org.eclipse.ui.PlatformUI;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.CarControllerManager;
-import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.ConnectorConfigurationManager;
@@ -30,7 +30,7 @@ public class RaceValidator {
         errorMessages = new ArrayList<String>();
     }
 
-    @ValidatationDesription("Validating Number of Player...")
+    @ValidatationDesription("Validating number of players...")
     public boolean validateNumberOfPlayer(List<Player> players) {
         if(players.size() != 0) {
             return true;
@@ -40,7 +40,7 @@ public class RaceValidator {
         }
     }
 
-    @ValidatationDesription("Validating Player Names...")
+    @ValidatationDesription("Validating players name...")
     public boolean validatePlayerNames(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0)
@@ -55,7 +55,7 @@ public class RaceValidator {
         return valid;
     }
 
-    @ValidatationDesription("Validating Player Controller...")
+    @ValidatationDesription("Validating players controller...")
     public boolean validatePlayerController(List<Player> players) {
         CarControllerManager deviceManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
         boolean valid = true;
@@ -64,14 +64,30 @@ public class RaceValidator {
 
         for(int i = 0; i < players.size(); i++) {
             CarController carController = players.get(i).getController();
-            if(carController instanceof DrivingAgentController) {
-                continue;
-            } else if(carController == null || carController.getId() == null
+            if(carController == null || carController.getId() == null
                     || !deviceManager.isIdValid(carController.getId())) {
                 errorMessages.add("Player No. " + (i + 1)
                         + " has an invalid controller! Please check your player and input device settings.");
                 valid = false;
             }
+        }
+        // check that every controller is only used by one Player
+        for(int i = 0; i < players.size(); i++) {
+
+            if(players.get(i).getController() == null)
+                continue;
+
+            UUID curUUID = players.get(i).getController().getId();
+            int cntEqual = 0;
+            for(Player p2: players) {
+                if(p2.getController().getId().equals(curUUID))
+                    cntEqual++;
+            }
+            if(cntEqual > 1) {
+                errorMessages.add("Player No. " + (i + 1) + " has not an unique car controller.");
+                valid = false;
+            }
+
         }
         return valid;
     }
@@ -94,7 +110,7 @@ public class RaceValidator {
      * @param players
      * @return true if its valid otherwise false
      */
-    @ValidatationDesription("Validating players connector against track...")
+    @ValidatationDesription("Validating players connector...")
     public boolean validatePlayersConnectorAgainstTrack(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0)
@@ -161,6 +177,24 @@ public class RaceValidator {
                     errorMessages.add("Player No. " + (i + 1)
                             + " has an invalid connector. Can not combine Lib42Connector with analogue track.");
                 }
+            }
+
+        }
+
+        // check that every connector is only used by one Player
+        for(int i = 0; i < players.size(); i++) {
+            if(players.get(i).getSlotCarSystemConnector() == null)
+                continue;
+
+            UUID curUUID = players.get(i).getSlotCarSystemConnector().getId();
+            int cntEqual = 0;
+            for(Player p2: players) {
+                if(p2.getSlotCarSystemConnector().getId().equals(curUUID))
+                    cntEqual++;
+            }
+            if(cntEqual > 1) {
+                errorMessages.add("Player No. " + (i + 1) + " has not an unique connector.");
+                valid = false;
             }
         }
         return valid;
