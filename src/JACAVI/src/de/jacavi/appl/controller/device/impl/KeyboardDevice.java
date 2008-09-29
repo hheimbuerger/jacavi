@@ -37,13 +37,11 @@ public class KeyboardDevice extends DeviceController implements Listener {
         currentControllerSignal.setSpeed(0);
         currentControllerSignal.setTrigger(false);
         Display.getCurrent().addFilter(SWT.KeyDown, this);
-        Display.getCurrent().addFilter(SWT.KeyUp, this);
     }
 
     @Override
     public void deactivate() {
         Display.getCurrent().removeFilter(SWT.KeyDown, this);
-        Display.getCurrent().removeFilter(SWT.KeyUp, this);
     }
 
     @Override
@@ -99,12 +97,10 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     private void handleFrontLight(int eventType) {
-        System.out.println("front light");
         currentControllerSignal.setSwitchFrontLight(eventType == SWT.KeyDown);
     }
 
     private void handleBackLight(int eventType) {
-        System.out.println("back light");
         currentControllerSignal.setSwitchBackLight(eventType == SWT.KeyDown);
     }
 }
