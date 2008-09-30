@@ -24,7 +24,8 @@ public class WiimoteDeviceManager {
      * @return int the number of connected wiiremotes
      */
     public int scanForWiimotes() {
-
+        // first shutdown to remove all existing
+        WiiUseApiManager.shutdown();
         // get all wiimotes max 6
         Wiimote[] wiiremotes = WiiUseApiManager.getWiimotes(6, true, WiiUseApiManager.WIIUSE_STACK_UNKNOWN);
         // convert the array in the list
