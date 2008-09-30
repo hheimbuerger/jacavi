@@ -69,10 +69,14 @@ public class TrackDesigner extends EditorPart {
         dlg.setFilterExtensions(filterExt);
         String selected = dlg.open();
         try {
-            ((TrackDesignerInput) getEditorInput()).setFilename(selected);
-            currentTrack.saveToXml(selected);
+            if(selected != null) {
+                ((TrackDesignerInput) getEditorInput()).setFilename(selected);
+                currentTrack.saveToXml(selected);
 
-            log.info("Track saved to " + selected);
+                log.info("Track saved to " + selected);
+                isDirty = false;
+                firePropertyChange(IEditorPart.PROP_DIRTY);
+            }
         } catch(FileNotFoundException e) {
             ExceptionHandler.handleException(this, e, true);
         } catch(Exception e) {
@@ -80,8 +84,6 @@ public class TrackDesigner extends EditorPart {
         }
 
         monitor.done();
-        isDirty = false;
-        firePropertyChange(IEditorPart.PROP_DIRTY);
 
     }
 
