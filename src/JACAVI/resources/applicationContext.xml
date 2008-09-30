@@ -40,5 +40,7 @@
 	<bean id="lib42FeedbackManager" class="de.jacavi.hal.lib42.Lib42FeedbackManager" lazy-init="true" />
 
 	<bean id="playersBean" class="java.util.ArrayList"/>
+	
+	<bean id="statisticsRegistryBean" class="de.jacavi.appl.racelogic.RaceStatisticsManager"/>
 
 </beans>
