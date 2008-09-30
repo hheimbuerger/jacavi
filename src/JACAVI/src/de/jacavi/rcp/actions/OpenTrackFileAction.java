@@ -24,70 +24,78 @@ import de.jacavi.appl.track.Track.TrackLoadingException;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 
-
-
 public class OpenTrackFileAction implements IWorkbenchWindowActionDelegate {
 
-    private static Log log = LogFactory.getLog(OpenTrackFileAction.class);
+	private static Log log = LogFactory.getLog(OpenTrackFileAction.class);
 
-    private IWorkbenchWindow window;
+	private IWorkbenchWindow window;
 
-    @Override
-    public void dispose() {
-    // TODO Auto-generated method stub
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
 
-    }
+	}
 
-    @Override
-    public void init(IWorkbenchWindow window) {
-        this.window = window;
-    }
+	@Override
+	public void init(IWorkbenchWindow window) {
+		this.window = window;
+	}
 
-    @Override
-    public void run(IAction action) {
-        String[] filterExt = { "*" + Track.FILE_EXTENSION };
-        FileDialog dlg = new FileDialog(window.getShell(), SWT.MULTI);
-        dlg.setFilterExtensions(filterExt);
-        File f = new File(dlg.open());
-        log.info(f.getAbsolutePath() + "selected");
+	@Override
+	public void run(IAction action) {
+		String[] filterExt = { "*" + Track.FILE_EXTENSION };
+		FileDialog dlg = new FileDialog(window.getShell(), SWT.MULTI);
+		dlg.setFilterExtensions(filterExt);
+		String file = dlg.open();
+		if (file != null) {
+			File f = new File(file);
+			log.info(f.getAbsolutePath() + "selected");
 
-        try {
-            openEditor(f);
-        } catch(FileNotFoundException e) {
-            handleException(e);
-        } catch(TrackLoadingException e) {
-            handleException(e);
-        } catch(PartInitException e) {
-            handleException(e);
-        }
-    }
+			try {
+				openEditor(f);
+			} catch (FileNotFoundException e) {
+				handleException(e);
+			} catch (TrackLoadingException e) {
+				handleException(e);
+			} catch (PartInitException e) {
+				handleException(e);
+			}
+		}
+	}
 
-    @Override
-    public void selectionChanged(IAction action, ISelection selection) {
-    // TODO Auto-generated method stub
-    }
+	@Override
+	public void selectionChanged(IAction action, ISelection selection) {
+		// TODO Auto-generated method stub
+	}
 
-    private void openEditor(File file) throws FileNotFoundException, TrackLoadingException, PartInitException {
-        Track track = new Track(file);
-        TrackDesignerInput editorInput = new TrackDesignerInput(file.getAbsolutePath(), track);
+	private void openEditor(File file) throws FileNotFoundException,
+			TrackLoadingException, PartInitException {
+		Track track = new Track(file);
+		TrackDesignerInput editorInput = new TrackDesignerInput(file
+				.getAbsolutePath(), track);
 
-        IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		IWorkbenchPage page = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow().getActivePage();
 
-        page.openEditor(editorInput, TrackDesigner.ID);
+		page.openEditor(editorInput, TrackDesigner.ID);
 
-        IWorkbenchPart active = page.getActivePart();
-        active.setFocus();
+		IWorkbenchPart active = page.getActivePart();
+		active.setFocus();
 
-    }
+	}
 
-    private void handleException(Exception e) {
-        log.error("Load failed", e);
+	private void handleException(Exception e) {
+		log.error("Load failed", e);
 
-        // Create the required Status object
-        Status status = new Status(IStatus.ERROR, "JACAVI", e.getMessage(), e);
+		// Create the required Status object
+		Status status = new Status(IStatus.ERROR, "JACAVI", e.getMessage(), e);
 
-        // Display the dialog
-        ErrorDialog.openError(window.getShell(), "Load Error", "It has been occured an error during loading the track",
-                status);
-    }
+		// Display the dialog
+		ErrorDialog
+				.openError(
+						window.getShell(),
+						"Load Error",
+						"It has been occured an error during loading the track",
+						status);
+	}
 }
