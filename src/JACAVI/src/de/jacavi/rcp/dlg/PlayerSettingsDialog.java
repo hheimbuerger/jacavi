@@ -146,8 +146,8 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         // comboDevices.setVisible(comboInput.getSelectionIndex() != 1);
         comboDevices.setLayoutData(gdInputs);
         comboDevicesViewer = new ComboViewer(comboDevices);
-        comboDevicesViewer.add(carControllerManager.getInputDevices().toArray(
-                new Object[carControllerManager.getInputDevices().size()]));
+        comboDevicesViewer.add(carControllerManager.getUnusedDevices(player).toArray(
+                new Object[carControllerManager.getUnusedDevices(player).size()]));
 
         // agents
         CLabel labelAgent = new CLabel(group, SWT.NONE);
@@ -167,8 +167,8 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
         comboConnectors = new Combo(group, SWT.BORDER | SWT.DROP_DOWN | SWT.READ_ONLY);
         comboConnectors.setLayoutData(gdInputs);
         comboConnectorsViewer = new ComboViewer(comboConnectors);
-        comboConnectorsViewer.add(connectorManager.getConnectors().toArray(
-                new Object[connectorManager.getConnectors().size()]));
+        comboConnectorsViewer.add(connectorManager.getUnusedConnectors(player).toArray(
+                new Object[connectorManager.getUnusedConnectors(player).size()]));
 
         // cars
         CLabel labelColor = new CLabel(group, SWT.NONE);

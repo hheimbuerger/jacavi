@@ -24,7 +24,7 @@ public class TestConfigurationManager {
     @Before
     public void setUp() throws Exception {
         connectorManager = new ConnectorConfigurationManager((ConnectorFactory) ContextLoader
-                .getBean("slotCarSystemConnectorFactory"));
+                .getBean("slotCarSystemConnectorFactory"), 4);
         factory = new SlotCarSystemConnectorFactory();
     }
 

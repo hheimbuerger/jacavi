@@ -30,10 +30,11 @@
 
     <bean id="carControllerManagerBean" class="de.jacavi.appl.controller.CarControllerManager" />
 
-	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.hal.SlotCarSystemConnectorFactory" /> 
+	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.test.hal.TestSlotCarSystemConnectorFactory" /> 
 
 	<bean id="connectorManager" class="de.jacavi.hal.ConnectorConfigurationManager" init-method="createDefaultConnectors">
         <constructor-arg type="de.jacavi.hal.ConnectorFactory" ref="slotCarSystemConnectorFactory" />
+        <constructor-arg value="${numberOfSimulatedConnectors}"></constructor-arg>
     </bean>
 	
 	
