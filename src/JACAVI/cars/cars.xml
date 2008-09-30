@@ -12,9 +12,9 @@
         <mass>5</mass>
         <top-speed>200</top-speed>
         <inertia>5</inertia>
-    </car>    
-	<car id="moped">
-        <bitmap>moped.png</bitmap>
+    </car>
+    <car id="Ford Mustang 2007">
+        <bitmap>ford_mustang53X24.png</bitmap>
         <tilesets>
             <tileset id="debug" />
             <tileset id="analogue" />
@@ -24,5 +24,65 @@
         <mass>4</mass>
         <top-speed>250</top-speed>
         <inertia>5</inertia>
-    </car>    
+    </car>
+    <car id="Bluerider">
+        <bitmap>bluerider53X24.png</bitmap>
+        <tilesets>
+            <tileset id="debug" />
+            <tileset id="analogue" />
+            <tileset id="digital" />
+        </tilesets>
+        <acceleration>7</acceleration>
+        <mass>4</mass>
+        <top-speed>250</top-speed>
+        <inertia>5</inertia>
+    </car>
+    <car id="Bugatti Feyron">
+        <bitmap>bugatti_feyron49X24.png</bitmap>
+        <tilesets>
+            <tileset id="debug" />
+            <tileset id="analogue" />
+            <tileset id="digital" />
+        </tilesets>
+        <acceleration>7</acceleration>
+        <mass>4</mass>
+        <top-speed>250</top-speed>
+        <inertia>5</inertia>
+    </car>
+     <car id="Chevrolet Corvette C6R">
+        <bitmap>chevrolet_corvette_C6R49X24.png</bitmap>
+        <tilesets>
+            <tileset id="debug" />
+            <tileset id="analogue" />
+            <tileset id="digital" />
+        </tilesets>
+        <acceleration>7</acceleration>
+        <mass>4</mass>
+        <top-speed>250</top-speed>
+        <inertia>5</inertia>
+    </car>
+    <car id="Chevrolet Corvette C6 Custom">
+        <bitmap>chevrolet_corvette_C6Custom52X24.png</bitmap>
+        <tilesets>
+            <tileset id="debug" />
+            <tileset id="analogue" />
+            <tileset id="digital" />
+        </tilesets>
+        <acceleration>7</acceleration>
+        <mass>4</mass>
+        <top-speed>250</top-speed>
+        <inertia>5</inertia>
+    </car>                
+    <car id="Peugeot Formula">
+        <bitmap>peugeot_formula51X24.png</bitmap>
+        <tilesets>
+            <tileset id="debug" />
+            <tileset id="analogue" />
+            <tileset id="digital" />
+        </tilesets>
+        <acceleration>7</acceleration>
+        <mass>4</mass>
+        <top-speed>250</top-speed>
+        <inertia>5</inertia>
+    </car>                                
 </cars>
