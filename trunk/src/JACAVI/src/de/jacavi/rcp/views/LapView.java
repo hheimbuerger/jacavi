@@ -1,81 +1,185 @@
 package de.jacavi.rcp.views;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.Messages;
+import de.jacavi.appl.racelogic.LapCompletionListener;
 import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.racelogic.RaceStatisticsManager;
+import de.jacavi.rcp.dlg.provider.PlayerContentProvider;
 
+public class LapView extends ViewPart implements LapCompletionListener,
+		IPerspectiveListener {
+	public static final String ID = "JACAVI.lapView"; //$NON-NLS-1$
 
+	private final ArrayList<Player> players;
+	private TableViewer tableViewer;
 
-public class LapView extends ViewPart {
-    public static final String ID = "JACAVI.lapView"; //$NON-NLS-1$
+	@SuppressWarnings("unchecked")
+	public LapView() {
+		players = (ArrayList<Player>) ContextLoader.getBean("playersBean");
+		addListenerObject(this);
+		((RaceStatisticsManager) ContextLoader
+				.getBean("statisticsRegistryBean")).addListener(this);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.addPerspectiveListener(this);
+	}
 
-    private final ArrayList<Player> players;
+	@Override
+	public void createPartControl(Composite parent) {
 
-    @SuppressWarnings("unchecked")
-    public LapView() {
-        players = (ArrayList<Player>) ContextLoader.getBean("playersBean");
-    }
+		final Text text = new Text(parent, SWT.BORDER);
+		text.setBounds(25, 240, 220, 25);
 
-    Table table;
+		String[] colNames = Messages.getStringArray("LapView.columns");
+		tableViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER
+				| SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION
+				| SWT.HIDE_SELECTION);
+		// // Set up the table
+		final Table playerTable = tableViewer.getTable();
+		playerTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-    @Override
-    public void createPartControl(Composite parent) {
+		playerTable.setHeaderVisible(true);
+		playerTable.setLinesVisible(true);
+		tableViewer.setColumnProperties(colNames);
+		tableViewer.setLabelProvider(new LapLabelProvider());
+		tableViewer.setContentProvider(new PlayerContentProvider());
+		tableViewer.setInput(players);
 
-        final Text text = new Text(parent, SWT.BORDER);
-        text.setBounds(25, 240, 220, 25);
+		TableColumn tc = null;
+		for (String colName : colNames) {
+			tc = new TableColumn(playerTable, SWT.LEFT);
+			tc.setText(colName);
+			tc.setWidth(100);
+		}
+		tableViewer.refresh();
 
-        table = new Table(parent, SWT.FULL_SELECTION | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-        table.setHeaderVisible(true);
-        table.setLinesVisible(true);
-        String[] titles = Messages.getStringArray("LapView.columns");
+		//
+		playerTable.addListener(SWT.Selection, new Listener() {
+			public void handleEvent(Event event) {
+				if (event.detail == SWT.CHECK) {
+					text.setText("You checked " + event.item); //$NON-NLS-1$
+				} else {
+					text.setText("You selected " + event.item); //$NON-NLS-1$
+				}
+				;
+			}
+		});
 
-        for(String title2: titles) {
-            TableColumn column = new TableColumn(table, SWT.NULL);
-            column.setText(title2);
-        }
+	}
 
-        for(int i = 0; i < players.size(); i++) {
-            TableItem item = new TableItem(table, SWT.NULL);
-            item.setText(0, players.get(i).getName());
-            item.setText(1, players.get(i).getController().getClass().getSimpleName());
-            // item.setText(2, players.get(i).getProtocol());
-            item.setText(2, "FIXME");
-            item.setText(3, "0:00"); //$NON-NLS-1$
-            item.setText(4, "0:00"); //$NON-NLS-1$
-            item.setText(5, "0:00"); //$NON-NLS-1$
-            item.setText(6, "0"); //$NON-NLS-1$
-        }
+	@Override
+	public void setFocus() {
+	}
 
-        for(int loopIndex = 0; loopIndex < titles.length; loopIndex++) {
-            table.getColumn(loopIndex).pack();
-        }
+	private class LapLabelProvider implements ITableLabelProvider {
 
-        table.setBounds(25, 25, 220, 200);
+		private final SimpleDateFormat formatter;
 
-        table.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event event) {
-                if(event.detail == SWT.CHECK) {
-                    text.setText("You checked " + event.item); //$NON-NLS-1$
-                } else {
-                    text.setText("You selected " + event.item); //$NON-NLS-1$
-                }
-            }
-        });
+		public LapLabelProvider() {
+			formatter = new SimpleDateFormat("mm:ss:SSS");
+		}
 
-    }
+		@Override
+		public Image getColumnImage(Object arg0, int arg1) {
+			return null;
+		}
 
-    @Override
-    public void setFocus() {}
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			Player p = (Player) element;
+
+			String result = "";
+			switch (columnIndex) {
+			case 0:
+				if (p.getName() != null) {
+					result = p.getName();
+				}
+				break;
+			case 1:
+				result = formatter.format(new Date(p.getRaceStatistic()
+						.getLastLap()));
+				break;
+			case 2:
+				result = formatter.format(new Date(p.getRaceStatistic()
+						.getBestLap()));
+				break;
+			case 3:
+				result = p.getPosition().lap + "";
+				break;
+			default:
+				result = "UNKNOWN";
+				break;
+			}
+			return result;
+		}
+
+		@Override
+		public void addListener(ILabelProviderListener arg0) {
+		}
+
+		@Override
+		public void dispose() {
+		}
+
+		@Override
+		public boolean isLabelProperty(Object arg0, String arg1) {
+			return false;
+		}
+
+		@Override
+		public void removeListener(ILabelProviderListener arg0) {
+		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * de.jacavi.rcp.views.LapCompletionListener#onLapCompleted(de.jacavi.appl
+	 * .racelogic.Player)
+	 */
+	public void onLapCompleted(final Player p) {
+		Display.getDefault().asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				tableViewer.refresh(p);
+			}
+		});
+	}
+
+	@Override
+	public void perspectiveActivated(IWorkbenchPage arg0,
+			IPerspectiveDescriptor arg1) {
+		tableViewer.refresh();
+	}
+
+	@Override
+	public void perspectiveChanged(IWorkbenchPage arg0,
+			IPerspectiveDescriptor arg1, String arg2) {
+	}
+
 }
