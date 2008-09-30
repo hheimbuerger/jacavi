@@ -10,6 +10,8 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import de.jacavi.appl.ContextLoader;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.lib42.Lib42DriveConnector;
@@ -29,13 +31,16 @@ public class ConnectorConfigurationManager {
      */
     private static final Logger logger = Logger.getLogger(ConnectorConfigurationManager.class);
 
-    private ConnectorFactory connectorFactory = null;
+    private final ConnectorFactory connectorFactory;
+
+    private final int numberOfSimulatedConnectors;
 
     private final Map<UUID, SlotCarSystemConnector> connectors = new TreeMap<UUID, SlotCarSystemConnector>();
 
-    public ConnectorConfigurationManager(ConnectorFactory connectorFactory) {
+    public ConnectorConfigurationManager(ConnectorFactory connectorFactory, int numberOfSimulatedConnectors) {
         logger.info("instantiating ConnectorConfigurationManager.");
         this.connectorFactory = connectorFactory;
+        this.numberOfSimulatedConnectors = numberOfSimulatedConnectors;
     }
 
     /**
@@ -69,9 +74,10 @@ public class ConnectorConfigurationManager {
      */
     protected void createDefaultConnectors() {
         // create one simulated connector (dummy)
-        // TODO: create three more if other players want to play simulated
-        SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation connector");
-        addConnector(simulatedConnector);
+        for(int i = 1; i <= numberOfSimulatedConnectors; i++) {
+            SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation " + i);
+            addConnector(simulatedConnector);
+        }
     }
 
     /**
@@ -81,6 +87,30 @@ public class ConnectorConfigurationManager {
         List<SlotCarSystemConnector> result = new ArrayList<SlotCarSystemConnector>();
         for(SlotCarSystemConnector connector: connectors.values())
             result.add(connector);
+        Collections.sort(result);
+        return result;
+    }
+
+    /**
+     * Get a sorted list of unused (not assigned to any existing player),configured SlotCarSystemConnectors If
+     * player==null you will get all unused if player!=null you will get all unused + the one of the player
+     * 
+     * @param player
+     *            the except player
+     *            <p>
+     * @return a sorted list of SlotCarSystemConnectors
+     */
+    @SuppressWarnings("unchecked")
+    public List<SlotCarSystemConnector> getUnusedConnectors(Player player) {
+        List<SlotCarSystemConnector> result = getConnectors();
+        List<Player> players = (List<Player>) ContextLoader.getBean("playersBean");
+        for(Player p: players) {
+            if(p != player) {
+                if(p.getSlotCarSystemConnector() != null)
+
+                    result.remove(p.getSlotCarSystemConnector());
+            }
+        }
         Collections.sort(result);
         return result;
     }

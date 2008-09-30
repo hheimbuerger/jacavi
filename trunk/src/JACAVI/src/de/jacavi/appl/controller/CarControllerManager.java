@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.apache.log4j.Logger;
 
+import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
@@ -19,6 +20,7 @@ import de.jacavi.appl.controller.device.impl.MouseKeyboardDeviceAdapter;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDeviceManager;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager.GameControllerDescriptor;
+import de.jacavi.appl.racelogic.Player;
 
 
 
@@ -91,6 +93,29 @@ public class CarControllerManager {
         for(CarController dc: controllers.values())
             if(dc instanceof DeviceController)
                 result.add((DeviceController) dc);
+        Collections.sort(result);
+        return result;
+    }
+
+    /**
+     * Returns a list of all unused (not assigned to any existing player) DeviceControllers if player==null if
+     * player==null you will get all unused devices if player!=null you will get all+ the players one
+     * 
+     * @param player
+     *            the except player
+     * @return a sorted list of configured unused input devices
+     */
+    @SuppressWarnings("unchecked")
+    public List<DeviceController> getUnusedDevices(Player player) {
+        List<DeviceController> result = getInputDevices();
+        List<Player> players = (List<Player>) ContextLoader.getBean("playersBean");
+        for(Player p: players) {
+            if(p != player) {
+                if(p.getController() != null && p.getController() instanceof DeviceController) {
+                    result.remove(p.getController());
+                }
+            }
+        }
         Collections.sort(result);
         return result;
     }
