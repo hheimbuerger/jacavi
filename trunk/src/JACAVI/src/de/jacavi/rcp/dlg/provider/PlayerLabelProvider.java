@@ -55,7 +55,6 @@ public class PlayerLabelProvider implements ITableLabelProvider {
                 if(player.getCar() != null) {
                     return player.getCar().getSwtImage();
                 }
-            default:
                 break;
         }
         return null;

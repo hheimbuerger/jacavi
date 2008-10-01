@@ -6,17 +6,13 @@ import de.jacavi.hal.simulation.SimulationDriveConnector;
 
 public class TestSimulationDriveConnectorAdapter implements SimulationDriveConnector {
 
-    private String name;
-
     private int speed = 0;
 
     private boolean frontLight = false;
 
     private boolean backLight = false;
 
-    public TestSimulationDriveConnectorAdapter(String name) {
-        this.name = name;
-    }
+    public TestSimulationDriveConnectorAdapter(String name) {}
 
     @Override
     public void fullBreak() {
