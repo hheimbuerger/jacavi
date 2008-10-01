@@ -28,8 +28,13 @@ public class DebugTDA extends TrackDataApproximator {
         /*else
             logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint());*/
 
-        // determine acceleration and speed
-        double acceleration = ((double) controllerSignal.getSpeed() / 100 - 0.5) * car.getAcceleration();
+        // adjusted speed: between -50 and +50
+        double adjustedSpeed = ((double) controllerSignal.getSpeed() / 100 - 0.5);
+
+        // acceleration = speed * car acceleration factor
+        double acceleration = adjustedSpeed * car.getAcceleration();
+
+        // speed = old speed + acceleration * num adjustments (but limited to 0..topspeed)
         speed = Math.max(Math.min(speed + acceleration * (gametick - lastGametick), car.getTopSpeed()), 0);
 
         // determine the new position;

@@ -145,7 +145,8 @@ public class TilesetRepository {
                         importLaneSections(lane, lane.getLaneSectionsChange(), laneSection.getChildNodes());
                     } else if(laneSection.getNodeName().equals("checkpoint")) {
                         lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection
-                                .getAttribute("x")), Integer.valueOf(laneSection.getAttribute("y")));
+                                .getAttribute("steps")), Integer.valueOf(laneSection.getAttribute("x")), Integer
+                                .valueOf(laneSection.getAttribute("y")));
                     } else {
                         throw new TilesetRepositoryInitializationFailedException("Invalid lane section in lane: "
                                 + laneSection.getNodeName());
@@ -178,8 +179,9 @@ public class TilesetRepository {
                                     .valueOf(laneSection.getAttribute("y3")), Integer.valueOf(laneSection
                                     .getAttribute("entryToExitAngle")));
                 } else if(laneSection.getNodeName().equals("checkpoint")) {
-                    lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection.getAttribute("x")),
-                            Integer.valueOf(laneSection.getAttribute("y")));
+                    lane.addCheckpoint(laneSection.getAttribute("id"), Integer.valueOf(laneSection
+                            .getAttribute("steps")), Integer.valueOf(laneSection.getAttribute("x")), Integer
+                            .valueOf(laneSection.getAttribute("y")));
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid lane section in lane: "
                             + laneSection.getNodeName());

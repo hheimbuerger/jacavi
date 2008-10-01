@@ -10,8 +10,11 @@ public class Checkpoint {
 
     private final Point point;
 
-    public Checkpoint(String id, Point point) {
+    private final int steps;
+
+    public Checkpoint(String id, int steps, Point point) {
         this.id = id;
+        this.steps = steps;
         this.point = point;
     }
 
@@ -21,6 +24,10 @@ public class Checkpoint {
 
     public Point getPoint() {
         return point;
+    }
+
+    public int getSteps() {
+        return steps;
     }
 
 }
