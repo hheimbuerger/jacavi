@@ -201,7 +201,11 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     }
 
     protected void carSelectionChanged(SelectionEvent event) {
+        ImageCombo combo = (ImageCombo) event.getSource();
+        Composite c = combo.getParent();
         carImagePreview.setImage(carRepository.getCarByID(comboCar.getText()).getSwtImage());
+        carImagePreview.pack(true);
+        c.pack(true);
     }
 
     protected void switchDeviceAgentVisibility(SelectionEvent event) {
