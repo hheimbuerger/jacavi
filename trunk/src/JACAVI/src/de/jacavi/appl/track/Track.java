@@ -227,7 +227,7 @@ public class Track {
         }
         return null;*/
         TrackSection section = sections.get(position.trackSectionIndex);
-        Lane lane = section.getLane(position.currentLane);
+        Lane lane = section.getLane(position.laneIndex);
         return new CarScreenPosition(section, lane.getStepPoint(position));
     }
 

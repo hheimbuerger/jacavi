@@ -22,11 +22,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="50" x1="-26" y1="-5" x2="26" y2="-5" />
-                <checkpoint id="cp1" x="-26" y="-8" />
+                <checkpoint id="cp1" steps="25" x="-26" y="-8" />
             </lane>
             <lane>
                 <line length="50" x1="-26" y1="5" x2="26" y2="5" />
-                <checkpoint id="cp2" x="-26" y="8" />
+                <checkpoint id="cp2" steps="25" x="-26" y="8" />
             </lane>
         </tile>
         <tile id="crossover" name="crossover">

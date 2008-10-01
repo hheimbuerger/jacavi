@@ -63,8 +63,8 @@ public class Lane {
      * @param y
      *            the y-coordinate of the checkpoint
      */
-    public void addCheckpoint(String id, int x, int y) {
-        checkpoints.add(new Checkpoint(id, new Point(x, y)));
+    public void addCheckpoint(String id, int steps, int x, int y) {
+        checkpoints.add(new Checkpoint(id, steps, new Point(x, y)));
     }
 
     public LaneSectionList getLaneSectionsCommon() {
