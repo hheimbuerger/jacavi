@@ -48,6 +48,8 @@ public class Car {
             throw new IllegalArgumentException("The image resource " + CAR_BITMAP_PATH_PREFIX + filename
                     + " could not be loaded.");
         image = ImageIO.read(resourceAsStream);
+
+        // FIXME: this image is never disposed again!
         swtImage = Activator.getImageDescriptor(CAR_BITMAP_PATH_PREFIX + filename).createImage();
     }
 

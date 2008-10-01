@@ -14,6 +14,7 @@ package de.jacavi.rcp.widgets.controls;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
@@ -22,6 +23,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.accessibility.AccessibleTextAdapter;
 import org.eclipse.swt.accessibility.AccessibleTextEvent;
 import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -42,6 +44,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TypedListener;
+import org.eclipse.swt.widgets.Widget;
 
 
 
@@ -160,16 +163,16 @@ public final class ImageCombo extends Composite {
         };
 
         int[] comboEvents = { SWT.Dispose, SWT.Move, SWT.Resize };
-        for(int i = 0; i < comboEvents.length; i++)
-            this.addListener(comboEvents[i], listener);
+        for(int comboEvent: comboEvents)
+            this.addListener(comboEvent, listener);
 
         int[] textEvents = { SWT.KeyDown, SWT.KeyUp, SWT.Modify, SWT.MouseDown, SWT.MouseUp, SWT.Traverse, SWT.FocusIn };
-        for(int i = 0; i < textEvents.length; i++)
-            text.addListener(textEvents[i], listener);
+        for(int textEvent: textEvents)
+            text.addListener(textEvent, listener);
 
         int[] arrowEvents = { SWT.Selection, SWT.FocusIn };
-        for(int i = 0; i < arrowEvents.length; i++)
-            arrow.addListener(arrowEvents[i], listener);
+        for(int arrowEvent: arrowEvents)
+            arrow.addListener(arrowEvent, listener);
 
         createPopup(-1);
         initAccessible();
@@ -363,8 +366,8 @@ public final class ImageCombo extends Composite {
         int textWidth = 0;
         GC gc = new GC(text);
         int spacer = gc.stringExtent(" ").x; //$NON-NLS-1$
-        for(int i = 0; i < items.length; i++) {
-            textWidth = Math.max(gc.stringExtent(items[i]).x, textWidth);
+        for(String item: items) {
+            textWidth = Math.max(gc.stringExtent(item).x, textWidth);
         }
         gc.dispose();
         Point textSize = text.computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
@@ -398,11 +401,11 @@ public final class ImageCombo extends Composite {
             table.setBackground(background);
 
         int[] popupEvents = { SWT.Close, SWT.Paint, SWT.Deactivate };
-        for(int i = 0; i < popupEvents.length; i++)
-            popup.addListener(popupEvents[i], listener);
+        for(int popupEvent: popupEvents)
+            popup.addListener(popupEvent, listener);
         int[] listEvents = { SWT.MouseUp, SWT.Selection, SWT.Traverse, SWT.KeyDown, SWT.KeyUp, SWT.FocusIn, SWT.Dispose };
-        for(int i = 0; i < listEvents.length; i++)
-            table.addListener(listEvents[i], listener);
+        for(int listEvent: listEvents)
+            table.addListener(listEvent, listener);
 
         if(selectionIndex != -1)
             table.setSelection(selectionIndex);
@@ -455,7 +458,6 @@ public final class ImageCombo extends Composite {
         }
 
         if(getShell() != popup.getParent()) {
-            TableItem[] items = table.getItems();
             int selectionIndex = table.getSelectionIndex();
             table.removeListener(SWT.Dispose, listener);
             popup.dispose();
@@ -933,7 +935,6 @@ public final class ImageCombo extends Composite {
         switch(event.type) {
             case SWT.Dispose:
                 if(getShell() != popup.getParent()) {
-                    TableItem[] items = table.getItems();
                     int selectionIndex = table.getSelectionIndex();
                     popup = null;
                     table = null;
@@ -1342,8 +1343,8 @@ public final class ImageCombo extends Composite {
     public void setItems(String[] items) {
         checkWidget();
         this.table.removeAll();
-        for(int i = 0, n = items.length; i < n; i++) {
-            add(items[i], null);
+        for(String item: items) {
+            add(item, null);
         }
         if(!text.getEditable())
             text.setText(""); //$NON-NLS-1$
