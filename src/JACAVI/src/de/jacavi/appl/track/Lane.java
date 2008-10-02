@@ -4,8 +4,6 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
-import de.jacavi.rcp.widgets.TrackWidget;
-
 
 
 /**
@@ -86,6 +84,18 @@ public class Lane {
      */
     public List<Checkpoint> getCheckpoints() {
         return checkpoints;
+    }
+
+    /**
+     * Returns an boolean if there are checkpoints on this lane
+     * 
+     * @return boolean true if the Lane has checkpoints otherwise false
+     */
+    public boolean hasCheckpoints() {
+        if(checkpoints.size() > 0)
+            return true;
+        else
+            return false;
     }
 
     public void setExits(int regularExit, int changeExit) {

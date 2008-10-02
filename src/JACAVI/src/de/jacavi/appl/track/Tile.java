@@ -1,6 +1,8 @@
 package de.jacavi.appl.track;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
 
@@ -52,6 +54,10 @@ public class Tile {
 
     public String getName() {
         return name;
+    }
+
+    public List<Lane> getLanes() {
+        return Arrays.asList(lanes);
     }
 
     public MultiStyleImage getSectionImage() {

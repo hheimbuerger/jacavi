@@ -6,6 +6,8 @@ import de.jacavi.appl.track.CarPosition;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
 
+
+
 public class Lib42TDA extends TrackDataApproximator {
 
     @Override
