@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<track name="htwgDigital" tileset="digital">
+<track name="htwgDigitalCheck" tileset="digital">
     <section id="finishingStraight"/>
     <section id="turn30deg2"/>
     <section id="turn60deg2"/>
     <section id="turn30deg"/>
-    <section id="straightShort"/>
+    <section id="straightShorter"/>
     <section id="straight_cp_15/16"/>
     <section id="straightChange1_cp_1/2"/>
     <section id="turn30deg2"/>
@@ -21,7 +21,7 @@
     <section id="turn60deg2"/>
     <section id="turn60deg2"/>
     <section id="turn60deg2"/>
-    <section id="straightShort"/>
+    <section id="straightShorter"/>
     <section id="turn30deg"/>
     <section id="turn60deg"/>
     <section id="straight"/>
