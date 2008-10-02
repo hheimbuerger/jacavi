@@ -28,7 +28,7 @@ public class TDAInjectorFactory {
         SlotCarDriveConnector driveConnector = player.getSlotCarSystemConnector().getDriveConnector();
         List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());
         if(interfaces.contains(Lib42DriveConnector.class)) {
-            player.setTda(new Lib42TDA());
+            player.setTda(new ExperimentalLib42TDA());
         } else if(interfaces.contains(AnalogueDriveConnector.class)) {
             player.setTda(new AnalogueTDA());
         } else if(interfaces.contains(BlueriderDriveConnector.class)) {
