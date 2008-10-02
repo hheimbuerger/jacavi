@@ -254,10 +254,22 @@
             	<checkpoint id="3" steps="79" x="-4" y="5"/>
             </lane>
         </tile>
-        <tile id="straightShort" name="Straight (short)">
-            <filename>straightShort.png</filename>
+        <tile id="straightShort" name="Straight short">
+            <filename>kurzTEST.png</filename>
             <entryPoint x="14" y="-1" />
             <exitPoint x="-14" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="29" x1="14" y1="-15" x2="-14" y2="-15" />
+            </lane>
+            <lane>
+                <line length="29" x1="14" y1="17" x2="-14" y2="17" />
+            </lane>
+        </tile>
+        <tile id="straightShorter" name="Straight shorter">
+            <filename>kuerzerTEST.png</filename>
+            <entryPoint x="10" y="-1" />
+            <exitPoint x="-10" y="-1" />
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="29" x1="14" y1="-15" x2="-14" y2="-15" />
@@ -293,8 +305,8 @@
 		</tile>
 -->
         <tile id="turn30deg" name="30° turn">
-            <filename>30degTurn.png</filename>
-            <entryPoint x="25" y="-5" />
+            <filename>kurve_156px_30_2.png</filename>
+            <entryPoint x="27" y="-5" />
             <exitPoint x="-12" y="6" />
             <entryToExitAngle>-30</entryToExitAngle>
             <lane>
@@ -305,8 +317,8 @@
             </lane>
 		</tile>
 		<tile id="turn30deg2" name="30° turn2">
-            <filename>30degTurn2.png</filename>
-            <entryPoint x="25" y="2" />
+            <filename>kurve_156px_30.png</filename>
+            <entryPoint x="27" y="2" />
             <exitPoint x="-11" y="-8" />
             <entryToExitAngle>30</entryToExitAngle>
             <lane>
@@ -318,8 +330,8 @@
 		</tile>
 		<tile id="steepTurn" name="30° steepTurn">
             <filename>30degSteep.png</filename>
-            <entryPoint x="39" y="6" />
-            <exitPoint x="-24" y="-11" />
+            <entryPoint x="38" y="6" />
+            <exitPoint x="-23" y="-10" />
             <entryToExitAngle>30</entryToExitAngle>
             <lane>
 				<quad-bezier length="23" x1="39" y1="-8" x2="3" y2="-10" x3="-17" y3="-23" entryToExitAngle="30" />                
@@ -342,9 +354,9 @@
 		</tile>
 		
 		<tile id="turn60deg" name="60° turn">
-            <filename>60degTurn.png</filename>
-            <entryPoint x="43" y="-14" />
-            <exitPoint x="-20" y="24" />
+            <filename>kurve_156px_60_2.png</filename>
+            <entryPoint x="46" y="-15" />
+            <exitPoint x="-23" y="24" />
             <entryToExitAngle>-60</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="43" y1="-28" x2="0" y2="-29" x3="-34" y3="18" entryToExitAngle="-60" />
@@ -354,9 +366,9 @@
             </lane>
         </tile>
         <tile id="turn60deg2" name="60° turn2">
-            <filename>60degTurn2.png</filename>
-            <entryPoint x="43" y="11" />
-            <exitPoint x="-18" y="-27" />
+            <filename>kurve_156px_60.png</filename>
+            <entryPoint x="46" y="13" />
+            <exitPoint x="-20" y="-25" />
             <entryToExitAngle>60</entryToExitAngle>
             <lane>
                 <quad-bezier length="80" x1="44" y1="-3" x2="8" y2="-7" x3="-5" y3="-33" entryToExitAngle="60" />
