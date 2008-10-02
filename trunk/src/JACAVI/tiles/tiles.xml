@@ -167,7 +167,77 @@
                 <line length="83" x1="41" y1="-15" x2="-41" y2="-15" />
             </lane>
             <lane>
-                <line length="90" x1="41" y1="17" x2="-41" y2="17" />
+                <line length="83" x1="41" y1="17" x2="-41" y2="17" />
+            </lane>
+        </tile>
+        <tile id="straight_cp_13/14" name="Straight Checkpoint 13/14">
+            <filename>straightLong.png</filename>
+            <entryPoint x="41" y="-1" />
+            <exitPoint x="-41" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="83" x1="41" y1="-15" x2="-41" y2="-15" />
+            	<checkpoint id="13" steps="4" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="83" x1="41" y1="17" x2="-41" y2="17" />
+            	<checkpoint id="14" steps="4" x="-4" y="5"/>
+            </lane>
+        </tile>
+        <tile id="straight_cp_11/12" name="Straight Checkpoint 11/12">
+            <filename>straightLong.png</filename>
+            <entryPoint x="41" y="-1" />
+            <exitPoint x="-41" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="83" x1="41" y1="-15" x2="-41" y2="-15" />
+            	<checkpoint id="11" steps="4" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="83" x1="41" y1="17" x2="-41" y2="17" />
+            	<checkpoint id="12" steps="4" x="-4" y="5"/>
+            </lane>
+        </tile>
+        <tile id="straight_cp_7/8" name="Straight Checkpoint 7/8">
+            <filename>straightLong.png</filename>
+            <entryPoint x="41" y="-1" />
+            <exitPoint x="-41" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="83" x1="41" y1="-15" x2="-41" y2="-15" />
+            	<checkpoint id="7" steps="46" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="83" x1="41" y1="17" x2="-41" y2="17" />
+            	<checkpoint id="8" steps="46" x="-4" y="5"/>
+            </lane>
+        </tile>
+        <tile id="straight_cp_5/6" name="Straight Checkpoint 5/6">
+            <filename>straightLong.png</filename>
+            <entryPoint x="41" y="-1" />
+            <exitPoint x="-41" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="83" x1="41" y1="-15" x2="-41" y2="-15" />
+            	<checkpoint id="5" steps="4" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="83" x1="41" y1="17" x2="-41" y2="17" />
+            	<checkpoint id="6" steps="4" x="-4" y="5"/>
+            </lane>
+        </tile>
+         <tile id="straight_cp_3/4" name="Straight Checkpoint 3/4">
+            <filename>straightLong.png</filename>
+            <entryPoint x="41" y="-1" />
+            <exitPoint x="-41" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="83" x1="41" y1="-15" x2="-41" y2="-15" />
+            	<checkpoint id="3" steps="4" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="83" x1="41" y1="17" x2="-41" y2="17" />
+            	<checkpoint id="4" steps="4" x="-4" y="5"/>
             </lane>
         </tile>
         <tile id="straightShort" name="Straight (short)">
@@ -291,6 +361,34 @@
             </lane>
             <lane>
                 <line length="165" x1="82" y1="17" x2="-82" y2="17" />
+            </lane>
+        </tile>
+        <tile id="straightChange1_cp_9/10" name="Change lane Checkpoint 9/10">
+            <filename>change1.png</filename> 
+            <entryPoint x="82" y="-1" />
+            <exitPoint x="-82" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="165" x1="82" y1="-15" x2="-82" y2="-15" />
+                <checkpoint id="9" steps="1" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="165" x1="82" y1="17" x2="-82" y2="17" />
+            	<checkpoint id="10" steps="1" x="-4" y="5"/>
+            </lane>
+        </tile>
+        <tile id="straightChange2_cp_1/2" name="Change lane Checkpoint 1/2">
+            <filename>change1.png</filename> 
+            <entryPoint x="82" y="-1" />
+            <exitPoint x="-82" y="-1" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="165" x1="82" y1="-15" x2="-82" y2="-15" />
+                <checkpoint id="1" steps="1" x="-4" y="5"/>
+            </lane>
+            <lane>
+                <line length="165" x1="82" y1="17" x2="-82" y2="17" />
+            	<checkpoint id="2" steps="1" x="-4" y="5"/>
             </lane>
         </tile>
         <tile id="straightChange2" name="Change lane 2">
