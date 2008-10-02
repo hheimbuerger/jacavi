@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.FeedbackSignal;
+import de.jacavi.rcp.util.Check;
 
 
 
@@ -25,6 +26,7 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
     private FeedbackSignal latestFeedback = new FeedbackSignal(null, "0");
 
     public Lib42FeedbackConnectorAdapter(int carID) {
+        Check.Require(carID > 0, "carID must be > 0");
         this.carID = carID;
         // get the feedbackManager and add me as listener on sensor callbacks
         feedbackManager = (Lib42FeedbackManager) ContextLoader.getBean("lib42FeedbackManager");

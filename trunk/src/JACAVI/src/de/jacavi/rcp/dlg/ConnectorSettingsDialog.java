@@ -137,7 +137,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
     }
 
     protected void handleClickInitializeLib42(SelectionEvent e) {
-        int carID = lib42CarID.getSelectionIndex();
+        int carID = lib42CarID.getSelectionIndex() + 1;
         SlotCarSystemConnector lib42Connector = connectorFactory.createLib42Connector(lib42CarID.getText()
                 + " -> Lib42", carID);
         connectorManager.addConnector(lib42Connector);
