@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<track name="htwgDigital" tileset="digital">
+    <section id="finishingStraight"/>
+    <section id="turn60deg2"/>
+    <section id="turn60deg2"/>
+    <section id="turn60deg2"/>
+    <section id="straight_cp_13/14"/>
+    <section id="straight"/>
+    <section id="steepTurn"/>
+    <section id="steepTurn"/>
+    <section id="steepTurn"/>
+    <section id="steepTurn"/>
+    <section id="straight_cp_11/12"/>
+    <section id="straight"/>
+    <section id="straight"/>
+    <section id="turn30deg"/>
+	<section id="straightChange1_cp_9/10" />
+    <section id="straight_cp_7/8"/>
+    <section id="straightShort"/>
+    <section id="straight"/>
+    <section id="turn60deg2"/>
+    <section id="turn30deg2"/>
+    <section id="straightShort"/>
+    <section id="turn60deg"/>
+    <section id="turn60deg"/>
+    <section id="turn60deg"/>
+    <section id="straightShort"/>
+    <section id="straight_cp_5/6"/>
+    <section id="straight"/>
+    <section id="turn30deg"/>
+    <section id="turn60deg"/>
+    <section id="straight_cp_3/4"/>
+    <section id="pitstopOut"/>
+    <section id="pitstopMiddle"/>
+    <section id="pitstopIn"/>
+    <section id="straight"/>
+    <section id="turn30deg"/>
+    <section id="straightChange2_cp_1/2"/>
+    <section id="straight"/>
+    <section id="straightShort"/>
+    <section id="turn30deg2"/>
+    <section id="turn60deg"/>
+	<section id="turn30deg"/>
+</track>
