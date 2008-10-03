@@ -35,17 +35,20 @@ public class KeyboardDevice extends DeviceController implements Listener {
     @Override
     public void activate() {
         Display.getCurrent().addFilter(SWT.KeyDown, this);
+        Display.getCurrent().addFilter(SWT.KeyUp, this);
     }
 
     @Override
     public void deactivate() {
         Display.getCurrent().removeFilter(SWT.KeyDown, this);
+        Display.getCurrent().removeFilter(SWT.KeyUp, this);
     }
 
     @Override
     public ControllerSignal poll() {
         ControllerSignal retVal = currentControllerSignal;
-        currentControllerSignal = new ControllerSignal(currentControllerSignal.getSpeed(), false);
+        currentControllerSignal = new ControllerSignal(currentControllerSignal.getSpeed(), currentControllerSignal
+                .isTrigger());
         return retVal;
     }
 
@@ -58,29 +61,29 @@ public class KeyboardDevice extends DeviceController implements Listener {
     public void handleEvent(Event event) {
         int speed = currentControllerSignal.getSpeed();
 
-        // accelerate
-        if(event.keyCode == keyboardLayout.getAccelerationButton()) {
+        // accelerate (takes KeyDown only)
+        if(event.type == SWT.KeyDown && event.keyCode == keyboardLayout.getAccelerationButton()) {
             handleAcceleration(speed);
         }
 
-        // brake
-        if(event.keyCode == keyboardLayout.getBrakeButton()) {
+        // brake (takes KeyDown only)
+        if(event.type == SWT.KeyDown && event.keyCode == keyboardLayout.getBrakeButton()) {
             handleBrake(speed);
         }
 
-        // trigger
-        if(event.keyCode == keyboardLayout.getTriggerButton()) {
-            handleTrigger(event.type);
-        }
-
-        // frontLight
-        if(event.keyCode == keyboardLayout.getFrontLightButton()) {
+        // frontLight (takes KeyDown only)
+        if(event.type == SWT.KeyDown && event.keyCode == keyboardLayout.getFrontLightButton()) {
             handleFrontLight(event.type);
         }
 
-        // backLight
-        if(event.keyCode == keyboardLayout.getBackLightButton()) {
+        // backLight (takes KeyDown only)
+        if(event.type == SWT.KeyDown && event.keyCode == keyboardLayout.getBackLightButton()) {
             handleBackLight(event.type);
+        }
+
+        // trigger (takes both KeyDown and KeyUp -- because it can be held)
+        if(event.keyCode == keyboardLayout.getTriggerButton()) {
+            handleTrigger(event.type);
         }
     }
 
