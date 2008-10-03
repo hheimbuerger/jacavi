@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <track name="htwgDigitalCheck" tileset="digital">
     <section id="finishingStraight"/>
-    <section id="turn30deg2"/>
+    ection id="turn30deg2"/>
     <section id="turn60deg2"/>
     <section id="turn30deg"/>
     <section id="straightShorter"/>
@@ -41,4 +41,5 @@
     <section id="turn60deg"/>
     <section id="turn60deg"/>
     <section id="turn60deg"/>
+    
 </track>

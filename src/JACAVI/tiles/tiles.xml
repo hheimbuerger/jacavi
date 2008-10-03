@@ -383,11 +383,24 @@
             <exitPoint x="-82" y="-1" />
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
-                <line length="165" x1="82" y1="-15" x2="-82" y2="-15" />
+                <line length="165" x1="82" y1="-16" x2="-82" y2="-16" />
             </lane>
-            <lane>
-                <line length="165" x1="82" y1="17" x2="-82" y2="17" />
+            
+            <lane isChangeLane="true">
+                <common>
+                    <line length="30" x1="82" y1="17" x2="52" y2="17" />
+                </common>
+                <regular exitLane="1">
+                    <line length="135" x1="52" y1="17" x2="-82" y2="17" />
+                </regular>
+                <change exitLane="0">
+                    <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                         and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                    <line length="20" x1="52" y1="17" x2="-52" y2="-16" />
+                    <line length="25" x1="-52" y1="-16" x2="-82" y2="-16" />
+                </change>
             </lane>
+            
         </tile>
         <tile id="straightChange2_cp_9/10" name="Change lane Checkpoint 9/10">
             <filename>change2.png</filename> 
@@ -422,8 +435,19 @@
             <entryPoint x="82" y="-1" />
             <exitPoint x="-82" y="-1" />
             <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="165" x1="82" y1="-15" x2="-82" y2="-15" />
+            <lane isChangeLane="true">
+                <common>
+                    <line length="30" x1="82" y1="-16" x2="52" y2="-16" />
+                </common>
+                <regular exitLane="1">
+                    <line length="135" x1="52" y1="-16" x2="-82" y2="-16" />
+                </regular>
+                <change exitLane="0">
+                    <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                         and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                    <line length="20" x1="52" y1="-16" x2="-52" y2="17" />
+                    <line length="30" x1="-52" y1="17" x2="-82" y2="17" />
+                </change>
             </lane>
             <lane>
                 <line length="165" x1="82" y1="17" x2="-82" y2="17" />
@@ -528,18 +552,42 @@
             <entryPoint x="51" y="0" />
             <exitPoint x="-50" y="0" />
             <entryToExitAngle>0</entryToExitAngle>
-            <lane>
-                <line length="99" x1="52" y1="-47" x2="-52" y2="-47" />
+            
+            
+            
+            
+            <lane exitLane="1">
+                <line length="15" x1="52" y1="-47" x2="30" y2="-47" />
+                <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                     and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                <line length="20" x1="30" y1="-47" x2="-30" y2="-15" />
+                <line length="25" x1="-30" y1="-15" x2="-52" y2="-15" />
             </lane>
-            <lane>
-                <line length="99" x1="52" y1="-15" x2="-52" y2="-15" />
+            <lane exitLane="0">
+                <line length="15" x1="52" y1="-15" x2="30" y2="-15" />
+                <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                     and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                <line length="20" x1="30" y1="-15" x2="-30" y2="-47" />
+                <line length="25" x1="-30" y1="-47" x2="-52" y2="-47" />
             </lane>
-            <lane>
-                <line length="99" x1="52" y1="17" x2="-52" y2="17" />
+            
+            <lane exitLane="3">
+                <line length="15" x1="52" y1="17" x2="30" y2="17" />
+                <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                     and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                <line length="20" x1="30" y1="17" x2="-30" y2="49" />
+                <line length="25" x1="-30" y1="49" x2="-52" y2="49" />
             </lane>
-            <lane>
-                <line length="99" x1="52" y1="49" x2="-52" y2="49" />
+            <lane exitLane="2">
+                <line length="15" x1="52" y1="49" x2="30" y2="49" />
+                <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                     and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                <line length="20" x1="30" y1="49" x2="-30" y2="17" />
+                <line length="25" x1="-30" y1="17" x2="-52" y2="17" />
             </lane>
+            
+            
+            
         </tile>
 <!--
         <tile id="change1" name="Change1">
