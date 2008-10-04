@@ -46,10 +46,10 @@ import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.CarScreenPosition;
 import de.jacavi.appl.track.Checkpoint;
-import de.jacavi.appl.track.DirectedPoint;
 import de.jacavi.appl.track.LaneSection;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
@@ -718,12 +718,18 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         // prepare drawing the 'cars'
         CarScreenPosition carPosition[] = null;
+        AffineTransform carDrawingTransformation[] = null;
         if(widgetMode == TrackWidgetMode.RACE_MODE) {
+            // determine the screen position of all cars
             carPosition = new CarScreenPosition[playersBean.size()];
             for(int i = 0; i < playersBean.size(); i++) {
                 Player p = playersBean.get(i);
                 carPosition[i] = track.determineScreenPositionFromPosition(p.getPosition());
             }
+
+            // prepare an array for the drawing transformation of the cars (which are a side product of the rendering
+            // process)
+            carDrawingTransformation = new AffineTransform[playersBean.size()];
         }
 
         // iterate over all track sections of the currently displayed track
@@ -752,7 +758,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             Vector2D entryToExitPointVector = new Vector2D(rotatedRelativeEntryPoint, rotatedRelativeExitPoint);
 
             // create a transformation to be used for placing the image -- the transformation includes the rotation, the
-            // translation to the entry point and the translation from the entry to the exit point
+            // translation to the entry point and the translation from the entry to the exit directedPoint
             AffineTransform imagePlacementTransformation = new AffineTransform();
             imagePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
             imagePlacementTransformation.rotate(currentAngle.getRadians());
@@ -768,11 +774,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             else
                 g.drawImage(s.getImage().getColorImage(), imagePlacementOperation, 0, 0);
 
-            // DEBUG: draw the lanes on top
+            // create the lane placement transformation -- it's needed to draw the lanes (optional, used for debugging
+            // during lane definion) and to draw the cars
             AffineTransform lanePlacementTransformation = new AffineTransform();
             lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
             lanePlacementTransformation.rotate(currentAngle.getRadians());
             lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
+
+            // draw the lanes on top if the user has requested that
             if(Activator.getStore().getBoolean(MainPage.PREF_SHOW_LANES)) {
                 final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
                 if(track.getTileset().getLaneCount() > 4)
@@ -791,17 +800,18 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 }
             }
 
-            // draw the current car position
-            if(widgetMode == TrackWidgetMode.RACE_MODE) {
-                for(int i = 0; i < playersBean.size(); i++) {
+            // NOTE: The car was previously drawn here. That has the advantage of cars occasionally being drawn below
+            // tiles when they are crossing other tiles. However, this behaviour was creating nasty drawing artifacts at
+            // the tile edges.
+
+            // store the transformation if a car is on this tile (we'll need it at the end to draw the car at the right
+            // position) and update its angle by the current angle of the tile
+            if(widgetMode == TrackWidgetMode.RACE_MODE)
+                for(int i = 0; i < playersBean.size(); i++)
                     if(carPosition[i] != null && s == carPosition[i].section) {
-                        DirectedPoint directedPoint = carPosition[i].point;
-                        Angle carDirection = new Angle(currentAngle.angle + directedPoint.angle.angle);
-                        drawCar(g, playersBean.get(i).getCar(), lanePlacementTransformation.transform(
-                                directedPoint.point, null), carDirection);
+                        carDrawingTransformation[i] = lanePlacementTransformation;
+                        carPosition[i].directedPoint.angle.turn(currentAngle.angle);
                     }
-                }
-            }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
             // bounding box -- that way we'll get a bounding box for the whole track in the end
@@ -828,6 +838,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // calculate the new angle by turning it by the angle this tile is supposedly changing the track direction
             currentAngle.turn(s.getEntryToExitAngle());
         }
+
+        // draw the cars
+        if(widgetMode == TrackWidgetMode.RACE_MODE)
+            for(int i = 0; i < playersBean.size(); i++)
+                drawCar(g, playersBean.get(i).getCar(), carDrawingTransformation[i].transform(
+                        carPosition[i].directedPoint.point, null), carPosition[i].directedPoint.angle);
 
         // restore the old transformation
         g.setTransform(originalTransformation);

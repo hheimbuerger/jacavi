@@ -134,11 +134,11 @@
             </lane>
             <lane>
                 <line length="30" x1="-36" y1="5" x2="10" y2="5" />
-                <quad-bezier length="20" x1="10" y1="5" x2="20" y2="5" x3="20" y3="15" entryToExitAngle="-90" />
-                <quad-bezier length="20" x1="20" y1="15" x2="20" y2="25" x3="10" y3="25" entryToExitAngle="-90" />
+                <quad-bezier length="20" x1="10" y1="5" x2="20" y2="5" x3="20" y3="15" entryToExitAngle="90" />
+                <quad-bezier length="20" x1="20" y1="15" x2="20" y2="25" x3="10" y3="25" entryToExitAngle="90" />
                 <line length="30" x1="10" y1="25" x2="-10" y2="25" />
-                <quad-bezier length="20" x1="-10" y1="25" x2="-20" y2="25" x3="-20" y3="15" entryToExitAngle="-90" />
-                <quad-bezier length="20" x1="-20" y1="15" x2="-20" y2="5" x3="-10" y3="5" entryToExitAngle="-90" />
+                <quad-bezier length="20" x1="-10" y1="25" x2="-20" y2="25" x3="-20" y3="15" entryToExitAngle="90" />
+                <quad-bezier length="20" x1="-20" y1="15" x2="-20" y2="5" x3="-10" y3="5" entryToExitAngle="90" />
                 <line length="30" x1="-10" y1="5" x2="36" y2="5" />
             </lane>
         </tile>
