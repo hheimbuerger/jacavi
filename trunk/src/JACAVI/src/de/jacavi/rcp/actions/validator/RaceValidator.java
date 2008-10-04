@@ -129,7 +129,7 @@ public class RaceValidator {
         /*
          * available track types are analogue,digital and debug
          */
-        String currentTrackType = activeTrack.getTileset().getName();
+        String currentTrackType = activeTrack.getTileset().getId();
 
         // get the ConnectorCOnfigurationManager
         ConnectorConfigurationManager connectionManager = (ConnectorConfigurationManager) ContextLoader

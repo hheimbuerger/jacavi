@@ -273,7 +273,7 @@ public class Track {
         Document document = impl.createDocument(null, null, null);
         Element rootElement = document.createElement("track");
         rootElement.setAttribute("name", trackName);
-        rootElement.setAttribute("tileset", tileset.toString().toLowerCase());
+        rootElement.setAttribute("tileset", tileset.getId().toLowerCase());
         document.appendChild(rootElement);
 
         // append child elements for all the track sections
