@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <cars>
-    <car id="debug1">
-        <bitmap>debug_car1.png</bitmap>
-        <tilesets>
-            <tileset id="debug" />
-            <tileset id="analogue" />
-            <tileset id="digital" />
-        </tilesets>
-        <acceleration>5</acceleration>
-        <mass>5</mass>
-        <top-speed>200</top-speed>
-        <inertia>5</inertia>
-    </car>
     <car id="Ford Mustang 2007">
         <bitmap>ford_mustang53X24.png</bitmap>
         <tilesets>
