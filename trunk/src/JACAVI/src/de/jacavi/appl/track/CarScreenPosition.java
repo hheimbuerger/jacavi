@@ -6,6 +6,8 @@ public class CarScreenPosition {
     public DirectedPoint point;
 
     public CarScreenPosition(TrackSection section, DirectedPoint point) {
+        assert section != null;
+        assert point != null;
         this.section = section;
         this.point = point;
     }

@@ -14,7 +14,7 @@ public class CarPosition {
     public int trackSectionIndex;
 
     /** The number of steps this car has already taken in its current tile. */
-    public int stepsInTile;
+    public int stepsOnTile;
 
     /** The index of the lane this car is currently at. */
     public int laneIndex;
@@ -31,7 +31,7 @@ public class CarPosition {
     public int lap;
 
     /** The player that holds this instance */
-    public Player player;
+    private final Player player;
 
     private final RaceStatisticsManager raceStatisticsManager;
 
@@ -40,49 +40,108 @@ public class CarPosition {
         raceStatisticsManager = (RaceStatisticsManager) ContextLoader.getBean("statisticsRegistryBean");
     }
 
+    /**
+     * Resets the car to the race starting point.
+     */
     public void reset(int laneIndex) {
         trackSectionIndex = 0;
-        stepsInTile = 0;
+        stepsOnTile = 0;
         this.laneIndex = laneIndex;
         isOnLaneChange = false;
         isOnTrack = true;
         lap = 0;
     }
 
-    public void moveSteps(Track track, int stepsToMove, boolean laneChangeTriggered) {
-        int remainingSteps = stepsToMove;
-
-        while(remainingSteps > 0) {
-            remainingSteps = moveOverTile(track, remainingSteps, track.getSections().get(trackSectionIndex).getTile());
-        }
-    }
-
+    /**
+     * Sets this car position to the given static position.
+     */
     public void setPosition(int trackSectionIndex, int laneIndex, int stepsInTile, boolean incrementLaps) {
         this.trackSectionIndex = trackSectionIndex;
         this.laneIndex = laneIndex;
-        this.stepsInTile = stepsInTile;
+        this.stepsOnTile = stepsInTile;
         if(incrementLaps)
             lap++;
     }
 
-    private int moveOverTile(Track track, int remainingSteps, Tile currentTile) {
-        Lane lane = currentTile.getLane(laneIndex);
-        LaneSectionList laneSectionsCommon = lane.getLaneSectionsCommon();
+    /**
+     * Moves the car position by the given number of steps, taking all other aspects into account, like tile borders,
+     * lane switching, etc.
+     */
+    public void moveSteps(Track track, int stepsToMove, boolean laneChangeTriggered) {
+        int remainingSteps = stepsToMove;
 
-        int commonSteps = laneSectionsCommon.getLength();
-        if(remainingSteps < commonSteps - stepsInTile) {
-            stepsInTile += remainingSteps;
-            return 0;
-        } else {
-            stepsInTile = 0;
+        while(remainingSteps > 0) {
+            remainingSteps = moveOverTileSection(track, remainingSteps, laneChangeTriggered, track.getSections().get(
+                    trackSectionIndex).getTile());
+        }
+    }
+
+    /**
+     * Moves the car over one tile section, where a tile section is here considered the <common>, <regular> or <change>
+     * part of a tile.
+     */
+    private int moveOverTileSection(Track track, int stepsToMove, boolean laneChangeTriggered, Tile currentTile) {
+        int remainingSteps = stepsToMove;
+
+        // determine the current lane
+        Lane lane = currentTile.getLane(laneIndex);
+
+        // determine the current section (<common>, <regular> or <change>)
+        int commonSteps = lane.getLaneSectionsCommon().getLength();
+        LaneSectionList currentLaneSection;
+        int remainingStepsInSection;
+        boolean isInSecondSection;
+        if(stepsOnTile < commonSteps) { // we're still in the <common> section
+            currentLaneSection = lane.getLaneSectionsCommon();
+            remainingStepsInSection = commonSteps - stepsOnTile;
+            isInSecondSection = false;
+        } else { // we're in the <change> or <regular> section
+            currentLaneSection = isOnLaneChange ? lane.getLaneSectionsChange() : lane.getLaneSectionsRegular();
+            remainingStepsInSection = currentLaneSection.getLength() + commonSteps - stepsOnTile;
+            isInSecondSection = true;
+        }
+
+        // determine how many steps we can move on the current section and update stepsOnTile and remainingSteps
+        int stepsToMoveInThisSection = Math.min(remainingSteps, remainingStepsInSection);
+        stepsOnTile += stepsToMoveInThisSection;
+        remainingSteps -= stepsToMoveInThisSection;
+
+        // proceed to the second section if appropriate
+        if(!isInSecondSection && stepsOnTile >= commonSteps) {
+            isInSecondSection = true;
+            if(laneChangeTriggered)
+                isOnLaneChange = true;
+        }
+
+        // move on to the next tile if this one is finished
+        int totalStepsOnTile = commonSteps
+                + (isOnLaneChange ? lane.getLaneSectionsChange().getLength() : lane.getLaneSectionsRegular()
+                        .getLength());
+        assert stepsOnTile <= totalStepsOnTile;
+        if(stepsOnTile == totalStepsOnTile) {
+            // update the steps, the lane index, the track section index and the lane change state for the next tile
+            stepsOnTile = 0;
             laneIndex = isOnLaneChange ? lane.getChangeExitLaneIndex() : lane.getRegularExitLaneIndex();
             trackSectionIndex++;
-            if(trackSectionIndex >= track.getSections().size()) {
+            isOnLaneChange = false;
+
+            // if this was the last tile of the track, also move on to the next lap
+            assert trackSectionIndex <= track.getSections().size();
+            if(trackSectionIndex == track.getSections().size()) {
                 trackSectionIndex = 0;
                 lap++;
                 raceStatisticsManager.fireLapCompleted(player);
             }
-            return remainingSteps - (commonSteps - stepsInTile);
         }
+
+        return remainingSteps;
     }
+
+    @Override
+    public String toString() {
+        return "CarPosition[trackSectionIndex=" + trackSectionIndex + ", laneIndex=" + laneIndex + ", stepsOnTile="
+                + stepsOnTile + ", lap=" + lap + ", isOnLaneChange=" + isOnLaneChange + ", isOnTrack=" + isOnTrack
+                + "]";
+    }
+
 }

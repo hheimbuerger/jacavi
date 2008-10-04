@@ -25,7 +25,7 @@ import java.util.List;
  * </ul>
  * <p>
  * Instances of this class are created by the {@link TilesetRepository} during initialization and used by the
- * {@link TrackWidget} to draw the cars on the track.
+ * TrackWidget to draw the cars on the track.
  * <p>
  * Note that the sum of all entryToExitAngles of the curved lane sections should be the same as the tile's
  * entryToExitAngle. While the tile's entryToExitAngle is used to place the rotate the following tile accordingly, the
@@ -124,14 +124,26 @@ public class Lane {
         int currentPos = 0;
         Angle currentAngle = new Angle(0);
         for(LaneSection ls: laneSectionsCommon) {
-            if(position.stepsInTile < currentPos + ls.length) {
-                DirectedPoint stepPoint = ls.getStepPoint(position.stepsInTile - currentPos);
+            if(position.stepsOnTile < currentPos + ls.length) {
+                DirectedPoint stepPoint = ls.getStepPoint(position.stepsOnTile - currentPos);
                 stepPoint.angle.turn(currentAngle);
                 return stepPoint;
             }
             currentPos += ls.length;
             currentAngle.turn(ls.entryToExitAngle);
         }
+        // FIXME: this is almost the same loop, just over a different iterable -- clean up necessary
+        for(LaneSection ls: position.isOnLaneChange ? laneSectionsChange : laneSectionsRegular) {
+            if(position.stepsOnTile < currentPos + ls.length) {
+                DirectedPoint stepPoint = ls.getStepPoint(position.stepsOnTile - currentPos);
+                stepPoint.angle.turn(currentAngle);
+                return stepPoint;
+            }
+            currentPos += ls.length;
+            currentAngle.turn(ls.entryToExitAngle);
+        }
+
+        assert false: "Lane.getStepPoint() could not determine the DirectedPoint for " + position.toString();
         return null;
     }
 
