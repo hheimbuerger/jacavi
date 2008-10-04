@@ -41,13 +41,11 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
 
     @Override
     public void setSpeed(int speed) {
-        System.out.println("New speed: " + speed);
         this.speed = speed;
     }
 
     @Override
     public void switchBackLight() {
-        System.out.println("switch backLight");
         if(backLight)
             backLight = false;
         else
@@ -56,7 +54,6 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
 
     @Override
     public void switchFrontLight() {
-        System.out.println("switch frontlight");
         if(frontLight)
             frontLight = false;
         else
@@ -65,7 +62,6 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
 
     @Override
     public int toggleSwitch() {
-        System.out.println("toggle switch");
         return 0;
     }
 
