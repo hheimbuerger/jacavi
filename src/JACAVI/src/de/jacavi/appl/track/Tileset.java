@@ -9,7 +9,7 @@ import de.jacavi.appl.track.TilesetRepository.TilesetRepositoryInitializationFai
 
 
 public class Tileset {
-    private final String name;
+    private final String id;
 
     private final SortedMap<String, Tile> tiles;
 
@@ -19,14 +19,14 @@ public class Tileset {
 
     private final int laneCount;
 
-    public Tileset(String name, int laneCount) {
-        this.name = name;
+    public Tileset(String id, int laneCount) {
+        this.id = id;
         this.laneCount = laneCount;
         this.tiles = new TreeMap<String, Tile>();
     }
 
-    public String getName() {
-        return name;
+    public String getId() {
+        return id;
     }
 
     public SortedMap<String, Tile> getTiles() {
@@ -36,10 +36,10 @@ public class Tileset {
     public void validate() throws TilesetRepositoryInitializationFailedException {
         // make sure exactly one of the tiles is marked as the initial tile
         if(hasMultipleInitials)
-            throw new TilesetRepositoryInitializationFailedException("The tileset " + name
+            throw new TilesetRepositoryInitializationFailedException("The tileset " + id
                     + " contains at least two different tiles marked as initial.");
         else if(initialTileID == null)
-            throw new TilesetRepositoryInitializationFailedException("The tileset " + name
+            throw new TilesetRepositoryInitializationFailedException("The tileset " + id
                     + " is missing a tile marked as initial");
     }
 
@@ -55,7 +55,7 @@ public class Tileset {
 
         // make sure all tiles have the same number of lanes
         if(laneCount != tile.getLaneCount())
-            throw new TilesetRepositoryInitializationFailedException("The tile " + tileID + " of the tileset " + name
+            throw new TilesetRepositoryInitializationFailedException("The tile " + tileID + " of the tileset " + id
                     + " has an invalid number of lanes. Expected: <" + laneCount + ">. Got: <" + tile.getLaneCount()
                     + ">.");
     }

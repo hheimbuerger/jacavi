@@ -95,7 +95,7 @@ public class TilesetRepository {
             if(tileDataNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element tileDataElement = (Element) tileDataNodes.item(i);
                 if(tileDataElement.getNodeName().equals("filename")) {
-                    filename = "/tiles/" + tileset.getName() + "/" + tileDataElement.getTextContent();
+                    filename = "/tiles/" + tileset.getId() + "/" + tileDataElement.getTextContent();
                 } else if(tileDataElement.getNodeName().equals("entryPoint")) {
                     entryPoint = new Point(Integer.valueOf(tileDataElement.getAttribute("x")), Integer
                             .valueOf(tileDataElement.getAttribute("y")));
