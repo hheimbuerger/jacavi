@@ -535,8 +535,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 zoomLevel = 1.0;
                 break;
             default:
-                throw new RuntimeException("Event handler missing for control " + control.toString()
-                        + " in TrackWidget.handleInnerControlClick()");
+                // throw new RuntimeException("Event handler missing for control " + control.toString() +
+                // " in TrackWidget.handleInnerControlClick()");
+                logger
+                        .warn("Event handler missing for control "
+                                + control.toString()
+                                + " in TrackWidget.handleInnerControlClick(). This should never occur and probably indicates a race condition.");
         }
 
         // trigger a repaint
