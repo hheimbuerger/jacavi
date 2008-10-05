@@ -63,7 +63,6 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         connectorManager = (ConnectorConfigurationManager) ContextLoader.getBean("connectorManager");
         // get the connectorFactory
         connectorFactory = (ConnectorFactory) ContextLoader.getBean("slotCarSystemConnectorFactory");
-
         // prepare the images
         imageManager
                 .put("imageLib42", Activator.getImageDescriptor("/icons/connectors/lib42(64X64).png").createImage());

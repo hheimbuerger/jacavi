@@ -10,9 +10,14 @@ import de.jacavi.hal.FeedbackSignal;
 
 public class AnalogueTDA extends TrackDataApproximator {
 
+    public AnalogueTDA(Track track, int racetimerInterval) {
+        this.track = track;
+        this.raceTimerInterval = racetimerInterval;
+    }
+
     @Override
-    public void updatePosition(CarPosition carPosition, int gametick, Car car, Track track,
-            ControllerSignal controllerSignal, FeedbackSignal feedbackSignal) {
+    public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
+            FeedbackSignal feedbackSignal) {
     // TODO Auto-generated method stub
 
     }

@@ -37,7 +37,7 @@ public class Testlib42FeedbackConnectorAdapter implements Lib42FeedbackConnector
         if(!start) {
             start = true;
             Timer timer = new Timer();
-            timer.schedule(new FeedbackTimerTask(), 10, 2000);
+            timer.schedule(new FeedbackTimerTask(), 10, 800);
         }
         return new FeedbackSignal(null, feedbackIndex + "");
     }

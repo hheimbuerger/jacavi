@@ -59,8 +59,10 @@ public class CarPosition {
         this.trackSectionIndex = trackSectionIndex;
         this.laneIndex = laneIndex;
         this.stepsOnTile = stepsInTile;
-        if(incrementLaps)
+        if(incrementLaps) {
             lap++;
+            raceStatisticsManager.fireLapCompleted(player);
+        }
     }
 
     /**

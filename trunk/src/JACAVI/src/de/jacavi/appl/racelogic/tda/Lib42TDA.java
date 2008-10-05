@@ -10,9 +10,13 @@ import de.jacavi.hal.FeedbackSignal;
 
 public class Lib42TDA extends TrackDataApproximator {
 
+    public Lib42TDA(Track track) {
+        this.track = track;
+    }
+
     @Override
-    public void updatePosition(CarPosition carPosition, int gametick, Car car, Track track,
-            ControllerSignal controllerSignal, FeedbackSignal feedbackSignal) {
+    public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
+            FeedbackSignal feedbackSignal) {
     // TODO Auto-generated method stub
 
     }
