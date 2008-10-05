@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Track;
 import de.jacavi.hal.SlotCarDriveConnector;
 import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
@@ -24,17 +25,17 @@ public class TDAInjectorFactory {
      * @param player
      *            The player who gets the specific TDA injected
      */
-    public void initializeTDA(Player player) {
+    public void initializeTDA(Player player, Track currentTrack, int raceTimerInterval) {
         SlotCarDriveConnector driveConnector = player.getSlotCarSystemConnector().getDriveConnector();
         List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());
         if(interfaces.contains(Lib42DriveConnector.class)) {
-            player.setTda(new ExperimentalLib42TDA());
+            player.setTda(new ExperimentalLib42TDA(currentTrack, raceTimerInterval));
         } else if(interfaces.contains(AnalogueDriveConnector.class)) {
-            player.setTda(new AnalogueTDA());
+            player.setTda(new AnalogueTDA(currentTrack, raceTimerInterval));
         } else if(interfaces.contains(BlueriderDriveConnector.class)) {
-            player.setTda(new BlueriderTDA());
+            player.setTda(new BlueriderTDA(currentTrack, raceTimerInterval));
         } else if(interfaces.contains(SimulationDriveConnector.class)) {
-            player.setTda(new DebugTDA());
+            player.setTda(new DebugTDA(currentTrack, raceTimerInterval));
         }
     }
 }

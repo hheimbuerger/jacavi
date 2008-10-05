@@ -18,9 +18,14 @@ public class DebugTDA extends TrackDataApproximator {
 
     private int lastGametick = 0;
 
+    public DebugTDA(Track track, int racetimerInterval) {
+        this.track = track;
+        this.raceTimerInterval = racetimerInterval;
+    }
+
     @Override
-    public void updatePosition(CarPosition carPosition, int gametick, Car car, Track track,
-            ControllerSignal controllerSignal, FeedbackSignal feedbackSignal) {
+    public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
+            FeedbackSignal feedbackSignal) {
         // log a bit
         if(feedbackSignal.getGforce() != null)
             logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint() + " GForce: "
