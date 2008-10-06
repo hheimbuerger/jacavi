@@ -98,7 +98,7 @@ abstract public class TrackDataApproximator {
                 if(currentSection.getLane(laneIndex).hasCheckpoints()) {
                     // TODO: i sai that there is only one checkpoint do it for all
                     // start counting steps
-                    if(currentSection.getLane(laneIndex).getCheckpoints().get(0).getId() == checkpoint.getId()) {
+                    if(currentSection.getLane(laneIndex).getCheckpoints().get(0).getId().equals(checkpoint.getId())) {
                         // start the step count here
                         count = true;
                         // add to result lanesteps - checkpoint steps
@@ -106,8 +106,8 @@ abstract public class TrackDataApproximator {
                     }
                     // stop counting steps
                     else if(count
-                            && (currentSection.getLane(laneIndex).getCheckpoints().get(0).getId() == nextCheckpoint
-                                    .getId())) {
+                            && (currentSection.getLane(laneIndex).getCheckpoints().get(0).getId().equals(nextCheckpoint
+                                    .getId()))) {
                         count = false;
                         endDetected = true;
                         // correct the result

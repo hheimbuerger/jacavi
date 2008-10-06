@@ -62,7 +62,7 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
     }
 
     @Override
-    public int getSwitch() {
+    public boolean getSwitch() {
         return driveConnector.getSwitch();
     }
 
@@ -72,7 +72,7 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
     }
 
     @Override
-    public int toggleSwitch() {
+    public boolean toggleSwitch() {
         return driveConnector.toggleSwitch();
     }
 

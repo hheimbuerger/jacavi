@@ -30,23 +30,31 @@ public class DebugTDA extends TrackDataApproximator {
         if(feedbackSignal.getGforce() != null)
             logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint() + " GForce: "
                     + feedbackSignal.getGforce().getX() + " " + feedbackSignal.getGforce().getY());
-        /*else
-            logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint());*/
+        /*
+         * else logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint());
+         */
 
-        // adjusted speed: between -50 and +50
-        double adjustedSpeed = ((double) controllerSignal.getSpeed() / 100 - 0.5);
-
+        // adjusted speed: between -0.5 and +0.5
+        // double adjustedThrust = ((double) controllerSignal.getSpeed() / 100 - 0.5);
         // acceleration = speed * car acceleration factor
-        double acceleration = adjustedSpeed * car.getAcceleration();
+        double thrust = controllerSignal.getSpeed() / 100.0;
+        double thrustAcceleration = thrust * car.getAcceleration();
+
+        double frictionAcceleration = car.getMass() * -1;
 
         // speed = old speed + acceleration * num adjustments (but limited to 0..topspeed)
-        speed = Math.max(Math.min(speed + acceleration * (gametick - lastGametick), car.getTopSpeed()), 0);
+        speed = Math.max(Math.min(speed + thrustAcceleration * (gametick - lastGametick)
+                + (frictionAcceleration * (gametick - lastGametick)), car.getTopSpeed()), 0);
+
+        System.out.println("speed=" + speed + ", thrust=" + thrustAcceleration + ", friction=" + frictionAcceleration);
 
         // determine the new position;
         int stepsToMove = ((int) speed) / 10;
 
-        /*logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove
-                + "), topSpeed (" + car.getTopSpeed() + ")");*/
+        /*
+         * logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove +
+         * "), topSpeed (" + car.getTopSpeed() + ")");
+         */
 
         // move
         carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());

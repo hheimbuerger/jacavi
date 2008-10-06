@@ -25,8 +25,8 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
     }
 
     @Override
-    public int getSwitch() {
-        return 0;
+    public boolean getSwitch() {
+        return false;
     }
 
     @Override
@@ -61,8 +61,8 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
     }
 
     @Override
-    public int toggleSwitch() {
-        return 0;
+    public boolean toggleSwitch() {
+        return false;
     }
 
 }

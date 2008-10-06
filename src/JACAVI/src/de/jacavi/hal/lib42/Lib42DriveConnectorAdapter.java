@@ -7,7 +7,7 @@ import de.jacavi.rcp.util.Check;
 
 public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
 
-    private int carID;
+    private final int carID;
 
     private NativeLib42 lib42 = null;
 
@@ -17,6 +17,7 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
         Check.Require(carID > 0, "carID must be >0");
         this.carID = carID;
         lib42 = NativeLib42.getInstance();
+        lib42.resetCars();
         lib42.programmCar(carID);
     }
 
@@ -29,8 +30,8 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
     }
 
     @Override
-    public int getSwitch() {
-        return lib42.getSwitch(carID);
+    public boolean getSwitch() {
+        return lib42.getSwitch(carID) == 1;
     }
 
     @Override
@@ -41,8 +42,8 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
     }
 
     @Override
-    public int toggleSwitch() {
-        return lib42.toggleSwitch(carID);
+    public boolean toggleSwitch() {
+        return lib42.toggleSwitch(carID) == 1;
     }
 
     @Override
