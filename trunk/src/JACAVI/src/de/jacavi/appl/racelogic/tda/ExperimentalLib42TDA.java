@@ -101,6 +101,6 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
 
         // TODO: hate physics
         // FIXME:
-        return controllerSignal.getSpeed() / 2;
+        return controllerSignal.getSpeed() * 4;
     }
 }

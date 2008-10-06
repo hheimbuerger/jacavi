@@ -49,7 +49,7 @@ public class DebugTDA extends TrackDataApproximator {
         System.out.println("speed=" + speed + ", thrust=" + thrustAcceleration + ", friction=" + frictionAcceleration);
 
         // determine the new position;
-        int stepsToMove = ((int) speed) / 10;
+        int stepsToMove = ((int) speed);
 
         /*
          * logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove +
