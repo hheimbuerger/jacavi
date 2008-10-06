@@ -411,10 +411,10 @@
                 <common>
                     <line length="30" x1="82" y1="-16" x2="52" y2="-16" />
                 </common>
-                <regular exitLane="1">
+                <regular exitLane="0">
                     <line length="135" x1="52" y1="-16" x2="-82" y2="-16" />
                 </regular>
-                <change exitLane="0">
+                <change exitLane="1">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
                     <line length="20" x1="52" y1="-16" x2="-52" y2="17" />
