@@ -82,10 +82,10 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
 
     @Override
     protected void createTabItems(CTabFolder tabFolder) {
-        createLib42Tab(prepareTabItem("Lib42 Connectors", imageManager.get("icon"), imageManager.get("imageLib42")));
-        createBlueRiderTab(prepareTabItem("Bluerider Connector", imageManager.get("icon"), imageManager
+        createLib42Tab(prepareTabItem("Lib42", imageManager.get("icon"), imageManager.get("imageLib42")));
+        createBlueRiderTab(prepareTabItem("Bluerider", imageManager.get("icon"), imageManager
                 .get("imageBluerider")));
-        createAnalogueTab(prepareTabItem("Analogue Connectors", imageManager.get("icon"), imageManager
+        createAnalogueTab(prepareTabItem("Analogue", imageManager.get("icon"), imageManager
                 .get("imageAnalogue")));
     }
 

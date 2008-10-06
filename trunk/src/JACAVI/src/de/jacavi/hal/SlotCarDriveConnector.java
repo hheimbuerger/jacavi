@@ -11,9 +11,9 @@ public interface SlotCarDriveConnector {
 
     int getSpeed();
 
-    int getSwitch();
+    boolean getSwitch();
 
-    int toggleSwitch();
+    boolean toggleSwitch();
 
     void fullBreak();
 

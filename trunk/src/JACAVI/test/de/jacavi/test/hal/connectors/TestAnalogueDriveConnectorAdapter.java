@@ -27,9 +27,9 @@ public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector
     }
 
     @Override
-    public int getSwitch() {
+    public boolean getSwitch() {
         // TODO Auto-generated method stub
-        return 0;
+        return false;
     }
 
     @Override
@@ -39,9 +39,9 @@ public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector
     }
 
     @Override
-    public int toggleSwitch() {
+    public boolean toggleSwitch() {
         // TODO Auto-generated method stub
-        return 0;
+        return false;
     }
 
     @Override

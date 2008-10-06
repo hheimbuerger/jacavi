@@ -50,7 +50,7 @@ public class ConnectorConfigurationManager {
      */
     public void addConnector(SlotCarSystemConnector connector) {
 
-        logger.info(connector.getName() + " is now under connector management");
+        // logger.info(connector.getName() + " is now under connector management");
 
         List<Class<?>> connectorsInterfaces = Arrays.asList(connector.getDriveConnector().getClass().getInterfaces());
 

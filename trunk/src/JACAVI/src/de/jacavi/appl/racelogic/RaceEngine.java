@@ -136,10 +136,12 @@ public class RaceEngine {
                 // back if its detected
 
                 // change track
-                if(controllerSignal.isTrigger()) {
+                if(controllerSignal.isTrigger() && !slotCarSystemConnector.getSwitch()) {
                     slotCarSystemConnector.toggleSwitch();
-                    controllerSignal.setTrigger(false);
+                } else if(!controllerSignal.isTrigger() && slotCarSystemConnector.getSwitch()) {
+                    slotCarSystemConnector.toggleSwitch();
                 }
+
                 // switch front Light
                 if(controllerSignal.isSwitchFrontLight()) {
                     slotCarSystemConnector.switchFrontLight();

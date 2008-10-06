@@ -44,9 +44,7 @@ public class MouseDevice extends DeviceController implements Listener {
 
     @Override
     public ControllerSignal poll() {
-        ControllerSignal retVal = currentControllerSignal;
-        currentControllerSignal = new ControllerSignal(currentControllerSignal.getSpeed(), false);
-        return retVal;
+        return currentControllerSignal;
     }
 
     @Override
