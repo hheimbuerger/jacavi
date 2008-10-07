@@ -209,26 +209,21 @@ public class Track {
         invokeListeners();
     }
 
-    /*public int getLaneLength(int index) {
-        int length = 0;
-        for(TrackSection s: sections)
-            for(LaneSection ls: s.getLane(index).getLaneSections())
-                length += ls.length;
-        return length;
-    }*/
-
+    /**
+     * Calculates the screen position (current track section index and the relative point and direction the car is at on
+     * the track section) from a car position.
+     * 
+     * @param position
+     *            the position of the car
+     * @return the screen position of the car
+     */
     public CarScreenPosition determineScreenPositionFromPosition(CarPosition position) {
-        /*int length = 0;
-        for(TrackSection s: sections) {
-            Lane lane = s.getLane(position.currentLane);
-            if(position.stepsFromStart < length + lane.getLength())
-                return new CarScreenPosition(s, lane.getStepPoint(position.stepsFromStart - length));
-            length += lane.getLength();
-        }
-        return null;*/
-        TrackSection section = sections.get(position.trackSectionIndex);
-        Lane lane = section.getLane(position.laneIndex);
-        return new CarScreenPosition(section, lane.getStepPoint(position));
+        if(position.isOnTrack) {
+            TrackSection section = sections.get(position.trackSectionIndex);
+            Lane lane = section.getLane(position.laneIndex);
+            return new CarScreenPosition(section, lane.getStepPoint(position));
+        } else
+            return new CarScreenPosition();
     }
 
     public List<TrackSection> getSections() {

@@ -812,9 +812,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // position) and update its angle by the current angle of the tile
             if(widgetMode == TrackWidgetMode.RACE_MODE)
                 for(int i = 0; i < playersBean.size(); i++)
-                    if(carPosition[i] != null && s == carPosition[i].section) {
+                    if(carPosition[i].isOnTrack() && s == carPosition[i].getSection()) {
                         carDrawingTransformation[i] = lanePlacementTransformation;
-                        carPosition[i].directedPoint.angle.turn(currentAngle.angle);
+                        carPosition[i].getDirectedPoint().angle.turn(currentAngle.angle);
                     }
 
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
@@ -843,14 +843,36 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             currentAngle.turn(s.getEntryToExitAngle());
         }
 
-        // draw the cars
+        // draw the cars, store the cars that have left the track (they need to be drawn after resetting the base
+        // transformation!)
+        List<Player> offTrackPlayers = new ArrayList<Player>();
         if(widgetMode == TrackWidgetMode.RACE_MODE)
             for(int i = 0; i < playersBean.size(); i++)
-                drawCar(g, playersBean.get(i).getCar(), carDrawingTransformation[i].transform(
-                        carPosition[i].directedPoint.point, null), carPosition[i].directedPoint.angle);
+                if(carPosition[i].isOnTrack())
+                    drawCar(g, playersBean.get(i).getCar(), carDrawingTransformation[i].transform(carPosition[i]
+                            .getDirectedPoint().point, null), carPosition[i].getDirectedPoint().angle);
+                else
+                    offTrackPlayers.add(playersBean.get(i));
 
         // restore the old transformation
         g.setTransform(originalTransformation);
+
+        // draw the off-track cars
+        if(widgetMode == TrackWidgetMode.RACE_MODE && offTrackPlayers.size() > 0) {
+            Point size = getSize();
+            int offset = 0;
+            final int CAR_DISTANCE = 10;
+
+            for(Player p: offTrackPlayers) {
+                int carHeight = p.getCar().getImage().getHeight(null);
+                offset += carHeight;
+                offset += CAR_DISTANCE;
+                drawCar(g, p.getCar(), new Point2D.Double(80, size.y - 30 - offset), new Angle(0));
+            }
+
+            g.setColor(Color.BLACK);
+            g.drawRect(50, size.y - 30 - offset - 15, 60, offset);
+        }
     }
 
     private void drawCar(Graphics2D g, Car car, Point2D position, Angle carDirection) {

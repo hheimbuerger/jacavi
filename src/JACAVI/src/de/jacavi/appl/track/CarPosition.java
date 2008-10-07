@@ -13,18 +13,16 @@ public class CarPosition {
     /** The section of the track the car is currently at. */
     public int trackSectionIndex;
 
-    /** The number of steps this car has already taken in its current tile. */
-    public int stepsOnTile;
-
     /** The index of the lane this car is currently at. */
     public int laneIndex;
+
+    /** The number of steps this car has already taken in its current tile. */
+    public int stepsOnTile;
 
     /** Whether the car is on a lane part that is used to change the lane. */
     public boolean isOnLaneChange;
 
-    /**
-     * Whether the car is still on track. If this is false, all other values but {@link lap} have undefined values.
-     */
+    /** Whether the car is still on track. If this is false, all other values but {@link lap} have undefined values. */
     public boolean isOnTrack;
 
     /** The number of laps this car has already completed. */
@@ -56,6 +54,7 @@ public class CarPosition {
      * Sets this car position to the given static position.
      */
     public void setPosition(int trackSectionIndex, int laneIndex, int stepsInTile, boolean incrementLaps) {
+        this.isOnTrack = true;
         this.trackSectionIndex = trackSectionIndex;
         this.laneIndex = laneIndex;
         this.stepsOnTile = stepsInTile;
@@ -70,6 +69,7 @@ public class CarPosition {
      * lane switching, etc.
      */
     public void moveSteps(Track track, int stepsToMove, boolean laneChangeTriggered) {
+        assert isOnTrack: "Can't move a car that has left the track.";
         int remainingSteps = stepsToMove;
 
         while(remainingSteps > 0) {
@@ -139,11 +139,24 @@ public class CarPosition {
         return remainingSteps;
     }
 
-    @Override
-    public String toString() {
-        return "CarPosition[trackSectionIndex=" + trackSectionIndex + ", laneIndex=" + laneIndex + ", stepsOnTile="
-                + stepsOnTile + ", lap=" + lap + ", isOnLaneChange=" + isOnLaneChange + ", isOnTrack=" + isOnTrack
-                + "]";
+    /**
+     * Moves the car off the track.
+     */
+    public void leaveTrack() {
+        isOnTrack = false;
+        trackSectionIndex = 0;
+        laneIndex = 0;
+        stepsOnTile = 0;
+        isOnLaneChange = false;
     }
 
+    @Override
+    public String toString() {
+        if(isOnTrack)
+            return "CarPosition[trackSectionIndex=" + trackSectionIndex + ", laneIndex=" + laneIndex + ", stepsOnTile="
+                    + stepsOnTile + ", lap=" + lap + ", isOnLaneChange=" + isOnLaneChange + ", isOnTrack=" + isOnTrack
+                    + "]";
+        else
+            return "CarPosition[left track]";
+    }
 }

@@ -30,34 +30,41 @@ public class DebugTDA extends TrackDataApproximator {
         if(feedbackSignal.getGforce() != null)
             logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint() + " GForce: "
                     + feedbackSignal.getGforce().getX() + " " + feedbackSignal.getGforce().getY());
-        /*
-         * else logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint());
-         */
+        /*else
+            logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint());*/
 
-        // adjusted speed: between -0.5 and +0.5
-        // double adjustedThrust = ((double) controllerSignal.getSpeed() / 100 - 0.5);
-        // acceleration = speed * car acceleration factor
-        double thrust = controllerSignal.getSpeed() / 100.0;
-        double thrustAcceleration = thrust * car.getAcceleration();
+        if(carPosition.isOnTrack) {
 
-        double frictionAcceleration = car.getMass() * -1;
+            // adjusted speed: between -0.5 and +0.5
+            // double adjustedThrust = ((double) controllerSignal.getSpeed() / 100 - 0.5);
+            // acceleration = speed * car acceleration factor
+            double thrust = controllerSignal.getSpeed() / 100.0;
+            double thrustAcceleration = thrust * car.getAcceleration();
 
-        // speed = old speed + acceleration * num adjustments (but limited to 0..topspeed)
-        speed = Math.max(Math.min(speed + thrustAcceleration * (gametick - lastGametick)
-                + (frictionAcceleration * (gametick - lastGametick)), car.getTopSpeed()), 0);
+            double frictionAcceleration = car.getMass() * -1;
 
-        System.out.println("speed=" + speed + ", thrust=" + thrustAcceleration + ", friction=" + frictionAcceleration);
+            // speed = old speed + acceleration * num adjustments (but limited to 0..topspeed)
+            speed = Math.max(Math.min(speed + thrustAcceleration * (gametick - lastGametick)
+                    + (frictionAcceleration * (gametick - lastGametick)), car.getTopSpeed()), 0);
 
-        // determine the new position;
-        int stepsToMove = ((int) speed);
+            System.out.println("speed=" + speed + ", thrust=" + thrustAcceleration + ", friction="
+                    + frictionAcceleration);
 
-        /*
-         * logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove +
-         * "), topSpeed (" + car.getTopSpeed() + ")");
-         */
+            // assume the car leaves the track when driving at 80% top speed
+            if(speed > car.getTopSpeed() * 0.8)
+                carPosition.leaveTrack();
+            else {
+                // determine the new position;
+                int stepsToMove = ((int) speed);
 
-        // move
-        carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
+                /*logger.debug("acceleration (" + acceleration + "), speed (" + speed + "), stepsToMove (" + stepsToMove
+                        + "), topSpeed (" + car.getTopSpeed() + ")");*/
+
+                // move
+                carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
+            }
+
+        }
 
         lastGametick = gametick;
     }
