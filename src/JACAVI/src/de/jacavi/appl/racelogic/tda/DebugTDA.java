@@ -39,23 +39,24 @@ public class DebugTDA extends TrackDataApproximator {
         // calculate the friction 0.01 is car on concrete
         double friction = (car.getMass() * 0.01) * -1;
 
-        acceleration = thrust / car.getMass();
-        speed = Math.max(Math.min((acceleration * raceTimerInterval) + (friction * raceTimerInterval) + speed, car
-                .getTopSpeed()), 0);
+        if(carPosition.isOnTrack) {
+            acceleration = thrust / car.getMass();
+            speed = Math.max(Math.min((acceleration * raceTimerInterval) + (friction * raceTimerInterval) + speed, car
+                    .getTopSpeed()), 0);
 
-        if(speed > getMaxSpeed(controllerSignal.getSpeed(), car)) {
-            if(getMaxSpeed(controllerSignal.getSpeed(), car) == 0)
-                speed = speed--;
+            if(speed > getMaxSpeed(controllerSignal.getSpeed(), car)) {
+                if(getMaxSpeed(controllerSignal.getSpeed(), car) == 0)
+                    speed = speed--;
+                else
+                    speed = getMaxSpeed(controllerSignal.getSpeed(), car);
+            }
+
+            if(speed > car.getTopSpeed() * 0.9)
+                carPosition.leaveTrack();
             else
-                speed = getMaxSpeed(controllerSignal.getSpeed(), car);
+                // move
+                carPosition.moveSteps(track, (int) speed, controllerSignal.isTrigger());
         }
-
-        if(speed > car.getTopSpeed() * 0.9)
-            carPosition.leaveTrack();
-        else
-            // move
-            carPosition.moveSteps(track, (int) speed, controllerSignal.isTrigger());
-
         lastGametick = gametick;
     }
 

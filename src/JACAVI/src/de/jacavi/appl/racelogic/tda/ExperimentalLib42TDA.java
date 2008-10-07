@@ -38,54 +38,58 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
         // save current speed
         speed = getStepsPerGametickCalculated(controllerSignal, car, gametick);
 
-        // if its not the same checkpoint triggered before
-        if(!feedbackSignal.getLastCheckpoint().equals(lastFeedback.getLastCheckpoint())) {
+        if(carPosition.isOnTrack) {
 
-            // check if we have a sensorposition for the feedback
-            String key = feedbackSignal.getLastCheckpoint();
+            // if its not the same checkpoint triggered before
+            if(!feedbackSignal.getLastCheckpoint().equals(lastFeedback.getLastCheckpoint())) {
 
-            if(checkpoints.containsKey(key)) {
-                CheckpointData checkpointData = checkpoints.get(key);
+                // check if we have a sensorposition for the feedback
+                String key = feedbackSignal.getLastCheckpoint();
 
-                // if currentCheckpoint is the first on this lane and the number of leps on last sensor is the same as
-                // now but greater 0
-                boolean incrementLap = false;
-                if((checkpointsByLane.get(checkpointData.getLaneIndex()).get(0).getId() == checkpointData.getId())
-                        && (lapsOnLastCheckpoint == carPosition.lap)) {
-                    incrementLap = true;
+                if(checkpoints.containsKey(key)) {
+                    CheckpointData checkpointData = checkpoints.get(key);
+
+                    // if currentCheckpoint is the first on this lane and the number of leps on last sensor is the same
+                    // as
+                    // now but greater 0
+                    boolean incrementLap = false;
+                    if((checkpointsByLane.get(checkpointData.getLaneIndex()).get(0).getId() == checkpointData.getId())
+                            && (lapsOnLastCheckpoint == carPosition.lap)) {
+                        incrementLap = true;
+                    }
+
+                    // move the car to detected sensor
+                    carPosition.setPosition(checkpointData.getTrackSectionIndex(), checkpointData.getLaneIndex(),
+                            checkpointData.getSteps(), incrementLap);
+
+                    System.out.println("CheckpintSteps: " + checkpointData.getSteps());
+
+                    // init stepsMoved since this checkpoint
+                    stepsAlreadyMoved = 0;
+                    // set steps to next cp
+                    stepsDeltaCPnextCP = checkpoints.get(feedbackSignal.getLastCheckpoint()).getStepsToNext();
+                    lapsOnLastCheckpoint = carPosition.lap;
                 }
+                lastFeedback = feedbackSignal;
+            } else {
+                // no new checkpoint triggered
+                // int stepsXY = sensorPositions.get(lastFeedback.getLastCheckpoint()).getStepsToNext();
+                int stepsToNextSensor = stepsDeltaCPnextCP - stepsAlreadyMoved;
+                if(speed > 0) {
+                    // time to next sensor in gameticks
+                    int timeToNextSensor = 1;
+                    if(stepsToNextSensor > (int) speed) {
+                        timeToNextSensor = stepsToNextSensor / (int) speed;
+                    }
+                    int stepsToMove = stepsToNextSensor / timeToNextSensor;
+                    // set steps already moved
+                    stepsAlreadyMoved += stepsToMove;
 
-                // move the car to detected sensor
-                carPosition.setPosition(checkpointData.getTrackSectionIndex(), checkpointData.getLaneIndex(),
-                        checkpointData.getSteps(), incrementLap);
-
-                System.out.println("CheckpintSteps: " + checkpointData.getSteps());
-
-                // init stepsMoved since this checkpoint
-                stepsAlreadyMoved = 0;
-                // set steps to next cp
-                stepsDeltaCPnextCP = checkpoints.get(feedbackSignal.getLastCheckpoint()).getStepsToNext();
-                lapsOnLastCheckpoint = carPosition.lap;
-            }
-            lastFeedback = feedbackSignal;
-        } else {
-            // no new checkpoint triggered
-            // int stepsXY = sensorPositions.get(lastFeedback.getLastCheckpoint()).getStepsToNext();
-            int stepsToNextSensor = stepsDeltaCPnextCP - stepsAlreadyMoved;
-            if(speed > 0) {
-                // time to next sensor in gameticks
-                int timeToNextSensor = 1;
-                if(stepsToNextSensor > (int) speed) {
-                    timeToNextSensor = stepsToNextSensor / (int) speed;
+                    if(stepsToMove > car.getTopSpeed() * 0.9)
+                        carPosition.leaveTrack();
+                    else
+                        carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
                 }
-                int stepsToMove = stepsToNextSensor / timeToNextSensor;
-                // set steps already moved
-                stepsAlreadyMoved += stepsToMove;
-
-                if(stepsToMove > car.getTopSpeed() * 0.9)
-                    carPosition.leaveTrack();
-                else
-                    carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
             }
         }
         lastGametick = gametick;
