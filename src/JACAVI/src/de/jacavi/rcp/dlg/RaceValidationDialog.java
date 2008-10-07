@@ -23,6 +23,7 @@ import de.jacavi.appl.racelogic.Player;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.actions.validator.RaceValidator;
 import de.jacavi.rcp.actions.validator.ValidatationDesription;
+import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
@@ -108,21 +109,22 @@ public class RaceValidationDialog extends TitleAreaDialog {
                     errorMessagesList.setLayoutData(errorsGd);
                 }
             } catch(IllegalArgumentException e) {
-                e.printStackTrace();
+                ExceptionHandler.handleException(this, e, true);
             } catch(SecurityException e) {
-                e.printStackTrace();
+                ExceptionHandler.handleException(this, e, true);
             } catch(IllegalAccessException e) {
-                e.printStackTrace();
+                ExceptionHandler.handleException(this, e, true);
             } catch(InvocationTargetException e) {
-                e.printStackTrace();
+                ExceptionHandler.handleException(this, e, true);
             }
         }
 
         for(String error: validator.getErrorMessages()) {
             errorMessagesList.add(error);
         }
-        if(!readyForStart)
+        if(!readyForStart) {
             Display.getCurrent().beep();
+        }
         return parent;
     }
 
