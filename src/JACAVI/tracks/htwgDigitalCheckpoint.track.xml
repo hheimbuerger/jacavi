@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <track name="htwgDigitalCheck" tileset="digital">
     <section id="finishingStraight"/>
-    <section id="turn30deg2"/>
+	<section id="turn30deg2"/>
     <section id="turn60deg2"/>
     <section id="turn30deg"/>
     <section id="straightShorter"/>
@@ -9,9 +9,7 @@
     <section id="straightChange1_cp_1/2"/>
     <section id="turn30deg2"/>
     <section id="straight"/>
-    <section id="pitstopOut"/>
-    <section id="pitstopMiddle"/>
-    <section id="pitstopIn"/>
+    <section id="pitstop" />
     <section id="straight_cp_3/4"/>
     <section id="turn60deg2"/>
     <section id="turn30deg2"/>
