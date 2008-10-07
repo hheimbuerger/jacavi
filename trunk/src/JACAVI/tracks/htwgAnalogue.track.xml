@@ -3,7 +3,7 @@
 <track name="HTWG Analogue Track" tileset="analogue" >
 
     <section id="finishingStraight" />
-    	<section id="straight"/>
+	    	<section id="straight"/>
     <section id="straight"/>
     <section id="turn30deg230_2TEST"/>
     <section id="turn30deg230_2TEST"/>
@@ -74,5 +74,5 @@
     <section id="straight"/>
     <section id="straight"/>
     <section id="straightShort"/>
-    <section id="straightShort"/>	
+    <section id="straightShort"/>
 </track>

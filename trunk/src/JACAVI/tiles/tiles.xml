@@ -176,11 +176,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="14" steps="790" x="-4" y="5"/>
+            	<checkpoint id="14" steps="790" x="-37" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="13" steps="790" x="-4" y="5"/>
+            	<checkpoint id="13" steps="790" x="-37" y="17"/>
             </lane>
         </tile>
         <tile id="straight_cp_15/16" name="Straight Checkpoint 15/16">
@@ -190,11 +190,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="16" steps="790" x="-4" y="5"/>
+            	<checkpoint id="16" steps="370" x="-5" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="15" steps="790" x="-4" y="5"/>
+            	<checkpoint id="15" steps="370" x="-5" y="17"/>
             </lane>
         </tile>
         
@@ -205,11 +205,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="12" steps="790" x="-4" y="5"/>
+            	<checkpoint id="12" steps="790" x="-37" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="11" steps="790" x="-4" y="5"/>
+            	<checkpoint id="11" steps="790" x="-37" y="17"/>
             </lane>
         </tile>
         <tile id="straight_cp_7/8" name="Straight Checkpoint 7/8">
@@ -219,11 +219,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="8" steps="370" x="-4" y="5"/>
+            	<checkpoint id="8" steps="370" x="-5" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="7" steps="370" x="-4" y="5"/>
+            	<checkpoint id="7" steps="370" x="-5" y="17"/>
             </lane>
         </tile>
         <tile id="straight_cp_5/6" name="Straight Checkpoint 5/6">
@@ -233,11 +233,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="6" steps="40" x="-4" y="5"/>
+            	<checkpoint id="6" steps="40" x="-37" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="5" steps="40" x="-4" y="5"/>
+            	<checkpoint id="5" steps="40" x="-37" y="17"/>
             </lane>
         </tile>
          <tile id="straight_cp_3/4" name="Straight Checkpoint 3/4">
@@ -247,11 +247,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="4" steps="790" x="-4" y="5"/>
+            	<checkpoint id="4" steps="790" x="-37" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="3" steps="790" x="-4" y="5"/>
+            	<checkpoint id="3" steps="790" x="-37" y="17"/>
             </lane>
         </tile>
         <tile id="straightShort" name="Straight short">
@@ -396,8 +396,10 @@
                 <change exitLane="0">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                    <line length="200" x1="52" y1="17" x2="-52" y2="-16" />
-                    <line length="250" x1="-52" y1="-16" x2="-82" y2="-16" />
+                    <quad-bezier length="15" x1="52" y1="17" x2="52" y2="17" x3="-52" y3="-16" entryToExitAngle="20" />
+                    <line length="1000" x1="52" y1="17" x2="-52" y2="-16" />
+                    <quad-bezier length="15" x1="-52" y1="-16" x2="-52" y2="-16" x3="-82" y3="-16" entryToExitAngle="-20" />
+                    <line length="350" x1="-52" y1="-16" x2="-82" y2="-16" />
                 </change>
             </lane>
             
@@ -417,14 +419,16 @@
                 <change exitLane="1">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                    <line length="200" x1="52" y1="-16" x2="-52" y2="17" />
-                    <line length="300" x1="-52" y1="17" x2="-82" y2="17" />
+                    <quad-bezier length="15" x1="52" y1="-16" x2="52" y2="-16" x3="-52" y3="17" entryToExitAngle="-20" />
+                    <line length="1000" x1="52" y1="-16" x2="-52" y2="17" />
+                    <quad-bezier length="15" x1="-52" y1="17" x2="-52" y2="17" x3="-82" y3="17" entryToExitAngle="20" />
+                    <line length="350" x1="-52" y1="17" x2="-82" y2="17" />
                 </change>
-                <checkpoint id="10" steps="810" x="-4" y="5"/>
+                <checkpoint id="10" steps="1620" x="-79" y="-16"/>
             </lane>
             <lane>
                 <line length="1650" x1="82" y1="17" x2="-82" y2="17" />
-                <checkpoint id="9" steps="810" x="-4" y="5"/>
+                <checkpoint id="9" steps="1620" x="-79" y="17"/>
             </lane>
         </tile>
         <tile id="straightChange1_cp_1/2" name="Change lane Checkpoint 1/2">
@@ -434,7 +438,7 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="1650" x1="82" y1="-16" x2="-82" y2="-16" />
-                <checkpoint id="2" steps="810" x="-4" y="5"/>
+                <checkpoint id="2" steps="1620" x="-79" y="-16"/>
             </lane>
             
             <lane isChangeLane="true">
@@ -447,10 +451,12 @@
                 <change exitLane="0">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                    <line length="200" x1="52" y1="17" x2="-52" y2="-16" />
-                    <line length="250" x1="-52" y1="-16" x2="-82" y2="-16" />
+                    <quad-bezier length="15" x1="52" y1="17" x2="52" y2="17" x3="-52" y3="-16" entryToExitAngle="20" />
+                    <line length="1000" x1="52" y1="17" x2="-52" y2="-16" />
+                    <quad-bezier length="15" x1="-52" y1="-16" x2="-52" y2="-16" x3="-82" y3="-16" entryToExitAngle="-20" />
+                    <line length="350" x1="-52" y1="-16" x2="-82" y2="-16" />
                 </change>
-                <checkpoint id="1" steps="810" x="-4" y="5"/>
+                <checkpoint id="1" steps="1620" x="-79" y="17"/>
             </lane>
         </tile>
         <tile id="straightChange2" name="Change lane 2">
@@ -465,17 +471,51 @@
                 <regular exitLane="1">
                     <line length="1350" x1="52" y1="-16" x2="-82" y2="-16" />
                 </regular>
-                <change exitLane="0">
+                <change exitLane="1">
                     <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                          and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                    <line length="200" x1="52" y1="-16" x2="-52" y2="17" />
-                    <line length="300" x1="-52" y1="17" x2="-82" y2="17" />
+                    <quad-bezier length="15" x1="52" y1="16" x2="52" y2="16" x3="-52" y3="17" entryToExitAngle="-20" />
+                    <line length="1000" x1="52" y1="-16" x2="-52" y2="17" />
+                    <quad-bezier length="15" x1="-52" y1="17" x2="-52" y2="17" x3="-82" y3="17" entryToExitAngle="20" />
+                    <line length="350" x1="-52" y1="17" x2="-82" y2="17" />
                 </change>
             </lane>
             <lane>
                 <line length="1650" x1="82" y1="17" x2="-82" y2="17" />
             </lane>
         </tile>
+        
+        <tile id="pitstop" name="Pitstop">
+        	<filename>pitstop.png</filename>
+        	<entryPoint x="124" y="15" />
+        	<exitPoint x="-124" y="15" />
+        	<entryToExitAngle>0</entryToExitAngle>
+        	<lane isChangeLane="true">
+                <common>
+                    <line length="140" x1="124" y1="1" x2="112" y2="1" />
+                </common>
+                <regular exitLane="0">
+                    <line length="2350" x1="112" y1="1" x2="-124" y2="1" />
+                </regular>
+                <change exitLane="0">
+                    <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                         and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                    <quad-bezier length="50" x1="119" y1="1" x2="110" y2="0" x3="100" y3="-3" entryToExitAngle="30" />
+                    <line length="705" x1="100" y1="-3" x2="52" y2="-28" />
+                    <quad-bezier length="50" x1="52" y1="-28" x2="42" y2="-31" x3="34" y3="-32" entryToExitAngle="-30" />
+                    <line length="740" x1="34" y1="-32" x2="-34" y2="-32" />
+                    <quad-bezier length="50" x1="-34" y1="-32" x2="-42" y2="-31" x3="-52" y3="-28" entryToExitAngle="-30" />
+                    <line length="705" x1="-52" y1="-28" x2="-100" y2="-3" />
+                    <quad-bezier length="50" x1="-100" y1="-3" x2="-110" y2="0" x3="-119" y3="1" entryToExitAngle="30" />
+                    <line length="140" x1="-119" y1="1" x2="-124" y2="1" />
+                </change>
+            </lane>
+            <lane>
+                <line length="2490" x1="124" y1="33" x2="-124" y2="33" />
+            </lane>
+        </tile>
+        
+<!--        
         <tile id="pitstopIn" name="Ptistop out">
             <filename>pitIn.png</filename>
             <entryPoint x="41" y="15" />
@@ -512,6 +552,7 @@
                 <line length="990" x1="41" y1="33" x2="-41" y2="33" />
             </lane>
         </tile>
+-->
     </tileset>
 
 
@@ -580,32 +621,40 @@
             
             
             <lane exitLane="1">
-                <line length="200" x1="52" y1="-47" x2="30" y2="-47" />
+                <line length="200" x1="52" y1="-47" x2="33" y2="-47" />
+                <quad-bezier length="50" x1="33" y1="-47" x2="30" y2="-46" x3="26" y3="-45" entryToExitAngle="-30" />
                 <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                      and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                <line length="650" x1="30" y1="-47" x2="-30" y2="-15" />
-                <line length="200" x1="-30" y1="-15" x2="-52" y2="-15" />
+                <line length="650" x1="26" y1="-45" x2="-26" y2="-17" />
+                <quad-bezier length="50" x1="-26" y1="-17" x2="-28" y2="-16" x3="-31" y3="-15" entryToExitAngle="30" />
+                <line length="200" x1="-31" y1="-15" x2="-52" y2="-15" />
             </lane>
             <lane exitLane="0">
-                <line length="200" x1="52" y1="-15" x2="30" y2="-15" />
+                <line length="200" x1="52" y1="-15" x2="33" y2="-15" />
+                <quad-bezier length="50" x1="33" y1="-15" x2="30" y2="-16" x3="26" y3="-17" entryToExitAngle="30" />
                 <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                      and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                <line length="650" x1="30" y1="-15" x2="-30" y2="-47" />
+                <line length="650" x1="26" y1="-17" x2="-26" y2="-45" />
+                <quad-bezier length="50" x1="-26" y1="-45" x2="-28" y2="-46" x3="-30" y3="-47" entryToExitAngle="-30" />
                 <line length="200" x1="-30" y1="-47" x2="-52" y2="-47" />
             </lane>
             
             <lane exitLane="3">
-                <line length="200" x1="52" y1="17" x2="30" y2="17" />
+                <line length="200" x1="52" y1="17" x2="33" y2="17" />
+                <quad-bezier length="50" x1="33" y1="17" x2="30" y2="18" x3="26" y3="19" entryToExitAngle="-30" />
                 <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                      and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                <line length="650" x1="30" y1="17" x2="-30" y2="49" />
-                <line length="200" x1="-30" y1="49" x2="-52" y2="49" />
+                <line length="650" x1="26" y1="19" x2="-26" y2="47" />
+                <quad-bezier length="50" x1="-26" y1="47" x2="-28" y2="48" x3="-31" y3="49" entryToExitAngle="30" />
+                <line length="200" x1="-31" y1="49" x2="-52" y2="49" />
             </lane>
             <lane exitLane="2">
-                <line length="200" x1="52" y1="49" x2="30" y2="49" />
+                <line length="200" x1="52" y1="49" x2="33" y2="49" />
+                <quad-bezier length="50" x1="33" y1="49" x2="30" y2="48" x3="26" y3="47" entryToExitAngle="30" />
                 <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
                      and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
-                <line length="650" x1="30" y1="49" x2="-30" y2="17" />
+                <line length="650" x1="26" y1="47" x2="-24" y2="19" />
+                <quad-bezier length="50" x1="-24" y1="19" x2="-28" y2="17" x3="-30" y3="17" entryToExitAngle="-30" />
                 <line length="200" x1="-30" y1="17" x2="-52" y2="17" />
             </lane>
             
