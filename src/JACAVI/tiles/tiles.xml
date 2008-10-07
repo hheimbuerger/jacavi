@@ -233,11 +233,11 @@
             <entryToExitAngle>0</entryToExitAngle>
             <lane>
                 <line length="830" x1="41" y1="-15" x2="-41" y2="-15" />
-            	<checkpoint id="6" steps="40" x="-37" y="-15"/>
+            	<checkpoint id="6" steps="790" x="-37" y="-15"/>
             </lane>
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
-            	<checkpoint id="5" steps="40" x="-37" y="17"/>
+            	<checkpoint id="5" steps="790" x="-37" y="17"/>
             </lane>
         </tile>
          <tile id="straight_cp_3/4" name="Straight Checkpoint 3/4">

@@ -14,7 +14,7 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
 
     private int lastGametick = 0;
 
-    private int currentSpeed = 0;
+    private double speed = 0;
 
     private int stepsAlreadyMoved = 0;
 
@@ -22,9 +22,12 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
 
     private int lapsOnLastCheckpoint = 0;
 
+    private double acceleration = 0.0;
+
     public ExperimentalLib42TDA(Track track, int racetimerIntreval) {
         this.track = track;
         this.raceTimerInterval = racetimerIntreval;
+
         initializeCheckpointMap();
     }
 
@@ -33,7 +36,7 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
             FeedbackSignal feedbackSignal) {
 
         // save current speed
-        currentSpeed = getStepsPerGametickCalculated(controllerSignal, car, gametick);
+        speed = getStepsPerGametickCalculated(controllerSignal, car, gametick);
 
         // if its not the same checkpoint triggered before
         if(!feedbackSignal.getLastCheckpoint().equals(lastFeedback.getLastCheckpoint())) {
@@ -55,6 +58,9 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
                 // move the car to detected sensor
                 carPosition.setPosition(checkpointData.getTrackSectionIndex(), checkpointData.getLaneIndex(),
                         checkpointData.getSteps(), incrementLap);
+
+                System.out.println("CheckpintSteps: " + checkpointData.getSteps());
+
                 // init stepsMoved since this checkpoint
                 stepsAlreadyMoved = 0;
                 // set steps to next cp
@@ -66,16 +72,20 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
             // no new checkpoint triggered
             // int stepsXY = sensorPositions.get(lastFeedback.getLastCheckpoint()).getStepsToNext();
             int stepsToNextSensor = stepsDeltaCPnextCP - stepsAlreadyMoved;
-            if(currentSpeed > 0) {
+            if(speed > 0) {
                 // time to next sensor in gameticks
                 int timeToNextSensor = 1;
-                if(stepsToNextSensor > currentSpeed) {
-                    timeToNextSensor = stepsToNextSensor / currentSpeed;
+                if(stepsToNextSensor > (int) speed) {
+                    timeToNextSensor = stepsToNextSensor / (int) speed;
                 }
                 int stepsToMove = stepsToNextSensor / timeToNextSensor;
                 // set steps already moved
                 stepsAlreadyMoved += stepsToMove;
-                carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
+
+                if(stepsToMove > car.getTopSpeed() * 0.9)
+                    carPosition.leaveTrack();
+                else
+                    carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
             }
         }
         lastGametick = gametick;
@@ -84,23 +94,32 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
     private int getStepsPerGametickCalculated(ControllerSignal controllerSignal, Car car, int gametick) {
 
         if(gametick == 0)
-            currentSpeed = 0;
+            speed = 0;
 
-        // what we have
-        double carMass = car.getMass();
-        double carAcceleration = car.getAcceleration();
-        double carTopSpped = car.getTopSpeed();
-        double carInertia = car.getInertia();
+        // car acceleration factor is defined in car.xml
+        double thrust = controllerSignal.getSpeed() * car.getAcceleration();
 
-        int lastSpeed = currentSpeed;
+        // calculate the friction 0.01 is car on concrete
+        double friction = (car.getMass() * 0.01) * -1;
 
-        // what we can get
+        acceleration = thrust / car.getMass();
+        speed = Math.max(Math.min((acceleration * raceTimerInterval) + (friction * raceTimerInterval) + speed, car
+                .getTopSpeed()), 0);
 
-        // now we have the way since raceTimerInterval to now in steps
-        double DeltaXY = currentSpeed / raceTimerInterval;
+        if(speed > getMaxSpeed(controllerSignal.getSpeed(), car)) {
+            if(getMaxSpeed(controllerSignal.getSpeed(), car) == 0)
+                speed--;
+            else
+                speed = getMaxSpeed(controllerSignal.getSpeed(), car);
+        }
+        return (int) speed;
+    }
 
-        // TODO: hate physics
-        // FIXME:
-        return controllerSignal.getSpeed() * 4;
+    private double getMaxSpeed(int controllerSignal, Car car) {
+        double result = 0;
+
+        result = (car.getTopSpeed() / 100) * controllerSignal;
+
+        return result;
     }
 }

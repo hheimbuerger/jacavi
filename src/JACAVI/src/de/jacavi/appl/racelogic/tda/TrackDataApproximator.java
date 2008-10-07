@@ -41,9 +41,7 @@ abstract public class TrackDataApproximator {
                 Lane lane = section.getLane(laneIndex);
                 if(lane.hasCheckpoints()) {
                     for(Checkpoint check: lane.getCheckpoints()) {
-
                         check.setLaneIndex(laneIndex);
-
                         CheckpointData newCheckpointData = new CheckpointData(check.getId(), trackSectionIndex,
                                 laneIndex, check.getSteps());
                         // add to the simple queue to map feedback to gui

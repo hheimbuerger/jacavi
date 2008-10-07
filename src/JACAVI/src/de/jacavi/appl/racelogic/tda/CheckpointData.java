@@ -17,6 +17,7 @@ public class CheckpointData {
         this.trackSectionIndex = trackSectionIndex;
         this.laneIndex = laneIndex;
         stepsToNext = 0;
+        this.steps = steps;
     }
 
     public int getSteps() {
