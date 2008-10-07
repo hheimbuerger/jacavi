@@ -43,8 +43,9 @@ public class RaceValidator {
     @ValidatationDesription("Validating players name...")
     public boolean validatePlayerNames(List<Player> players) {
         boolean valid = true;
-        if(players.size() == 0)
+        if(players.size() == 0) {
             return false;
+        }
 
         for(int i = 0; i < players.size(); i++) {
             if(players.get(i).getName() == null || players.get(i).getName().trim().length() == 0) {
@@ -59,8 +60,9 @@ public class RaceValidator {
     public boolean validatePlayerController(List<Player> players) {
         CarControllerManager deviceManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
         boolean valid = true;
-        if(players.size() == 0)
+        if(players.size() == 0) {
             return false;
+        }
 
         for(int i = 0; i < players.size(); i++) {
             CarController carController = players.get(i).getController();
@@ -74,14 +76,18 @@ public class RaceValidator {
         // check that every controller is only used by one Player
         for(int i = 0; i < players.size(); i++) {
 
-            if(players.get(i).getController() == null)
+            if(players.get(i).getController() == null) {
                 continue;
+            }
 
             UUID curUUID = players.get(i).getController().getId();
             int cntEqual = 0;
             for(Player p2: players) {
-                if(p2.getController().getId().equals(curUUID))
-                    cntEqual++;
+                if(p2.getController() != null) {
+                    if(p2.getController().getId().equals(curUUID)) {
+                        cntEqual++;
+                    }
+                }
             }
             if(cntEqual > 1) {
                 errorMessages.add("Player No. " + (i + 1) + " has not an unique car controller.");
@@ -97,7 +103,8 @@ public class RaceValidator {
      * <ul>
      * <li>not null</li>
      * <li>an valid uuid</li>
-     * <li>the right combination of current focused track type and connector</li>
+     * <li>the right combination of current focused track type and connector
+     * </li>
      * </ul>
      * <p>
      * It is also validated, if no editor is open.
@@ -113,8 +120,9 @@ public class RaceValidator {
     @ValidatationDesription("Validating players connector...")
     public boolean validatePlayersConnectorAgainstTrack(List<Player> players) {
         boolean valid = true;
-        if(players.size() == 0)
+        if(players.size() == 0) {
             return false;
+        }
 
         // determine the current track from the active editor
         TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
@@ -158,8 +166,8 @@ public class RaceValidator {
             List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());
 
             /*
-             * on digital track only lib42 on analogue track all except lib42 on debug track all?
-             * SimulatedDriveConnector on all?
+             * on digital track only lib42 on analogue track all except lib42 on
+             * debug track all? SimulatedDriveConnector on all?
              */
             if(currentTrackType.equals("digital")) {
                 if(interfaces.contains(BlueriderDriveConnector.class)) {
@@ -183,14 +191,18 @@ public class RaceValidator {
 
         // check that every connector is only used by one Player
         for(int i = 0; i < players.size(); i++) {
-            if(players.get(i).getSlotCarSystemConnector() == null)
+            if(players.get(i).getSlotCarSystemConnector() == null) {
                 continue;
+            }
 
             UUID curUUID = players.get(i).getSlotCarSystemConnector().getId();
             int cntEqual = 0;
             for(Player p2: players) {
-                if(p2.getSlotCarSystemConnector().getId().equals(curUUID))
-                    cntEqual++;
+                if(p2.getSlotCarSystemConnector() != null) {
+                    if(p2.getSlotCarSystemConnector().getId().equals(curUUID)) {
+                        cntEqual++;
+                    }
+                }
             }
             if(cntEqual > 1) {
                 errorMessages.add("Player No. " + (i + 1) + " has not an unique connector.");

@@ -125,7 +125,10 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
             public void widgetSelected(SelectionEvent e) {
                 Player newPlayer = new Player();
                 model.add(newPlayer);
-                openPlayerSettingsDialog(parent, newPlayer);
+                PlayerSettingsDialog dlg = new PlayerSettingsDialog(parent.getShell(), newPlayer);
+                if(dlg.open() == Window.CANCEL) {
+                    model.remove(newPlayer);
+                }
                 tableViewer.refresh();
             }
         });
