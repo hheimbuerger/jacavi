@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
+<!--  mass in g -->
+<!--  top speed in steps/raceTimerInterval -->
 <cars>
     <car id="Ford Mustang 2007">
-        <bitmap>ford_mustang53X24.png</bitmap>
+        <bitmap>ford_mustang33X15.png</bitmap>
         <tilesets>
             <tileset id="debug" />
             <tileset id="analogue" />
-            <tileset id="digital" />
         </tilesets>
         <acceleration>7</acceleration>
         <mass>4</mass>
@@ -14,11 +14,10 @@
         <inertia>5</inertia>
     </car>
     <car id="Bluerider">
-        <bitmap>bluerider53X24.png</bitmap>
+        <bitmap>bluerider33X15.png</bitmap>
         <tilesets>
             <tileset id="debug" />
             <tileset id="analogue" />
-            <tileset id="digital" />
         </tilesets>
         <acceleration>7</acceleration>
         <mass>4</mass>
@@ -26,11 +25,10 @@
         <inertia>5</inertia>
     </car>
     <car id="Bugatti Feyron">
-        <bitmap>bugatti_feyron49X24.png</bitmap>
+        <bitmap>bugatti_feyron29X15.png</bitmap>
         <tilesets>
             <tileset id="debug" />
             <tileset id="analogue" />
-            <tileset id="digital" />
         </tilesets>
         <acceleration>7</acceleration>
         <mass>4</mass>
@@ -38,11 +36,10 @@
         <inertia>5</inertia>
     </car>
      <car id="Chevrolet Corvette C6R">
-        <bitmap>chevrolet_corvette_C6R49X24.png</bitmap>
+        <bitmap>chevrolet_corvette_C6R_31X15.png</bitmap>
         <tilesets>
             <tileset id="debug" />
             <tileset id="analogue" />
-            <tileset id="digital" />
         </tilesets>
         <acceleration>7</acceleration>
         <mass>4</mass>
@@ -50,7 +47,7 @@
         <inertia>5</inertia>
     </car>
     <car id="Chevrolet Corvette C6 Custom">
-        <bitmap>chevrolet_corvette_C6Custom52X24.png</bitmap>
+        <bitmap>chevrolet_corvette_C6Custom_32X15.png</bitmap>
         <tilesets>
             <tileset id="debug" />
             <tileset id="analogue" />
@@ -62,15 +59,14 @@
         <inertia>5</inertia>
     </car>                
     <car id="Peugeot Formula">
-        <bitmap>peugeot_formula51X24.png</bitmap>
+        <bitmap>peugeot_formula32X15.png</bitmap>
         <tilesets>
-            <tileset id="debug" />
-            <tileset id="analogue" />
+        	<tileset id="analogue" />
             <tileset id="digital" />
         </tilesets>
         <acceleration>7</acceleration>
-        <mass>4</mass>
-        <top-speed>250</top-speed>
+        <mass>1</mass><!-- 104 g -->
+        <top-speed>200</top-speed><!-- in km/h <-> 10m/s <-> 20 steps/ms with current digital tileset -->
         <inertia>5</inertia>
     </car>                                
 </cars>
