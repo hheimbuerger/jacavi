@@ -53,4 +53,6 @@ public abstract class CarController implements Comparable<CarController> {
      * measure.
      */
     public void deactivate() {}
+
+    public void reset() {}
 }

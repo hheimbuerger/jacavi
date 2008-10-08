@@ -5,6 +5,7 @@ import java.util.Map;
 
 import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.ControllerSignal;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.track.CarPosition;
 import de.jacavi.appl.track.Checkpoint;
 import de.jacavi.appl.track.Lane;
@@ -19,7 +20,13 @@ abstract public class TrackDataApproximator {
 
     protected Track track;
 
+    protected Player player;
+
     protected int raceTimerInterval;
+
+    protected double speed = 0;
+
+    protected double acceleration = 0.0;
 
     protected Map<String, CheckpointData> checkpoints = new HashMap<String, CheckpointData>();
 
@@ -119,6 +126,18 @@ abstract public class TrackDataApproximator {
             }
         }
         return result;
+    }
+
+    protected void resetCar() {
+        // reset the controller
+        player.getController().reset();
+        // speed
+        speed = 0;
+        acceleration = 0;
+        // set speed to 0 on connector
+        player.getSlotCarSystemConnector().fullBreak();
+        // FIXME: currently its ever first starting point
+        player.getPosition().reset(track.getStartingPoints()[0]);
     }
 
 }

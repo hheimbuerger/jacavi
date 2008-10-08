@@ -20,7 +20,7 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         return speed;
     }
 
@@ -40,7 +40,7 @@ public class TestSimulationDriveConnectorAdapter implements SimulationDriveConne
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         this.speed = speed;
     }
 

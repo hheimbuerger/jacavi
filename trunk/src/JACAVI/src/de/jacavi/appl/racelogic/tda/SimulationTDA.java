@@ -5,23 +5,30 @@ import org.apache.commons.logging.LogFactory;
 
 import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.ControllerSignal;
+import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.track.CarPosition;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
 
 
 
-public class DebugTDA extends TrackDataApproximator {
-    private static Log logger = LogFactory.getLog(DebugTDA.class);
+public class SimulationTDA extends TrackDataApproximator {
+    private static Log logger = LogFactory.getLog(SimulationTDA.class);
 
-    private double speed = 0;
-
-    private double acceleration = 0.0;
-
-    public DebugTDA(Track track, int racetimerInterval) {
+    public SimulationTDA(Player player, Track track, int racetimerInterval) {
+        this.player = player;
         this.track = track;
         this.raceTimerInterval = racetimerInterval;
     }
+
+    /*
+    // reset
+    if(controllerSignal.isReset()) {
+        player.getController().reset();
+        slotCarSystemConnector.setThrust(0);
+        player.getPosition().reset(track.getStartingPoints()[i]);
+    }
+    */
 
     @Override
     public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
@@ -49,11 +56,16 @@ public class DebugTDA extends TrackDataApproximator {
                     speed = getMaxSpeed(controllerSignal.getThrust(), car);
             }
 
+            // car will crash if thrust is 90% of full speed
             if(speed > car.getTopSpeed() * 0.9)
                 carPosition.leaveTrack();
             else
                 // move
                 carPosition.moveSteps(track, (int) speed, controllerSignal.isTrigger());
+        } else {
+            if(controllerSignal.isReset()) {
+                resetCar();
+            }
         }
     }
 

@@ -57,8 +57,8 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
     }
 
     @Override
-    public int getSpeed() {
-        return driveConnector.getSpeed();
+    public int getThrust() {
+        return driveConnector.getThrust();
     }
 
     @Override
@@ -67,8 +67,8 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
     }
 
     @Override
-    public void setSpeed(int speed) {
-        driveConnector.setSpeed(speed);
+    public void setThrust(int speed) {
+        driveConnector.setThrust(speed);
     }
 
     @Override

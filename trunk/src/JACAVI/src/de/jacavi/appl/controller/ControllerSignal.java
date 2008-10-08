@@ -19,11 +19,14 @@ public class ControllerSignal {
 
     private boolean switchBackLight = false;
 
+    private boolean reset = false;
+
     public ControllerSignal() {
         thrust = 0;
         trigger = false;
         switchFrontLight = false;
         switchBackLight = false;
+        reset = false;
     }
 
     public ControllerSignal(int speed, boolean trigger) {
@@ -31,7 +34,7 @@ public class ControllerSignal {
         this.trigger = trigger;
         switchFrontLight = false;
         switchBackLight = false;
-
+        this.reset = false;
     }
 
     public ControllerSignal(int speed, boolean trigger, boolean frontLight, boolean backLight) {
@@ -39,6 +42,23 @@ public class ControllerSignal {
         this.trigger = trigger;
         this.switchFrontLight = frontLight;
         this.switchBackLight = backLight;
+        this.reset = false;
+    }
+
+    public ControllerSignal(int speed, boolean trigger, boolean frontLight, boolean backLight, boolean reset) {
+        this.thrust = speed;
+        this.trigger = trigger;
+        this.switchFrontLight = frontLight;
+        this.switchBackLight = backLight;
+        this.reset = reset;
+    }
+
+    public boolean isReset() {
+        return reset;
+    }
+
+    public void setReset(boolean reset) {
+        this.reset = reset;
     }
 
     public boolean isSwitchBackLight() {

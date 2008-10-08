@@ -24,7 +24,7 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnect
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -36,7 +36,7 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnect
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         log.debug("Bluerider in speed: " + speed);
         int adjustedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, 255);
         log.debug("Bluerider adjusted speed: " + adjustedSpeed);

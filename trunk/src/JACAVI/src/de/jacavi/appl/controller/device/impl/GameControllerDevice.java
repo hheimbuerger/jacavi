@@ -28,7 +28,8 @@ public class GameControllerDevice extends DeviceController {
         boolean mainButtonDown = device.isButtonDown(Joystick.BUTTON1);
         boolean frontLightButton = device.isButtonDown(Joystick.BUTTON2);
         boolean backLighButton = device.isButtonDown(Joystick.BUTTON3);
-        return new ControllerSignal(speed, mainButtonDown, frontLightButton, backLighButton);
+        boolean reset = device.isButtonDown(Joystick.BUTTON4);
+        return new ControllerSignal(speed, mainButtonDown, frontLightButton, backLighButton, reset);
     }
 
     @Override
@@ -50,4 +51,5 @@ public class GameControllerDevice extends DeviceController {
     public String[] getCapabilities() {
         return descriptor.capabilities;
     }
+
 }

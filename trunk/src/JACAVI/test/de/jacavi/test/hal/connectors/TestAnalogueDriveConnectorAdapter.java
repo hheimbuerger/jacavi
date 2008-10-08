@@ -21,7 +21,7 @@ public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -33,7 +33,7 @@ public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
     // TODO Auto-generated method stub
 
     }
