@@ -218,12 +218,9 @@ public class Track {
      * @return the screen position of the car
      */
     public CarScreenPosition determineScreenPositionFromPosition(CarPosition position) {
-        if(position.isOnTrack) {
-            TrackSection section = sections.get(position.trackSectionIndex);
-            Lane lane = section.getLane(position.laneIndex);
-            return new CarScreenPosition(section, lane.getStepPoint(position));
-        } else
-            return new CarScreenPosition();
+        TrackSection section = sections.get(position.trackSectionIndex);
+        Lane lane = section.getLane(position.laneIndex);
+        return new CarScreenPosition(section, lane.getStepPoint(position), position.isOnTrack);
     }
 
     public List<TrackSection> getSections() {

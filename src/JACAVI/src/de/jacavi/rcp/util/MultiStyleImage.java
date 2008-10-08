@@ -9,6 +9,7 @@ import java.awt.image.ByteLookupTable;
 import java.awt.image.ColorConvertOp;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.LookupOp;
+import java.awt.image.RescaleOp;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -26,6 +27,8 @@ public class MultiStyleImage {
     private BufferedImage grayscaleImage = null;
 
     private BufferedImage highlightedImage = null;
+
+    private BufferedImage transparentImage;
 
     public MultiStyleImage(String filename) throws IOException {
         InputStream resourceAsStream = Activator.getResourceAsStream(filename);
@@ -45,11 +48,6 @@ public class MultiStyleImage {
     }
 
     public void prepareHighlightedImage() {
-        /*byte[] lut = new byte[256];
-        for(int i = 0; i < 256; i++)
-            lut[i] = (byte) ((byte) 255 - i);
-        ByteLookupTable blut = new ByteLookupTable(0, lut);
-        LookupOp op = new LookupOp(blut, null);*/
         byte[] invert = new byte[256];
         byte[] identity = new byte[256];
         for(int i = 0; i < 256; i++) {
@@ -67,6 +65,16 @@ public class MultiStyleImage {
         highlightedImage = blueInvertOp.filter(colorImage, null);
     }
 
+    private void prepareTransparentImage() {
+        // create a rescale filter op that makes the image 30% opaque
+        float[] scales = { 1f, 1f, 1f, 0.3f };
+        float[] offsets = new float[4];
+        RescaleOp rop = new RescaleOp(scales, offsets, null);
+
+        // filter the image
+        transparentImage = rop.filter(colorImage, null);
+    }
+
     public BufferedImage getColorImage() {
         return colorImage;
     }
@@ -81,6 +89,12 @@ public class MultiStyleImage {
         if(highlightedImage == null)
             prepareHighlightedImage();
         return highlightedImage;
+    }
+
+    public BufferedImage getTransparentImage() {
+        if(transparentImage == null)
+            prepareTransparentImage();
+        return transparentImage;
     }
 
     public int getWidth() {
