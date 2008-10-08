@@ -28,7 +28,7 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
      */
     private static final Logger log = Logger.getLogger(WiimoteDevice.class);
 
-    private final ControllerSignal currentControllerSignal = new ControllerSignal();
+    private ControllerSignal currentControllerSignal = new ControllerSignal();
 
     private Wiimote wiimote = null;
 
@@ -38,6 +38,16 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
         this.wiimote = wiimote;
         wiimote.activateMotionSensing();
         wiimote.addWiiMoteEventListeners(this);
+    }
+
+    @Override
+    public void activate() {
+        currentControllerSignal = new ControllerSignal();
+    }
+
+    @Override
+    public void deactivate() {
+
     }
 
     public Wiimote getWiimote() {
