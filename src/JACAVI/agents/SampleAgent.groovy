@@ -6,8 +6,8 @@ public class SampleAgent implements DrivingAgent {
 
     public ControllerSignal poll() {
         counter++
-        if(((counter / 300) as int) % 2 == 1) {
-            return new ControllerSignal(45, false)
+        if(((counter / 100) as int) % 2 == 1) {
+            return new ControllerSignal(35, true)
         } else {
             return new ControllerSignal(55, false)
         }
