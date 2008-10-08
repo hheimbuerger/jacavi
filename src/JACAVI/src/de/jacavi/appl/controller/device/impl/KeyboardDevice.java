@@ -28,12 +28,12 @@ public class KeyboardDevice extends DeviceController implements Listener {
     public KeyboardDevice(String name, KeyboardLayout keyboardLayout) {
         super(name);
         currentControllerSignal = new ControllerSignal();
-
         this.keyboardLayout = keyboardLayout;
     }
 
     @Override
     public void activate() {
+        currentControllerSignal = new ControllerSignal();
         Display.getCurrent().addFilter(SWT.KeyDown, this);
         Display.getCurrent().addFilter(SWT.KeyUp, this);
     }
