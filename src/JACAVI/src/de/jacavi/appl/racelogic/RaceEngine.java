@@ -105,8 +105,7 @@ public class RaceEngine {
                 player.setRaceStatistic(new Statistics());
                 player.getPosition().lap = 0;
             }
-            raceTimer.cancel();
-            isTimerRunning = false;
+
         } else {
             logger.error("RaceEngine.stopRace() was invoked but timer was not running. Race was *not* stopped!");
         }
