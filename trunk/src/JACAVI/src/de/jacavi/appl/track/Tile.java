@@ -30,8 +30,10 @@ public class Tile {
 
     private final Lane[] lanes;
 
+    private final StartingPoint[] startingPoints;
+
     public Tile(String id, String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
-            int entryToExitAngle, Lane[] lanes) throws IOException {
+            int entryToExitAngle, Lane[] lanes, StartingPoint[] startingPoints) throws IOException {
         this.id = id;
         this.filename = filename;
         this.name = name;
@@ -40,6 +42,7 @@ public class Tile {
         this.exitPoint = exitPoint;
         this.entryToExitAngle = new Angle(entryToExitAngle);
         this.lanes = lanes;
+        this.startingPoints = startingPoints;
 
         sectionImage = new MultiStyleImage(filename);
     }
@@ -87,4 +90,9 @@ public class Tile {
     public int getLaneCount() {
         return lanes.length;
     }
+
+    public StartingPoint[] getStartingPoints() {
+        return startingPoints;
+    }
+
 }
