@@ -252,7 +252,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private BufferedImage cachedTrackImage;
 
-    private AffineTransform onCachedTrackImageTransform;
+    private AffineTransform cachedTrackImageTransform;
 
     private Map<TrackSection, AffineTransform> carDrawingTransformations;
 
@@ -448,6 +448,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      */
     public void setSelectedTile(int selectedTile) {
         this.selectedTile = selectedTile;
+        clearCache();
         repaint();
     }
 
@@ -664,8 +665,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 setSelectedTile(Math.min(selectedTile, track.getSections().size() - 1));
             else
                 setSelectedTile(-1);
-        else
+        else {
+            clearCache();
             repaint();
+        }
     }
 
     /**
@@ -700,6 +703,13 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         zoomLevel = Math.max(Math.min(zoomLevel + adjustment, ZOOM_MAX), ZOOM_MIN);
     }
 
+    private void clearCache() {
+        cachedTrackImage = null;
+        cachedTrackImageTransform = null;
+        carDrawingTransformations = null;
+        carDrawingAngles = null;
+    }
+
     /**
      * Renders the currently displayed track.
      * <p>
@@ -729,10 +739,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
                 g.setBackground(Color.WHITE);
                 g.clearRect(0, 0, cachedTrackImage.getWidth(), cachedTrackImage.getHeight());
-                onCachedTrackImageTransform = AffineTransform.getTranslateInstance(-lastTrackBoundingBox.getX()
+                cachedTrackImageTransform = AffineTransform.getTranslateInstance(-lastTrackBoundingBox.getX()
                         + viewportTransformation.getTranslateX(), -lastTrackBoundingBox.getY()
                         + viewportTransformation.getTranslateY());
-                g.setTransform(onCachedTrackImageTransform);
+                g.setTransform(cachedTrackImageTransform);
                 logger.debug("Phase 2: drawing on the off-screen buffer");
             } else {
                 g = targetG2D;
@@ -883,8 +893,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         }
 
         if(cachedTrackImage != null)
-            targetG2D.drawImage(cachedTrackImage, (int) -onCachedTrackImageTransform.getTranslateX(),
-                    (int) -onCachedTrackImageTransform.getTranslateY(), null);
+            targetG2D.drawImage(cachedTrackImage, (int) -cachedTrackImageTransform.getTranslateX(),
+                    (int) -cachedTrackImageTransform.getTranslateY(), null);
 
         // restore the old transformation
         targetG2D.setTransform(originalTransformation);
