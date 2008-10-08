@@ -125,8 +125,7 @@ public class RaceEngine {
 
         @Override
         public void run() {
-            for(int i = 0; i < players.size(); i++) {
-                Player player = players.get(i);
+            for(Player player: players) {
                 // get the players CarController
                 CarController carController = player.getController();
                 // get players hal connector
