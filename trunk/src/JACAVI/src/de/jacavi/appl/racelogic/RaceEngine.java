@@ -95,6 +95,8 @@ public class RaceEngine {
      */
     public void stopRace() {
         if(isTimerRunning) {
+            raceTimer.cancel();
+            isTimerRunning = false;
             // disorganize devices
             for(Player player: players) {
                 player.getController().deactivate();
