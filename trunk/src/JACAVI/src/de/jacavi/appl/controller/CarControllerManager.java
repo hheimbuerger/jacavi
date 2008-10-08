@@ -9,6 +9,7 @@ import java.util.TreeMap;
 import java.util.UUID;
 
 import org.apache.log4j.Logger;
+import org.eclipse.swt.SWT;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
@@ -16,6 +17,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
+import de.jacavi.appl.controller.device.impl.KeyboardLayout;
 import de.jacavi.appl.controller.device.impl.MouseKeyboardDeviceAdapter;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
 import de.jacavi.appl.controller.device.impl.WiimoteDeviceManager;
@@ -38,8 +40,10 @@ public class CarControllerManager {
 
     public CarControllerManager() {
         // TODO: should be read from configuration, just inserting some for testing here
-        KeyboardDevice k1 = new KeyboardDevice("Keyboard 1");
-        KeyboardDevice k2 = new KeyboardDevice("Keyboard 2");
+        KeyboardDevice k1 = new KeyboardDevice("Keyboard (up/down/ctrl/del)", new KeyboardLayout(SWT.ARROW_UP,
+                SWT.ARROW_DOWN, SWT.CONTROL, 'y', 'x', SWT.DEL));
+        KeyboardDevice k2 = new KeyboardDevice("Keyboard (w/s/shift/q)", new KeyboardLayout('w', 's', SWT.SHIFT, 'e',
+                'd', 'q'));
         controllers.put(k1.getId(), k1);
         controllers.put(k2.getId(), k2);
 
