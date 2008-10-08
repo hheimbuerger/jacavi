@@ -260,6 +260,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private boolean isTrackBoundingBoxDirty = true;
 
+    private boolean isDrawing = false;
+
+    private int droppedFrameCounter;
+
+    private int lastDroppedFrameCount;
+
     private class ClickEventRepetitionHandler extends TimerTask {
         private final InnerControlID heldControl;
 
@@ -1017,13 +1023,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      */
     @Override
     public void paint(Control control, Graphics2D g2d) {
+        isDrawing = true;
+
         Point size = control.getSize();
 
         // update the frame counter
         if(new Date().getTime() - lastFrameCounterUpdate.getTime() >= 1000) {
             lastFrameCount = frameCounter;
+            lastDroppedFrameCount = droppedFrameCounter;
             lastFrameCounterUpdate = new Date();
             frameCounter = 0;
+            droppedFrameCounter = 0;
         }
         frameCounter++;
 
@@ -1053,7 +1063,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // draw the frame counter
         g2d.setFont(widgetFont);
         g2d.setColor(Color.BLACK);
-        g2d.drawString(lastFrameCount + "fps", 10, 20);
+        g2d.drawString(lastFrameCount + "fps (" + lastDroppedFrameCount + " dropped)", 10, 20);
+
+        isDrawing = false;
     }
 
     /**
@@ -1069,6 +1081,20 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     @Override
     public Rectangle2D getBounds(Control control) {
         return J2DUtilities.toRectangle2D(control.getBounds());
+    }
+
+    public void repaintIfIdle() {
+        if(isDrawing)
+            droppedFrameCounter++;
+        else
+            // the repaint() method of the TrackWidget may only be executed on the event dispatcher thread!
+            Display.getDefault().asyncExec(new Runnable() {
+                @Override
+                public void run() {
+                    if(!isDisposed())
+                        repaint();
+                }
+            });
     }
 
 }
