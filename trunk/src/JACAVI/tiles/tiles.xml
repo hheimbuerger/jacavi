@@ -160,7 +160,10 @@
             <lane>
                 <line length="830" x1="41" y1="17" x2="-41" y2="17" />
             </lane>
-            <startingPoint lane="0" steps="0" />
+            <startingPoint lane="0" steps="440" />
+            <startingPoint lane="1" steps="600" />
+            <startingPoint lane="0" steps="90" />
+            <startingPoint lane="1" steps="250" />
         </tile>
         <tile id="straight" name="Straight">
             <filename>straightLong.png</filename>
@@ -579,7 +582,10 @@
             <lane>
                 <line length="1050" x1="51" y1="49" x2="-50" y2="49" />
             </lane>
-            <startingPoint lane="0" steps="0" />
+            <startingPoint lane="0" steps="600" />
+            <startingPoint lane="1" steps="600" />
+            <startingPoint lane="2" steps="600" />
+            <startingPoint lane="3" steps="600" />
         </tile>
         <tile id="straight" name="Straight">
             <filename>straightLong.png</filename>
