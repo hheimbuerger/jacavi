@@ -633,4 +633,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         for(DeviceController dc: carControllerManager.getInputDevices())
             deviceList.add(dc.getName());
     }
+
+    @Override
+    protected void createLowerSection(Composite parent) {
+    // DO NOTHING here
+    }
 }

@@ -55,6 +55,8 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
 
     private List listDevices;
 
+    private Label labelDeviceList;
+
     public AbstractSettingsDialog(Shell parentShell) {
         super(parentShell);
 
@@ -136,7 +138,7 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         bottomSectionComposite.setLayout(bottomSectionLayout);
 
         // add the label
-        Label labelDeviceList = new Label(bottomSectionComposite, SWT.WRAP);
+        labelDeviceList = new Label(bottomSectionComposite, SWT.WRAP);
         labelDeviceList.setText("List of configured devices:");
         FormData labelFormData = new FormData();
         labelFormData.top = new FormAttachment(0, 10);
@@ -151,7 +153,11 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         listFormData.right = new FormAttachment(90, 0); // to 90% width
         listFormData.bottom = new FormAttachment(100); // to 100% height
         listFormData.left = new FormAttachment(10, 0); // from 10% width
+
         listDevices.setLayoutData(listFormData);
+
+        // create something else
+        createLowerSection(parent);
 
         // tell the subclass to create the tab items now
         createTabItems(tabFolder);
@@ -200,6 +206,20 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         return content;
     }
 
+    protected void setDeviceListLabel(String text) {
+        labelDeviceList.setText(text);
+        labelDeviceList.pack(true);
+        labelDeviceList.getParent().pack(true);
+
+    }
+
+    protected String getSelectedDevice() {
+        String result = "";
+        if(listDevices.getSelectionIndex() != -1)
+            result = listDevices.getItem(listDevices.getSelectionIndex());
+        return result;
+    }
+
     protected final void updateDeviceList() {
         listDevices.removeAll();
         fillDeviceList(listDevices);
@@ -221,4 +241,6 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
     abstract protected void createTabItems(CTabFolder tabFolder);
 
     abstract protected void fillDeviceList(List deviceList);
+
+    abstract protected void createLowerSection(Composite parent);
 }

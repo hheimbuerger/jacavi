@@ -78,15 +78,14 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         getShell().setText("Connector Settings");
         setTitle("Configure slot car systems");
         setMessage("Initialize and configure your slot car systems.", IMessageProvider.INFORMATION);
+        super.setDeviceListLabel("List of configured connectors:");
     }
 
     @Override
     protected void createTabItems(CTabFolder tabFolder) {
         createLib42Tab(prepareTabItem("Lib42", imageManager.get("icon"), imageManager.get("imageLib42")));
-        createBlueRiderTab(prepareTabItem("Bluerider", imageManager.get("icon"), imageManager
-                .get("imageBluerider")));
-        createAnalogueTab(prepareTabItem("Analogue", imageManager.get("icon"), imageManager
-                .get("imageAnalogue")));
+        createBlueRiderTab(prepareTabItem("Bluerider", imageManager.get("icon"), imageManager.get("imageBluerider")));
+        createAnalogueTab(prepareTabItem("Analogue", imageManager.get("icon"), imageManager.get("imageAnalogue")));
     }
 
     private void createLib42Tab(Composite parent) {
@@ -140,7 +139,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         SlotCarSystemConnector lib42Connector = connectorFactory.createLib42Connector(lib42CarID.getText()
                 + " -> Lib42", carID);
         connectorManager.addConnector(lib42Connector);
-        connectorManager.testSystemConnector(lib42Connector);
+        // connectorManager.testSystemConnector(lib42Connector);
         updateDeviceList();
     }
 
@@ -256,7 +255,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
                             .valueOf(textBlueriderPort.getText())));
             if(((BlueriderDriveConnector) blueriderConnector.getDriveConnector()).connectBlueRider()) {
                 connectorManager.addConnector(blueriderConnector);
-                connectorManager.testSystemConnector(blueriderConnector);
+                // connectorManager.testSystemConnector(blueriderConnector);
             } else {
                 blueriderValidationGroup.setText("Could not connect to Bluerider");
             }
@@ -374,7 +373,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
             // TODO: connect analogue devices
 
             connectorManager.addConnector(analogueConnector);
-            connectorManager.testSystemConnector(analogueConnector);
+            // connectorManager.testSystemConnector(analogueConnector);
         }
         updateDeviceList();
     }
@@ -386,4 +385,26 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         }
     }
 
+    @Override
+    protected void createLowerSection(Composite parent) {
+        Button buttonTest = new Button(parent, SWT.NONE);
+        buttonTest.setText("Test selected connector");
+        buttonTest.addSelectionListener(new SelectionAdapter() {
+            @Override
+            public void widgetSelected(SelectionEvent e) {
+                ConnectorSettingsDialog.this.handleClickTestConnector(e);
+            }
+        });
+    }
+
+    protected void handleClickTestConnector(SelectionEvent e) {
+        String deviceName = getSelectedDevice();
+        if(deviceName.equals(""))
+            return;
+
+        for(SlotCarSystemConnector connector: connectorManager.getConnectors()) {
+            if(connector.getName().equals(deviceName))
+                connectorManager.testSystemConnector(connector);
+        }
+    }
 }
