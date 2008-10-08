@@ -136,8 +136,7 @@ abstract public class TrackDataApproximator {
         acceleration = 0;
         // set speed to 0 on connector
         player.getSlotCarSystemConnector().fullBreak();
-        // FIXME: currently its ever first starting point
-        player.getPosition().reset(track.getStartingPoints()[0]);
+        player.getPosition().reset(track.getStartingPoints()[player.getPosition().laneIndex]);
     }
 
 }
