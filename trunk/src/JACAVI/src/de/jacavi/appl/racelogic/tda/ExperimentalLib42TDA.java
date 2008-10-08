@@ -98,7 +98,7 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
             speed = 0;
 
         // car acceleration factor is defined in car.xml
-        double thrust = controllerSignal.getSpeed() * car.getAcceleration();
+        double thrust = controllerSignal.getThrust() * car.getAcceleration();
 
         // calculate the friction 0.01 is car on concrete
         double friction = (car.getMass() * 0.01) * -1;
@@ -107,11 +107,11 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
         speed = Math.max(Math.min((acceleration * raceTimerInterval) + (friction * raceTimerInterval) + speed, car
                 .getTopSpeed()), 0);
 
-        if(speed > getMaxSpeed(controllerSignal.getSpeed(), car)) {
-            if(getMaxSpeed(controllerSignal.getSpeed(), car) == 0)
+        if(speed > getMaxSpeed(controllerSignal.getThrust(), car)) {
+            if(getMaxSpeed(controllerSignal.getThrust(), car) == 0)
                 speed--;
             else
-                speed = getMaxSpeed(controllerSignal.getSpeed(), car);
+                speed = getMaxSpeed(controllerSignal.getThrust(), car);
         }
         return (int) speed;
     }

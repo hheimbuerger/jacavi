@@ -153,7 +153,7 @@ public class RaceEngine {
                     controllerSignal.setSwitchBackLight(false);
                 }
                 // set new speed
-                slotCarSystemConnector.setSpeed(controllerSignal.getSpeed());
+                slotCarSystemConnector.setSpeed(controllerSignal.getThrust());
                 // invoke the TDA
                 TrackDataApproximator tda = player.getTda();
                 tda.updatePosition(player.getPosition(), gametick, player.getCar(), controllerSignal, feedbackSignal);

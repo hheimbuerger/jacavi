@@ -94,7 +94,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                 public void run() {
                     if(!progressBar.isDisposed() && carControllerManager.isIdValid(deviceID)) {
                         ControllerSignal signal = carControllerManager.getDevice(deviceID).poll();
-                        progressBar.setSelection(signal.getSpeed());
+                        progressBar.setSelection(signal.getThrust());
                         progressBar.setForeground(signal.isTrigger() ? Display.getDefault().getSystemColor(
                                 SWT.COLOR_DARK_MAGENTA) : null);
                     }

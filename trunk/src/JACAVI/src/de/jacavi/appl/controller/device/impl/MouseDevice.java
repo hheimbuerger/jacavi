@@ -63,7 +63,7 @@ public class MouseDevice extends DeviceController implements Listener {
                         lastYCoords = event.y;
                     } else if(event.type == SWT.MouseUp) {
                         isLeftMouseButtonPressed = false;
-                        lastSpeed = currentControllerSignal.getSpeed();
+                        lastSpeed = currentControllerSignal.getThrust();
                     }
                     break;
 
@@ -93,7 +93,7 @@ public class MouseDevice extends DeviceController implements Listener {
     }
 
     private void handleSpeed(int speed) {
-        currentControllerSignal.setSpeed(Math.min(Math.max(speed, 0), 100));
+        currentControllerSignal.setThrust(Math.min(Math.max(speed, 0), 100));
     }
 
 }

@@ -11,7 +11,7 @@ import de.jacavi.rcp.util.Check;
  */
 public class ControllerSignal {
 
-    private int speed = 0;
+    private int thrust = 0;
 
     private boolean trigger = false;
 
@@ -20,14 +20,14 @@ public class ControllerSignal {
     private boolean switchBackLight = false;
 
     public ControllerSignal() {
-        speed = 0;
+        thrust = 0;
         trigger = false;
         switchFrontLight = false;
         switchBackLight = false;
     }
 
     public ControllerSignal(int speed, boolean trigger) {
-        this.speed = speed;
+        this.thrust = speed;
         this.trigger = trigger;
         switchFrontLight = false;
         switchBackLight = false;
@@ -35,7 +35,7 @@ public class ControllerSignal {
     }
 
     public ControllerSignal(int speed, boolean trigger, boolean frontLight, boolean backLight) {
-        this.speed = speed;
+        this.thrust = speed;
         this.trigger = trigger;
         this.switchFrontLight = frontLight;
         this.switchBackLight = backLight;
@@ -53,10 +53,10 @@ public class ControllerSignal {
         this.switchFrontLight = switchFrontLight;
     }
 
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         // Check preconditions speed must be between 0 and 100 included
         Check.Require(speed >= 0 && speed <= 100, "speed must be between (included) 0 and 100");
-        this.speed = speed;
+        this.thrust = speed;
     }
 
     public boolean isSwitchFrontLight() {
@@ -67,8 +67,8 @@ public class ControllerSignal {
         this.trigger = trigger;
     }
 
-    public int getSpeed() {
-        return speed;
+    public int getThrust() {
+        return thrust;
     }
 
     public boolean isTrigger() {
