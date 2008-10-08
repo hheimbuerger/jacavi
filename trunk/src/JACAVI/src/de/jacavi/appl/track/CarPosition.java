@@ -47,7 +47,6 @@ public class CarPosition {
         laneIndex = startingPoint.getLaneIndex();
         isOnLaneChange = false;
         isOnTrack = true;
-        lap = 0;
     }
 
     /**
