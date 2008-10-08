@@ -521,6 +521,35 @@
                 <line length="2490" x1="124" y1="33" x2="-124" y2="33" />
             </lane>
         </tile>
+        <tile id="pitstop2" name="Pitstop2">
+        	<filename>pitstop2.png</filename>
+        	<entryPoint x="124" y="-18" />
+        	<exitPoint x="-124" y="-18" />
+        	<entryToExitAngle>0</entryToExitAngle>
+        	<lane>
+                <line length="2490" x1="124" y1="-32" x2="-124" y2="-32" />
+            </lane>
+        	<lane isChangeLane="true">
+                <common>
+                    <line length="140" x1="124" y1="0" x2="112" y2="0" />
+                </common>
+                <regular exitLane="1">
+                    <line length="2350" x1="112" y1="0" x2="-124" y2="0" />
+                </regular>
+                <change exitLane="1">
+                    <!-- The curves for entering and leaving the lane change are missing here. That is only for testing
+                         and will result in incorrect drawing (the car will not be rotated properly during the lane change.) -->
+                    <quad-bezier length="50" x1="119" y1="0" x2="110" y2="-1" x3="100" y3="3" entryToExitAngle="-30" />
+                    <line length="705" x1="100" y1="3" x2="52" y2="28" />
+                    <quad-bezier length="50" x1="52" y1="28" x2="42" y2="31" x3="34" y3="32" entryToExitAngle="30" />
+                    <line length="740" x1="34" y1="32" x2="-34" y2="32" />
+                    <quad-bezier length="50" x1="-34" y1="32" x2="-42" y2="31" x3="-52" y3="28" entryToExitAngle="30" />
+                    <line length="705" x1="-52" y1="28" x2="-100" y2="3" />
+                    <quad-bezier length="50" x1="-100" y1="3" x2="-110" y2="-1" x3="-119" y3="0" entryToExitAngle="-30" />
+                    <line length="140" x1="-119" y1="0" x2="-124" y2="0" />
+                </change>
+            </lane>
+        </tile>
         
 <!--        
         <tile id="pitstopIn" name="Ptistop out">
