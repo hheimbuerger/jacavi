@@ -10,6 +10,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -388,6 +389,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
     @Override
     protected void createLowerSection(Composite parent) {
         Button buttonTest = new Button(parent, SWT.NONE);
+        buttonTest.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
         buttonTest.setText("Test selected connector");
         buttonTest.addSelectionListener(new SelectionAdapter() {
             @Override
@@ -399,12 +401,14 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
 
     protected void handleClickTestConnector(SelectionEvent e) {
         String deviceName = getSelectedDevice();
-        if(deviceName.equals(""))
+        if(deviceName.equals("")) {
             return;
+        }
 
         for(SlotCarSystemConnector connector: connectorManager.getConnectors()) {
-            if(connector.getName().equals(deviceName))
+            if(connector.getName().equals(deviceName)) {
                 connectorManager.testSystemConnector(connector);
+            }
         }
     }
 }
