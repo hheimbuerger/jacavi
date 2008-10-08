@@ -23,9 +23,7 @@ public class KeyboardLayout {
 
     // possible would be also a handbrake or boost button, because the handling with the keyboard isn't the best in
     // comparison to wiimote or gamepad
-    // 121 is y and 120 is x
-    // reset is r
-    public static KeyboardLayout Default = new KeyboardLayout(SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.CONTROL, 121, 120, 114);
+    public static KeyboardLayout Default = new KeyboardLayout(SWT.ARROW_UP, SWT.ARROW_DOWN, SWT.CONTROL, 'y', 'x', 'r');
 
     /**
      * @param accelerationButton
