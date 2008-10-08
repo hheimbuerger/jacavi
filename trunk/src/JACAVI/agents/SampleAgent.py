@@ -7,7 +7,7 @@ class MyAgent(DrivingAgent):
 
     def poll(self):
         self.counter += 1
-        if self.counter / 300 % 2:
-            return ControllerSignal(45, False)
+        if self.counter / 100 % 2:
+            return ControllerSignal(35, True)
         else:
             return ControllerSignal(55, False)
