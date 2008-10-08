@@ -258,6 +258,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private Map<TrackSection, Integer> carDrawingAngles;
 
+    private boolean isTrackBoundingBoxDirty = true;
+
     private class ClickEventRepetitionHandler extends TimerTask {
         private final InnerControlID heldControl;
 
@@ -706,7 +708,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private void clearCache() {
         cachedTrackImage = null;
         cachedTrackImageTransform = null;
-        lastTrackBoundingBox = null;
+        isTrackBoundingBoxDirty = true;
         carDrawingTransformations = null;
         carDrawingAngles = null;
     }
@@ -733,7 +735,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             long initializationTime = 0, calculationTime = 0, drawingTime = 0, otherTime = 0;
             long baseTime = new Date().getTime();
 
-            if(lastTrackBoundingBox != null) {
+            if(lastTrackBoundingBox != null && !isTrackBoundingBoxDirty) {
                 cachedTrackImage = new BufferedImage((int) lastTrackBoundingBox.getWidth(), (int) lastTrackBoundingBox
                         .getHeight(), BufferedImage.TYPE_INT_RGB);
                 g = cachedTrackImage.createGraphics();
@@ -888,6 +890,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
                 otherTime += new Date().getTime() - baseTime;
             }
+
+            isTrackBoundingBoxDirty = false;
 
             logger.debug("Rendering times: init=" + initializationTime + "ms, calculation=" + calculationTime
                     + "ms, drawing=" + drawingTime + "ms, other=" + otherTime + "ms");
