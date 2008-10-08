@@ -334,4 +334,10 @@ public class Track {
     public TrackSection getInitialSection() {
         return sections.get(0);
     }
+
+    public StartingPoint[] getStartingPoints() {
+        // FIXME: starting points should be taken from all tiles, not just the initial tile
+        Tile initialTile = getInitialSection().getTile();
+        return initialTile.getStartingPoints();
+    }
 }

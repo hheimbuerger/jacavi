@@ -11,6 +11,7 @@ import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.racelogic.tda.TDAInjectorFactory;
 import de.jacavi.appl.racelogic.tda.TrackDataApproximator;
+import de.jacavi.appl.track.StartingPoint;
 import de.jacavi.appl.track.Statistics;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
@@ -69,8 +70,9 @@ public class RaceEngine {
 
             // TODO: assign all cars to their starting position
             int i = 0;
+            StartingPoint[] startingPoints = track.getStartingPoints();
             for(Player player: players) {
-                player.getPosition().reset(i++ % track.getTileset().getLaneCount());
+                player.getPosition().reset(startingPoints[i++]);
                 // inject each player with an specific tda and give activeTrack
                 tdaInjector.initializeTDA(player, track, raceTimerInterval);
                 // prepare devices

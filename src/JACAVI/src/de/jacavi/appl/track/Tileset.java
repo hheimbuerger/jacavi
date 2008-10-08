@@ -41,6 +41,11 @@ public class Tileset {
         else if(initialTileID == null)
             throw new TilesetRepositoryInitializationFailedException("The tileset " + id
                     + " is missing a tile marked as initial");
+
+        // make sure there's at least one starting point defined in the track
+        if(getInitialTile().getStartingPoints().length == 0)
+            throw new TilesetRepositoryInitializationFailedException("The tileset " + id
+                    + " is lacking starting points.");
     }
 
     public void add(String tileID, Tile tile) throws TilesetRepositoryInitializationFailedException {

@@ -41,10 +41,10 @@ public class CarPosition {
     /**
      * Resets the car to the race starting point.
      */
-    public void reset(int laneIndex) {
+    public void reset(StartingPoint startingPoint) {
         trackSectionIndex = 0;
-        stepsOnTile = 0;
-        this.laneIndex = laneIndex;
+        stepsOnTile = startingPoint.getSteps();
+        laneIndex = startingPoint.getLaneIndex();
         isOnLaneChange = false;
         isOnTrack = true;
         lap = 0;

@@ -89,6 +89,7 @@ public class TilesetRepository {
         int entryToExitAngle = 0;
         List<Lane> lanes = new ArrayList<Lane>();
         int laneIndex = 0;
+        List<StartingPoint> startingPoints = new ArrayList<StartingPoint>();
 
         NodeList tileDataNodes = tileElement.getChildNodes();
         for(int i = 0; i < tileDataNodes.getLength(); i++) {
@@ -107,6 +108,14 @@ public class TilesetRepository {
                 } else if(tileDataElement.getNodeName().equals("lane")) {
                     lanes.add(importLane(tileset, tileDataElement, laneIndex));
                     laneIndex++;
+                } else if(tileDataElement.getNodeName().equals("startingPoint")) {
+                    int startingLaneIndex = Integer.valueOf(tileDataElement.getAttribute("lane"));
+                    if(startingLaneIndex >= lanes.size())
+                        throw new TilesetRepositoryInitializationFailedException("Tile " + tileID + " of tileset "
+                                + tileset.getId() + " refers to lane index " + startingLaneIndex + " but only "
+                                + lanes.size() + " lanes are defined at this point.");
+                    startingPoints.add(new StartingPoint(startingLaneIndex, Integer.valueOf(tileDataElement
+                            .getAttribute("steps"))));
                 } else {
                     throw new TilesetRepositoryInitializationFailedException("Invalid element in tile: "
                             + tileDataElement.getNodeName());
@@ -114,8 +123,10 @@ public class TilesetRepository {
             }
         }
 
-        tileset.add(tileID, new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle,
-                lanes.toArray(new Lane[lanes.size()])));
+        tileset.add(tileID,
+                new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, lanes
+                        .toArray(new Lane[lanes.size()]), startingPoints.toArray(new StartingPoint[startingPoints
+                        .size()])));
     }
 
     private Lane importLane(Tileset tileset, Element tileDataElement, int laneIndex)
