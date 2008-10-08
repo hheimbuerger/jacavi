@@ -11,8 +11,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
-import de.jacavi.appl.track.Track;
-
 
 
 public class CreateTrackPageOne extends WizardPage {
@@ -35,7 +33,8 @@ public class CreateTrackPageOne extends WizardPage {
         label1.setText("Put here the name of the new track: ");
 
         trackNameInputField = new Text(container, SWT.BORDER | SWT.SINGLE);
-        trackNameInputField.setText(Track.FILE_EXTENSION);
+        trackNameInputField.setText("New Track");
+        trackNameInputField.setSelection(0, trackNameInputField.getText().length());
         trackNameInputField.setFocus();
         trackNameInputField.addKeyListener(new KeyListener() {
 
@@ -68,11 +67,10 @@ public class CreateTrackPageOne extends WizardPage {
 
     private void checkComplete() {
         String input = trackNameInputField.getText();
-        if(input.endsWith(Track.FILE_EXTENSION) && input.length() > Track.FILE_EXTENSION.length()) {
+        if(input != null && input.length() > 0)
             setPageComplete(true);
-        } else {
+        else
             setPageComplete(false);
-        }
     }
 
 }
