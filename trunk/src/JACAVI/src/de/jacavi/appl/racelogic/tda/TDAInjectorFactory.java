@@ -33,7 +33,7 @@ public class TDAInjectorFactory {
         } else if(interfaces.contains(AnalogueDriveConnector.class)) {
             player.setTda(new AnalogueTDA(currentTrack, raceTimerInterval));
         } else if(interfaces.contains(BlueriderDriveConnector.class)) {
-            player.setTda(new BlueriderTDA(currentTrack, raceTimerInterval));
+            player.setTda(new DebugTDA(currentTrack, raceTimerInterval));
         } else if(interfaces.contains(SimulationDriveConnector.class)) {
             player.setTda(new DebugTDA(currentTrack, raceTimerInterval));
         }

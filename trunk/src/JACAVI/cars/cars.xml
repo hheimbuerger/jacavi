@@ -19,9 +19,9 @@
             <tileset id="debug" />
             <tileset id="analogue" />
         </tilesets>
-        <acceleration>6.4</acceleration>
-        <mass>104</mass>
-        <top-speed>550</top-speed>
+        <acceleration>400</acceleration>
+        <mass>950</mass>
+        <top-speed>450</top-speed>
         <inertia>5</inertia>
     </car>
     <car id="Bugatti Feyron">
