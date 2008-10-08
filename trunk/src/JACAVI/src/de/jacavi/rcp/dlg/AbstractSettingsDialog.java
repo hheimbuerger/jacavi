@@ -146,7 +146,7 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
         labelDeviceList.setLayoutData(labelFormData);
 
         // add the device list
-        listDevices = new List(bottomSectionComposite, SWT.BORDER);
+        listDevices = new List(bottomSectionComposite, SWT.BORDER | SWT.V_SCROLL);
         FormData listFormData = new FormData();
         listFormData.top = new FormAttachment(labelDeviceList, 5); // 5 pixels from the label
         listFormData.height = 80; // fixed height of 80 pixels
