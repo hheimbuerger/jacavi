@@ -706,6 +706,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private void clearCache() {
         cachedTrackImage = null;
         cachedTrackImageTransform = null;
+        lastTrackBoundingBox = null;
         carDrawingTransformations = null;
         carDrawingAngles = null;
     }
