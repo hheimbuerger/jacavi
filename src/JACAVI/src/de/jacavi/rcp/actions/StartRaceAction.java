@@ -9,7 +9,6 @@ import org.eclipse.ui.WorkbenchException;
 
 import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.dlg.RaceValidationDialog;
-import de.jacavi.rcp.dlg.TrafficLightsDialog;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.PartFromIDResolver;
@@ -20,18 +19,12 @@ import de.jacavi.rcp.views.RaceView;
 /**
  * Class that represents an action that leads through following steps:
  * <p>
- * <li>
- * validate race settings
- * </li>
- * <li>
- * switch to race perspective
- * </li>
- * <li>
- * show traffic lights
- * </li>
- * <li>
- * start race engine
- * </li>
+ * <ul>
+ * <li>validate race settings
+ * <li>switch to race perspective
+ * <li>show traffic lights
+ * <li>start race engine
+ * </ul>
  * 
  * @author Fabian
  */
@@ -66,7 +59,7 @@ public class StartRaceAction extends RaceControlAction {
         RaceView raceView = (RaceView) PartFromIDResolver.resolveView(RaceView.ID);
 
         // show traffic lights
-        new TrafficLightsDialog();
+        // new TrafficLightsDialog();
 
         // tell the RaceEngine to start the race
         log.debug("Starting RaceEngine");
