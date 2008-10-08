@@ -1,14 +1,11 @@
 package de.jacavi.appl.car;
 
-import java.awt.Image;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
-
-import javax.imageio.ImageIO;
 
 import de.jacavi.appl.track.Tileset;
 import de.jacavi.rcp.Activator;
+import de.jacavi.rcp.util.MultiStyleImage;
 
 
 
@@ -29,7 +26,7 @@ public class Car {
 
     private final double inertia;
 
-    private final Image image;
+    private final MultiStyleImage image;
 
     private final org.eclipse.swt.graphics.Image swtImage;
 
@@ -43,11 +40,7 @@ public class Car {
         this.mass = mass;
         this.topSpeed = topSpeed;
 
-        InputStream resourceAsStream = Activator.getResourceAsStream(CAR_BITMAP_PATH_PREFIX + filename);
-        if(resourceAsStream == null)
-            throw new IllegalArgumentException("The image resource " + CAR_BITMAP_PATH_PREFIX + filename
-                    + " could not be loaded.");
-        image = ImageIO.read(resourceAsStream);
+        image = new MultiStyleImage(CAR_BITMAP_PATH_PREFIX + filename);
 
         // FIXME: this image is never disposed again!
         swtImage = Activator.getImageDescriptor(CAR_BITMAP_PATH_PREFIX + filename).createImage();
@@ -81,7 +74,7 @@ public class Car {
         return inertia;
     }
 
-    public Image getImage() {
+    public MultiStyleImage getImage() {
         return image;
     }
 

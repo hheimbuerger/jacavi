@@ -26,7 +26,7 @@ public class CarPosition {
     public boolean isOnTrack;
 
     /** The number of laps this car has already completed. */
-    public int lap;
+    public int lap = 0;
 
     /** The player that holds this instance */
     private final Player player;
@@ -144,10 +144,10 @@ public class CarPosition {
      */
     public void leaveTrack() {
         isOnTrack = false;
-        trackSectionIndex = 0;
+        /* trackSectionIndex = 0;
         laneIndex = 0;
         stepsOnTile = 0;
-        isOnLaneChange = false;
+        isOnLaneChange = false; */
     }
 
     @Override

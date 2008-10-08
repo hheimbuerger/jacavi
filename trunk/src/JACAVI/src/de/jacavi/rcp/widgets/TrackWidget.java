@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -912,8 +913,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     private void drawCars(Graphics2D g, AffineTransform viewportTransformation) {
-        List<Player> offTrackPlayers = new ArrayList<Player>();
-
         // back up the current transformation of the graphics context, so we can restore it later on
         AffineTransform originalTransformation = g.getTransform();
 
@@ -927,45 +926,27 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             carPosition[i] = track.determineScreenPositionFromPosition(p.getPosition());
         }
 
-        // draw the cars, store the cars that have left the track (they need to be drawn after resetting the base
-        // transformation!)
-        for(int i = 0; i < playersBean.size(); i++)
-            if(carPosition[i].isOnTrack())
-                drawCar(g, playersBean.get(i).getCar(), carDrawingTransformations.get(carPosition[i].getSection())
-                        .transform(carPosition[i].getDirectedPoint().point, null), new Angle(carPosition[i]
-                        .getDirectedPoint().angle.angle
-                        + carDrawingAngles.get(carPosition[i].getSection())));
-            else
-                offTrackPlayers.add(playersBean.get(i));
+        // draw the cars, cars that have left the track using the transparent image
+        for(int i = 0; i < playersBean.size(); i++) {
+            Car car = playersBean.get(i).getCar();
+            Image carImage = (carPosition[i].isOnTrack()) ? car.getImage().getColorImage() : car.getImage()
+                    .getTransparentImage();
+            drawCar(g, carImage, carDrawingTransformations.get(carPosition[i].getSection()).transform(
+                    carPosition[i].getDirectedPoint().point, null), new Angle(
+                    carPosition[i].getDirectedPoint().angle.angle + carDrawingAngles.get(carPosition[i].getSection())));
+        }
 
         // restore the old transformation
         g.setTransform(originalTransformation);
-
-        // draw the off-track cars
-        if(widgetMode == TrackWidgetMode.RACE_MODE && offTrackPlayers.size() > 0) {
-            Point size = getSize();
-            int offset = 0;
-            final int CAR_DISTANCE = 10;
-
-            for(Player p: offTrackPlayers) {
-                int carHeight = p.getCar().getImage().getHeight(null);
-                offset += carHeight;
-                offset += CAR_DISTANCE;
-                drawCar(g, p.getCar(), new Point2D.Double(80, size.y - 30 - offset), new Angle(0));
-            }
-
-            g.setColor(Color.BLACK);
-            g.drawRect(50, size.y - 30 - offset - 15, 60, offset);
-        }
     }
 
-    private void drawCar(Graphics2D g, Car car, Point2D position, Angle carDirection) {
+    private void drawCar(Graphics2D g, Image carImage, Point2D position, Angle carDirection) {
         AffineTransform carRotationTransformation = new AffineTransform();
         carRotationTransformation.translate(position.getX(), position.getY());
         carRotationTransformation.rotate(carDirection.getRadians());
-        carRotationTransformation.translate(-car.getImage().getWidth(null) / 2, -car.getImage().getHeight(null) / 2);
+        carRotationTransformation.translate(-carImage.getWidth(null) / 2, -carImage.getHeight(null) / 2);
 
-        g.drawImage(car.getImage(), carRotationTransformation, null);
+        g.drawImage(carImage, carRotationTransformation, null);
     }
 
     private void drawThrustGauges(Graphics2D g) {
