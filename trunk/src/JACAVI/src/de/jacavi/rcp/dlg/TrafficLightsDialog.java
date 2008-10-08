@@ -20,26 +20,27 @@ import de.jacavi.rcp.Activator;
 
 
 
+/**
+ * This class opens a shell and shows a traffic gif to let the players prepare for race
+ * 
+ * @author Fabian
+ */
 public class TrafficLightsDialog {
-    Display display = Display.getCurrent();
 
-    Shell shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.NO_TRIM);;
+    private final String gifPath = "icons/traffic/ampel.gif";
+
+    private final Display display = Display.getCurrent();
+
+    private final Shell shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.NO_TRIM);;
 
     public TrafficLightsDialog() {
-        Image gifImage = Activator.getImageDescriptor("/icons/traffic/ampel.gif").createImage();
+        initShell();
+        animateGif();
+    }
 
-        shell.setLayout(new FillLayout());
-        shell.setSize(gifImage.getBounds().width, gifImage.getBounds().height);
-
-        Monitor primary = display.getPrimaryMonitor();
-        Rectangle bounds = primary.getBounds();
-        Rectangle rect = shell.getBounds();
-        int x = bounds.x + (bounds.width - rect.width) / 2;
-        int y = bounds.y + (bounds.height - rect.height) / 2;
-        shell.setLocation(x, y);
-
+    private void animateGif() {
         ImageLoader imageLoader = new ImageLoader();
-        final ImageData[] imageDatas = imageLoader.load("icons/traffic/ampel.gif");
+        final ImageData[] imageDatas = imageLoader.load(gifPath);
 
         final Image image = new Image(display, imageDatas[0].width, imageDatas[0].height);
         final Canvas canvas = new Canvas(shell, SWT.NULL);
@@ -57,7 +58,7 @@ public class TrafficLightsDialog {
 
             @Override
             public void run() {
-                for(int i = 0; i < 7; i++) {
+                for(int i = 0; i < imageDatas.length; i++) {
 
                     frameIndex %= imageDatas.length;
 
@@ -83,6 +84,8 @@ public class TrafficLightsDialog {
                 display.asyncExec(new Runnable() {
                     public void run() {
                         shell.dispose();
+                        image.dispose();
+                        gc.dispose();
                     }
                 });
             }
@@ -106,6 +109,25 @@ public class TrafficLightsDialog {
                 display.sleep();
             }
         }
+    }
+
+    /**
+     * shell is set into the center and gets the size of the image
+     */
+    private void initShell() {
+        Image gifImage = Activator.getImageDescriptor(gifPath).createImage();
+
+        // setting size
+        shell.setLayout(new FillLayout());
+        shell.setSize(gifImage.getBounds().width, gifImage.getBounds().height);
+
+        // setting position
+        Monitor primary = display.getPrimaryMonitor();
+        Rectangle bounds = primary.getBounds();
+        Rectangle rect = shell.getBounds();
+        int x = bounds.x + (bounds.width - rect.width) / 2;
+        int y = bounds.y + (bounds.height - rect.height) / 2;
+        shell.setLocation(x, y);
     }
 
 }
