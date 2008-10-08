@@ -24,14 +24,15 @@ public class MouseDevice extends DeviceController implements Listener {
 
     public MouseDevice(String name) {
         super(name);
+        currentControllerSignal = new ControllerSignal();
     }
 
     @Override
     public void activate() {
+        currentControllerSignal = new ControllerSignal();
         isLeftMouseButtonPressed = false;
         lastYCoords = 0;
         lastSpeed = 0;
-        currentControllerSignal = new ControllerSignal();
         Display.getCurrent().addFilter(SWT.MouseDown, this);
         Display.getCurrent().addFilter(SWT.MouseMove, this);
         Display.getCurrent().addFilter(SWT.MouseUp, this);
