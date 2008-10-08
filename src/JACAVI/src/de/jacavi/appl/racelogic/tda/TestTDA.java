@@ -55,7 +55,7 @@ public class TestTDA extends TrackDataApproximator {
          * "), topSpeed (" + car.getTopSpeed() + ")");
          */
 
-        double thrust = controllerSignal.getSpeed() * car.getAcceleration();
+        double thrust = controllerSignal.getThrust() * car.getAcceleration();
         double friction = (car.getMass() * 0.01) * -1;
         double acceleration = thrust / car.getMass();
 
@@ -65,8 +65,8 @@ public class TestTDA extends TrackDataApproximator {
         speed = Math.max(Math.min(speed + acceleration + friction, car.getTopSpeed()), 0);
 
         // set the speed limit for this signal
-        if(speed > getMaxSpeed(controllerSignal.getSpeed(), car))
-            speed = getMaxSpeed(controllerSignal.getSpeed(), car);
+        if(speed > getMaxSpeed(controllerSignal.getThrust(), car))
+            speed = getMaxSpeed(controllerSignal.getThrust(), car);
 
         System.out.println("friction= " + friction);
         System.out.println("acceleration= " + acceleration);

@@ -973,7 +973,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             CarController dc = p.getController();
             String name = p.getName();
             ControllerSignal signal = dc.poll();
-            int speed = signal.getSpeed();
+            int speed = signal.getThrust();
             boolean isTriggered = signal.isTrigger();
 
             // calculate the gauge positions

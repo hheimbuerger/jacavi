@@ -318,7 +318,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         if(openScript != null) {
             try {
                 ControllerSignal signal = openScript.dryRun();
-                textResults.setText("Script completed successfully and returned: ControllerSignal(" + signal.getSpeed()
+                textResults.setText("Script completed successfully and returned: ControllerSignal(" + signal.getThrust()
                         + ", " + signal.isTrigger() + ")");
             } catch(ScriptExecutionException exc) {
                 textResults.setText(exc.getMessage());

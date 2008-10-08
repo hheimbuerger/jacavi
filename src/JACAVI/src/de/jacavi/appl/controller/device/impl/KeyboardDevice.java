@@ -47,7 +47,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
     @Override
     public ControllerSignal poll() {
         ControllerSignal retVal = currentControllerSignal;
-        currentControllerSignal = new ControllerSignal(currentControllerSignal.getSpeed(), currentControllerSignal
+        currentControllerSignal = new ControllerSignal(currentControllerSignal.getThrust(), currentControllerSignal
                 .isTrigger());
         return retVal;
     }
@@ -59,7 +59,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
 
     @Override
     public void handleEvent(Event event) {
-        int speed = currentControllerSignal.getSpeed();
+        int speed = currentControllerSignal.getThrust();
 
         // accelerate (takes KeyDown only)
         if(event.type == SWT.KeyDown && event.keyCode == keyboardLayout.getAccelerationButton()) {
@@ -92,11 +92,11 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     private void handleBrake(int speed) {
-        currentControllerSignal.setSpeed(Math.max(speed - speedStepConstant, 0));
+        currentControllerSignal.setThrust(Math.max(speed - speedStepConstant, 0));
     }
 
     private void handleAcceleration(int speed) {
-        currentControllerSignal.setSpeed(Math.min(speed + speedStepConstant, 100));
+        currentControllerSignal.setThrust(Math.min(speed + speedStepConstant, 100));
     }
 
     private void handleFrontLight(int eventType) {

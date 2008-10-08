@@ -32,7 +32,7 @@ public class MouseKeyboardDeviceAdapter extends DeviceController {
     public ControllerSignal poll() {
         ControllerSignal mouse = mouseDevice.poll();
         ControllerSignal keyboard = keyboardDevice.poll();
-        return new ControllerSignal(mouse.getSpeed(), mouse.isTrigger(), keyboard.isSwitchFrontLight(), keyboard
+        return new ControllerSignal(mouse.getThrust(), mouse.isTrigger(), keyboard.isSwitchFrontLight(), keyboard
                 .isSwitchBackLight());
     }
 
