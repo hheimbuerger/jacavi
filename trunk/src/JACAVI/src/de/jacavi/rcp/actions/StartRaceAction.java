@@ -4,6 +4,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
@@ -36,7 +37,8 @@ public class StartRaceAction extends RaceControlAction {
     public void run(IAction action) {
         // TODO
         // # Check if all players have a non-empty name and a selected car. Abort and report if not.
-        // # Check if all players have an input device that is connected (CarControllerManager has to be asked for the ID)
+        // # Check if all players have an input device that is connected (CarControllerManager has to be asked for the
+        // ID)
         // . Abort and report if not.
         // # Check if all players have a technology that is connected and configured (TechnologyConfigurationManager has
         // to be asked for the ID). Abort and report if not.
@@ -47,9 +49,9 @@ public class StartRaceAction extends RaceControlAction {
         // # Start the RaceEngine.
 
         // show the RaceValidationDialog (which will automatically do the actual validation)
-        if(new RaceValidationDialog(window.getShell(), players).open() == Window.OK)
+        if(new RaceValidationDialog(window.getShell(), players).open() == Window.OK) {
             log.debug("Race validated successfull");
-        else {
+        } else {
             return;
         }
 
@@ -72,7 +74,7 @@ public class StartRaceAction extends RaceControlAction {
 
         // tell the RaceEngine to start the race
         log.debug("Starting RaceEngine");
+
         raceEngine.startRace(activeTrack, raceView);
     }
-
 }
