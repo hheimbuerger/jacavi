@@ -42,6 +42,8 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
 
     private ValidationGroup analogueValidationGroup = null;
 
+    private ValidationGroup lib42ValidationGroup = null;
+
     private Combo comboAnalogueLane = null;
 
     private Combo lib42CarID = null;
@@ -133,15 +135,27 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         labellib42HelpText
                 .setText("Remove all cars from the course except the car you want to configure. Then push \"Initialize this car\".\n\nOn success you will see moving the car a bit.");
 
+        lib42ValidationGroup = new ValidationGroup(parent, SWT.WRAP);
+        FormData fd15 = new FormData();
+        fd15.top = new FormAttachment(labellib42HelpText, 10);
+        fd15.left = new FormAttachment(labellib42HelpText, 0, SWT.LEFT);
+        fd15.right = new FormAttachment(labellib42HelpText, 0, SWT.RIGHT);
+        fd15.height = 100;
+        lib42ValidationGroup.setLayoutData(fd15);
+
     }
 
     protected void handleClickInitializeLib42(SelectionEvent e) {
         int carID = lib42CarID.getSelectionIndex() + 1;
-        SlotCarSystemConnector lib42Connector = connectorFactory.createLib42Connector(lib42CarID.getText()
-                + " -> Lib42", carID);
-        connectorManager.addConnector(lib42Connector);
-        // connectorManager.testSystemConnector(lib42Connector);
-        updateDeviceList();
+        try {
+            SlotCarSystemConnector lib42Connector = connectorFactory.createLib42Connector(lib42CarID.getText()
+                    + " -> Lib42", carID);
+            connectorManager.addConnector(lib42Connector);
+            // connectorManager.testSystemConnector(lib42Connector);
+            updateDeviceList();
+        } catch(Exception ex) {
+            lib42ValidationGroup.setText("Could not connect to lib42 on windows");
+        }
     }
 
     private void createBlueRiderTab(Composite parent) {

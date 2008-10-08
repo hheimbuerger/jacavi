@@ -19,7 +19,7 @@ import de.jacavi.hal.simulation.SimulationFeedbackConnectorAdapter;
  */
 public class SlotCarSystemConnectorFactory implements ConnectorFactory {
 
-    public SlotCarSystemConnector createLib42Connector(String name, int carID) {
+    public SlotCarSystemConnector createLib42Connector(String name, int carID) throws Exception {
         return new SlotCarSystemConnector(name, new Lib42DriveConnectorAdapter(carID),
                 new Lib42FeedbackConnectorAdapter(carID));
     }
