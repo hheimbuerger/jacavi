@@ -218,13 +218,13 @@ public class ConnectorConfigurationManager {
      * @param connector
      */
     public void testSystemConnector(SlotCarSystemConnector connector) {
-        connector.setSpeed(30);
+        connector.setThrust(30);
         try {
             Thread.currentThread();
             Thread.sleep(600);
         } catch(InterruptedException e) {
             logger.error("something went wrong during thread sleep", e);
         }
-        connector.setSpeed(0);
+        connector.setThrust(0);
     }
 }

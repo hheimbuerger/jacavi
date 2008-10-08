@@ -7,9 +7,9 @@ package de.jacavi.hal;
  */
 public interface SlotCarDriveConnector {
 
-    void setSpeed(int speed);
+    void setThrust(int speed);
 
-    int getSpeed();
+    int getThrust();
 
     boolean getSwitch();
 

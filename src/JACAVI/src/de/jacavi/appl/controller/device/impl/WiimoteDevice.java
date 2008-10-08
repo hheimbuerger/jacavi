@@ -50,6 +50,11 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     }
 
+    @Override
+    public void reset() {
+        currentControllerSignal = new ControllerSignal();
+    }
+
     public Wiimote getWiimote() {
         return wiimote;
     }
@@ -89,13 +94,12 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     public void onButtonsEvent(WiimoteButtonsEvent arg0) {
         // set trigger
         currentControllerSignal.setTrigger(arg0.isButtonBPressed());
-
+        // set reset
+        currentControllerSignal.setReset(arg0.isButtonAPressed());
         // switch front light on/off
-        if(arg0.isButtonOneJustPressed())
-            currentControllerSignal.setSwitchFrontLight(true);
+        currentControllerSignal.setSwitchFrontLight(arg0.isButtonOneJustPressed());
         // set back light on/off
-        if(arg0.isButtonTwoJustPressed())
-            currentControllerSignal.setSwitchBackLight(true);
+        currentControllerSignal.setSwitchBackLight(arg0.isButtonTwoJustPressed());
 
     }
 

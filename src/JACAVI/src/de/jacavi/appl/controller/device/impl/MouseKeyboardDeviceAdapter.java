@@ -29,11 +29,17 @@ public class MouseKeyboardDeviceAdapter extends DeviceController {
     }
 
     @Override
+    public void reset() {
+        mouseDevice.reset();
+        keyboardDevice.reset();
+    }
+
+    @Override
     public ControllerSignal poll() {
         ControllerSignal mouse = mouseDevice.poll();
         ControllerSignal keyboard = keyboardDevice.poll();
         return new ControllerSignal(mouse.getThrust(), mouse.isTrigger(), keyboard.isSwitchFrontLight(), keyboard
-                .isSwitchBackLight());
+                .isSwitchBackLight(), mouse.isReset());
     }
 
     @Override

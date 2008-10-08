@@ -45,6 +45,11 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     @Override
+    public void reset() {
+        currentControllerSignal = new ControllerSignal();
+    }
+
+    @Override
     public ControllerSignal poll() {
         ControllerSignal retVal = currentControllerSignal;
         currentControllerSignal = new ControllerSignal(currentControllerSignal.getThrust(), currentControllerSignal
@@ -85,6 +90,15 @@ public class KeyboardDevice extends DeviceController implements Listener {
         if(event.keyCode == keyboardLayout.getTriggerButton()) {
             handleTrigger(event.type);
         }
+
+        // trigger Key Down only
+        if(event.type == SWT.KeyDown && event.keyCode == keyboardLayout.getResetButton()) {
+            handleReset(event.type);
+        }
+    }
+
+    private void handleReset(int type) {
+        currentControllerSignal.setReset(type == SWT.KeyDown);
     }
 
     private void handleTrigger(int eventType) {

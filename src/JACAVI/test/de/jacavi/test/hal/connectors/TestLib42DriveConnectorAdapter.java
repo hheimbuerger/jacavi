@@ -127,7 +127,7 @@ public class TestLib42DriveConnectorAdapter implements Lib42DriveConnector {
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         // TODO Auto-generated method stub
         return 0;
     }
@@ -139,7 +139,7 @@ public class TestLib42DriveConnectorAdapter implements Lib42DriveConnector {
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         System.out.println("Speed set to:" + speed);
     }
 

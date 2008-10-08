@@ -38,7 +38,7 @@ public class SimulationDriveConnectorAdapter implements SimulationDriveConnector
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         return currentSpeed;
     }
 
@@ -48,7 +48,7 @@ public class SimulationDriveConnectorAdapter implements SimulationDriveConnector
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         // logger.debug("Setting speed on " + debugName + " to " + speed);
         currentSpeed = speed;
 

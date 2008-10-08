@@ -80,7 +80,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         Check.Ensure(currentSpeed >= 0 && currentSpeed <= maxHALSpeed, "currentSpeed is in the wrong Range");
         return SlotCarSpeedAdjuster.denormalizeSpeed(currentSpeed, maxHALSpeed);
     }
@@ -92,7 +92,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         log.debug("Bluerider speed in: " + speed);
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
         Check.Require(normalizedSpeed >= 0 && normalizedSpeed <= maxHALSpeed, "Speed is int the wrong range");

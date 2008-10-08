@@ -127,8 +127,8 @@ public class RaceEngine {
 
         @Override
         public void run() {
-            for(Player player: players) {
-
+            for(int i = 0; i < players.size(); i++) {
+                Player player = players.get(i);
                 // get the players CarController
                 CarController carController = player.getController();
                 // get players hal connector
@@ -159,7 +159,8 @@ public class RaceEngine {
                     controllerSignal.setSwitchBackLight(false);
                 }
                 // set new speed
-                slotCarSystemConnector.setSpeed(controllerSignal.getThrust());
+                slotCarSystemConnector.setThrust(controllerSignal.getThrust());
+
                 // invoke the TDA
                 TrackDataApproximator tda = player.getTda();
                 tda.updatePosition(player.getPosition(), gametick, player.getCar(), controllerSignal, feedbackSignal);

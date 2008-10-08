@@ -16,6 +16,8 @@ public class MouseDevice extends DeviceController implements Listener {
 
     private boolean isLeftMouseButtonPressed = false;
 
+    private boolean isRightMouseButtonPressed = false;
+
     private int lastYCoords = 0;
 
     private int lastSpeed = 0;
@@ -37,9 +39,18 @@ public class MouseDevice extends DeviceController implements Listener {
 
     @Override
     public void deactivate() {
+        lastYCoords = 0;
+        lastSpeed = 0;
         Display.getCurrent().removeFilter(SWT.MouseDown, this);
         Display.getCurrent().removeFilter(SWT.MouseMove, this);
         Display.getCurrent().removeFilter(SWT.MouseUp, this);
+    }
+
+    @Override
+    public void reset() {
+        lastYCoords = 0;
+        lastSpeed = 0;
+        currentControllerSignal = new ControllerSignal();
     }
 
     @Override
@@ -65,15 +76,22 @@ public class MouseDevice extends DeviceController implements Listener {
                         isLeftMouseButtonPressed = false;
                         lastSpeed = currentControllerSignal.getThrust();
                     }
+                    handleReset(event.type);
                     break;
-
                 // middle mouse button
                 case 2:
                     break;
 
                 // right mouse button
                 case 3:
+                    if(event.type == SWT.MouseDown) {
+                        isRightMouseButtonPressed = true;
+                    } else if(event.type == SWT.MouseUp) {
+                        isRightMouseButtonPressed = false;
+                    }
+
                     handleTrigger(event.type);
+                    handleReset(event.type);
                     break;
             }
         } else if(event.type == SWT.MouseMove) {
@@ -85,6 +103,10 @@ public class MouseDevice extends DeviceController implements Listener {
                 }
             }
         }
+    }
+
+    private void handleReset(int type) {
+        currentControllerSignal.setReset(isRightMouseButtonPressed && isLeftMouseButtonPressed);
     }
 
     private void handleTrigger(int eventType) {

@@ -22,7 +22,7 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
     }
 
     @Override
-    public int getSpeed() {
+    public int getThrust() {
         int halSpeed = lib42.getSpeed(carID);
         Check.Ensure(halSpeed >= 0 && halSpeed <= maxHALSpeed, "Speed is in the wrong range");
         int speed = SlotCarSpeedAdjuster.denormalizeSpeed(halSpeed, maxHALSpeed);
@@ -35,7 +35,7 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setThrust(int speed) {
         int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
         Check.Require(normalizedSpeed >= 0 && normalizedSpeed <= maxHALSpeed, "speed is in the wrong range");
         lib42.setSpeed(carID, normalizedSpeed);
