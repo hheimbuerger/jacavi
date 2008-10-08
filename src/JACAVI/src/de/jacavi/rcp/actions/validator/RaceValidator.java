@@ -33,12 +33,29 @@ public class RaceValidator {
 
     @ValidatationDesription("Validating number of players...")
     public boolean validateNumberOfPlayer(List<Player> players) {
-        if(players.size() != 0) {
-            return true;
-        } else {
-            errorMessages.add("No Players available! Please check your player settings.");
+        boolean valid = true;
+
+        // determine the current track from the active editor
+        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+
+        if(activeEditor == null) {
+            errorMessages.add("Invalid track! Please create a new or import an existing track.");
             return false;
         }
+
+        Track activeTrack = activeEditor.getTrack();
+
+        if(players.size() == 0) {
+            valid = false;
+            errorMessages.add("No Players available! Please check your player settings.");
+        }
+        if(activeTrack.getStartingPoints().length < players.size()) {
+            valid = false;
+            errorMessages.add("The active track is only for " + activeTrack.getStartingPoints().length + " players.");
+        }
+
+        return valid;
     }
 
     @ValidatationDesription("Validating players name...")
