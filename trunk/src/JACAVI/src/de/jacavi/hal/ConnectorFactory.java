@@ -9,7 +9,7 @@ import java.net.InetSocketAddress;
  */
 public interface ConnectorFactory {
 
-    public SlotCarSystemConnector createLib42Connector(String name, int carID);
+    public SlotCarSystemConnector createLib42Connector(String name, int carID) throws Exception;
 
     public SlotCarSystemConnector createBlueriderConnector(String name, String comPort,
             InetSocketAddress analogueDeviceAdress);

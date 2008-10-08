@@ -21,7 +21,7 @@ public class Lib42FeedbackManager {
 
     private Map<String, Lib42FeedbackConnector> feedbackConnectors = new TreeMap<String, Lib42FeedbackConnector>();
 
-    public Lib42FeedbackManager() {
+    public Lib42FeedbackManager() throws Exception {
         // start the only instance of the NativeCsdLib
         NativeCsdLib.startLib42Sensordetection(this);
     }

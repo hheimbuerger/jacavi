@@ -15,23 +15,36 @@ public class NativeCsdLib {
 
     private static NativeCsdLib instance = null;
 
+    /*
     static {
         System.loadLibrary("CsdLib");
     }
+    */
 
     /**
      * @param feedbackManager
      */
-    public static void startLib42Sensordetection(Lib42FeedbackManager infeedbackManager) {
+    public static void startLib42Sensordetection(Lib42FeedbackManager infeedbackManager) throws Exception {
         if(instance == null) {
             Check.Require(infeedbackManager != null, "feedbackManager may not be null");
             instance = new NativeCsdLib();
             instance.initSensorDetection("callback");
-            feedbackManager= infeedbackManager;
+            feedbackManager = infeedbackManager;
         }
     }
 
-    private NativeCsdLib() {}
+    private NativeCsdLib() throws Exception {
+
+        try {
+            System.loadLibrary("CsdLib");
+        } catch(UnsatisfiedLinkError ers) {
+            throw new Exception("error on loading Clib42", ers);
+        } catch(NoClassDefFoundError er) {
+            throw new Exception("error on loading Clib42", er);
+        } catch(Exception ex) {
+            throw new Exception("error on loading Clib42", ex);
+        }
+    }
 
     /**
      * Initialize the native sensor detection library

@@ -9,15 +9,24 @@ public class NativeLib42 {
 
     private static NativeLib42 instance = null;
 
+    /*
     static {
+        try {
+            System.loadLibrary("Clib42");
+        } catch(NoClassDefFoundError er) {
+            MessageBox ms = new MessageBox(Display.getCurrent().getActiveShell());
+            ms.open();
 
-        System.loadLibrary("Clib42");
+        } catch(Exception ex) {
+            MessageBox ms = new MessageBox(Display.getCurrent().getActiveShell());
+            ms.open();
+        }
     }
-
+    */
     /**
      * @return NativeLib42 the only instance because of read write device problem
      */
-    public static NativeLib42 getInstance() {
+    public static NativeLib42 getInstance() throws Exception {
         if(instance == null) {
             instance = new NativeLib42();
             instance.initLib42(0);
@@ -30,7 +39,17 @@ public class NativeLib42 {
         instance.releaseLib42();
     }
 
-    private NativeLib42() {}
+    private NativeLib42() throws Exception {
+        try {
+            System.loadLibrary("Clib42");
+        } catch(UnsatisfiedLinkError ers) {
+            throw new Exception("error on loading Clib42", ers);
+        } catch(NoClassDefFoundError er) {
+            throw new Exception("error on loading Clib42", er);
+        } catch(Exception ex) {
+            throw new Exception("error on loading Clib42", ex);
+        }
+    }
 
     /**
      * @param mode

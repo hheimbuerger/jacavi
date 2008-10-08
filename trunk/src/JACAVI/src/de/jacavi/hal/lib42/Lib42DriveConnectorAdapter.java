@@ -13,7 +13,7 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
 
     private final int maxHALSpeed = 15;
 
-    public Lib42DriveConnectorAdapter(int carID) {
+    public Lib42DriveConnectorAdapter(int carID) throws Exception {
         Check.Require(carID > 0, "carID must be >0");
         this.carID = carID;
         lib42 = NativeLib42.getInstance();
