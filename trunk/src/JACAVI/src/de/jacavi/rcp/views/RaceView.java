@@ -5,7 +5,6 @@ import java.io.IOException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
@@ -70,13 +69,7 @@ public class RaceView extends ViewPart implements IPerspectiveListener {
     }
 
     public void repaint() {
-        // the repaint() method of the TrackWidget may only be executed on the event dispatcher thread!
-        Display.getDefault().asyncExec(new Runnable() {
-            @Override
-            public void run() {
-                if(!trackWidget.isDisposed())
-                    trackWidget.repaint();
-            }
-        });
+        trackWidget.repaintIfIdle();
     }
+
 }
