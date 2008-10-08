@@ -11,6 +11,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.CarControllerManager;
 import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Tileset;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.SlotCarDriveConnector;
@@ -103,8 +104,7 @@ public class RaceValidator {
      * <ul>
      * <li>not null</li>
      * <li>an valid uuid</li>
-     * <li>the right combination of current focused track type and connector
-     * </li>
+     * <li>the right combination of current focused track type and connector</li>
      * </ul>
      * <p>
      * It is also validated, if no editor is open.
@@ -179,6 +179,7 @@ public class RaceValidator {
                     errorMessages.add("Player No. " + (i + 1)
                             + " has an invalid connector. Can not combine AnalogueConnector with digital track.");
                 }
+
             } else if(currentTrackType.equals("analogue")) {
                 if(interfaces.contains(Lib42DriveConnector.class)) {
                     valid = false;
@@ -207,6 +208,46 @@ public class RaceValidator {
             if(cntEqual > 1) {
                 errorMessages.add("Player No. " + (i + 1) + " has not an unique connector.");
                 valid = false;
+            }
+        }
+        return valid;
+    }
+
+    @ValidatationDesription("Validating car's track...")
+    public boolean validateCarsTrack(List<Player> players) {
+        boolean valid = true;
+
+        // determine the current track from the active editor
+        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+
+        if(activeEditor == null) {
+            errorMessages.add("Invalid track! Please create a new or import an existing track.");
+            return false;
+        }
+
+        Track activeTrack = activeEditor.getTrack();
+        /*
+         * available track types are analogue,digital and debug
+         */
+        String currentTrackType = activeTrack.getTileset().getId();
+
+        for(int i = 0; i < players.size(); i++) {
+            List<String> tilesetIDs = new ArrayList<String>();
+            for(Tileset t: players.get(i).getCar().getTilesets()) {
+                tilesetIDs.add(t.getId());
+            }
+
+            if(currentTrackType.equals("analogue")) {
+                if(!tilesetIDs.contains("analogue")) {
+                    valid = false;
+                    errorMessages.add("Player No. " + (i + 1) + " has an incompatible car for this track.");
+                }
+            } else if(currentTrackType.equals("digital")) {
+                if(!tilesetIDs.contains("digital")) {
+                    valid = false;
+                    errorMessages.add("Player No. " + (i + 1) + " has an incompatible car for this track.");
+                }
             }
         }
         return valid;
