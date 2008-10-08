@@ -16,8 +16,6 @@ public class DebugTDA extends TrackDataApproximator {
 
     private double speed = 0;
 
-    private int lastGametick = 0;
-
     private double acceleration = 0.0;
 
     public DebugTDA(Track track, int racetimerInterval) {
@@ -57,7 +55,6 @@ public class DebugTDA extends TrackDataApproximator {
                 // move
                 carPosition.moveSteps(track, (int) speed, controllerSignal.isTrigger());
         }
-        lastGametick = gametick;
     }
 
     private double getMaxSpeed(int controllerSignal, Car car) {

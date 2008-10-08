@@ -7,11 +7,7 @@ import de.jacavi.hal.SlotCarFeedbackConnector;
 
 public class TestSimulationFeedbackConnectorAdapter implements SlotCarFeedbackConnector {
 
-    private String name;
-
-    public TestSimulationFeedbackConnectorAdapter(String name) {
-        this.name = name;
-    }
+    public TestSimulationFeedbackConnectorAdapter(String name) {}
 
     @Override
     public FeedbackSignal pollFeedback() {

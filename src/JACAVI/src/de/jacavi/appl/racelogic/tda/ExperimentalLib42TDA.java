@@ -12,8 +12,6 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
 
     private FeedbackSignal lastFeedback = new FeedbackSignal(null, "0");
 
-    private int lastGametick = 0;
-
     private double speed = 0;
 
     private int stepsAlreadyMoved = 0;
@@ -92,7 +90,6 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
                 }
             }
         }
-        lastGametick = gametick;
     }
 
     private int getStepsPerGametickCalculated(ControllerSignal controllerSignal, Car car, int gametick) {
