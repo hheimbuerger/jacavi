@@ -16,7 +16,6 @@ import de.jacavi.appl.track.Statistics;
 import de.jacavi.appl.track.Track;
 import de.jacavi.hal.FeedbackSignal;
 import de.jacavi.hal.SlotCarSystemConnector;
-import de.jacavi.rcp.dlg.TrafficLightsDialog;
 import de.jacavi.rcp.util.Check;
 import de.jacavi.rcp.views.RaceView;
 
@@ -72,7 +71,6 @@ public class RaceEngine {
             // TODO: assign all cars to their starting position
             int i = 0;
             StartingPoint[] startingPoints = track.getStartingPoints();
-            new TrafficLightsDialog();
             for(Player player: players) {
                 player.getPosition().reset(startingPoints[i++]);
                 // inject each player with an specific tda and give activeTrack
