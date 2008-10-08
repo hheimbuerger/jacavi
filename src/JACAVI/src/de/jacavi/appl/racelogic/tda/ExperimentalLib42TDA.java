@@ -83,7 +83,7 @@ public class ExperimentalLib42TDA extends TrackDataApproximator {
                     // set steps already moved
                     stepsAlreadyMoved += stepsToMove;
 
-                    if(stepsToMove > car.getTopSpeed() * 0.9)
+                    if(speed > car.getTopSpeed() * 0.9)
                         carPosition.leaveTrack();
                     else
                         carPosition.moveSteps(track, stepsToMove, controllerSignal.isTrigger());
