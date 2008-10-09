@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<launchConfiguration type="org.eclipse.pde.ui.RuntimeWorkbench">
+<booleanAttribute key="append.args" value="true"/>
+<stringAttribute key="application" value="JACAVI.application"/>
+<booleanAttribute key="askclear" value="true"/>
+<booleanAttribute key="automaticAdd" value="false"/>
+<booleanAttribute key="automaticValidate" value="true"/>
+<stringAttribute key="bad_container_name" value="\JACAVI\J"/>
+<stringAttribute key="bootstrap" value=""/>
+<stringAttribute key="checked" value="[NONE]"/>
+<booleanAttribute key="clearConfig" value="false"/>
+<booleanAttribute key="clearws" value="false"/>
+<booleanAttribute key="clearwslog" value="false"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/[shared] JaCaVi Product (accelerated)"/>
+<booleanAttribute key="default" value="false"/>
+<booleanAttribute key="includeOptional" value="false"/>
+<stringAttribute key="location" value="${workspace_loc:JACAVI}/runtime-workspace-JACAVI"/>
+<mapAttribute key="org.eclipse.debug.core.environmentVariables">
+<mapEntry key="LD_LIBRARY_PATH" value="${workspace_loc:JACAVI/libs}"/>
+<mapEntry key="PATH" value="${workspace_loc:JACAVI/libs}"/>
+</mapAttribute>
+<listAttribute key="org.eclipse.debug.ui.favoriteGroups">
+<listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
+<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
+</listAttribute>
+<stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"/>
+<stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-enableassertions -Xmx256M"/>
+<stringAttribute key="org.eclipse.jdt.launching.WORKING_DIRECTORY" value="${workspace_loc:JACAVI}"/>
+<booleanAttribute key="pde.generated.config" value="false"/>
+<stringAttribute key="pde.version" value="3.3"/>
+<stringAttribute key="product" value="JACAVI.product"/>
+<stringAttribute key="selected_target_plugins" value="org.eclipse.swt.win32.win32.x86,com.ibm.icu,org.eclipse.core.resources,org.junit4,org.eclipse.update.configurator,org.eclipse.gef,org.eclipse.equinox.registry,org.eclipse.core.jobs,org.eclipse.core.commands,org.eclipse.help,org.eclipse.core.filesystem.win32.x86,org.eclipse.swt,org.eclipse.equinox.common,org.eclipse.core.resources.compatibility,org.eclipse.ant.core,org.eclipse.jface.databinding,org.eclipse.core.runtime.compatibility,org.eclipse.core.contenttype,org.eclipse.ui,org.eclipse.core.variables,org.eclipse.draw2d,org.eclipse.equinox.preferences,org.eclipse.jface,org.eclipse.core.expressions,org.eclipse.equinox.app,org.eclipse.osgi,org.eclipse.core.filesystem,org.eclipse.core.databinding,org.eclipse.core.resources.win32.x86,org.eclipse.ui.workbench,org.eclipse.core.runtime,org.eclipse.core.runtime.compatibility.registry"/>
+<stringAttribute key="selected_workspace_plugins" value="JACAVI"/>
+<booleanAttribute key="show_selected_only" value="true"/>
+<booleanAttribute key="tracing" value="false"/>
+<booleanAttribute key="useDefaultConfig" value="true"/>
+<booleanAttribute key="useDefaultConfigArea" value="true"/>
+<booleanAttribute key="useProduct" value="true"/>
+<booleanAttribute key="usefeatures" value="false"/>
+</launchConfiguration>
