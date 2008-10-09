@@ -980,43 +980,45 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         int i = 0;
         for(Player p: playersBean) {
-            // if(p.getController() instanceof CarController) {
-            // determine the current state
             CarController dc = p.getController();
             String name = p.getName();
             ControllerSignal signal = dc.poll();
-            int speed = signal.getThrust();
-            boolean isTriggered = signal.isTrigger();
+            if(signal != null) {
+                int speed = signal.getThrust();
+                boolean isTriggered = signal.isTrigger();
 
-            // calculate the gauge positions
-            int leftOffset = LEFT_MARGIN + (i * (WIDTH + OFFSET));
-            RoundRectangle2D outerGauge = new RoundRectangle2D.Double(leftOffset, TOP_MARGIN, WIDTH, HEIGHT, 5, 5);
-            Rectangle2D gradientClip = new Rectangle2D.Double(leftOffset, TOP_MARGIN + (HEIGHT - speed), WIDTH, HEIGHT
-                    - (HEIGHT - speed));
-            GradientPaint gradient = new GradientPaint(new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN - 20),
-                    Color.GREEN, new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN + HEIGHT + 20), Color.RED);
+                // calculate the gauge positions
+                int leftOffset = LEFT_MARGIN + (i * (WIDTH + OFFSET));
+                RoundRectangle2D outerGauge = new RoundRectangle2D.Double(leftOffset, TOP_MARGIN, WIDTH, HEIGHT, 5, 5);
+                Rectangle2D gradientClip = new Rectangle2D.Double(leftOffset, TOP_MARGIN + (HEIGHT - speed), WIDTH,
+                        HEIGHT - (HEIGHT - speed));
+                GradientPaint gradient = new GradientPaint(new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN - 20),
+                        Color.GREEN, new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN + HEIGHT + 20), Color.RED);
 
-            // draw the gauge
-            g.setPaint(gradient);
-            g.setClip(gradientClip);
-            g.fill(outerGauge);
-            g.setClip(null);
-            g.setStroke(stroke);
-            g.setColor(isTriggered ? Color.MAGENTA : Color.BLACK);
-            g.draw(outerGauge);
+                // draw the gauge
+                g.setPaint(gradient);
+                g.setClip(gradientClip);
+                g.fill(outerGauge);
+                g.setClip(null);
+                g.setStroke(stroke);
+                g.setColor(isTriggered ? Color.MAGENTA : Color.BLACK);
+                g.draw(outerGauge);
 
-            // draw the current speed into the gauge
-            g.setFont(widgetFont);
-            g.setColor(Color.BLACK);
-            int speedWidth = g.getFontMetrics(widgetFont).stringWidth(String.valueOf(speed));
-            g.drawString(String.valueOf(speed), leftOffset + WIDTH / 2 - speedWidth / 2 + 1, TOP_MARGIN + HEIGHT - 20);
+                // draw the current speed into the gauge
+                g.setFont(widgetFont);
+                g.setColor(Color.BLACK);
+                int speedWidth = g.getFontMetrics(widgetFont).stringWidth(String.valueOf(speed));
+                g.drawString(String.valueOf(speed), leftOffset + WIDTH / 2 - speedWidth / 2 + 1, TOP_MARGIN + HEIGHT
+                        - 20);
 
-            // draw the player name below the gauge
-            int nameWidth = g.getFontMetrics(widgetFont).stringWidth(name);
-            g.drawString(name, leftOffset + WIDTH / 2 - nameWidth / 2, TOP_MARGIN + HEIGHT + (i % 2 == 0 ? 15 : 28));
+                // draw the player name below the gauge
+                int nameWidth = g.getFontMetrics(widgetFont).stringWidth(name);
+                g
+                        .drawString(name, leftOffset + WIDTH / 2 - nameWidth / 2, TOP_MARGIN + HEIGHT
+                                + (i % 2 == 0 ? 15 : 28));
 
-            i++;
-            // }
+                i++;
+            }
         }
     }
 

@@ -9,8 +9,10 @@ import org.eclipse.ui.WorkbenchException;
 
 import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.dlg.RaceValidationDialog;
+import de.jacavi.rcp.dlg.TrafficLightsDialog;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.perspectives.RacePerspective;
+import de.jacavi.rcp.util.ExceptionHandler;
 import de.jacavi.rcp.util.PartFromIDResolver;
 import de.jacavi.rcp.views.RaceView;
 
@@ -51,15 +53,14 @@ public class StartRaceAction extends RaceControlAction {
             log.debug("Opening Race Perspective");
             PlatformUI.getWorkbench().showPerspective(RacePerspective.ID, window);
         } catch(WorkbenchException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            ExceptionHandler.handleException(this, e, true);
         }
 
         // get the raceView
         RaceView raceView = (RaceView) PartFromIDResolver.resolveView(RaceView.ID);
 
         // show traffic lights
-        // new TrafficLightsDialog();
+        new TrafficLightsDialog();
 
         // tell the RaceEngine to start the race
         log.debug("Starting RaceEngine");

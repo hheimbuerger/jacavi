@@ -61,7 +61,10 @@ public class DrivingAgentController extends CarController {
 
     @Override
     public ControllerSignal poll() {
-        return scriptObject.poll(/*null, null, null*/);
+        if(scriptObject == null)
+            return null;
+        else
+            return scriptObject.poll(/*null, null, null*/);
     }
 
     @Override
