@@ -332,9 +332,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // prepare the font
         widgetFont = new Font("Arial", Font.BOLD, 10);
 
-        // prepare the viewport transformation
-        updateViewportTransformation();
-
         // initialize the inner controls
         initializeInnerControls();
 
@@ -572,8 +569,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     private void updateViewportTransformation() {
-        // update the current viewpoint transformation
         Point size = getSize();
+
+        // update the current viewpoint transformation
         viewportTransformation = new AffineTransform();
         viewportTransformation.translate(size.x / 2, size.y / 2);
         viewportTransformation.translate(panPosition.x, panPosition.y);
@@ -939,7 +937,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // back up the current transformation of the graphics context, so we can restore it later on
         AffineTransform originalTransformation = g.getTransform();
 
-        // active the viewport transformation
+        // activate the viewport transformation
         g.setTransform(viewportTransformation);
 
         // determine the screen position of all cars
@@ -1028,6 +1026,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     @Override
     public void paint(Control control, Graphics2D g2d) {
         isDrawing = true;
+
+        // prepare the viewport transformation
+        updateViewportTransformation();
 
         // update the frame counter
         if(new Date().getTime() - lastFrameCounterUpdate.getTime() >= 1000) {
