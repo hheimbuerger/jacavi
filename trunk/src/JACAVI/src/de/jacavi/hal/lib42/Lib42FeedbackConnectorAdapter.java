@@ -18,7 +18,7 @@ import de.jacavi.rcp.util.Check;
 public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
     private static Log log = LogFactory.getLog(Lib42FeedbackConnectorAdapter.class);
 
-    private int carID;
+    private final int carID;
 
     private Lib42FeedbackManager feedbackManager = null;
 
@@ -36,6 +36,11 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
     @Override
     public int getCarID() {
         return carID;
+    }
+
+    @Override
+    public void resetSignal() {
+        latestFeedback = new FeedbackSignal(null, "0");
     }
 
     /**

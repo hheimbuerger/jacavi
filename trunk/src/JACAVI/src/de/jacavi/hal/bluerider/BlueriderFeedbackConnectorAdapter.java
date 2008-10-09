@@ -23,7 +23,7 @@ public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnect
 
     private double currentYAcceleration;
 
-    private Integer log = new Integer(0);
+    private final Integer log = new Integer(0);
 
     public BlueriderFeedbackConnectorAdapter(AnalogueFeedbackConnectorAdapter analogFeedback) {
         Check.Require(analogFeedback != null, "AnalogueFeedbackConnector may not be null");
@@ -31,6 +31,11 @@ public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnect
         // subscribe to get gforce feedback
         ComManager.getInstanceOfCM().addComListener(this, ComManager.FIX_1); // Y
         ComManager.getInstanceOfCM().addComListener(this, ComManager.FIX_2); // x
+    }
+
+    @Override
+    public void resetSignal() {
+
     }
 
     @Override
