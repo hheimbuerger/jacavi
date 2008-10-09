@@ -5,4 +5,6 @@ package de.jacavi.hal;
  */
 public interface SlotCarFeedbackConnector {
     FeedbackSignal pollFeedback();
+
+    void resetSignal();
 }

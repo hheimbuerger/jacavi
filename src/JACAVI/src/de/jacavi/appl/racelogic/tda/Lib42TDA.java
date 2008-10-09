@@ -68,9 +68,14 @@ public class Lib42TDA extends TrackDataApproximator {
                 }
                 lastFeedback = feedbackSignal;
             } else {
+                int stepsToNextSensor = 0;
                 // no new checkpoint triggered
                 // int stepsXY = sensorPositions.get(lastFeedback.getLastCheckpoint()).getStepsToNext();
-                int stepsToNextSensor = stepsDeltaCPnextCP - stepsAlreadyMoved;
+                if(feedbackSignal.getLastCheckpoint().equals(lastFeedback.getLastCheckpoint())) {
+                    stepsToNextSensor = checkpointsByLane.get(carPosition.laneIndex).get(0).getStepsToNext();
+                } else {
+                    stepsToNextSensor = stepsDeltaCPnextCP - stepsAlreadyMoved;
+                }
                 if(speed > 0) {
                     // time to next sensor in gameticks
                     int timeToNextSensor = 1;

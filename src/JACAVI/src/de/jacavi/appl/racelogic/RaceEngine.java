@@ -72,6 +72,7 @@ public class RaceEngine {
             int i = 0;
             StartingPoint[] startingPoints = track.getStartingPoints();
             for(Player player: players) {
+                player.getSlotCarSystemConnector().resetSignal();
                 player.getPosition().reset(startingPoints[i++]);
                 // inject each player with an specific tda and give activeTrack
                 tdaInjector.initializeTDA(player, track, raceTimerInterval);

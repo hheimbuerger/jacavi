@@ -19,4 +19,9 @@ public class AnalogueFeedbackConnectorAdapter implements SlotCarFeedbackConnecto
         return new FeedbackSignal(null, "not implemented");
     }
 
+    @Override
+    public void resetSignal() {
+
+    }
+
 }

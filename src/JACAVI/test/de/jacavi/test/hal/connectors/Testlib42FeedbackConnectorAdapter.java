@@ -12,9 +12,9 @@ import de.jacavi.hal.lib42.Lib42FeedbackConnector;
 
 public class Testlib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
 
-    private int carID;
+    private final int carID;
 
-    private List<String> feedbackList = new ArrayList<String>();
+    private final List<String> feedbackList = new ArrayList<String>();
 
     private int feedbackIndex = 1;
 
@@ -30,6 +30,11 @@ public class Testlib42FeedbackConnectorAdapter implements Lib42FeedbackConnector
         for(int i = 1; i <= 15; i += 2) {
             feedbackList.add(i + "");
         }
+    }
+
+    @Override
+    public void resetSignal() {
+
     }
 
     @Override

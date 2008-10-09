@@ -14,6 +14,11 @@ public class TestAnalogueFeddbackConnectorAdapter implements SlotCarFeedbackConn
     }
 
     @Override
+    public void resetSignal() {
+
+    }
+
+    @Override
     public FeedbackSignal pollFeedback() {
         // TODO Auto-generated method stub
         return null;
