@@ -146,7 +146,6 @@ public class RaceValidator {
                 .getActivePage().getActiveEditor();
 
         if(activeEditor == null) {
-            errorMessages.add("Invalid track! Please create a new or import an existing track.");
             return false;
         }
 
@@ -239,7 +238,6 @@ public class RaceValidator {
                 .getActivePage().getActiveEditor();
 
         if(activeEditor == null) {
-            errorMessages.add("Invalid track! Please create a new or import an existing track.");
             return false;
         }
 
