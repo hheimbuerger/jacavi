@@ -253,19 +253,19 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private BufferedImage cachedTrackImage;
 
-    private AffineTransform cachedTrackImageTransform;
+    private Map<TrackSection, AffineTransformOp> imagePlacementOperations;
 
-    private Map<TrackSection, AffineTransform> carDrawingTransformations;
+    private Map<TrackSection, AffineTransform> lanePlacementTransformations;
 
     private Map<TrackSection, Integer> carDrawingAngles;
-
-    private boolean isTrackBoundingBoxDirty = true;
 
     private boolean isDrawing = false;
 
     private int droppedFrameCounter;
 
     private int lastDroppedFrameCount;
+
+    private AffineTransform viewportTransformation;
 
     private class ClickEventRepetitionHandler extends TimerTask {
         private final InnerControlID heldControl;
@@ -315,7 +315,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(3);
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
         J2DRegistry.setHints(hints);
 
         // check if we're accelerated, log a warning if we're not
@@ -331,6 +331,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         // prepare the font
         widgetFont = new Font("Arial", Font.BOLD, 10);
+
+        // prepare the viewport transformation
+        updateViewportTransformation();
 
         // initialize the inner controls
         initializeInnerControls();
@@ -480,7 +483,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      */
     protected void handleMouseDown(MouseEvent e) {
         switch(e.button) {
-            // if the selection button has been pressed down, do a hit detection and chance the current selection
+            // if the selection button has been pressed down, do a hit detection and change the current selection
             case SELECTION_BUTTON:
                 boolean wasHitDetected = false;
                 // if a control is active, process the hit on that
@@ -488,11 +491,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     handleInnerControlClick(hoveredInnerControl);
                     clickEventRepetitionTimer = new Timer("clickEventRepetition");
                     clickEventRepetitionTimer.schedule(new ClickEventRepetitionHandler(hoveredInnerControl), 50, 50);
+                    wasHitDetected = true;
                 }
                 // if that isn't the case, check if there's a hit on any of the track sections
                 else if(widgetMode == TrackWidgetMode.DESIGN_MODE)
                     for(int i = lastTileShapeList.size() - 1; i >= 0; i--) {
-                        if(lastTileShapeList.get(i).contains(e.x, e.y)) {
+                        if(viewportTransformation.createTransformedShape(lastTileShapeList.get(i)).contains(e.x, e.y)) {
                             setSelectedTile(i);
                             wasHitDetected = true;
                             break;
@@ -563,7 +567,18 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         }
 
         // trigger a repaint
+        updateViewportTransformation();
         repaint();
+    }
+
+    private void updateViewportTransformation() {
+        // update the current viewpoint transformation
+        Point size = getSize();
+        viewportTransformation = new AffineTransform();
+        viewportTransformation.translate(size.x / 2, size.y / 2);
+        viewportTransformation.translate(panPosition.x, panPosition.y);
+        viewportTransformation.scale(zoomLevel, zoomLevel);
+        viewportTransformation.rotate(rotationAngle.getRadians(), 0, 0);
     }
 
     /**
@@ -625,8 +640,10 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             }
         }
 
-        if(doesRequireRepaint)
+        if(doesRequireRepaint) {
+            updateViewportTransformation();
             repaint();
+        }
     }
 
     protected void handleControlResizedEvent(ControlEvent e) {
@@ -691,14 +708,16 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      *            the adjustment in pixels (negative values mean to up, positive mean down)
      */
     private void adjustPanPositionBounded(int xAdjustment, int yAdjustment) {
-        int upperBound = (int) (-lastTrackBoundingBox.getMinY() + panPosition.y - lastTrackBoundingBox.getHeight() * 0.9);
+        /*int upperBound = (int) (-lastTrackBoundingBox.getMinY() + panPosition.y - lastTrackBoundingBox.getHeight() * 0.9);
         int rightBound = (int) (-lastTrackBoundingBox.getMaxX() + panPosition.x + getSize().x + lastTrackBoundingBox
                 .getWidth() * 0.9);
         int lowerBound = (int) (-lastTrackBoundingBox.getMaxY() + panPosition.y + getSize().y + lastTrackBoundingBox
                 .getHeight() * 0.9);
         int leftBound = (int) (-lastTrackBoundingBox.getMinX() + panPosition.x - lastTrackBoundingBox.getWidth() * 0.9);
         panPosition.x = Math.max(Math.min(panPosition.x + xAdjustment, rightBound), leftBound);
-        panPosition.y = Math.max(Math.min(panPosition.y + yAdjustment, lowerBound), upperBound);
+        panPosition.y = Math.max(Math.min(panPosition.y + yAdjustment, lowerBound), upperBound);*/
+        panPosition.x += xAdjustment;
+        panPosition.y += yAdjustment;
     }
 
     /**
@@ -714,10 +733,102 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private void clearCache() {
         cachedTrackImage = null;
-        cachedTrackImageTransform = null;
+        /*cachedTrackImageTransform = null;
         isTrackBoundingBoxDirty = true;
-        carDrawingTransformations = null;
-        carDrawingAngles = null;
+        lanePlacementTransformations = null;
+        carDrawingAngles = null;*/
+    }
+
+    private void doCalculations() {
+        // recreate the shape list (used for doing hit detections) and the track bounding box (used for determining the
+        // scrolling bounds)
+        lastTileShapeList = new ArrayList<Shape>();
+        lastTrackBoundingBox = null;
+
+        // initialise the drawing angle and track pos of the next tile
+        Angle currentAngle = new Angle(0);
+        Point2D currentTrackPos = new Point2D.Double(0.0, 0.0);
+
+        imagePlacementOperations = new HashMap<TrackSection, AffineTransformOp>();
+        lanePlacementTransformations = new HashMap<TrackSection, AffineTransform>();
+        carDrawingAngles = new HashMap<TrackSection, Integer>();
+
+        // iterate over all track sections of the currently displayed track
+        for(TrackSection s: track.getSections()) {
+
+            // create points for the entry and exit points (relative to the tile's center)
+            Point2D relativeEntryPoint = new Point2D.Double(s.getEntryPoint().x, s.getEntryPoint().y);
+            Point2D relativeExitPoint = new Point2D.Double(s.getExitPoint().x, s.getExitPoint().y);
+
+            // determine the entry and exit points after applying the current rotation (required for the next step)
+            AffineTransform rotationTransformation = AffineTransform.getRotateInstance(currentAngle.getRadians());
+            AffineTransformOp rotationOperation = new AffineTransformOp(rotationTransformation,
+                    AffineTransformOp.TYPE_BICUBIC);
+            Point2D rotatedRelativeEntryPoint = rotationOperation.getPoint2D(relativeEntryPoint, null);
+            Point2D rotatedRelativeExitPoint = rotationOperation.getPoint2D(relativeExitPoint, null);
+
+            // determine two vectors:
+            // a) imageBaseToEntryPointVector: a vector pointing from the upper left corner of the image to the
+            // entry
+            // point after applying the rotation (used for placing the tile at the correct position)
+            // b) entryToExitPointVector: a vector pointing from the entry to the exit point after applying the
+            // rotation
+            // (used to determine the exit point of this tile and therefore the entry point of the next one)
+            Vector2D centerToEntryPointVector = new Vector2D(relativeEntryPoint);
+            Vector2D imageBaseToCenterVector = new Vector2D(new Point2D.Double(s.getImage().getWidth() / 2, s
+                    .getImage().getHeight() / 2));
+            Vector2D imageBaseToEntryPointVector = imageBaseToCenterVector.add(centerToEntryPointVector);
+            Vector2D entryToExitPointVector = new Vector2D(rotatedRelativeEntryPoint, rotatedRelativeExitPoint);
+
+            // create a transformation to be used for placing the image -- the transformation includes the rotation,
+            // the
+            // translation to the entry point and the translation from the entry to the exit directedPoint
+            AffineTransform imagePlacementTransformation = new AffineTransform();
+            imagePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
+            imagePlacementTransformation.rotate(currentAngle.getRadians());
+            imagePlacementTransformation.concatenate(imageBaseToEntryPointVector.getInvertedTransform());
+            AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransformation,
+                    AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+
+            // create the lane placement transformation -- it's needed to draw the lanes (optional, used for
+            // debugging
+            // during lane definion) and to draw the cars
+            AffineTransform lanePlacementTransformation = new AffineTransform();
+            lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
+            lanePlacementTransformation.rotate(currentAngle.getRadians());
+            lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
+
+            // store all the transformations and angles
+            imagePlacementOperations.put(s, imagePlacementOperation);
+            lanePlacementTransformations.put(s, lanePlacementTransformation);
+            carDrawingAngles.put(s, currentAngle.angle);
+
+            // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
+            // bounding box -- that way we'll get a bounding box for the whole track in the end
+            Rectangle2D finalImageBoundingBox = imagePlacementOperation.getBounds2D(s.getImage().getColorImage());
+            if(lastTrackBoundingBox == null)
+                lastTrackBoundingBox = finalImageBoundingBox;
+            else
+                Rectangle2D.union(lastTrackBoundingBox, finalImageBoundingBox, lastTrackBoundingBox);
+
+            // create a shape of the exact box of the image (not parallel to the viewport!) by transforming a
+            // rectangle
+            // corresponding to the image with the viewport transformation
+            Rectangle2D r = new Rectangle2D.Double(0.0, 0.0, s.getImage().getWidth(), s.getImage().getHeight());
+            Shape tileShape = imagePlacementTransformation.createTransformedShape(r);
+
+            // store that shape, we'll need it later on to do hit detection
+            lastTileShapeList.add(tileShape);
+
+            // calculate the new track position by taking current track position and applying the
+            // entryToExitPointTransformation
+            AffineTransform entryToExitPointTransformation = entryToExitPointVector.getTransform();
+            currentTrackPos = entryToExitPointTransformation.transform(currentTrackPos, null);
+
+            // calculate the new angle by turning it by the angle this tile is supposedly changing the track
+            // direction
+            currentAngle.turn(s.getEntryToExitAngle());
+        }
     }
 
     /**
@@ -734,182 +845,94 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // back up the current transformation of the graphics context, so we can restore it later on
         AffineTransform originalTransformation = targetG2D.getTransform();
 
-        // active the viewport transformation
+        // activate the viewport transformation
         targetG2D.setTransform(viewportTransformation);
 
+        // if the currently cached off-screen image has been flagged as dirty, we'll need to regenerate it
         if(cachedTrackImage == null) {
-            Graphics2D g;
-            long initializationTime = 0, calculationTime = 0, drawingTime = 0, otherTime = 0;
+            logger.debug("Regenerating off-screen image.");
             long baseTime = new Date().getTime();
 
-            if(lastTrackBoundingBox != null && !isTrackBoundingBoxDirty) {
-                cachedTrackImage = new BufferedImage((int) lastTrackBoundingBox.getWidth(), (int) lastTrackBoundingBox
-                        .getHeight(), BufferedImage.TYPE_INT_RGB);
-                g = cachedTrackImage.createGraphics();
+            // recalculate the transformations and the bounding box
+            doCalculations();
+            long calculationTime = new Date().getTime() - baseTime;
+            baseTime = new Date().getTime();
 
-                g.setBackground(Color.WHITE);
-                g.clearRect(0, 0, cachedTrackImage.getWidth(), cachedTrackImage.getHeight());
-                cachedTrackImageTransform = AffineTransform.getTranslateInstance(-lastTrackBoundingBox.getX()
-                        + viewportTransformation.getTranslateX(), -lastTrackBoundingBox.getY()
-                        + viewportTransformation.getTranslateY());
-                g.setTransform(cachedTrackImageTransform);
-                logger.debug("Phase 2: drawing on the off-screen buffer");
-            } else {
-                g = targetG2D;
-                logger.debug("Phase 1: drawing on the screen (need lastTrackBoundingBox)");
-            }
+            // recreate the off-screen image
+            createOffScreenImage();
 
-            // recreate the shape list (used for doing hit detections) and the track bounding box (used for determining
-            // the
-            // scrolling bounds)
-            lastTileShapeList = new ArrayList<Shape>();
-            lastTrackBoundingBox = null;
-
-            // initialise the drawing angle and track pos of the next tile
-            Angle currentAngle = new Angle(0);
-            Point2D currentTrackPos = new Point2D.Double(0.0, 0.0);
-
-            carDrawingTransformations = new HashMap<TrackSection, AffineTransform>();
-            carDrawingAngles = new HashMap<TrackSection, Integer>();
-
-            // initialize a counter (used for detected the selected tile)
-            int counter = 0;
-            initializationTime = new Date().getTime() - baseTime;
-
-            // iterate over all track sections of the currently displayed track
-            for(TrackSection s: track.getSections()) {
-                baseTime = new Date().getTime();
-
-                // create points for the entry and exit points (relative to the tile's center)
-                Point2D relativeEntryPoint = new Point2D.Double(s.getEntryPoint().x, s.getEntryPoint().y);
-                Point2D relativeExitPoint = new Point2D.Double(s.getExitPoint().x, s.getExitPoint().y);
-
-                // determine the entry and exit points after applying the current rotation (required for the next step)
-                AffineTransform rotationTransformation = AffineTransform.getRotateInstance(currentAngle.getRadians());
-                AffineTransformOp rotationOperation = new AffineTransformOp(rotationTransformation,
-                        AffineTransformOp.TYPE_BICUBIC);
-                Point2D rotatedRelativeEntryPoint = rotationOperation.getPoint2D(relativeEntryPoint, null);
-                Point2D rotatedRelativeExitPoint = rotationOperation.getPoint2D(relativeExitPoint, null);
-
-                // determine two vectors:
-                // a) imageBaseToEntryPointVector: a vector pointing from the upper left corner of the image to the
-                // entry
-                // point after applying the rotation (used for placing the tile at the correct position)
-                // b) entryToExitPointVector: a vector pointing from the entry to the exit point after applying the
-                // rotation
-                // (used to determine the exit point of this tile and therefore the entry point of the next one)
-                Vector2D centerToEntryPointVector = new Vector2D(relativeEntryPoint);
-                Vector2D imageBaseToCenterVector = new Vector2D(new Point2D.Double(s.getImage().getWidth() / 2, s
-                        .getImage().getHeight() / 2));
-                Vector2D imageBaseToEntryPointVector = imageBaseToCenterVector.add(centerToEntryPointVector);
-                Vector2D entryToExitPointVector = new Vector2D(rotatedRelativeEntryPoint, rotatedRelativeExitPoint);
-
-                // create a transformation to be used for placing the image -- the transformation includes the rotation,
-                // the
-                // translation to the entry point and the translation from the entry to the exit directedPoint
-                AffineTransform imagePlacementTransformation = new AffineTransform();
-                imagePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
-                imagePlacementTransformation.rotate(currentAngle.getRadians());
-                imagePlacementTransformation.concatenate(imageBaseToEntryPointVector.getInvertedTransform());
-                AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransformation,
-                        AffineTransformOp.TYPE_BICUBIC);
-
-                // create the lane placement transformation -- it's needed to draw the lanes (optional, used for
-                // debugging
-                // during lane definion) and to draw the cars
-                AffineTransform lanePlacementTransformation = new AffineTransform();
-                lanePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
-                lanePlacementTransformation.rotate(currentAngle.getRadians());
-                lanePlacementTransformation.concatenate(centerToEntryPointVector.getInvertedTransform());
-
-                calculationTime += new Date().getTime() - baseTime;
-                baseTime = new Date().getTime();
-
-                // now we can draw the image (using the negated version if it's the currently selected one) -- the
-                // placement
-                // is already included in the transformation operation, so the
-                // coordinates used here are simple the origin coordinates
-                if(counter++ == selectedTile)
-                    g.drawImage(s.getImage().getHighlightedImage(), imagePlacementOperation, 0, 0);
-                else
-                    g.drawImage(s.getImage().getColorImage(), imagePlacementOperation, 0, 0);
-
-                drawingTime += new Date().getTime() - baseTime;
-                baseTime = new Date().getTime();
-
-                // draw the lanes on top if the user has requested that
-                if(Activator.getStore().getBoolean(MainPage.PREF_SHOW_LANES)) {
-                    final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
-                    if(track.getTileset().getLaneCount() > 4)
-                        throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
-                    for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
-                        g.setColor(laneColors[laneIndex]);
-                        for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsCommon())
-                            g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-                        for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsRegular())
-                            g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-                        for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsChange())
-                            g.draw(lanePlacementTransformation.createTransformedShape(ls.getShape()));
-                        for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
-                            g.draw(lanePlacementTransformation.createTransformedShape(new Rectangle2D.Double(c
-                                    .getPoint().x - 1, c.getPoint().y - 1, 3, 3)));
-                    }
-                }
-
-                // NOTE: The car was previously drawn here. That has the advantage of cars occasionally being drawn
-                // below
-                // tiles when they are crossing other tiles. However, this behaviour was creating nasty drawing
-                // artifacts at
-                // the tile edges.
-
-                // store all the transformations and angles
-                if(widgetMode == TrackWidgetMode.RACE_MODE) {
-                    carDrawingTransformations.put(s, lanePlacementTransformation);
-                    carDrawingAngles.put(s, currentAngle.angle);
-                }
-
-                // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
-                // bounding box -- that way we'll get a bounding box for the whole track in the end
-                Rectangle2D finalImageBoundingBox = viewportTransformation.createTransformedShape(
-                        imagePlacementOperation.getBounds2D(s.getImage().getColorImage())).getBounds2D();
-                if(lastTrackBoundingBox == null)
-                    lastTrackBoundingBox = finalImageBoundingBox;
-                else
-                    Rectangle2D.union(lastTrackBoundingBox, finalImageBoundingBox, lastTrackBoundingBox);
-
-                // create a shape of the exact box of the image (not parallel to the viewport!) by transforming a
-                // rectangle
-                // corresponding to the image with the viewport transformation
-                Rectangle2D r = new Rectangle2D.Double(0.0, 0.0, s.getImage().getWidth(), s.getImage().getHeight());
-                Shape tileShape = imagePlacementTransformation.createTransformedShape(r);
-
-                // store that shape, we'll need it later on to do hit detection
-                lastTileShapeList.add(viewportTransformation.createTransformedShape(tileShape));
-
-                // calculate the new track position by taking current track position and applying the
-                // entryToExitPointTransformation
-                AffineTransform entryToExitPointTransformation = entryToExitPointVector.getTransform();
-                currentTrackPos = entryToExitPointTransformation.transform(currentTrackPos, null);
-
-                // calculate the new angle by turning it by the angle this tile is supposedly changing the track
-                // direction
-                currentAngle.turn(s.getEntryToExitAngle());
-
-                otherTime += new Date().getTime() - baseTime;
-            }
-
-            isTrackBoundingBoxDirty = false;
-
-            logger.debug("Rendering times: init=" + initializationTime + "ms, calculation=" + calculationTime
-                    + "ms, drawing=" + drawingTime + "ms, other=" + otherTime + "ms");
+            long drawingTime = new Date().getTime() - baseTime;
+            logger.debug("Calculation took " + calculationTime + "ms, drawing the off-screen image took " + drawingTime
+                    + "ms.");
         }
 
-        if(cachedTrackImage != null)
-            targetG2D.drawImage(cachedTrackImage, (int) -cachedTrackImageTransform.getTranslateX(),
-                    (int) -cachedTrackImageTransform.getTranslateY(), null);
+        // blit the off-screen image to the screen
+        targetG2D.drawImage(cachedTrackImage, (int) lastTrackBoundingBox.getX(), (int) lastTrackBoundingBox.getY(),
+                null);
 
         // restore the old transformation
         targetG2D.setTransform(originalTransformation);
+    }
+
+    private void createOffScreenImage() {
+        // create a new off-screen image
+        cachedTrackImage = new BufferedImage((int) lastTrackBoundingBox.getWidth(), (int) lastTrackBoundingBox
+                .getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = cachedTrackImage.createGraphics();
+
+        // clear the off-screen image with a white background
+        g.setBackground(Color.WHITE);
+        g.clearRect(0, 0, cachedTrackImage.getWidth(), cachedTrackImage.getHeight());
+
+        // the calculations were performed around 0,0 so some areas might actually be in negative areas -- we can't draw
+        // there on the off-screen image, so we'll translate all the upcoming drawing operations by the upper left
+        // corner of the bounding box
+        g
+                .setTransform(AffineTransform.getTranslateInstance(-lastTrackBoundingBox.getX(), -lastTrackBoundingBox
+                        .getY()));
+
+        // initialize a counter (used for detected the selected tile)
+        int counter = 0;
+
+        // iterate over all track sections of the currently displayed track
+        for(TrackSection s: track.getSections()) {
+            // draw the image (using the negated version if it's the currently selected one) -- the placement is
+            // already included in the transformation operation, so the coordinates used here are simple the origin
+            // coordinates
+            /*long baseTime = new Date().getTime();*/
+            if(counter++ == selectedTile)
+                g.drawImage(s.getImage().getHighlightedImage(), imagePlacementOperations.get(s), 0, 0);
+            else
+                g.drawImage(s.getImage().getColorImage(), imagePlacementOperations.get(s), 0, 0);
+            /*logger.debug("Drawing this tile took " + (new Date().getTime() - baseTime) + "ms.");*/
+
+            // draw the lanes on top if the user has requested that
+            if(Activator.getStore().getBoolean(MainPage.PREF_SHOW_LANES)) {
+                final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
+                if(track.getTileset().getLaneCount() > 4)
+                    throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
+                for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
+                    g.setColor(laneColors[laneIndex]);
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsCommon())
+                        g.draw(lanePlacementTransformations.get(s).createTransformedShape(ls.getShape()));
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsRegular())
+                        g.draw(lanePlacementTransformations.get(s).createTransformedShape(ls.getShape()));
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsChange())
+                        g.draw(lanePlacementTransformations.get(s).createTransformedShape(ls.getShape()));
+                    for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
+                        g.draw(lanePlacementTransformations.get(s).createTransformedShape(
+                                new Rectangle2D.Double(c.getPoint().x - 1, c.getPoint().y - 1, 3, 3)));
+                }
+            }
+        }
+
+        /*File outputfile = new File("f:\\test.png");
+        try {
+            ImageIO.write(cachedTrackImage, "png", outputfile);
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+        System.exit(1);*/
     }
 
     private void drawCars(Graphics2D g, AffineTransform viewportTransformation) {
@@ -931,7 +954,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             Car car = playersBean.get(i).getCar();
             Image carImage = (carPosition[i].isOnTrack()) ? car.getImage().getColorImage() : car.getImage()
                     .getTransparentImage();
-            drawCar(g, carImage, carDrawingTransformations.get(carPosition[i].getSection()).transform(
+            drawCar(g, carImage, lanePlacementTransformations.get(carPosition[i].getSection()).transform(
                     carPosition[i].getDirectedPoint().point, null), new Angle(
                     carPosition[i].getDirectedPoint().angle.angle + carDrawingAngles.get(carPosition[i].getSection())));
         }
@@ -1006,8 +1029,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     public void paint(Control control, Graphics2D g2d) {
         isDrawing = true;
 
-        Point size = control.getSize();
-
         // update the frame counter
         if(new Date().getTime() - lastFrameCounterUpdate.getTime() >= 1000) {
             lastFrameCount = frameCounter;
@@ -1017,13 +1038,6 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             droppedFrameCounter = 0;
         }
         frameCounter++;
-
-        // update the current viewpoint transformation
-        AffineTransform viewportTransformation = new AffineTransform();
-        viewportTransformation.translate(size.x / 2, size.y / 2);
-        viewportTransformation.translate(panPosition.x, panPosition.y);
-        viewportTransformation.scale(zoomLevel, zoomLevel);
-        viewportTransformation.rotate(rotationAngle.getRadians(), 0, 0);
 
         // draw the track
         drawTrack(g2d, viewportTransformation);
