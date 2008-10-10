@@ -11,7 +11,7 @@
 <booleanAttribute key="clearConfig" value="false"/>
 <booleanAttribute key="clearws" value="false"/>
 <booleanAttribute key="clearwslog" value="false"/>
-<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/[shared] JaCaVi (accelerated)"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/[shared] JaCaVi (clean Workbench)"/>
 <booleanAttribute key="default" value="false"/>
 <booleanAttribute key="includeOptional" value="false"/>
 <stringAttribute key="location" value="${workspace_loc:JACAVI}/runtime-workspace-JACAVI"/>
@@ -21,7 +21,6 @@
 </mapAttribute>
 <listAttribute key="org.eclipse.debug.ui.favoriteGroups">
 <listEntry value="org.eclipse.debug.ui.launchGroup.debug"/>
-<listEntry value="org.eclipse.debug.ui.launchGroup.run"/>
 </listAttribute>
 <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-os ${target.os} -ws ${target.ws} -arch ${target.arch} -nl ${target.nl}"/>
 <stringAttribute key="org.eclipse.jdt.launching.SOURCE_PATH_PROVIDER" value="org.eclipse.pde.ui.workbenchClasspathProvider"/>
@@ -30,7 +29,7 @@
 <booleanAttribute key="pde.generated.config" value="false"/>
 <stringAttribute key="pde.version" value="3.3"/>
 <stringAttribute key="product" value="org.eclipse.platform.ide"/>
-<stringAttribute key="selected_target_plugins" value="org.eclipse.jface,org.eclipse.core.runtime,org.eclipse.help,org.eclipse.jface.databinding,org.eclipse.equinox.app,org.eclipse.ui.workbench,org.eclipse.equinox.common,org.eclipse.core.filesystem.win32.x86,org.eclipse.equinox.preferences,org.eclipse.core.jobs,org.eclipse.gef,org.eclipse.core.contenttype,org.eclipse.update.configurator,org.holongate.j2d.win32,org.eclipse.draw2d,org.eclipse.osgi,org.eclipse.core.runtime.compatibility,org.eclipse.equinox.registry,org.eclipse.core.filesystem,org.holongate.j2d,org.eclipse.core.runtime.compatibility.registry,org.eclipse.swt.win32.win32.x86,org.holongate.draw2d,org.junit4,org.eclipse.ui,org.eclipse.core.commands,org.eclipse.core.databinding,org.holongate.j2d.motif,com.ibm.icu,org.eclipse.core.resources,org.eclipse.core.expressions,org.eclipse.swt,org.eclipse.core.resources.compatibility,org.eclipse.core.resources.win32.x86,org.holongate.j2d.gtk"/>
+<stringAttribute key="selected_target_plugins" value="org.eclipse.core.filesystem.win32.x86,org.eclipse.equinox.preferences,org.eclipse.core.expressions,org.holongate.j2d.motif,org.eclipse.core.filesystem,org.eclipse.swt.win32.win32.x86,org.eclipse.core.runtime.compatibility,org.eclipse.core.jobs,org.eclipse.core.contenttype,org.eclipse.core.databinding,org.holongate.j2d.win32,org.eclipse.osgi,org.eclipse.core.resources,org.eclipse.equinox.common,org.holongate.j2d.gtk,org.eclipse.core.runtime,org.eclipse.ui.workbench,org.eclipse.core.runtime.compatibility.registry,org.eclipse.update.configurator,org.eclipse.ui,org.eclipse.draw2d,org.eclipse.core.resources.compatibility,org.eclipse.jface,org.junit4,org.eclipse.core.resources.win32.x86,org.eclipse.swt,org.eclipse.equinox.app,org.holongate.j2d,org.eclipse.help,org.holongate.draw2d,org.eclipse.equinox.registry,org.eclipse.core.commands,org.eclipse.jface.databinding,org.eclipse.gef,com.ibm.icu"/>
 <stringAttribute key="selected_workspace_plugins" value="JACAVI"/>
 <booleanAttribute key="show_selected_only" value="true"/>
 <booleanAttribute key="tracing" value="false"/>
