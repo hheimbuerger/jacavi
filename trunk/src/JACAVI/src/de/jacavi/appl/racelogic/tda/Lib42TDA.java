@@ -71,7 +71,7 @@ public class Lib42TDA extends TrackDataApproximator {
                 int stepsToNextSensor = 0;
                 // no new checkpoint triggered
                 // int stepsXY = sensorPositions.get(lastFeedback.getLastCheckpoint()).getStepsToNext();
-                if(feedbackSignal.getLastCheckpoint().equals(lastFeedback.getLastCheckpoint())) {
+                if(feedbackSignal.getLastCheckpoint().equals("0")) {
                     stepsToNextSensor = checkpointsByLane.get(carPosition.laneIndex).get(0).getStepsToNext();
                 } else {
                     stepsToNextSensor = stepsDeltaCPnextCP - stepsAlreadyMoved;
