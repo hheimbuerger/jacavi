@@ -269,6 +269,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     private AffineTransform viewportTransformation;
 
+    private final IPropertyChangeListener preferenceChangeListener;
+
     private class ClickEventRepetitionHandler extends TimerTask {
         private final InnerControlID heldControl;
 
@@ -337,14 +339,14 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // first repaint)
         setTrack(track);
 
-        // register to be informed about
-        // preference changes
-        Activator.getStore().addPropertyChangeListener(new IPropertyChangeListener() {
+        // register to be informed about preference changes
+        preferenceChangeListener = new IPropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent e) {
                 TrackWidget.this.preferencesChanged(e);
             }
-        });
+        };
+        Activator.getStore().addPropertyChangeListener(preferenceChangeListener);
 
         // add various listeners, all just redirecting the calls to class methods
         addMouseListener(new MouseAdapter() {
@@ -492,6 +494,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             track.removeListener(this);
         if(clickEventRepetitionTimer != null)
             clickEventRepetitionTimer.cancel();
+        if(preferenceChangeListener != null)
+            Activator.getStore().removePropertyChangeListener(preferenceChangeListener);
     }
 
     /**
@@ -711,6 +715,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     protected void handleMouseExit(MouseEvent e) {
         isMouseOnWidget = false;
+        repaint();
     }
 
     /**
