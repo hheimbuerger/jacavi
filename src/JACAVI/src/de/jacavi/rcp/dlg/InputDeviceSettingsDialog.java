@@ -132,7 +132,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     @Override
     protected void setDescriptionTexts() {
         getShell().setText("Input Device Settings");
-        setTitle("Initialize and configure input devices");
+        setTitle("Configure input devices");
         setMessage("Initialize and configure your input devices.", IMessageProvider.INFORMATION);
     }
 

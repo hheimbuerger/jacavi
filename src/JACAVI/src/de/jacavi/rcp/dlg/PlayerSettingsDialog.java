@@ -89,8 +89,9 @@ public class PlayerSettingsDialog extends TitleAreaDialog {
     @Override
     protected Control createContents(Composite parent) {
         Control contents = super.createContents(parent);
-        setTitle("Player Settings");
-        setMessage("Please set Player specific options", IMessageProvider.INFORMATION);
+        setTitle("Configure player");
+        setMessage("Set the name, controller, input device or driving agent, connector and car of this player.",
+                IMessageProvider.INFORMATION);
         return contents;
     }
 
