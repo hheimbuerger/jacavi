@@ -24,6 +24,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -57,7 +59,7 @@ import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
 import de.jacavi.appl.track.Track.TrackModificationListener;
 import de.jacavi.rcp.Activator;
-import de.jacavi.rcp.preferences.MainPage;
+import de.jacavi.rcp.preferences.MainPreferencePage;
 import de.jacavi.rcp.widgets.controls.ImageButtonControl;
 import de.jacavi.rcp.widgets.controls.InnerControl;
 import de.jacavi.rcp.widgets.controls.ScrollerControl;
@@ -312,11 +314,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         setBackground(Display.getCurrent().getSystemColor(BACKGROUND_COLOR));
 
         // configure the rendering hints (currently maximized on quality)
-        Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(3);
-        hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
-        hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-        J2DRegistry.setHints(hints);
+        updateRenderingHints();
 
         // check if we're accelerated, log a warning if we're not
         String graphics2DFactoryClassName = getGraphics2DFactory().getClass().getName();
@@ -338,6 +336,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // we're done with the initialization of the renderer and can initialize the track (this will also trigger the
         // first repaint)
         setTrack(track);
+
+        // register to be informed about
+        // preference changes
+        Activator.getStore().addPropertyChangeListener(new IPropertyChangeListener() {
+            @Override
+            public void propertyChange(PropertyChangeEvent e) {
+                TrackWidget.this.preferencesChanged(e);
+            }
+        });
 
         // add various listeners, all just redirecting the calls to class methods
         addMouseListener(new MouseAdapter() {
@@ -383,6 +390,20 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 TrackWidget.this.handleDisposeEvent(e);
             }
         });
+    }
+
+    private void updateRenderingHints() {
+        Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>(3);
+        hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        int viewportRenderingQuality = Activator.getStore().getInt(MainPreferencePage.PREF_VIEWPORT_QUALITY);
+        if(viewportRenderingQuality == AffineTransformOp.TYPE_BICUBIC)
+            hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        else if(viewportRenderingQuality == AffineTransformOp.TYPE_BILINEAR)
+            hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        else if(viewportRenderingQuality == AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+            hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        J2DRegistry.setHints(hints);
     }
 
     private void initializeInnerControls() throws IOException {
@@ -471,6 +492,21 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             track.removeListener(this);
         if(clickEventRepetitionTimer != null)
             clickEventRepetitionTimer.cancel();
+    }
+
+    /**
+     * Triggers a redraw when the user changes the preferences.
+     */
+    private void preferencesChanged(PropertyChangeEvent e) {
+        if(!isDisposed()) {
+            // if the viewport quality was changed, the rendering hints have to be updated
+            if(e.getProperty().equals(MainPreferencePage.PREF_VIEWPORT_QUALITY))
+                updateRenderingHints();
+
+            // generally , we have to clear the cache and rerender
+            clearCache();
+            repaint();
+        }
     }
 
     /**
@@ -785,8 +821,8 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             imagePlacementTransformation.translate(currentTrackPos.getX(), currentTrackPos.getY());
             imagePlacementTransformation.rotate(currentAngle.getRadians());
             imagePlacementTransformation.concatenate(imageBaseToEntryPointVector.getInvertedTransform());
-            AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransformation,
-                    AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+            AffineTransformOp imagePlacementOperation = new AffineTransformOp(imagePlacementTransformation, Activator
+                    .getStore().getInt(MainPreferencePage.PREF_TILE_QUALITY));
 
             // create the lane placement transformation -- it's needed to draw the lanes (optional, used for
             // debugging
@@ -905,7 +941,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             /*logger.debug("Drawing this tile took " + (new Date().getTime() - baseTime) + "ms.");*/
 
             // draw the lanes on top if the user has requested that
-            if(Activator.getStore().getBoolean(MainPage.PREF_SHOW_LANES)) {
+            if(Activator.getStore().getBoolean(MainPreferencePage.PREF_SHOW_LANES)) {
                 final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
                 if(track.getTileset().getLaneCount() > 4)
                     throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");

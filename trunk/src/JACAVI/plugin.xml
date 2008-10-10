@@ -262,9 +262,15 @@
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
-            class="de.jacavi.rcp.preferences.MainPage"
+            class="de.jacavi.rcp.preferences.MainPreferencePage"
             id="JACAVI.mainPreferencePage"
-            name="JaCaVi preferences">
+            name="Track rendering">
       </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="de.jacavi.rcp.preferences.MainPreferenceInitializer">
+      </initializer>
    </extension>
 </plugin>
