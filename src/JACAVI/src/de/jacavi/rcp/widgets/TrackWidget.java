@@ -6,8 +6,10 @@ import java.awt.Font;
 import java.awt.GradientPaint;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.TexturePaint;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -1021,23 +1023,36 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
         int i = 0;
         for(Player p: playersBean) {
+            boolean isOnTrack = p.getPosition().isOnTrack;
             CarController dc = p.getController();
             String name = p.getName();
             ControllerSignal signal = dc.poll();
             if(signal != null) {
-                int speed = signal.getThrust();
-                boolean isTriggered = signal.isTrigger();
+                int thrust = isOnTrack ? signal.getThrust() : 100;
+                boolean isTriggered = isOnTrack ? signal.isTrigger() : false;
 
                 // calculate the gauge positions
                 int leftOffset = LEFT_MARGIN + (i * (WIDTH + OFFSET));
                 RoundRectangle2D outerGauge = new RoundRectangle2D.Double(leftOffset, TOP_MARGIN, WIDTH, HEIGHT, 5, 5);
-                Rectangle2D gradientClip = new Rectangle2D.Double(leftOffset, TOP_MARGIN + (HEIGHT - speed), WIDTH,
-                        HEIGHT - (HEIGHT - speed));
-                GradientPaint gradient = new GradientPaint(new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN - 20),
-                        Color.GREEN, new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN + HEIGHT + 20), Color.RED);
+                Rectangle2D gradientClip = new Rectangle2D.Double(leftOffset, TOP_MARGIN + (HEIGHT - thrust), WIDTH,
+                        HEIGHT - (HEIGHT - thrust));
+                Paint fillPattern;
+                if(p.getPosition().isOnTrack)
+                    fillPattern = new GradientPaint(new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN - 20),
+                            Color.GREEN, new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN + HEIGHT + 20),
+                            Color.RED);
+                else {
+                    BufferedImage image = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
+                    Graphics2D g2d = image.createGraphics();
+                    g2d.setBackground(Color.WHITE);
+                    g2d.clearRect(0, 0, image.getWidth(), image.getHeight());
+                    g2d.setColor(Color.BLUE);
+                    g2d.drawLine(0, 0, 4, 4);
+                    fillPattern = new TexturePaint(image, new Rectangle2D.Double(0, 0, 5, 5));
+                }
 
                 // draw the gauge
-                g.setPaint(gradient);
+                g.setPaint(fillPattern);
                 g.setClip(gradientClip);
                 g.fill(outerGauge);
                 g.setClip(null);
@@ -1046,14 +1061,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 g.draw(outerGauge);
 
                 // draw the current speed into the gauge
-                g.setFont(widgetFont);
-                g.setColor(Color.BLACK);
-                int speedWidth = g.getFontMetrics(widgetFont).stringWidth(String.valueOf(speed));
-                g.drawString(String.valueOf(speed), leftOffset + WIDTH / 2 - speedWidth / 2 + 1, TOP_MARGIN + HEIGHT
-                        - 20);
+                if(p.getPosition().isOnTrack) {
+                    g.setFont(widgetFont);
+                    g.setColor(Color.BLACK);
+                    int thrustWidth = g.getFontMetrics(widgetFont).stringWidth(String.valueOf(thrust));
+                    g.drawString(String.valueOf(thrust), leftOffset + WIDTH / 2 - thrustWidth / 2 + 1, TOP_MARGIN
+                            + HEIGHT - 20);
+                }
 
                 // draw the player name below the gauge
                 int nameWidth = g.getFontMetrics(widgetFont).stringWidth(name);
+                g.setFont(widgetFont);
                 g
                         .drawString(name, leftOffset + WIDTH / 2 - nameWidth / 2, TOP_MARGIN + HEIGHT
                                 + (i % 2 == 0 ? 15 : 28));
