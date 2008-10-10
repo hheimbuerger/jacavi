@@ -58,17 +58,19 @@ public class TrafficLightsDialog {
 
             @Override
             public void run() {
-                for(int i = 0; i < imageDatas.length; i++) {
+                for(ImageData imageData: imageDatas) {
 
                     frameIndex %= imageDatas.length;
 
                     final ImageData frameData = imageDatas[frameIndex];
                     display.asyncExec(new Runnable() {
                         public void run() {
-                            Image frame = new Image(display, frameData);
-                            gc.drawImage(frame, frameData.x, frameData.y);
-                            frame.dispose();
-                            canvas.redraw();
+                            if(!gc.isDisposed() && !canvas.isDisposed()) {
+                                Image frame = new Image(display, frameData);
+                                gc.drawImage(frame, frameData.x, frameData.y);
+                                frame.dispose();
+                                canvas.redraw();
+                            }
                         }
                     });
 
@@ -83,9 +85,12 @@ public class TrafficLightsDialog {
                 }
                 display.asyncExec(new Runnable() {
                     public void run() {
-                        shell.dispose();
-                        image.dispose();
-                        gc.dispose();
+                        if(!shell.isDisposed())
+                            shell.dispose();
+                        if(!image.isDisposed())
+                            image.dispose();
+                        if(!gc.isDisposed())
+                            gc.dispose();
                     }
                 });
             }
