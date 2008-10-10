@@ -28,7 +28,7 @@ import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.KeyboardDevice;
-import de.jacavi.appl.controller.device.impl.MouseDevice;
+import de.jacavi.appl.controller.device.impl.MouseKeyboardDeviceAdapter;
 import de.jacavi.appl.controller.device.impl.WiimoteDevice;
 import de.jacavi.rcp.Activator;
 
@@ -72,7 +72,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     private Button buttonTestMouseLayout;
 
-    private MouseDevice currentMouse;
+    private MouseKeyboardDeviceAdapter currentMouse;
 
     private static class DevicePreviewUpdater extends TimerTask {
         private final UUID deviceID;
@@ -556,9 +556,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             buttonTestMouseLayout.setText("Preview");
         } else { // user clicked 'preview'
             java.util.List<DeviceController> mouseDevices = carControllerManager
-                    .getInputDevicesByType(MouseDevice.class);
+                    .getInputDevicesByType(MouseKeyboardDeviceAdapter.class);
             if(mouseDevices.size() > 0) {
-                currentMouse = (MouseDevice) mouseDevices.get(0);
+                currentMouse = (MouseKeyboardDeviceAdapter) mouseDevices.get(0);
                 currentMouse.activate();
                 previewUpdater = new Timer("previewUpdater");
                 previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, currentMouse.getId(),
