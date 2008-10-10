@@ -2,6 +2,7 @@ package de.jacavi.rcp.dlg;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -47,14 +48,14 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
     @Override
     protected Control createContents(Composite parent) {
         Control contents = super.createContents(parent);
-        setTitle("Player Overview");
-        setMessage("Please configure the number of players and its settings", IMessageProvider.INFORMATION);
+        setTitle("Configure players");
+        setMessage("Configure the players participating in the next race.", IMessageProvider.INFORMATION);
         return contents;
     }
 
     @Override
     protected Control createDialogArea(final Composite parent) {
-        parent.getShell().setText("Player Overview");
+        parent.getShell().setText("Player Settings");
 
         GridData gd = new GridData(GridData.FILL_HORIZONTAL);
         gd.horizontalAlignment = GridData.HORIZONTAL_ALIGN_CENTER;
@@ -107,6 +108,20 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
         createButtons(parent);
 
         return parent;
+    }
+
+    @Override
+    protected void createButtonsForButtonBar(Composite parent) {
+        createButton(parent, IDialogConstants.CLOSE_ID, IDialogConstants.CLOSE_LABEL, true);
+    }
+
+    @Override
+    protected void buttonPressed(int buttonId) {
+        // handle the click on the 'Close' button
+        if(buttonId == IDialogConstants.CLOSE_ID)
+            close();
+
+        super.buttonPressed(buttonId);
     }
 
     private void createButtons(final Composite parent) {
