@@ -66,8 +66,8 @@ public class MultiStyleImage {
     }
 
     private void prepareTransparentImage() {
-        // create a rescale filter op that makes the image 30% opaque
-        float[] scales = { 1f, 1f, 1f, 0.3f };
+        // create a rescale filter op that makes the image 50% opaque
+        float[] scales = { 1f, 1f, 1f, 0.5f };
         float[] offsets = new float[4];
         RescaleOp rop = new RescaleOp(scales, offsets, null);
 
