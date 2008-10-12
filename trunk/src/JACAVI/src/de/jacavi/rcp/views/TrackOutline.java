@@ -100,8 +100,9 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
                     TableViewer source = (TableViewer) event.getSource();
                     LinkedList<TrackSection> sectionList = (LinkedList<TrackSection>) source.getInput();
                     for(int i = 0; i < sectionList.size(); i++) {
-                        if(sectionList.get(i) == selection.getFirstElement())
+                        if(sectionList.get(i) == selection.getFirstElement()) {
                             activeEditor.getTrackWidget().setSelectedTile(i);
+                        }
 
                     }
                 }
@@ -186,8 +187,9 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         currentTrack = source.getTrackWidget().getTrack();
         tilesTableViewer.setInput(currentTrack.getSections());
         tilesTableViewer.refresh();
-        if(!tilesTableViewer.getTable().isEnabled())
+        if(!tilesTableViewer.getTable().isEnabled()) {
             tilesTableViewer.getTable().setEnabled(true);
+        }
         log.debug("TableViewer inside the TrackOutlineView refreshed");
     }
 
@@ -200,5 +202,6 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
     public void dispose() {
         super.dispose();
         imageRegistry.dispose();
+        tilesTableViewer.getTable().dispose();
     }
 }

@@ -173,6 +173,8 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     public void dispose() {
         super.dispose();
         imageRegistry.dispose();
+        scrolledComposite.getContent().dispose();
+        scrolledComposite.dispose();
     }
 
 }
