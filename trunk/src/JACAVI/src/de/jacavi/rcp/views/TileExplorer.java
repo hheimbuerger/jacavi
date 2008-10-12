@@ -132,8 +132,10 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
     public void partClosed(IWorkbenchPartReference partRef) {
         if(partRef.getId().equals(TrackDesigner.ID)) {
             activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
-            if(activeEditor == null)
+            if(activeEditor == null) {
                 scrolledComposite.getContent().dispose();
+                scrolledComposite.dispose();
+            }
         }
     }
 
