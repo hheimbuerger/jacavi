@@ -73,10 +73,10 @@ public class ControllerSignal {
         this.switchFrontLight = switchFrontLight;
     }
 
-    public void setThrust(int speed) {
-        // Check preconditions speed must be between 0 and 100 included
-        Check.Require(speed >= 0 && speed <= 100, "speed must be between (included) 0 and 100");
-        this.thrust = speed;
+    public void setThrust(int thrust) {
+        // Check preconditions thrust must be between 0 and 100 included
+        Check.Require(thrust >= 0 && thrust <= 100, "thrust must be between (included) 0 and 100");
+        this.thrust = thrust;
     }
 
     public boolean isSwitchFrontLight() {
