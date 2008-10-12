@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<track name="demo1" tileset="debug">
+<track name="demo_with30degturns" tileset="debug">
     <section id="finishingStraight" />
     <section id="straight" />
     <section id="turn30deg" />
