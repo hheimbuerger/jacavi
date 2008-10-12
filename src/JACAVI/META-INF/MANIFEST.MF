@@ -23,6 +23,9 @@ Bundle-ClassPath: .,
  libs/javajoystick-0.7.jar,
  libs/RXTXcomm.jar,
  libs/jython-2.2.1.jar,
- libs/groovy-all-1.5.6.jar
+ libs/groovy-all-1.5.6.jar,
+ libs/ws-commons-util-1.0.2.jar,
+ libs/xmlrpc-common-3.1.jar,
+ libs/xmlrpc-server-3.1.jar
 Bundle-Vendor: JaCaVi - Team
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

@@ -41,8 +41,7 @@ public abstract class CarController implements Comparable<CarController> {
     /**
      * Prepare for the race that's going to start soon.
      * <p>
-     * In comparison to the initialize method this one may be called when the race perspective has opened and the race
-     * has started
+     * May also be called for a preview from the InputDeviceSettingsDialog.
      */
     public void activate() {}
 

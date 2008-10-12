@@ -16,6 +16,7 @@ import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.controller.agent.ScriptController;
 import de.jacavi.appl.controller.agent.impl.GroovyScriptController;
 import de.jacavi.appl.controller.agent.impl.JythonScriptController;
+import de.jacavi.appl.controller.agent.impl.XmlRpcController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
@@ -53,6 +54,12 @@ public class CarControllerManager {
         // a mouse is assumed to be always available
         MouseKeyboardDeviceAdapter m1 = new MouseKeyboardDeviceAdapter("Mouse");
         controllers.put(m1.getId(), m1);
+
+        // we also initialize two static XML-RPC controllers
+        XmlRpcController xmlRpcController1 = new XmlRpcController("XML-RPC, port 8080", 8080);
+        controllers.put(xmlRpcController1.getId(), xmlRpcController1);
+        XmlRpcController xmlRpcController2 = new XmlRpcController("XML-RPC, port 8081", 8081);
+        controllers.put(xmlRpcController2.getId(), xmlRpcController2);
 
         // game controllers have to be detected
         try {
