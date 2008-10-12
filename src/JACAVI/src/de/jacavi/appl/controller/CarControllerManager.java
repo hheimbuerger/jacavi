@@ -13,6 +13,9 @@ import org.eclipse.swt.SWT;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
+import de.jacavi.appl.controller.agent.ScriptController;
+import de.jacavi.appl.controller.agent.impl.GroovyScriptController;
+import de.jacavi.appl.controller.agent.impl.JythonScriptController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
 import de.jacavi.appl.controller.device.impl.GameControllerDeviceManager;
@@ -148,8 +151,14 @@ public class CarControllerManager {
     public List<DeviceController> getInputDevicesByType(Class<?> type) {
         List<DeviceController> result = new ArrayList<DeviceController>();
         for(CarController dc: controllers.values())
-            if(dc.getClass() == type && dc instanceof DeviceController)
-                result.add((DeviceController) dc);
+            if(dc instanceof DeviceController)
+                for(Class<?> superclass = dc.getClass(); superclass != Object.class; superclass = superclass
+                        .getSuperclass())
+                    if(superclass == type) {
+                        result.add((DeviceController) dc);
+                        break;
+                    }
+
         Collections.sort(result);
         return result;
     }
@@ -177,8 +186,13 @@ public class CarControllerManager {
     public void removeControllersByType(Class<?> type) {
         List<UUID> toRemove = new ArrayList<UUID>();
         for(UUID id: controllers.keySet())
-            if(controllers.get(id).getClass() == type)
-                toRemove.add(id);
+            // walk the class hierarchy up and check if controller.get(id) is an instance of type
+            for(Class<?> superclass = controllers.get(id).getClass(); superclass != Object.class; superclass = superclass
+                    .getSuperclass())
+                if(superclass == type) {
+                    toRemove.add(id);
+                    break;
+                }
         for(UUID id: toRemove)
             removeInputDevice(id);
     }
@@ -246,18 +260,21 @@ public class CarControllerManager {
             addController(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager.getWiimote(i)));
     }
 
+    /**
+     * Redetects all available agents (script files).
+     */
     public void redetectAgents() {
-        removeControllersByType(DrivingAgentController.class);
+        removeControllersByType(ScriptController.class);
 
         // FIXME: should be made more flexible and not rely on a hardcoded path and hardcoded file extensions
         File agentsDir = new File("agents/");
         for(File agentFile: agentsDir.listFiles()) {
             if(agentFile.getName().endsWith(".py")) {
-                addController(new DrivingAgentController(agentFile.getName().substring(0,
+                addController(new JythonScriptController(agentFile.getName().substring(0,
                         agentFile.getName().length() - 3)
-                        + " (Python)", agentFile));
+                        + " (Jython)", agentFile));
             } else if(agentFile.getName().endsWith(".groovy")) {
-                addController(new DrivingAgentController(agentFile.getName().substring(0,
+                addController(new GroovyScriptController(agentFile.getName().substring(0,
                         agentFile.getName().length() - 7)
                         + " (Groovy)", agentFile));
             }
