@@ -37,7 +37,10 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarControllerManager;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
-import de.jacavi.appl.controller.agent.DrivingAgentController.ScriptExecutionException;
+import de.jacavi.appl.controller.agent.ScriptController;
+import de.jacavi.appl.controller.agent.ScriptController.ScriptExecutionException;
+import de.jacavi.appl.controller.agent.impl.GroovyScriptController;
+import de.jacavi.appl.controller.agent.impl.JythonScriptController;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.ExceptionHandler;
 
@@ -66,7 +69,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
 
     private boolean dirty = false;
 
-    private DrivingAgentController openScript;
+    private ScriptController openScript;
 
     public AgentSettingsDialog(Shell parentShell) {
         super(parentShell);
@@ -262,7 +265,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
                     handleSaveClick(e);
 
             TreeItem selectedItem = (TreeItem) e.item;
-            openScript = (DrivingAgentController) selectedItem.getData();
+            openScript = (ScriptController) selectedItem.getData();
             File agentFile = openScript.getAgentFile();
 
             StringBuilder contents = new StringBuilder();
@@ -318,8 +321,8 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         if(openScript != null) {
             try {
                 ControllerSignal signal = openScript.dryRun();
-                textResults.setText("Script completed successfully and returned: ControllerSignal(" + signal.getThrust()
-                        + ", " + signal.isTrigger() + ")");
+                textResults.setText("Script completed successfully and returned: ControllerSignal("
+                        + signal.getThrust() + ", " + signal.isTrigger() + ")");
             } catch(ScriptExecutionException exc) {
                 textResults.setText(exc.getMessage());
             }
@@ -339,16 +342,13 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         // add the new entries
         for(DrivingAgentController dac: carControllerManager.getDrivingAgents()) {
             TreeItem item = new TreeItem(treeAgents, SWT.NONE);
-            switch(dac.getScriptType()) {
-                case PYTHON:
-                    item.setImage(imageRegistry.get("python"));
-                    break;
-                case GROOVY:
-                    item.setImage(imageRegistry.get("groovy"));
-                    break;
-                default:
-                    throw new RuntimeException("Unexpected script type.");
-            }
+            if(dac instanceof JythonScriptController)
+                item.setImage(imageRegistry.get("python"));
+            else if(dac instanceof GroovyScriptController)
+                item.setImage(imageRegistry.get("groovy"));
+            else
+                throw new RuntimeException("Unexpected script type.");
+
             item.setText(dac.getName());
             item.setData(dac);
         }
