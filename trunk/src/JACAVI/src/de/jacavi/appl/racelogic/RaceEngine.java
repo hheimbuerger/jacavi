@@ -53,7 +53,12 @@ public class RaceEngine {
     }
 
     /**
-     * Start the RaceTimerTask
+     * Start the RaceTimerTask <p>
+     * 
+     * @param activeTrack
+     *            The focused Track the race should start at
+     * @param raceView
+     *            The RaceView the race is shown in
      */
     public void startRace(Track activeTrack, RaceView raceView) {
         Check.Require(activeTrack != null, "activeTrack may not be null");
@@ -72,7 +77,9 @@ public class RaceEngine {
             int i = 0;
             StartingPoint[] startingPoints = track.getStartingPoints();
             for(Player player: players) {
+                // reset the FeedbackSignal
                 player.getSlotCarSystemConnector().resetSignal();
+                // reset players positions
                 player.getPosition().reset(startingPoints[i++]);
                 // inject each player with an specific tda and give activeTrack
                 tdaInjector.initializeTDA(player, track, raceTimerInterval);
@@ -101,6 +108,7 @@ public class RaceEngine {
             isTimerRunning = false;
             // disorganize devices
             for(Player player: players) {
+                // deactivate all controllers
                 player.getController().deactivate();
                 // all cars stop when the game stops
                 player.getSlotCarSystemConnector().getDriveConnector().fullBreak();
@@ -114,14 +122,14 @@ public class RaceEngine {
     }
 
     /**
-     * Inner Class
-     * <p>
-     * Represents the RaceTimer polls the InputDevices and gives the signal to HAL and RaceView
-     * 
-     * @author fro
+     * Inner Class <p> Represents the RaceTimer polls the InputDevices gets FeedbackSignals and gives the
+     * ControllerSignal to the SlotCarSystemConnectors, the TDA fror approximation and indicates an refresh of the
+     * RaceView. This is done every Gametick. <p><p> You can configurate the raceTimerInterval (time until the next
+     * gametick) in jacavi.configuration.
      */
     class RaceTimerTask extends TimerTask {
 
+        // gametick counter
         int gametick = 0;
 
         @Override
@@ -135,29 +143,30 @@ public class RaceEngine {
                 ControllerSignal controllerSignal = carController.poll();
                 // get the hal feedback signal
                 FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
-                // Signals like change track and lights on off must be save and
-                // not be lost so we set the signal only
-                // back if its detected
 
-                // change track
-                if(controllerSignal.isTrigger() && !slotCarSystemConnector.getSwitch()) {
-                    slotCarSystemConnector.toggleSwitch();
-                } else if(!controllerSignal.isTrigger() && slotCarSystemConnector.getSwitch()) {
-                    slotCarSystemConnector.toggleSwitch();
-                }
+                // dont give any signals if the car is not on track
+                if(player.getPosition().isOnTrack) {
 
-                // switch front Light
-                if(controllerSignal.isSwitchFrontLight()) {
-                    slotCarSystemConnector.switchFrontLight();
-                    controllerSignal.setSwitchFrontLight(false);
+                    // change track
+                    if(controllerSignal.isTrigger() && !slotCarSystemConnector.getSwitch()) {
+                        slotCarSystemConnector.toggleSwitch();
+                    } else if(!controllerSignal.isTrigger() && slotCarSystemConnector.getSwitch()) {
+                        slotCarSystemConnector.toggleSwitch();
+                    }
+
+                    // switch front Light
+                    if(controllerSignal.isSwitchFrontLight()) {
+                        slotCarSystemConnector.switchFrontLight();
+                        controllerSignal.setSwitchFrontLight(false);
+                    }
+                    // switch back light
+                    if(controllerSignal.isSwitchBackLight()) {
+                        slotCarSystemConnector.switchBackLight();
+                        controllerSignal.setSwitchBackLight(false);
+                    }
+                    // set new speed
+                    slotCarSystemConnector.setThrust(controllerSignal.getThrust());
                 }
-                // switch back light
-                if(controllerSignal.isSwitchBackLight()) {
-                    slotCarSystemConnector.switchBackLight();
-                    controllerSignal.setSwitchBackLight(false);
-                }
-                // set new speed
-                slotCarSystemConnector.setThrust(controllerSignal.getThrust());
 
                 // invoke the TDA
                 TrackDataApproximator tda = player.getTda();

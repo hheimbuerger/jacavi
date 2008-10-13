@@ -18,8 +18,10 @@ import de.jacavi.rcp.util.RingList;
 
 abstract public class TrackDataApproximator {
 
+    // current Track
     protected Track track;
 
+    // the owner of this TDA instance
     protected Player player;
 
     protected int raceTimerInterval;

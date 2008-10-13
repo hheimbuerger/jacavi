@@ -21,15 +21,6 @@ public class SimulationTDA extends TrackDataApproximator {
         this.raceTimerInterval = racetimerInterval;
     }
 
-    /*
-    // reset
-    if(controllerSignal.isReset()) {
-        player.getController().reset();
-        slotCarSystemConnector.setThrust(0);
-        player.getPosition().reset(track.getStartingPoints()[i]);
-    }
-    */
-
     @Override
     public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
             FeedbackSignal feedbackSignal) {
@@ -69,6 +60,15 @@ public class SimulationTDA extends TrackDataApproximator {
         }
     }
 
+    /**
+     * Get the maximum speed this car can get in steps/gametick <p>
+     * 
+     * @param controllerSignal
+     *            The input ControlerSignal
+     * @param car
+     *            The current car
+     * @return steps/gametick max speed
+     */
     private double getMaxSpeed(int controllerSignal, Car car) {
         double result = 0;
 
