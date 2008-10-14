@@ -1,13 +1,17 @@
 package de.jacavi.hal;
 
+/**
+ * An checkpoint etc Feedback from hal. FeedbackSignal with checkpintID=0 is the null checkpoint and should not existent
+ * on hal
+ */
 public class FeedbackSignal {
 
-    private String lastCheckpoint;
+    private String checkpointID;
 
     private Gforce gforce = null;
 
     public FeedbackSignal(Gforce gforce, String lastCheckpoint) {
-        this.lastCheckpoint = lastCheckpoint;
+        this.checkpointID = lastCheckpoint;
         this.gforce = gforce;
     }
 
@@ -15,16 +19,20 @@ public class FeedbackSignal {
         return gforce;
     }
 
-    public String getLastCheckpoint() {
-        return lastCheckpoint;
+    public String getCheckpoint() {
+        return checkpointID;
     }
 
-    public void setLastCheckpoint(String lastCheckpoint) {
-        this.lastCheckpoint = lastCheckpoint;
+    public void setCheckpoint(String lastCheckpoint) {
+        this.checkpointID = lastCheckpoint;
     }
 
     public void setGforce(Gforce gforce) {
         this.gforce = gforce;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return(obj instanceof FeedbackSignal && checkpointID.equals(((FeedbackSignal) obj).getCheckpoint()));
+    }
 }

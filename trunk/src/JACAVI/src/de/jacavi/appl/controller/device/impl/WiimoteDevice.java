@@ -50,11 +50,6 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     }
 
-    @Override
-    public void reset() {
-        currentControllerSignal = new ControllerSignal();
-    }
-
     public Wiimote getWiimote() {
         return wiimote;
     }

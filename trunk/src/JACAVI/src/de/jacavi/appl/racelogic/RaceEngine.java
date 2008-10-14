@@ -53,7 +53,8 @@ public class RaceEngine {
     }
 
     /**
-     * Start the RaceTimerTask <p>
+     * Start the RaceTimerTask
+     * <p>
      * 
      * @param activeTrack
      *            The focused Track the race should start at
@@ -77,8 +78,6 @@ public class RaceEngine {
             int i = 0;
             StartingPoint[] startingPoints = track.getStartingPoints();
             for(Player player: players) {
-                // reset the FeedbackSignal
-                player.getSlotCarSystemConnector().resetSignal();
                 // reset players positions
                 player.getPosition().reset(startingPoints[i++]);
                 // inject each player with an specific tda and give activeTrack
@@ -122,10 +121,14 @@ public class RaceEngine {
     }
 
     /**
-     * Inner Class <p> Represents the RaceTimer polls the InputDevices gets FeedbackSignals and gives the
-     * ControllerSignal to the SlotCarSystemConnectors, the TDA fror approximation and indicates an refresh of the
-     * RaceView. This is done every Gametick. <p><p> You can configurate the raceTimerInterval (time until the next
-     * gametick) in jacavi.configuration.
+     * Inner Class
+     * <p>
+     * Represents the RaceTimer polls the InputDevices gets FeedbackSignals and gives the ControllerSignal to the
+     * SlotCarSystemConnectors, the TDA fror approximation and indicates an refresh of the RaceView. This is done every
+     * Gametick.
+     * <p>
+     * <p>
+     * You can configurate the raceTimerInterval (time until the next gametick) in jacavi.configuration.
      */
     class RaceTimerTask extends TimerTask {
 
@@ -134,15 +137,17 @@ public class RaceEngine {
 
         @Override
         public void run() {
-            for(Player player: players) {
+            for(int i = 0; i < players.size(); i++) {
+
+                Player player = players.get(i);
                 // get the players CarController
                 CarController carController = player.getController();
                 // get players hal connector
                 SlotCarSystemConnector slotCarSystemConnector = player.getSlotCarSystemConnector();
                 // get players controller signal
                 ControllerSignal controllerSignal = carController.poll();
-                // get the hal feedback signal
-                FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
+                // get the tda
+                TrackDataApproximator tda = player.getTda();
 
                 // dont give any signals if the car is not on track
                 if(player.getPosition().isOnTrack) {
@@ -166,11 +171,24 @@ public class RaceEngine {
                     }
                     // set new speed
                     slotCarSystemConnector.setThrust(controllerSignal.getThrust());
-                }
+                    // get the hal feedback signal
+                    FeedbackSignal feedbackSignal = slotCarSystemConnector.pollFeedback();
+                    // invoke the TDA
+                    tda.updatePosition(player.getPosition(), gametick, player.getCar(), controllerSignal,
+                            feedbackSignal);
 
-                // invoke the TDA
-                TrackDataApproximator tda = player.getTda();
-                tda.updatePosition(player.getPosition(), gametick, player.getCar(), controllerSignal, feedbackSignal);
+                } else {
+                    // full break on connector
+                    slotCarSystemConnector.fullBreak();
+                    if(controllerSignal.isReset()) {
+                        // reset the controller
+                        player.getController().reset();
+                        // reset the tda
+                        tda.reset();
+                        // reset the car to starting position
+                        player.getPosition().reset(track.getStartingPoints()[i]);
+                    }
+                }
                 // repaint the RaceView
                 raceView.repaint();
             }

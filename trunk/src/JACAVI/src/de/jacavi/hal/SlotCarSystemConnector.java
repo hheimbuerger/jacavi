@@ -57,11 +57,6 @@ public class SlotCarSystemConnector implements SlotCarFeedbackConnector, SlotCar
     }
 
     @Override
-    public void resetSignal() {
-        feedbackConnector.resetSignal();
-    }
-
-    @Override
     public int getThrust() {
         return driveConnector.getThrust();
     }

@@ -31,6 +31,7 @@ public class MouseDevice extends DeviceController implements Listener {
     public void activate() {
         currentControllerSignal = new ControllerSignal();
         isLeftMouseButtonPressed = false;
+        isRightMouseButtonPressed = false;
         lastYCoords = 0;
         lastSpeed = 0;
         Display.getCurrent().addFilter(SWT.MouseDown, this);
@@ -49,9 +50,11 @@ public class MouseDevice extends DeviceController implements Listener {
 
     @Override
     public void reset() {
+        currentControllerSignal = new ControllerSignal();
+        isLeftMouseButtonPressed = false;
+        isRightMouseButtonPressed = false;
         lastYCoords = 0;
         lastSpeed = 0;
-        currentControllerSignal = new ControllerSignal();
     }
 
     @Override

@@ -33,11 +33,6 @@ public class Testlib42FeedbackConnectorAdapter implements Lib42FeedbackConnector
     }
 
     @Override
-    public void resetSignal() {
-
-    }
-
-    @Override
     public FeedbackSignal pollFeedback() {
         if(!start) {
             start = true;

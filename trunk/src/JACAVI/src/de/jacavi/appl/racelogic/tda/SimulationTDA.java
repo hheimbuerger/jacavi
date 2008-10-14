@@ -26,8 +26,8 @@ public class SimulationTDA extends TrackDataApproximator {
             FeedbackSignal feedbackSignal) {
         // log a bit
         if(feedbackSignal.getGforce() != null)
-            logger.debug("Sensor: " + feedbackSignal.getLastCheckpoint() + " GForce: "
-                    + feedbackSignal.getGforce().getX() + " " + feedbackSignal.getGforce().getY());
+            logger.debug("Sensor: " + feedbackSignal.getCheckpoint() + " GForce: " + feedbackSignal.getGforce().getX()
+                    + " " + feedbackSignal.getGforce().getY());
 
         // car acceleration factor is defined in car.xml
         double thrust = controllerSignal.getThrust() * car.getAcceleration();
@@ -35,33 +35,29 @@ public class SimulationTDA extends TrackDataApproximator {
         // calculate the friction 0.01 is car on concrete
         double friction = (car.getMass() * 0.01) * -1;
 
-        if(carPosition.isOnTrack) {
-            acceleration = thrust / car.getMass();
-            speed = Math.max(Math.min((acceleration * raceTimerInterval) + (friction * raceTimerInterval) + speed, car
-                    .getTopSpeed()), 0);
+        acceleration = thrust / car.getMass();
+        speed = Math.max(Math.min((acceleration * raceTimerInterval) + (friction * raceTimerInterval) + speed, car
+                .getTopSpeed()), 0);
 
-            if(speed > getMaxSpeed(controllerSignal.getThrust(), car)) {
-                if(getMaxSpeed(controllerSignal.getThrust(), car) == 0)
-                    speed = speed--;
-                else
-                    speed = getMaxSpeed(controllerSignal.getThrust(), car);
-            }
-
-            // car will crash if thrust is 90% of full speed
-            if(speed > car.getTopSpeed() * 0.9)
-                carPosition.leaveTrack();
+        if(speed > getMaxSpeed(controllerSignal.getThrust(), car)) {
+            if(getMaxSpeed(controllerSignal.getThrust(), car) == 0)
+                speed = speed--;
             else
-                // move
-                carPosition.moveSteps(track, (int) speed, controllerSignal.isTrigger());
-        } else {
-            if(controllerSignal.isReset()) {
-                resetCar();
-            }
+                speed = getMaxSpeed(controllerSignal.getThrust(), car);
         }
+
+        // car will crash if thrust is 90% of full speed
+        if(speed > car.getTopSpeed() * 0.9)
+            carPosition.leaveTrack();
+        else
+            // move
+            carPosition.moveSteps(track, (int) speed, controllerSignal.isTrigger());
+
     }
 
     /**
-     * Get the maximum speed this car can get in steps/gametick <p>
+     * Get the maximum speed this car can get in steps/gametick
+     * <p>
      * 
      * @param controllerSignal
      *            The input ControlerSignal
