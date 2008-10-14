@@ -130,15 +130,14 @@ abstract public class TrackDataApproximator {
         return result;
     }
 
-    protected void resetCar() {
-        // reset the controller
-        player.getController().reset();
-        // speed
+    /**
+     * Resets the TDA
+     * <p>
+     * Currently used if the a crashed car gets a reset ControllerSignal
+     */
+    public void reset() {
         speed = 0;
         acceleration = 0;
-        // set speed to 0 on connector
-        player.getSlotCarSystemConnector().fullBreak();
-        player.getPosition().reset(track.getStartingPoints()[player.getPosition().laneIndex]);
     }
 
 }

@@ -22,8 +22,10 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
 
     private Lib42FeedbackManager feedbackManager = null;
 
-    // The latest received feedback
-    private FeedbackSignal latestFeedback = new FeedbackSignal(null, "0");
+    // The null Feedback
+    private FeedbackSignal latestFeedback = null;
+
+    private boolean isNew = false;
 
     public Lib42FeedbackConnectorAdapter(int carID) {
         Check.Require(carID > 0, "carID must be > 0");
@@ -38,11 +40,6 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
         return carID;
     }
 
-    @Override
-    public void resetSignal() {
-        latestFeedback = new FeedbackSignal(null, "0");
-    }
-
     /**
      * This is the callback on an sensor detection called and distributed by the feedbackManager
      * 
@@ -51,6 +48,7 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
     @Override
     public void sensorCallback(int sensorID) {
         log.debug("Sensor callback for car id: " + carID + " sensor: " + sensorID);
+        isNew = true;
         latestFeedback = new FeedbackSignal(null, sensorID + "");
     }
 
@@ -61,7 +59,10 @@ public class Lib42FeedbackConnectorAdapter implements Lib42FeedbackConnector {
 
     @Override
     public FeedbackSignal pollFeedback() {
-        return latestFeedback;
+        if(isNew) {
+            isNew = false;
+            return latestFeedback;
+        } else
+            return new FeedbackSignal(null, "0");
     }
-
 }

@@ -14,9 +14,4 @@ public class TestSimulationFeedbackConnectorAdapter implements SlotCarFeedbackCo
         return new FeedbackSignal(null, "0");
     }
 
-    @Override
-    public void resetSignal() {
-
-    }
-
 }

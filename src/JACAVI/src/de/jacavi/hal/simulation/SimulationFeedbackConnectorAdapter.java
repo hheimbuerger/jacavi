@@ -18,11 +18,6 @@ public class SimulationFeedbackConnectorAdapter implements SlotCarFeedbackConnec
         return new FeedbackSignal(null, null);
     }
 
-    @Override
-    public void resetSignal() {
-
-    }
-
     public String getName() {
         return name;
     }

@@ -34,14 +34,9 @@ public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnect
     }
 
     @Override
-    public void resetSignal() {
-
-    }
-
-    @Override
     public FeedbackSignal pollFeedback() {
         return new FeedbackSignal(new Gforce(currentXAcceleration, currentYAcceleration), analogueSensorDetection
-                .pollFeedback().getLastCheckpoint());
+                .pollFeedback().getCheckpoint());
     }
 
     @Override
