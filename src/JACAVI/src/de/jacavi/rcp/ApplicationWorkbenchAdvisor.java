@@ -57,6 +57,10 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     @Override
     public void postStartup() {
         super.postStartup();
+
+        Log log = LogFactory.getLog(this.getClass());
+        log.info("$$$ Systemvariable 'PATH' = " + System.getenv("PATH"));
+
         TrackDesignerInput editorInput;
         try {
             // get the workbench page
@@ -67,8 +71,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
             int i = 0;
             while(true) {
                 String filename = store.getString("editor" + i);
-                if(filename.equals(""))
+                if(filename.equals("")) {
                     break;
+                }
                 editorInput = new TrackDesignerInput(filename, new Track(new File(filename)));
                 page.openEditor(editorInput, TrackDesigner.ID);
                 i++;
@@ -104,8 +109,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 
     @Override
     public void eventLoopException(Throwable exception) {
-        if(exception == null)
+        if(exception == null) {
             return;
+        }
         // we log the exception
         Log log = LogFactory.getLog(this.getClass());
         log.error("Unhandled event loop exception", exception);
@@ -119,8 +125,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         // here we create a new ErrorHandler if there is none
         // we use our own implementation of WorkbenchErrorHandler (extends AbstractStatusHandler)
         // so we are more flexible see
-        if(workbenchErrorHandler == null)
+        if(workbenchErrorHandler == null) {
             workbenchErrorHandler = new JacaviErrorHandler();
+        }
         return workbenchErrorHandler;
     }
 
