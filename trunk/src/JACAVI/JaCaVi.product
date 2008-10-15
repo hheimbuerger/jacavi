@@ -30,7 +30,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-enableassertions -Xmx256M -Djava.library.path=D:\javcavi\trunk\src\JACAVI\libs</vmArgs>
+      <vmArgs>-enableassertions -Xmx256M -Djava.library.path=libs</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -50,7 +50,6 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
 
 
    <vm>
-      <windows>org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.6.0_07</windows>
    </vm>
 
    <plugins>
