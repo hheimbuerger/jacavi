@@ -58,9 +58,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
     public void postStartup() {
         super.postStartup();
 
-        Log log = LogFactory.getLog(this.getClass());
-        log.info("$$$ Systemvariable 'PATH' = " + System.getenv("PATH"));
-
         TrackDesignerInput editorInput;
         try {
             // get the workbench page
