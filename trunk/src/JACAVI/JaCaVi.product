@@ -30,7 +30,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
    </configIni>
 
    <launcherArgs>
-      <vmArgs>-enableassertions -Xmx256M -Djava.library.path=libs</vmArgs>
+      <vmArgs>-enableassertions -Xmx256M</vmArgs>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
@@ -47,7 +47,6 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
          <bmp/>
       </win>
    </launcher>
-
 
    <vm>
    </vm>

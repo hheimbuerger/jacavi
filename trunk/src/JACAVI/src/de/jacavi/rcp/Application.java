@@ -22,8 +22,9 @@ public class Application implements IApplication {
         log.info("JACAVI Application starting up...");
         Display display = PlatformUI.createDisplay();
 
-        Log log = LogFactory.getLog(this.getClass());
-        log.info("$$$ Systemvariable 'PATH' = " + System.getenv("PATH"));
+        //
+        System.loadLibrary("wiiuse.dll");
+
         try {
             int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
             if(returnCode == PlatformUI.RETURN_RESTART) {
