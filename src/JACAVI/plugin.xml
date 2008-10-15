@@ -34,12 +34,6 @@
             name="Lap View">
       </view>
       <view
-            class="de.jacavi.rcp.views.PlayerSettingsView"
-            icon="images/famfamfam-silk/controller_16x16.png"
-            id="JACAVI.playerSettingsView"
-            name="Player Settings View">
-      </view>
-      <view
             allowMultiple="false"
             class="de.jacavi.rcp.views.RaceView"
             icon="images/cars-16x16.png"
