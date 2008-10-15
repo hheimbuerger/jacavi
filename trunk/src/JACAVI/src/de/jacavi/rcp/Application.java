@@ -14,13 +14,16 @@ import org.eclipse.ui.PlatformUI;
  * This class controls all aspects of the application's execution
  */
 public class Application implements IApplication {
-	
+
     private static Log log = LogFactory.getLog(Application.class);
 
     public Object start(IApplicationContext context) {
 
         log.info("JACAVI Application starting up...");
         Display display = PlatformUI.createDisplay();
+
+        Log log = LogFactory.getLog(this.getClass());
+        log.info("$$$ Systemvariable 'PATH' = " + System.getenv("PATH"));
         try {
             int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
             if(returnCode == PlatformUI.RETURN_RESTART) {
@@ -35,13 +38,15 @@ public class Application implements IApplication {
 
     public void stop() {
         final IWorkbench workbench = PlatformUI.getWorkbench();
-        if(workbench == null)
+        if(workbench == null) {
             return;
+        }
         final Display display = workbench.getDisplay();
         display.syncExec(new Runnable() {
             public void run() {
-                if(!display.isDisposed())
+                if(!display.isDisposed()) {
                     workbench.close();
+                }
             }
         });
     }
