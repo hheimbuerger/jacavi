@@ -5,7 +5,7 @@
          id="application"
          point="org.eclipse.core.runtime.applications">
       <application
-            icon="icons/icon/jacavi_logo_16x16.png"
+            icon="images/icon/jacavi_logo_16x16.png"
             visible="true">
          <run
                class="de.jacavi.rcp.Application">
@@ -29,33 +29,33 @@
          point="org.eclipse.ui.views">
       <view
             class="de.jacavi.rcp.views.LapView"
-            icon="icons/views/clock-16x16.png"
+            icon="images/views/clock-16x16.png"
             id="JACAVI.lapView"
             name="Lap View">
       </view>
       <view
             class="de.jacavi.rcp.views.PlayerSettingsView"
-            icon="icons/famfamfam-silk/controller_16x16.png"
+            icon="images/famfamfam-silk/controller_16x16.png"
             id="JACAVI.playerSettingsView"
             name="Player Settings View">
       </view>
       <view
             allowMultiple="false"
             class="de.jacavi.rcp.views.RaceView"
-            icon="icons/cars-16x16.png"
+            icon="images/cars-16x16.png"
             id="JACAVI.trackView"
             name="Track View">
       </view>
       <view
             class="de.jacavi.rcp.views.TileExplorer"
-            icon="icons/views/explorer_16x16.gif"
+            icon="images/views/explorer_16x16.gif"
             id="JACAVI.tileExplorerView"
             name="Tile Explorer"
             restorable="true">
       </view>
       <view
             class="de.jacavi.rcp.views.TrackOutline"
-            icon="icons/views/outline_16x16.gif"
+            icon="images/views/outline_16x16.gif"
             id="JACAVI.trackOutline"
             name="Track Outline"
             restorable="true">
@@ -80,7 +80,7 @@
             label="Editor Action Set">
          <action
                class="de.jacavi.rcp.actions.OpenTrackFileAction"
-               icon="icons/actions/import_wiz_16x16.gif"
+               icon="images/actions/import_wiz_16x16.gif"
                id="JACAVI.loadTrackAction"
                label="Open Track..."
                menubarPath="trackMenu/trackGroup"
@@ -105,7 +105,7 @@
          </menu>
          <action
                class="de.jacavi.rcp.actions.StartRaceAction"
-               icon="icons/actions/checkered-flag-icon_16x16.gif"
+               icon="images/actions/checkered-flag-icon_16x16.gif"
                id="JACAVI.StartRaceAction"
                label="&amp;Start Race"
                menubarPath="raceMenu/raceGroup"
@@ -114,7 +114,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.AgentSettingsAction"
-               icon="icons/famfamfam-silk/vcard_16x16.png"
+               icon="images/famfamfam-silk/vcard_16x16.png"
                id="JACAVI.AgentSettingsAction"
                label="Configure Driving Agents..."
                menubarPath="settingsMenu/settingsGroup"
@@ -123,7 +123,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.OpenConnectorSettingsAction"
-               icon="icons/famfamfam-silk/connect_16x16.png"
+               icon="images/famfamfam-silk/connect_16x16.png"
                id="JACAVI.OpenConnectorSettingsDialog"
                label="Configure Connectors..."
                menubarPath="settingsMenu/settingsGroup"
@@ -132,7 +132,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.OpenInputDeviceSettingsAction"
-               icon="icons/famfamfam-silk/controller_16x16.png"
+               icon="images/famfamfam-silk/controller_16x16.png"
                id="JACAVI.OpenInputDeviceSettingsAction"
                label="Configure Input Devices..."
                menubarPath="settingsMenu/settingsGroup"
@@ -141,7 +141,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.PlayerSettingsAction"
-               icon="icons/famfamfam-silk/user_16x16.png"
+               icon="images/famfamfam-silk/user_16x16.png"
                id="JACAVI.PlayerSettingsAction"
                label="Configure Players..."
                menubarPath="settingsMenu/settingsGroup"
@@ -160,7 +160,7 @@
          </menu>
          <action
                class="de.jacavi.rcp.actions.StopRaceAction"
-               icon="icons/actions/progress_stop_16x16.gif"
+               icon="images/actions/progress_stop_16x16.gif"
                id="JACAVI.stopRace"
                label="Stop Race"
                menubarPath="raceMenu2/raceGroup2"
@@ -174,7 +174,7 @@
       <editor
             class="de.jacavi.rcp.editors.TrackDesigner"
             default="true"
-            icon="icons/views/designer_16x16.png"
+            icon="images/views/designer_16x16.png"
             id="JACAVI.TrackDesigner"
             name="TrackDesigner">
       </editor>
@@ -185,19 +185,19 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             class="de.jacavi.rcp.wizards.NewDebugTrackWizard"
-            icon="icons/views/designer_16x16.png"
+            icon="images/views/designer_16x16.png"
             id="JACAVI.NewDebugTrackWizard"
             name="New Debug Track">
       </wizard>
       <wizard
             class="de.jacavi.rcp.wizards.NewAnalogTrackWizard"
-            icon="icons/views/designer_16x16.png"
+            icon="images/views/designer_16x16.png"
             id="JACAVI.NewAnalogTrackWizard"
             name="New Analog Track">
       </wizard>
       <wizard
             class="de.jacavi.rcp.wizards.NewDigitalTrackWizard"
-            icon="icons/views/designer_16x16.png"
+            icon="images/views/designer_16x16.png"
             id="JACAVI.NewDigitalTrackWizard"
             name="New Digital Track">
       </wizard>
