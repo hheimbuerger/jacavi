@@ -203,12 +203,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         });
 
         // create a placeholder for future controls
-        Label labelDEBUGPlaceholder = new Label(c, SWT.WRAP);
+/*        Label labelDEBUGPlaceholder = new Label(c, SWT.WRAP);
         FormData fd8 = new FormData();
         fd8.left = new FormAttachment(buttonTestKeyboardLayout, 0, SWT.LEFT);
         fd8.top = new FormAttachment(buttonTestKeyboardLayout, 10, SWT.BOTTOM);
         labelDEBUGPlaceholder.setLayoutData(fd8);
-        labelDEBUGPlaceholder.setText("[CONTROLS FOR ADDING/REMOVING/MODIFYING KEYBOARD LAYOUTS GO HERE]");
+        labelDEBUGPlaceholder.setText("[---------------------------------]");*/
 
         // fill the list with the initial layouts
         for(DeviceController d: carControllerManager.getInputDevicesByType(KeyboardDevice.class))
@@ -464,7 +464,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         } else {
             Label labelWiimoteError = new Label(c, SWT.WRAP);
             labelWiimoteError.setText("Wiimote support could not be initialized, please check the logs.");
-            labelWiimoteError.setLayoutData(new GridData(SWT.FILL));
+            labelWiimoteError.setLayoutData(new FormData());
         }
     }
 
@@ -571,42 +571,46 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     protected void handleSelectionDetectedGameController(SelectionEvent e) {
         if(previewUpdater != null)
             previewUpdater.cancel();
-        int selectionIndex = listConnectedGameControllers.getSelectionIndex();
-        if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.size()) {
-            GameControllerDevice gameController = (GameControllerDevice) gameControllers.get(selectionIndex);
-            labelGameControllerName.setText(gameController.getName());
-            labelAxes.setText(String.valueOf(gameController.getNumAxes()));
-            labelButtons.setText(String.valueOf(gameController.getNumButtons()));
-            StringBuffer capabilities = new StringBuffer();
-            for(String capability: gameController.getCapabilities()) {
-                if(capabilities.length() > 0)
-                    capabilities.append(", ");
-                capabilities.append(capability);
+        if(listConnectedGameControllers != null) {
+            int selectionIndex = listConnectedGameControllers.getSelectionIndex();
+            if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.size()) {
+                GameControllerDevice gameController = (GameControllerDevice) gameControllers.get(selectionIndex);
+                labelGameControllerName.setText(gameController.getName());
+                labelAxes.setText(String.valueOf(gameController.getNumAxes()));
+                labelButtons.setText(String.valueOf(gameController.getNumButtons()));
+                StringBuffer capabilities = new StringBuffer();
+                for(String capability: gameController.getCapabilities()) {
+                    if(capabilities.length() > 0)
+                        capabilities.append(", ");
+                    capabilities.append(capability);
+                }
+                labelCapabilities.setText(capabilities.toString());
+                previewUpdater = new Timer("previewUpdater");
+                previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, gameController.getId(),
+                        gameControllerThrustGauge), 50, 50);
+            } else {
+                labelGameControllerName.setText("");
+                labelAxes.setText("");
+                labelButtons.setText("");
+                labelCapabilities.setText("");
+                gameControllerThrustGauge.setSelection(0);
             }
-            labelCapabilities.setText(capabilities.toString());
-            previewUpdater = new Timer("previewUpdater");
-            previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, gameController.getId(),
-                    gameControllerThrustGauge), 50, 50);
-        } else {
-            labelGameControllerName.setText("");
-            labelAxes.setText("");
-            labelButtons.setText("");
-            labelCapabilities.setText("");
-            gameControllerThrustGauge.setSelection(0);
         }
     }
 
     protected void handleSelectionDetectedWiimote(SelectionEvent e) {
         if(previewUpdater != null)
             previewUpdater.cancel();
-        int selectionIndex = listConnectedWiimotes.getSelectionIndex();
-        if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= wiimotes.size()) {
-            WiimoteDevice wiimote = (WiimoteDevice) wiimotes.get(selectionIndex);
-            previewUpdater = new Timer("wiimotePreviewUpdater");
-            previewUpdater.schedule(
-                    new DevicePreviewUpdater(carControllerManager, wiimote.getId(), wiimoteThrustGauge), 50, 50);
-        } else {
-            wiimoteThrustGauge.setSelection(0);
+        if(listConnectedWiimotes != null) {
+            int selectionIndex = listConnectedWiimotes.getSelectionIndex();
+            if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= wiimotes.size()) {
+                WiimoteDevice wiimote = (WiimoteDevice) wiimotes.get(selectionIndex);
+                previewUpdater = new Timer("wiimotePreviewUpdater");
+                previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, wiimote.getId(),
+                        wiimoteThrustGauge), 50, 50);
+            } else {
+                wiimoteThrustGauge.setSelection(0);
+            }
         }
     }
 
@@ -618,8 +622,10 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
         // remove all selections
         listKeyboardLayouts.setSelection(-1);
-        listConnectedGameControllers.setSelection(-1);
-        listConnectedWiimotes.setSelection(-1);
+        if(listConnectedGameControllers != null)
+            listConnectedGameControllers.setSelection(-1);
+        if(listConnectedWiimotes != null)
+            listConnectedWiimotes.setSelection(-1);
 
         // trigger the event handlers
         handleSelectionKeyboardLayout(null);
