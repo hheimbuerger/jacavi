@@ -109,22 +109,25 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
 
         // prepare the images
-        imageManager.put("imageKeyboard", Activator.getImageDescriptor("/icons/input_devices/keyboard.png")
+        imageManager.put("imageKeyboard", Activator.getImageDescriptor("/images/controller/keyboard_64x64.png")
                 .createImage());
-        imageManager.put("imageMouse", Activator.getImageDescriptor("/icons/input_devices/mouse.png").createImage());
-        imageManager.put("imageGameController", Activator
-                .getImageDescriptor("/icons/input_devices/game_controller.png").createImage());
         imageManager
-                .put("imageWiimote", Activator.getImageDescriptor("/icons/input_devices/wiimote.png").createImage());
-        imageManager.put("imageWiimoteButtons", Activator.getImageDescriptor("/icons/wiimote_buttons.png")
+                .put("imageMouse", Activator.getImageDescriptor("/images/controller/mouse_64x64.png").createImage());
+        imageManager.put("imageGameController", Activator.getImageDescriptor(
+                "/images/controller/game_controller_64x64.png").createImage());
+        imageManager.put("imageWiimote", Activator.getImageDescriptor("/images/controller/wiimote_64x64.png")
                 .createImage());
-        imageManager.put("icon", Activator.getImageDescriptor("/icons/famfamfam-silk/controller.png").createImage());
+        imageManager.put("imageWiimoteButtons", Activator.getImageDescriptor("/images/misc/wiimote_buttons_72x29.png")
+                .createImage());
+        imageManager.put("icon", Activator.getImageDescriptor("/images/famfamfam-silk/controller_16x16.png")
+                .createImage());
     }
 
     @Override
     public boolean close() {
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
+        }
 
         return super.close();
     }
@@ -203,16 +206,17 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         });
 
         // create a placeholder for future controls
-/*        Label labelDEBUGPlaceholder = new Label(c, SWT.WRAP);
-        FormData fd8 = new FormData();
-        fd8.left = new FormAttachment(buttonTestKeyboardLayout, 0, SWT.LEFT);
-        fd8.top = new FormAttachment(buttonTestKeyboardLayout, 10, SWT.BOTTOM);
-        labelDEBUGPlaceholder.setLayoutData(fd8);
-        labelDEBUGPlaceholder.setText("[---------------------------------]");*/
+        /*        Label labelDEBUGPlaceholder = new Label(c, SWT.WRAP);
+                FormData fd8 = new FormData();
+                fd8.left = new FormAttachment(buttonTestKeyboardLayout, 0, SWT.LEFT);
+                fd8.top = new FormAttachment(buttonTestKeyboardLayout, 10, SWT.BOTTOM);
+                labelDEBUGPlaceholder.setLayoutData(fd8);
+                labelDEBUGPlaceholder.setText("[---------------------------------]");*/
 
         // fill the list with the initial layouts
-        for(DeviceController d: carControllerManager.getInputDevicesByType(KeyboardDevice.class))
+        for(DeviceController d: carControllerManager.getInputDevicesByType(KeyboardDevice.class)) {
             listKeyboardLayouts.add(d.getName());
+        }
     }
 
     private void createMouseSection(Composite c) {
@@ -470,8 +474,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     protected void handleClickGameControllerDetection(SelectionEvent e) {
         // cancel the timer
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
+        }
 
         // start the redetection
         carControllerManager.redetectGameControllers();
@@ -480,15 +485,17 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
         // update the list
         listConnectedGameControllers.removeAll();
-        for(DeviceController d: gameControllers)
+        for(DeviceController d: gameControllers) {
             listConnectedGameControllers.add(d.getName());
+        }
         handleSelectionDetectedGameController(e);
     }
 
     protected void handleClickWiimoteDetection(SelectionEvent e) {
         // cancel the timer
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
+        }
 
         // start the redetection
         carControllerManager.redetectWiimotes();
@@ -497,16 +504,19 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
         // update the list
         listConnectedWiimotes.removeAll();
-        for(DeviceController d: carControllerManager.getInputDevicesByType(WiimoteDevice.class))
+        for(DeviceController d: carControllerManager.getInputDevicesByType(WiimoteDevice.class)) {
             listConnectedWiimotes.add(d.getName());
+        }
         handleSelectionDetectedWiimote(e);
     }
 
     protected void handleSelectionKeyboardLayout(SelectionEvent e) {
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
-        if(currentKeyboardLayout != null)
+        }
+        if(currentKeyboardLayout != null) {
             currentKeyboardLayout.deactivate();
+        }
         currentKeyboardLayout = null;
 
         int selectionIndex = listKeyboardLayouts.getSelectionIndex();
@@ -523,10 +533,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     protected void handleClickPreviewKeyboardLayout(SelectionEvent e) {
         if(currentKeyboardLayout != null) { // user clicked 'stop previewing'
-            if(previewUpdater != null)
+            if(previewUpdater != null) {
                 previewUpdater.cancel();
-            if(currentKeyboardLayout != null)
+            }
+            if(currentKeyboardLayout != null) {
                 currentKeyboardLayout.deactivate();
+            }
             currentKeyboardLayout = null;
             keyboardThrustGauge.setSelection(0);
             buttonTestKeyboardLayout.setText("Preview");
@@ -547,10 +559,12 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     protected void handleClickPreviewMouse(SelectionEvent e, boolean forceStop) {
         if(currentMouse != null || forceStop) { // user clicked 'stop previewing'
-            if(previewUpdater != null)
+            if(previewUpdater != null) {
                 previewUpdater.cancel();
-            if(currentMouse != null)
+            }
+            if(currentMouse != null) {
                 currentMouse.deactivate();
+            }
             currentMouse = null;
             mouseThrustGauge.setSelection(0);
             buttonTestMouseLayout.setText("Preview");
@@ -569,8 +583,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     protected void handleSelectionDetectedGameController(SelectionEvent e) {
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
+        }
         if(listConnectedGameControllers != null) {
             int selectionIndex = listConnectedGameControllers.getSelectionIndex();
             if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= gameControllers.size()) {
@@ -580,8 +595,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                 labelButtons.setText(String.valueOf(gameController.getNumButtons()));
                 StringBuffer capabilities = new StringBuffer();
                 for(String capability: gameController.getCapabilities()) {
-                    if(capabilities.length() > 0)
+                    if(capabilities.length() > 0) {
                         capabilities.append(", ");
+                    }
                     capabilities.append(capability);
                 }
                 labelCapabilities.setText(capabilities.toString());
@@ -599,8 +615,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     }
 
     protected void handleSelectionDetectedWiimote(SelectionEvent e) {
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
+        }
         if(listConnectedWiimotes != null) {
             int selectionIndex = listConnectedWiimotes.getSelectionIndex();
             if(gameControllers != null && selectionIndex >= 0 && selectionIndex <= wiimotes.size()) {
@@ -617,15 +634,18 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
     @Override
     protected void handleTabSelection(SelectionEvent e) {
         // cancel the timer
-        if(previewUpdater != null)
+        if(previewUpdater != null) {
             previewUpdater.cancel();
+        }
 
         // remove all selections
         listKeyboardLayouts.setSelection(-1);
-        if(listConnectedGameControllers != null)
+        if(listConnectedGameControllers != null) {
             listConnectedGameControllers.setSelection(-1);
-        if(listConnectedWiimotes != null)
+        }
+        if(listConnectedWiimotes != null) {
             listConnectedWiimotes.setSelection(-1);
+        }
 
         // trigger the event handlers
         handleSelectionKeyboardLayout(null);
@@ -636,8 +656,9 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     @Override
     protected void fillDeviceList(List deviceList) {
-        for(DeviceController dc: carControllerManager.getInputDevices())
+        for(DeviceController dc: carControllerManager.getInputDevices()) {
             deviceList.add(dc.getName());
+        }
     }
 
     @Override

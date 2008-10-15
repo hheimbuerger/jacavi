@@ -1,6 +1,5 @@
 package de.jacavi.appl.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,9 +12,6 @@ import org.eclipse.swt.SWT;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
-import de.jacavi.appl.controller.agent.ScriptController;
-import de.jacavi.appl.controller.agent.impl.GroovyScriptController;
-import de.jacavi.appl.controller.agent.impl.JythonScriptController;
 import de.jacavi.appl.controller.agent.impl.XmlRpcController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
@@ -91,7 +87,7 @@ public class CarControllerManager {
      * Adds a new controller to the internal list.
      * 
      * @param controller
-     *            the controller to add
+     *      the controller to add
      */
     public void addController(CarController controller) {
         controllers.put(controller.getId(), controller);
@@ -104,9 +100,11 @@ public class CarControllerManager {
      */
     public List<DeviceController> getInputDevices() {
         List<DeviceController> result = new ArrayList<DeviceController>();
-        for(CarController dc: controllers.values())
-            if(dc instanceof DeviceController)
+        for(CarController dc: controllers.values()) {
+            if(dc instanceof DeviceController) {
                 result.add((DeviceController) dc);
+            }
+        }
         Collections.sort(result);
         return result;
     }
@@ -116,7 +114,7 @@ public class CarControllerManager {
      * player==null you will get all unused devices if player!=null you will get all+ the players one
      * 
      * @param player
-     *            the except player
+     *      the except player
      * @return a sorted list of configured unused input devices
      */
     @SuppressWarnings("unchecked")
@@ -141,9 +139,11 @@ public class CarControllerManager {
      */
     public List<DrivingAgentController> getDrivingAgents() {
         List<DrivingAgentController> result = new ArrayList<DrivingAgentController>();
-        for(CarController dc: controllers.values())
-            if(dc instanceof DrivingAgentController)
+        for(CarController dc: controllers.values()) {
+            if(dc instanceof DrivingAgentController) {
                 result.add((DrivingAgentController) dc);
+            }
+        }
         Collections.sort(result);
         return result;
     }
@@ -152,19 +152,22 @@ public class CarControllerManager {
      * Returns a sorted list of all connected input devices of a certain type (XyzDevice).
      * 
      * @param type
-     *            the class of devices to return
+     *      the class of devices to return
      * @return a sorted list of all connected input devices of the given type
      */
     public List<DeviceController> getInputDevicesByType(Class<?> type) {
         List<DeviceController> result = new ArrayList<DeviceController>();
-        for(CarController dc: controllers.values())
-            if(dc instanceof DeviceController)
+        for(CarController dc: controllers.values()) {
+            if(dc instanceof DeviceController) {
                 for(Class<?> superclass = dc.getClass(); superclass != Object.class; superclass = superclass
-                        .getSuperclass())
+                        .getSuperclass()) {
                     if(superclass == type) {
                         result.add((DeviceController) dc);
                         break;
                     }
+                }
+            }
+        }
 
         Collections.sort(result);
         return result;
@@ -174,41 +177,45 @@ public class CarControllerManager {
      * Removes an input device from the internal list after deactivating it.
      * 
      * @param id
-     *            the ID of the device to remove
+     *      the ID of the device to remove
      */
     public void removeInputDevice(UUID id) {
         if(controllers.containsKey(id)) {
             controllers.get(id).cleanup();
             controllers.remove(id);
-        } else
+        } else {
             throw new IllegalArgumentException("tried removing an ID that does not exist!");
+        }
     }
 
     /**
      * Removes all input devices of a given type.
      * 
      * @param type
-     *            the class of input devices to remove (XyzDevice)
+     *      the class of input devices to remove (XyzDevice)
      */
     public void removeControllersByType(Class<?> type) {
         List<UUID> toRemove = new ArrayList<UUID>();
-        for(UUID id: controllers.keySet())
+        for(UUID id: controllers.keySet()) {
             // walk the class hierarchy up and check if controller.get(id) is an instance of type
             for(Class<?> superclass = controllers.get(id).getClass(); superclass != Object.class; superclass = superclass
-                    .getSuperclass())
+                    .getSuperclass()) {
                 if(superclass == type) {
                     toRemove.add(id);
                     break;
                 }
-        for(UUID id: toRemove)
+            }
+        }
+        for(UUID id: toRemove) {
             removeInputDevice(id);
+        }
     }
 
     /**
      * Returns true if the given ID is valid (corresponds to an available input device), false otherwise.
      * 
      * @param id
-     *            the ID to check
+     *      the ID to check
      * @return true if the given ID is valid (corresponds to an available input device), false otherwise
      */
     public boolean isIdValid(UUID id) {
@@ -245,10 +252,12 @@ public class CarControllerManager {
         GameControllerDescriptor[] gameControllers = gameControllerDeviceManager.scanForGameControllers();
 
         // add the detected devices to the device manager
-        if(gameControllers != null)
-            for(GameControllerDescriptor gameController: gameControllers)
+        if(gameControllers != null) {
+            for(GameControllerDescriptor gameController: gameControllers) {
                 addController(new GameControllerDevice(gameController.name, gameControllerDeviceManager
                         .getGameController(gameController), gameController));
+            }
+        }
     }
 
     /**
@@ -263,29 +272,30 @@ public class CarControllerManager {
         int numWiimotesConnected = wiimoteDeviceManager.scanForWiimotes();
 
         // add the detected devices to the device manager
-        for(int i = 1; i <= numWiimotesConnected; i++)
+        for(int i = 1; i <= numWiimotesConnected; i++) {
             addController(new WiimoteDevice("Wiimote " + i, wiimoteDeviceManager.getWiimote(i)));
+        }
     }
 
     /**
      * Redetects all available agents (script files).
      */
     public void redetectAgents() {
-        removeControllersByType(ScriptController.class);
-
-        // FIXME: should be made more flexible and not rely on a hardcoded path and hardcoded file extensions
-        File agentsDir = new File("agents/");
-        for(File agentFile: agentsDir.listFiles()) {
-            if(agentFile.getName().endsWith(".py")) {
-                addController(new JythonScriptController(agentFile.getName().substring(0,
-                        agentFile.getName().length() - 3)
-                        + " (Jython)", agentFile));
-            } else if(agentFile.getName().endsWith(".groovy")) {
-                addController(new GroovyScriptController(agentFile.getName().substring(0,
-                        agentFile.getName().length() - 7)
-                        + " (Groovy)", agentFile));
-            }
-        }
+    // removeControllersByType(ScriptController.class);
+    //
+    // // FIXME: should be made more flexible and not rely on a hardcoded path and hardcoded file extensions
+    // File agentsDir = new File("agents/");
+    // for(File agentFile: agentsDir.listFiles()) {
+    // if(agentFile.getName().endsWith(".py")) {
+    // addController(new JythonScriptController(agentFile.getName().substring(0,
+    // agentFile.getName().length() - 3)
+    // + " (Jython)", agentFile));
+    // } else if(agentFile.getName().endsWith(".groovy")) {
+    // addController(new GroovyScriptController(agentFile.getName().substring(0,
+    // agentFile.getName().length() - 7)
+    // + " (Groovy)", agentFile));
+    // }
+    // }
     }
 
     public CarController getDevice(UUID id) {
