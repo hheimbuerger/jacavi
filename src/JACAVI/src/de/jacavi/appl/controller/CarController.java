@@ -54,10 +54,10 @@ public abstract class CarController implements Comparable<CarController> {
     public void deactivate() {}
 
     /**
-     * Reset restes the state of a Controller without deactivating its listeners. Currently its called in the RaceEngine
-     * if ControllerSignal.isReset() to make shure that the Controller has the the same state like an new activated one.
+     * Reset resets the state of a Controller without deactivating its listeners. Currently it is called in the RaceEngine
+     * if ControllerSignal.isReset() to make sure the Controller has the same state as a freshly activated one.
      * <p>
-     * We need the reset becaus some Controllers save their thrust in state.
+     * We need the reset because some Controllers save their thrust in state.
      */
     public void reset() {}
 
