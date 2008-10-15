@@ -68,12 +68,13 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         connectorFactory = (ConnectorFactory) ContextLoader.getBean("slotCarSystemConnectorFactory");
         // prepare the images
         imageManager
-                .put("imageLib42", Activator.getImageDescriptor("/icons/connectors/lib42(64X64).png").createImage());
-        imageManager.put("imageBluerider", Activator.getImageDescriptor("/icons/connectors/bluerider(64X64).png")
+                .put("imageLib42", Activator.getImageDescriptor("/images/connectors/lib42_64x64.png").createImage());
+        imageManager.put("imageBluerider", Activator.getImageDescriptor("/images/connectors/bluerider_64x64.png")
                 .createImage());
-        imageManager.put("imageAnalogue", Activator.getImageDescriptor("/icons/connectors/analogue(64X64).png")
+        imageManager.put("imageAnalogue", Activator.getImageDescriptor("/images/connectors/analogue_64x64.png")
                 .createImage());
-        imageManager.put("icon", Activator.getImageDescriptor("/icons/famfamfam-silk/connect.png").createImage());
+        imageManager
+                .put("icon", Activator.getImageDescriptor("/images/famfamfam-silk/connect_16x16.png").createImage());
     }
 
     @Override

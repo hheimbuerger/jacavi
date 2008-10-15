@@ -4,7 +4,7 @@
 <product name="JaCaVi" id="JACAVI.product" application="JACAVI.application" version="1.0.0" useFeatures="false">
 
    <aboutInfo>
-      <image path="/JACAVI/icons/jacavi_logo/JaCaVi_Logo_250x123.png"/>
+      <image path="/JACAVI/images/logo/JaCaVi_Logo_250x123.png"/>
       <text>
          JaCaVi
 
@@ -34,7 +34,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/JACAVI/icons/jacavi_logo/jacavi_logo.png"/>
+   <windowImages i16="/JACAVI/images/icon/jacavi_logo_16x16.png"/>
 
    <splash
       location="JACAVI"

@@ -235,7 +235,7 @@
          </property>
          <property
                name="windowImages"
-               value="icons/jacavi_logo/jacavi_logo.png">
+               value="images/icon/jacavi_logo_16x16.png">
          </property>
          <property
                name="preferenceCustomization"
@@ -243,7 +243,7 @@
          </property>
          <property
                name="aboutImage"
-               value="icons/jacavi_logo/JaCaVi_Logo_250x123.png">
+               value="images/logo/JaCaVi_Logo_250x123.png">
          </property>
          <property
                name="startupForegroundColor"
@@ -259,7 +259,7 @@
          </property>
          <property
                name="aboutText"
-               value="JaCaVi&#x0D;&#x0A;&#x0D;&#x0A;Version: 1.0.0&#x0D;&#x0A;&#x0D;&#x0A;(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.&#x0D;&#x0A;Visit http://www.jacavi.de&#x0D;&#x0A;&#x0D;&#x0A;This product includes software developed by the&#x0D;&#x0A;Apache Software Foundation http://www.apache.org/&#x0D;&#x0A;&#x0D;&#x0A;Developers: &#x0D;&#x0A;Stefanos Papadopoulos (elgreco_04@hotmail.com)&#x0D;&#x0A;Henrik Heimbuerger (henrik@heimbuerger.de)&#x0D;&#x0A;Fabian Rohn (fabrohn@htwg-konstanz.de)&#x0D;&#x0A;Florian Roth (froth@htwg-konstnz.de)&#x0D;&#x0A;&#x0D;&#x0A;Expression of thanks to: Lib42 Team, BlueRider Team, ...">
+               value="JaCaVi&#x0A;&#x0A;Version: 1.0.0&#x0A;&#x0A;(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.&#x0A;Visit http://www.jacavi.de&#x0A;&#x0A;This product includes software developed by the&#x0A;Apache Software Foundation http://www.apache.org/&#x0A;&#x0A;Developers: &#x0A;Stefanos Papadopoulos (elgreco_04@hotmail.com)&#x0A;Henrik Heimbuerger (henrik@heimbuerger.de)&#x0A;Fabian Rohn (fabrohn@htwg-konstanz.de)&#x0A;Florian Roth (froth@htwg-konstnz.de)&#x0A;&#x0A;Expression of thanks to: Lib42 Team, BlueRider Team, ...">
          </property>
       </product>
    </extension>

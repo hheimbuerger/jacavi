@@ -77,23 +77,25 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
 
         imageRegistry = new ImageRegistry();
-        imageRegistry.put("python", Activator.getImageDescriptor("/icons/agent_types/python.png"));
-        imageRegistry.put("groovy", Activator.getImageDescriptor("/icons/agent_types/groovy.png"));
-        imageRegistry.put("famfamfam_disk", Activator.getImageDescriptor("/icons/famfamfam-silk/disk.png"));
+        imageRegistry.put("python", Activator.getImageDescriptor("/images/agents/python_16x16.png"));
+        imageRegistry.put("groovy", Activator.getImageDescriptor("/images/agents/groovy_16x16.png"));
+        imageRegistry.put("famfamfam_disk", Activator.getImageDescriptor("/images/famfamfam-silk/disk_16x16.png"));
         imageRegistry.put("famfamfam_arrow_refresh", Activator
-                .getImageDescriptor("/icons/famfamfam-silk/arrow_refresh.png"));
-        imageRegistry.put("famfamfam_flag_green", Activator.getImageDescriptor("/icons/famfamfam-silk/flag_green.png"));
+                .getImageDescriptor("/images/famfamfam-silk/arrow_refresh_16x16.png"));
+        imageRegistry.put("famfamfam_flag_green", Activator
+                .getImageDescriptor("/images/famfamfam-silk/flag_green_16x16.png"));
         sourceCodeFont = new Font(Display.getDefault(), "Courier New", 10, SWT.NONE);
         resultsFont = new Font(Display.getDefault(), "Courier New", 8, SWT.BOLD);
     }
 
     @Override
     public boolean close() {
-        if(dirty)
+        if(dirty) {
             if(!MessageDialog.openQuestion(getParentShell(), "Unsaved modifications",
                     "The current script has unsaved modifications, do you want to proceed without saving these?")) {
                 return false;
             }
+        }
 
         imageRegistry.dispose();
         sourceCodeFont.dispose();
@@ -189,20 +191,23 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         textSourceCode.addModifyListener(new ModifyListener() {
             @Override
             public void modifyText(ModifyEvent e) {
-                if(editReady)
+                if(editReady) {
                     setDirty(true);
+                }
             }
         });
         textSourceCode.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if(((e.stateMask & SWT.CTRL) == SWT.CTRL) && (e.keyCode == 's')) {
-                    if(toolItemSave.getEnabled())
+                    if(toolItemSave.getEnabled()) {
                         AgentSettingsDialog.this.handleSaveClick(null);
+                    }
                     e.doit = false;
                 } else if(e.keyCode == SWT.F5) {
-                    if(toolItemDryRun.getEnabled())
+                    if(toolItemDryRun.getEnabled()) {
                         AgentSettingsDialog.this.handleTestRunClick(null);
+                    }
                     e.doit = false;
                 }
             }
@@ -246,8 +251,9 @@ public class AgentSettingsDialog extends TitleAreaDialog {
     @Override
     protected void buttonPressed(int buttonId) {
         // handle the click on the 'Close' button
-        if(buttonId == IDialogConstants.CLOSE_ID)
+        if(buttonId == IDialogConstants.CLOSE_ID) {
             close();
+        }
 
         super.buttonPressed(buttonId);
     }
@@ -259,10 +265,12 @@ public class AgentSettingsDialog extends TitleAreaDialog {
 
     protected void handleAgentSelection(SelectionEvent e) {
         if(e != null && e.item instanceof TreeItem) {
-            if(dirty)
+            if(dirty) {
                 if(MessageDialog.openQuestion(getParentShell(), "Unsaved modifications",
-                        "The current script has unsaved modifications, do you want to save before proceeding?"))
+                        "The current script has unsaved modifications, do you want to save before proceeding?")) {
                     handleSaveClick(e);
+                }
+            }
 
             TreeItem selectedItem = (TreeItem) e.item;
             openScript = (ScriptController) selectedItem.getData();
@@ -342,12 +350,13 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         // add the new entries
         for(DrivingAgentController dac: carControllerManager.getDrivingAgents()) {
             TreeItem item = new TreeItem(treeAgents, SWT.NONE);
-            if(dac instanceof JythonScriptController)
+            if(dac instanceof JythonScriptController) {
                 item.setImage(imageRegistry.get("python"));
-            else if(dac instanceof GroovyScriptController)
+            } else if(dac instanceof GroovyScriptController) {
                 item.setImage(imageRegistry.get("groovy"));
-            else
+            } else {
                 throw new RuntimeException("Unexpected script type.");
+            }
 
             item.setText(dac.getName());
             item.setData(dac);

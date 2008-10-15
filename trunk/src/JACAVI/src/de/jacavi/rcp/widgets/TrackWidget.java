@@ -126,17 +126,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The maximum zoom level ("zoomed all in"). */
     private static final double ZOOM_MAX = 5.0;
 
-    private static final String ICON_ROTATION_CLOCKWISE = "/icons/famfamfam-silk/arrow_rotate_clockwise.png";
+    private static final String ICON_ROTATION_CLOCKWISE = "/images/famfamfam-silk/arrow_rotate_clockwise_16x16.png";
 
-    private static final String ICON_ROTATION_COUNTER_CLOCKWISE = "/icons/famfamfam-silk/arrow_rotate_anticlockwise.png";
+    private static final String ICON_ROTATION_COUNTER_CLOCKWISE = "/images/famfamfam-silk/arrow_rotate_anticlockwise_16x16.png";
 
-    private static final String ICON_ROTATION_RESET = "/icons/famfamfam-silk/house.png";
+    private static final String ICON_ROTATION_RESET = "/images/famfamfam-silk/house_16x16.png";
 
-    private static final String ICON_ZOOM_IN = "/icons/famfamfam-silk/arrow_in.png";
+    private static final String ICON_ZOOM_IN = "/images/famfamfam-silk/arrow_in_16x16.png";
 
-    private static final String ICON_ZOOM_OUT = "/icons/famfamfam-silk/arrow_out.png";
+    private static final String ICON_ZOOM_OUT = "/images/famfamfam-silk/arrow_out_16x16.png";
 
-    private static final String ICON_ZOOM_RESET = "/icons/famfamfam-silk/house.png";
+    private static final String ICON_ZOOM_RESET = "/images/famfamfam-silk/house_16x16.png";
 
     /** Logger for this class */
     private static final Logger logger = Logger.getLogger(TrackWidget.class);
@@ -285,8 +285,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    if(!TrackWidget.this.isDisposed() && (TrackWidget.this.hoveredInnerControl == heldControl))
+                    if(!TrackWidget.this.isDisposed() && (TrackWidget.this.hoveredInnerControl == heldControl)) {
                         TrackWidget.this.handleInnerControlClick(heldControl);
+                    }
                 }
             });
         }
@@ -323,13 +324,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         // check if we're accelerated, log a warning if we're not
         String graphics2DFactoryClassName = getGraphics2DFactory().getClass().getName();
         logger.debug("Current Graphics2DFactory: " + graphics2DFactoryClassName);
-        if(graphics2DFactoryClassName.equals("org.holongate.j2d.SWTGraphics2DFactory"))
+        if(graphics2DFactoryClassName.equals("org.holongate.j2d.SWTGraphics2DFactory")) {
             logger
                     .warn("No library for native graphics acceleration has been found! Drawing will be very slow. Please check your java.library.path!");
+        }
 
         // get the players bean needed to display the cars if we're in race mode
-        if(widgetMode == TrackWidgetMode.RACE_MODE)
+        if(widgetMode == TrackWidgetMode.RACE_MODE) {
             playersBean = (List<Player>) ContextLoader.getBean("playersBean");
+        }
 
         // prepare the font
         widgetFont = new Font("Arial", Font.BOLD, 10);
@@ -401,12 +404,13 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         hints.put(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         hints.put(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
         int viewportRenderingQuality = Activator.getStore().getInt(MainPreferencePage.PREF_VIEWPORT_QUALITY);
-        if(viewportRenderingQuality == AffineTransformOp.TYPE_BICUBIC)
+        if(viewportRenderingQuality == AffineTransformOp.TYPE_BICUBIC) {
             hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        else if(viewportRenderingQuality == AffineTransformOp.TYPE_BILINEAR)
+        } else if(viewportRenderingQuality == AffineTransformOp.TYPE_BILINEAR) {
             hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
-        else if(viewportRenderingQuality == AffineTransformOp.TYPE_NEAREST_NEIGHBOR)
+        } else if(viewportRenderingQuality == AffineTransformOp.TYPE_NEAREST_NEIGHBOR) {
             hints.put(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+        }
         J2DRegistry.setHints(hints);
     }
 
@@ -445,8 +449,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      */
     public void setTrack(Track track) {
         // unregister listener from a previously used track
-        if(this.track != null)
+        if(this.track != null) {
             this.track.removeListener(this);
+        }
 
         if(track != null) {
             // change the current track
@@ -492,12 +497,15 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      * Unregisters the listener from the currently displayed track if there is one.
      */
     private void handleDisposeEvent(DisposeEvent e) {
-        if(track != null)
+        if(track != null) {
             track.removeListener(this);
-        if(clickEventRepetitionTimer != null)
+        }
+        if(clickEventRepetitionTimer != null) {
             clickEventRepetitionTimer.cancel();
-        if(preferenceChangeListener != null)
+        }
+        if(preferenceChangeListener != null) {
             Activator.getStore().removePropertyChangeListener(preferenceChangeListener);
+        }
     }
 
     /**
@@ -506,8 +514,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     private void preferencesChanged(PropertyChangeEvent e) {
         if(!isDisposed()) {
             // if the viewport quality was changed, the rendering hints have to be updated
-            if(e.getProperty().equals(MainPreferencePage.PREF_VIEWPORT_QUALITY))
+            if(e.getProperty().equals(MainPreferencePage.PREF_VIEWPORT_QUALITY)) {
                 updateRenderingHints();
+            }
 
             // generally , we have to clear the cache and rerender
             clearCache();
@@ -533,7 +542,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                     wasHitDetected = true;
                 }
                 // if that isn't the case, check if there's a hit on any of the track sections
-                else if(widgetMode == TrackWidgetMode.DESIGN_MODE)
+                else if(widgetMode == TrackWidgetMode.DESIGN_MODE) {
                     for(int i = lastTileShapeList.size() - 1; i >= 0; i--) {
                         if(viewportTransformation.createTransformedShape(lastTileShapeList.get(i)).contains(e.x, e.y)) {
                             setSelectedTile(i);
@@ -541,9 +550,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                             break;
                         }
                     }
+                }
                 // if no hit was detected, remove the selection
-                if(!wasHitDetected)
+                if(!wasHitDetected) {
                     setSelectedTile(-1);
+                }
                 break;
 
             // if the pan button has been pressed down, start the panning
@@ -688,8 +699,9 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
 
     protected void handleControlResizedEvent(ControlEvent e) {
         // tell all the inner controls to reposition themselves
-        for(InnerControl c: innerControls.values())
+        for(InnerControl c: innerControls.values()) {
             c.reposition(getSize());
+        }
     }
 
     /**
@@ -702,11 +714,12 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         Point2D.Double p = new Point2D.Double(e.x, e.y);
 
         hoveredInnerControl = null;
-        for(InnerControlID id: innerControls.keySet())
+        for(InnerControlID id: innerControls.keySet()) {
             if(innerControls.get(id).doHitDetection(p)) {
                 hoveredInnerControl = id;
                 break;
             }
+        }
 
         return hoveredInnerControl != previouslyHoveredInnerControl;
     }
@@ -727,12 +740,13 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
      */
     @Override
     public void handleTrackModified() {
-        if(selectedTile != -1)
-            if(track.getSections().size() > 0)
+        if(selectedTile != -1) {
+            if(track.getSections().size() > 0) {
                 setSelectedTile(Math.min(selectedTile, track.getSections().size() - 1));
-            else
+            } else {
                 setSelectedTile(-1);
-        else {
+            }
+        } else {
             clearCache();
             repaint();
         }
@@ -847,10 +861,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // union this image's bounding box (rectangular and parallel to the viewport!) with the complete track
             // bounding box -- that way we'll get a bounding box for the whole track in the end
             Rectangle2D finalImageBoundingBox = imagePlacementOperation.getBounds2D(s.getImage().getColorImage());
-            if(lastTrackBoundingBox == null)
+            if(lastTrackBoundingBox == null) {
                 lastTrackBoundingBox = finalImageBoundingBox;
-            else
+            } else {
                 Rectangle2D.union(lastTrackBoundingBox, finalImageBoundingBox, lastTrackBoundingBox);
+            }
 
             // create a shape of the exact box of the image (not parallel to the viewport!) by transforming a
             // rectangle
@@ -941,28 +956,34 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             // already included in the transformation operation, so the coordinates used here are simple the origin
             // coordinates
             /*long baseTime = new Date().getTime();*/
-            if(counter++ == selectedTile)
+            if(counter++ == selectedTile) {
                 g.drawImage(s.getImage().getHighlightedImage(), imagePlacementOperations.get(s), 0, 0);
-            else
+            } else {
                 g.drawImage(s.getImage().getColorImage(), imagePlacementOperations.get(s), 0, 0);
-            /*logger.debug("Drawing this tile took " + (new Date().getTime() - baseTime) + "ms.");*/
+                /*logger.debug("Drawing this tile took " + (new Date().getTime() - baseTime) + "ms.");*/
+            }
 
             // draw the lanes on top if the user has requested that
             if(Activator.getStore().getBoolean(MainPreferencePage.PREF_SHOW_LANES)) {
                 final Color[] laneColors = new Color[] { Color.YELLOW, Color.BLUE, Color.CYAN, Color.MAGENTA };
-                if(track.getTileset().getLaneCount() > 4)
+                if(track.getTileset().getLaneCount() > 4) {
                     throw new RuntimeException("The TrackWidget doesn't support more than four lanes yet.");
+                }
                 for(int laneIndex = 0; laneIndex < track.getTileset().getLaneCount(); laneIndex++) {
                     g.setColor(laneColors[laneIndex]);
-                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsCommon())
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsCommon()) {
                         g.draw(lanePlacementTransformations.get(s).createTransformedShape(ls.getShape()));
-                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsRegular())
+                    }
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsRegular()) {
                         g.draw(lanePlacementTransformations.get(s).createTransformedShape(ls.getShape()));
-                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsChange())
+                    }
+                    for(LaneSection ls: s.getLane(laneIndex).getLaneSectionsChange()) {
                         g.draw(lanePlacementTransformations.get(s).createTransformedShape(ls.getShape()));
-                    for(Checkpoint c: s.getLane(laneIndex).getCheckpoints())
+                    }
+                    for(Checkpoint c: s.getLane(laneIndex).getCheckpoints()) {
                         g.draw(lanePlacementTransformations.get(s).createTransformedShape(
                                 new Rectangle2D.Double(c.getPoint().x - 1, c.getPoint().y - 1, 3, 3)));
+                    }
                 }
             }
         }
@@ -1037,11 +1058,11 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
                 Rectangle2D gradientClip = new Rectangle2D.Double(leftOffset, TOP_MARGIN + (HEIGHT - thrust), WIDTH,
                         HEIGHT - (HEIGHT - thrust));
                 Paint fillPattern;
-                if(p.getPosition().isOnTrack)
+                if(p.getPosition().isOnTrack) {
                     fillPattern = new GradientPaint(new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN - 20),
                             Color.GREEN, new Point2D.Double(leftOffset + WIDTH / 2, TOP_MARGIN + HEIGHT + 20),
                             Color.RED);
-                else {
+                } else {
                     BufferedImage image = new BufferedImage(5, 5, BufferedImage.TYPE_INT_RGB);
                     Graphics2D g2d = image.createGraphics();
                     g2d.setBackground(Color.WHITE);
@@ -1105,17 +1126,21 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
         drawTrack(g2d, viewportTransformation);
 
         // draw the cars
-        if(widgetMode == TrackWidgetMode.RACE_MODE)
+        if(widgetMode == TrackWidgetMode.RACE_MODE) {
             drawCars(g2d, viewportTransformation);
+        }
 
         // draw the inner controls
-        if(isMouseOnWidget)
-            for(InnerControlID id: innerControls.keySet())
+        if(isMouseOnWidget) {
+            for(InnerControlID id: innerControls.keySet()) {
                 innerControls.get(id).draw(g2d, id == hoveredInnerControl);
+            }
+        }
 
         // draw the thrust gauges
-        if(widgetMode == TrackWidgetMode.RACE_MODE)
+        if(widgetMode == TrackWidgetMode.RACE_MODE) {
             drawThrustGauges(g2d);
+        }
 
         // draw the frame counter
         g2d.setFont(widgetFont);
@@ -1141,17 +1166,19 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     }
 
     public void repaintIfIdle() {
-        if(isDrawing)
+        if(isDrawing) {
             droppedFrameCounter++;
-        else
+        } else {
             // the repaint() method of the TrackWidget may only be executed on the event dispatcher thread!
             Display.getDefault().asyncExec(new Runnable() {
                 @Override
                 public void run() {
-                    if(!isDisposed())
+                    if(!isDisposed()) {
                         repaint();
+                    }
                 }
             });
+        }
     }
 
 }

@@ -22,10 +22,10 @@ public class PlayerLabelProvider implements ITableLabelProvider {
     private final Map<String, Image> usedImages = new HashMap<String, Image>();
 
     public PlayerLabelProvider() {
-        usedImages.put("analog", Activator.getImageDescriptor("/icons/connectors/analogue(16X16).png").createImage());
-        usedImages.put("bluerider", Activator.getImageDescriptor("/icons/connectors/bluerider(16X16).png")
+        usedImages.put("analog", Activator.getImageDescriptor("/images/connectors/analogue_16x16.png").createImage());
+        usedImages.put("bluerider", Activator.getImageDescriptor("/images/connectors/bluerider_16x16.png")
                 .createImage());
-        usedImages.put("digital", Activator.getImageDescriptor("/icons/connectors/lib42(16X16).png").createImage());
+        usedImages.put("digital", Activator.getImageDescriptor("/images/connectors/lib42_16x16.png").createImage());
     }
 
     public Image getColumnImage(Object element, int columnIndex) {
@@ -66,20 +66,24 @@ public class PlayerLabelProvider implements ITableLabelProvider {
         String result = "";
         switch(columnIndex) {
             case 0:
-                if(p.getName() != null)
+                if(p.getName() != null) {
                     result = p.getName();
+                }
                 break;
             case 1:
-                if(p.getController() != null)
+                if(p.getController() != null) {
                     result = p.getController().toString();
+                }
                 break;
             case 2:
-                if(p.getSlotCarSystemConnector() != null)
+                if(p.getSlotCarSystemConnector() != null) {
                     result = p.getSlotCarSystemConnector().toString();
+                }
                 break;
             case 3:
-                if(p.getCar() != null)
+                if(p.getCar() != null) {
                     result = p.getCar().getName();
+                }
                 break;
             default:
                 result = "UNKNOWN";
