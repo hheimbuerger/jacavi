@@ -42,9 +42,8 @@
       <view
             allowMultiple="false"
             class="de.jacavi.rcp.views.RaceView"
-            icon="icons/cars-16x16.png"
-            id="JACAVI.trackView"
-            name="Track View">
+            id="JACAVI.raceView"
+            name="Race View">
       </view>
       <view
             class="de.jacavi.rcp.views.TileExplorer"
@@ -174,7 +173,7 @@
       <editor
             class="de.jacavi.rcp.editors.TrackDesigner"
             default="true"
-            icon="icons/cars-16x16.png"
+            icon="icons/views/designer_16x16.png"
             id="JACAVI.TrackDesigner"
             name="TrackDesigner">
       </editor>
@@ -185,19 +184,19 @@
          point="org.eclipse.ui.newWizards">
       <wizard
             class="de.jacavi.rcp.wizards.NewDebugTrackWizard"
-            icon="icons/cars-16x16.png"
+            icon="icons/views/designer_16x16.png"
             id="JACAVI.NewDebugTrackWizard"
             name="New Debug Track">
       </wizard>
       <wizard
             class="de.jacavi.rcp.wizards.NewAnalogTrackWizard"
-            icon="icons/cars-16x16.png"
+            icon="icons/views/designer_16x16.png"
             id="JACAVI.NewAnalogTrackWizard"
             name="New Analog Track">
       </wizard>
       <wizard
             class="de.jacavi.rcp.wizards.NewDigitalTrackWizard"
-            icon="icons/cars-16x16.png"
+            icon="icons/views/designer_16x16.png"
             id="JACAVI.NewDigitalTrackWizard"
             name="New Digital Track">
       </wizard>
@@ -259,7 +258,7 @@
          </property>
          <property
                name="aboutText"
-               value="JaCaVi&#x0D;&#x0A;&#x0D;&#x0A;Version: 1.0.0&#x0D;&#x0A;&#x0D;&#x0A;(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.&#x0D;&#x0A;Visit http://www.jacavi.de&#x0D;&#x0A;&#x0D;&#x0A;This product includes software developed by the&#x0D;&#x0A;Apache Software Foundation http://www.apache.org/&#x0D;&#x0A;&#x0D;&#x0A;Developers: &#x0D;&#x0A;Stefanos Papadopoulos (elgreco_04@hotmail.com)&#x0D;&#x0A;Henrik Heimbuerger (henrik@heimbuerger.de)&#x0D;&#x0A;Fabian Rohn (fabrohn@htwg-konstanz.de)&#x0D;&#x0A;Florian Roth (froth@htwg-konstnz.de)&#x0D;&#x0A;&#x0D;&#x0A;Expression of thanks to: Lib42 Team, BlueRider Team, ...">
+               value="JaCaVi&#x0A;&#x0A;Version: 1.0.0&#x0A;&#x0A;(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.&#x0A;Visit http://www.jacavi.de&#x0A;&#x0A;This product includes software developed by the&#x0A;Apache Software Foundation http://www.apache.org/&#x0A;&#x0A;Developers: &#x0A;Stefanos Papadopoulos (elgreco_04@hotmail.com)&#x0A;Henrik Heimbuerger (henrik@heimbuerger.de)&#x0A;Fabian Rohn (fabrohn@htwg-konstanz.de)&#x0A;Florian Roth (froth@htwg-konstnz.de)&#x0A;&#x0A;Expression of thanks to: Lib42 Team, BlueRider Team, ...">
          </property>
       </product>
    </extension>
