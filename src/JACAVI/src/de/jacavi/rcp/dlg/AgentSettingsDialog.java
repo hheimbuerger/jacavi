@@ -345,14 +345,12 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         handleAgentSelection(null);
 
         // add the new entries
-        for(DrivingAgentController dac: carControllerManager.getDrivingAgents()) {
+        for(ScriptController dac: carControllerManager.getDrivingScripts()) {
             TreeItem item = new TreeItem(treeAgents, SWT.NONE);
             if(dac instanceof JythonScriptController) {
                 item.setImage(imageRegistry.get("python"));
             } else if(dac instanceof GroovyScriptController) {
                 item.setImage(imageRegistry.get("groovy"));
-            } else {
-                throw new RuntimeException("Unexpected script type.");
             }
 
             item.setText(dac.getName());
