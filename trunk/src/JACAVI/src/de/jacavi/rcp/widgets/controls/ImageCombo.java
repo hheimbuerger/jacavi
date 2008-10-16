@@ -14,7 +14,6 @@ package de.jacavi.rcp.widgets.controls;
 import java.util.Arrays;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleControlAdapter;
@@ -23,7 +22,6 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.accessibility.AccessibleTextAdapter;
 import org.eclipse.swt.accessibility.AccessibleTextEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -44,7 +42,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TypedListener;
-import org.eclipse.swt.widgets.Widget;
 
 
 
@@ -1164,8 +1161,8 @@ public final class ImageCombo extends Composite {
      *                </ul>
      * @exception SWTException
      *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-     *                - if not called from the thread that created the receiver</li>
+     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      *                </ul>
      * @see ModifyListener
      * @see #addModifyListener
@@ -1188,8 +1185,8 @@ public final class ImageCombo extends Composite {
      *                </ul>
      * @exception SWTException
      *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-     *                - if not called from the thread that created the receiver</li>
+     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      *                </ul>
      * @see SelectionListener
      * @see #addSelectionListener
@@ -1210,8 +1207,8 @@ public final class ImageCombo extends Composite {
      *            the index of the item to select
      * @exception SWTException
      *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-     *                - if not called from the thread that created the receiver</li>
+     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      *                </ul>
      */
     public void select(int index) {
@@ -1250,8 +1247,8 @@ public final class ImageCombo extends Composite {
      *            the new editable state
      * @exception SWTException
      *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-     *                - if not called from the thread that created the receiver</li>
+     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      *                </ul>
      * @since 3.0
      */
@@ -1310,12 +1307,13 @@ public final class ImageCombo extends Composite {
      * @exception IllegalArgumentException
      *                <ul>
      *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list
-     *                minus 1 (inclusive)</li> <li>ERROR_NULL_ARGUMENT - if the string is null</li>
+     *                minus 1 (inclusive)</li>
+     *                <li>ERROR_NULL_ARGUMENT - if the string is null</li>
      *                </ul>
      * @exception SWTException
      *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-     *                - if not called from the thread that created the receiver</li>
+     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      *                </ul>
      */
     public void setItem(int index, String string, Image image) {
@@ -1331,13 +1329,13 @@ public final class ImageCombo extends Composite {
      *            the array of items
      * @exception IllegalArgumentException
      *                <ul>
-     *                <li>ERROR_NULL_ARGUMENT - if the items array is null</li> <li>ERROR_INVALID_ARGUMENT - if an item
-     *                in the items array is null</li>
+     *                <li>ERROR_NULL_ARGUMENT - if the items array is null</li>
+     *                <li>ERROR_INVALID_ARGUMENT - if an item in the items array is null</li>
      *                </ul>
      * @exception SWTException
      *                <ul>
-     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>ERROR_THREAD_INVALID_ACCESS
-     *                - if not called from the thread that created the receiver</li>
+     *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+     *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
      *                </ul>
      */
     public void setItems(String[] items) {
