@@ -12,6 +12,7 @@ import org.eclipse.swt.SWT;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
+import de.jacavi.appl.controller.agent.ScriptController;
 import de.jacavi.appl.controller.agent.impl.XmlRpcController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
@@ -87,7 +88,7 @@ public class CarControllerManager {
      * Adds a new controller to the internal list.
      * 
      * @param controller
-     *      the controller to add
+     *            the controller to add
      */
     public void addController(CarController controller) {
         controllers.put(controller.getId(), controller);
@@ -114,7 +115,7 @@ public class CarControllerManager {
      * player==null you will get all unused devices if player!=null you will get all+ the players one
      * 
      * @param player
-     *      the except player
+     *            the except player
      * @return a sorted list of configured unused input devices
      */
     @SuppressWarnings("unchecked")
@@ -149,10 +150,26 @@ public class CarControllerManager {
     }
 
     /**
+     * Returns a list of all script-based driving agents, sorted by name in alphabetical order.
+     * 
+     * @return a sorted list of script-based driving agents
+     */
+    public List<ScriptController> getDrivingScripts() {
+        List<ScriptController> result = new ArrayList<ScriptController>();
+        for(CarController dc: controllers.values()) {
+            if(dc instanceof ScriptController) {
+                result.add((ScriptController) dc);
+            }
+        }
+        Collections.sort(result);
+        return result;
+    }
+
+    /**
      * Returns a sorted list of all connected input devices of a certain type (XyzDevice).
      * 
      * @param type
-     *      the class of devices to return
+     *            the class of devices to return
      * @return a sorted list of all connected input devices of the given type
      */
     public List<DeviceController> getInputDevicesByType(Class<?> type) {
@@ -177,7 +194,7 @@ public class CarControllerManager {
      * Removes an input device from the internal list after deactivating it.
      * 
      * @param id
-     *      the ID of the device to remove
+     *            the ID of the device to remove
      */
     public void removeInputDevice(UUID id) {
         if(controllers.containsKey(id)) {
@@ -192,7 +209,7 @@ public class CarControllerManager {
      * Removes all input devices of a given type.
      * 
      * @param type
-     *      the class of input devices to remove (XyzDevice)
+     *            the class of input devices to remove (XyzDevice)
      */
     public void removeControllersByType(Class<?> type) {
         List<UUID> toRemove = new ArrayList<UUID>();
@@ -215,7 +232,7 @@ public class CarControllerManager {
      * Returns true if the given ID is valid (corresponds to an available input device), false otherwise.
      * 
      * @param id
-     *      the ID to check
+     *            the ID to check
      * @return true if the given ID is valid (corresponds to an available input device), false otherwise
      */
     public boolean isIdValid(UUID id) {
@@ -301,4 +318,5 @@ public class CarControllerManager {
     public CarController getDevice(UUID id) {
         return controllers.get(id);
     }
+
 }
