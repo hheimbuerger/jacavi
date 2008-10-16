@@ -1,5 +1,7 @@
 package de.jacavi.rcp.views;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.LinkedList;
 
 import org.apache.commons.logging.Log;
@@ -25,9 +27,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 
+import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.TrackSection;
-import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.editors.TrackDesigner;
 
 
@@ -69,12 +71,17 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
         tilesTableViewer.setLabelProvider(new LabelProvider() {
             @Override
             public Image getImage(Object element) {
-                String tileFileName = ((TrackSection) element).getTile().getFilename();
-                Image scaledImage = imageRegistry.get(tileFileName);
+                Tile tile = ((TrackSection) element).getTile();
+                Image scaledImage = imageRegistry.get(currentTrack.getTileset().getId() + "#" + tile.getId());
                 if(scaledImage == null) {
-                    Image image = Activator.getImageDescriptor(tileFileName).createImage();
-                    scaledImage = new Image(Display.getCurrent(), image.getImageData().scaledTo(16, 16));
-                    imageRegistry.put(((TrackSection) element).getTile().getFilename(), scaledImage);
+                    Image image;
+                    try {
+                        image = new Image(Display.getDefault(), new FileInputStream(tile.getBitmapFile()));
+                    } catch(FileNotFoundException e) {
+                        throw new IllegalArgumentException(e);
+                    }
+                    scaledImage = new Image(Display.getDefault(), image.getImageData().scaledTo(16, 16));
+                    imageRegistry.put(currentTrack.getTileset().getId() + "#" + tile.getId(), scaledImage);
                     image.dispose();
                 }
                 return scaledImage;

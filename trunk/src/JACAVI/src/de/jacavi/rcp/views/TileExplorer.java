@@ -1,5 +1,7 @@
 package de.jacavi.rcp.views;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.util.Map;
 
 import org.apache.commons.logging.Log;
@@ -15,6 +17,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -23,8 +26,8 @@ import org.eclipse.ui.part.ViewPart;
 
 import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.Track;
-import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.editors.TrackDesigner;
+import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
@@ -72,40 +75,35 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
             for(String tileID: tileMap.keySet()) {
                 Tile tile = tileMap.get(tileID);
 
-                Image scaledImage = imageRegistry.get(tile.getFilename());
-                if(scaledImage == null) {
-                    Image image = Activator.getImageDescriptor(tile.getFilename()).createImage();
-                    int width = image.getBounds().width;
-                    int height = image.getBounds().height;
-                    scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
-                            (int) (height * TILE_IMAGE_SCALE)));
-                    imageRegistry.put(tile.getFilename(), scaledImage);
-                    image.dispose();
-                }
-
-                GridData buttonGd = new GridData();
-                buttonGd.heightHint = 120;
-                buttonGd.widthHint = 120;
-                Button tileButton = new Button(innerComposite, SWT.PUSH);
-                tileButton.setLayoutData(buttonGd);
-                tileButton.setToolTipText(tile.getName());
-                tileButton.setImage(scaledImage);
-
-                // // HACK: This hack exists because the DEBUG TileSet is already unscaled small and has not to be
-                // scaled.
-                // // Why doesn't this just scale to a maximum width and height?
-                // if(currentTrack.getTileset().getName().equals("debug")) {
-                // tileButton.setImage(image);
-                // } else {
-                // tileButton.setImage(scaledImage);
-                // }
-
-                tileButton.addSelectionListener(new SelectionAdapter() {
-                    @Override
-                    public void widgetSelected(SelectionEvent e) {
-                        invokeInsertion(tileMap, e);
+                try {
+                    Image scaledImage = imageRegistry.get(currentTrack.getTileset().getId() + "#" + tileID);
+                    if(scaledImage == null) {
+                        Image image = new Image(Display.getDefault(), new FileInputStream(tile.getBitmapFile()));
+                        int width = image.getBounds().width;
+                        int height = image.getBounds().height;
+                        scaledImage = new Image(null, image.getImageData().scaledTo((int) (width * TILE_IMAGE_SCALE),
+                                (int) (height * TILE_IMAGE_SCALE)));
+                        imageRegistry.put(currentTrack.getTileset().getId() + "#" + tileID, scaledImage);
+                        image.dispose();
                     }
-                });
+
+                    GridData buttonGd = new GridData();
+                    buttonGd.heightHint = 120;
+                    buttonGd.widthHint = 120;
+                    Button tileButton = new Button(innerComposite, SWT.PUSH);
+                    tileButton.setLayoutData(buttonGd);
+                    tileButton.setToolTipText(tile.getName());
+                    tileButton.setImage(scaledImage);
+
+                    tileButton.addSelectionListener(new SelectionAdapter() {
+                        @Override
+                        public void widgetSelected(SelectionEvent e) {
+                            invokeInsertion(tileMap, e);
+                        }
+                    });
+                } catch(FileNotFoundException e) {
+                    ExceptionHandler.handleException(this, e, true);
+                }
             }
             innerComposite.pack();
             scrolledComposite.setContent(innerComposite);

@@ -14,12 +14,14 @@
 
 	<bean id="tilesetRepositoryBean" class="de.jacavi.appl.track.TilesetRepository" lazy-init="true">
 		<constructor-arg type="java.lang.String" value="${de.jacavi.appl.track.TilesetRepository.definition-path}" />
+        <constructor-arg type="java.lang.String" value="${de.jacavi.appl.track.TilesetRepository.bitmaps-base-path}" />
 	</bean>
 	
 	<bean id="tdaInjectorFactory" class="de.jacavi.appl.racelogic.tda.TDAInjectorFactory"/>
 	
     <bean id="carRepositoryBean" class="de.jacavi.appl.car.CarRepository" lazy-init="true">
         <constructor-arg type="java.lang.String" value="${de.jacavi.appl.track.CarRepository.definition-path}" />
+        <constructor-arg type="java.lang.String" value="${de.jacavi.appl.track.CarRepository.bitmaps-path}" />
         <constructor-arg ref="tilesetRepositoryBean" />
     </bean>
 
@@ -28,7 +30,9 @@
 		<property name="raceTimerInterval" value="${raceTimerInterval}" />
 	</bean>
 
-    <bean id="carControllerManagerBean" class="de.jacavi.appl.controller.CarControllerManager" />
+    <bean id="carControllerManagerBean" class="de.jacavi.appl.controller.CarControllerManager">
+        <constructor-arg type="java.lang.String" value="${de.jacavi.appl.controller.CarControllerManager.agents-path}" />
+    </bean>
 
 <!--	<bean id="slotCarSystemConnectorFactory" class="de.jacavi.test.hal.TestSlotCarSystemConnectorFactory" /> 
  -->

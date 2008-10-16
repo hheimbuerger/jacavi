@@ -10,6 +10,8 @@ import java.awt.image.ColorConvertOp;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.LookupOp;
 import java.awt.image.RescaleOp;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -30,6 +32,9 @@ public class MultiStyleImage {
 
     private BufferedImage transparentImage;
 
+    /**
+     * Constructor for creating a MultiStyleImage from a resource stream (image contained in the JAR).
+     */
     public MultiStyleImage(String filename) throws IOException {
         InputStream resourceAsStream = Activator.getResourceAsStream(filename);
         if(resourceAsStream == null)
@@ -37,6 +42,18 @@ public class MultiStyleImage {
         colorImage = ImageIO.read(resourceAsStream);
         if(!(colorImage.getColorModel() instanceof ComponentColorModel))
             throw new IllegalArgumentException("Image " + filename
+                    + " uses a color model that is not supported. Only images with a component"
+                    + " color model are supported. Try converting the image to a 24- or 32-bit"
+                    + " bitmap, using e.g. the PNG format.");
+    }
+
+    /**
+     * Constructor for creating a MultiStyleImage from a file in the file system (image outside any JARs).
+     */
+    public MultiStyleImage(File file) throws IOException {
+        colorImage = ImageIO.read(new FileInputStream(file));
+        if(!(colorImage.getColorModel() instanceof ComponentColorModel))
+            throw new IllegalArgumentException("Image " + file.getCanonicalPath()
                     + " uses a color model that is not supported. Only images with a component"
                     + " color model are supported. Try converting the image to a 24- or 32-bit"
                     + " bitmap, using e.g. the PNG format.");

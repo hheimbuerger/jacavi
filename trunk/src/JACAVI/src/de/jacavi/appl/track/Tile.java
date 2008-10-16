@@ -1,5 +1,6 @@
 package de.jacavi.appl.track;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -14,7 +15,7 @@ public class Tile {
 
     private final String id;
 
-    private final String filename;
+    private final File bitmapFile;
 
     private final String name;
 
@@ -32,10 +33,10 @@ public class Tile {
 
     private final StartingPoint[] startingPoints;
 
-    public Tile(String id, String filename, String name, boolean isInitial, Point entryPoint, Point exitPoint,
+    public Tile(String id, File file, String name, boolean isInitial, Point entryPoint, Point exitPoint,
             int entryToExitAngle, Lane[] lanes, StartingPoint[] startingPoints) throws IOException {
         this.id = id;
-        this.filename = filename;
+        this.bitmapFile = file;
         this.name = name;
         this.isInitial = isInitial;
         this.entryPoint = entryPoint;
@@ -44,19 +45,19 @@ public class Tile {
         this.lanes = lanes;
         this.startingPoints = startingPoints;
 
-        sectionImage = new MultiStyleImage(filename);
+        sectionImage = new MultiStyleImage(file);
     }
 
     public String getId() {
         return id;
     }
 
-    public String getFilename() {
-        return filename;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public File getBitmapFile() {
+        return bitmapFile;
     }
 
     public List<Lane> getLanes() {
