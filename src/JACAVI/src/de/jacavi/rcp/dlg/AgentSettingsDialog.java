@@ -36,7 +36,6 @@ import org.eclipse.swt.widgets.TreeItem;
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.CarControllerManager;
 import de.jacavi.appl.controller.ControllerSignal;
-import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.controller.agent.ScriptController;
 import de.jacavi.appl.controller.agent.ScriptController.ScriptExecutionException;
 import de.jacavi.appl.controller.agent.impl.GroovyScriptController;
@@ -79,11 +78,9 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         imageRegistry = new ImageRegistry();
         imageRegistry.put("python", Activator.getImageDescriptor("/images/agents/python_16x16.png"));
         imageRegistry.put("groovy", Activator.getImageDescriptor("/images/agents/groovy_16x16.png"));
-        imageRegistry.put("famfamfam_disk", Activator.getImageDescriptor("/images/famfamfam-silk/disk_16x16.png"));
-        imageRegistry.put("famfamfam_arrow_refresh", Activator
-                .getImageDescriptor("/images/famfamfam-silk/arrow_refresh_16x16.png"));
-        imageRegistry.put("famfamfam_flag_green", Activator
-                .getImageDescriptor("/images/famfamfam-silk/flag_green_16x16.png"));
+        imageRegistry.put("save_agent", Activator.getImageDescriptor("/images/misc/save_agent_16x16.png"));
+        imageRegistry.put("reload_agents", Activator.getImageDescriptor("/images/misc/reload_agents_16x16.png"));
+        imageRegistry.put("dryrun_agent", Activator.getImageDescriptor("/images/misc/dryrun_agent_16x16.png"));
         sourceCodeFont = new Font(Display.getDefault(), "Courier New", 10, SWT.NONE);
         resultsFont = new Font(Display.getDefault(), "Courier New", 8, SWT.BOLD);
     }
@@ -127,7 +124,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         ToolItem toolItemRefresh = new ToolItem(toolbar, SWT.NONE);
         toolItemRefresh.setText("Refresh");
         toolItemRefresh.setToolTipText("Updates the list of available agents.");
-        toolItemRefresh.setImage(imageRegistry.get("famfamfam_arrow_refresh"));
+        toolItemRefresh.setImage(imageRegistry.get("reload_agents"));
         toolItemRefresh.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -142,7 +139,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         toolItemSave = new ToolItem(toolbar, SWT.NONE);
         toolItemSave.setText("Save");
         toolItemSave.setToolTipText("Saves the modifications to disk. (Ctrl-S)");
-        toolItemSave.setImage(imageRegistry.get("famfamfam_disk"));
+        toolItemSave.setImage(imageRegistry.get("save_agent"));
         toolItemSave.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {
@@ -155,7 +152,7 @@ public class AgentSettingsDialog extends TitleAreaDialog {
         toolItemDryRun = new ToolItem(toolbar, SWT.NONE);
         toolItemDryRun.setText("Dry run");
         toolItemDryRun.setToolTipText("Runs the agent once with null parameters -- not supported by all agents. (F5)");
-        toolItemDryRun.setImage(imageRegistry.get("famfamfam_flag_green"));
+        toolItemDryRun.setImage(imageRegistry.get("dryrun_agent"));
         toolItemDryRun.addSelectionListener(new SelectionAdapter() {
             @Override
             public void widgetSelected(SelectionEvent e) {

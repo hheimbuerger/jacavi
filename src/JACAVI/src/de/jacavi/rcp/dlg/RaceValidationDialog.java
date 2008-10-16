@@ -49,8 +49,8 @@ public class RaceValidationDialog extends TitleAreaDialog {
     public RaceValidationDialog(Shell parentShell, java.util.List<Player> players) {
         super(parentShell);
         this.players = players;
-        this.valid = Activator.getImageDescriptor("/images/famfamfam-silk/accept_16x16.png").createImage();
-        this.invalid = Activator.getImageDescriptor("/images/famfamfam-silk/exclamation_16x16.png").createImage();
+        this.valid = Activator.getImageDescriptor("/images/misc/accept_16x16.png").createImage();
+        this.invalid = Activator.getImageDescriptor("/images/misc/exclamation_16x16.png").createImage();
         this.validator = new RaceValidator();
     }
 

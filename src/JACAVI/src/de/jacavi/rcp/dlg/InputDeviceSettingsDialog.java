@@ -119,7 +119,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                 .createImage());
         imageManager.put("imageWiimoteButtons", Activator.getImageDescriptor("/images/misc/wiimote_buttons_72x29.png")
                 .createImage());
-        imageManager.put("icon", Activator.getImageDescriptor("/images/famfamfam-silk/controller_16x16.png")
+        imageManager.put("icon", Activator.getImageDescriptor("/images/actions/configure_controllers_16x16.png")
                 .createImage());
     }
 
