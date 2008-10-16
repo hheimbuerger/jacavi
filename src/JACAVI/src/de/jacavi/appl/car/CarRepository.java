@@ -1,5 +1,7 @@
 package de.jacavi.appl.car;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -16,7 +18,7 @@ import org.xml.sax.SAXException;
 
 import de.jacavi.appl.track.Tileset;
 import de.jacavi.appl.track.TilesetRepository;
-import de.jacavi.rcp.Activator;
+import de.jacavi.appl.track.TilesetRepository.TilesetRepositoryInitializationFailedException;
 
 
 
@@ -32,11 +34,19 @@ public class CarRepository {
 
     private final TilesetRepository tilesetRepository;
 
-    public CarRepository(String configurationFile, TilesetRepository tilesetRepository)
+    private final File bitmapsPath;
+
+    public CarRepository(String configurationFile, String bitmapsPath, TilesetRepository tilesetRepository)
             throws CarRepositoryInitializationFailedException {
         this.tilesetRepository = tilesetRepository;
 
         try {
+            // make sure the base path for the bitmaps exists
+            this.bitmapsPath = new File(bitmapsPath);
+            if(!this.bitmapsPath.exists())
+                throw new TilesetRepositoryInitializationFailedException(
+                        "The specified path for the car bitmaps does not exist: " + this.bitmapsPath.getCanonicalPath());
+
             // parse the XML file
             Document document = parseConfigurationFile(configurationFile);
 
@@ -51,7 +61,7 @@ public class CarRepository {
 
     private Document parseConfigurationFile(String filename) throws ParserConfigurationException, SAXException,
             IOException {
-        InputStream is = Activator.getResourceAsStream(filename);
+        InputStream is = new FileInputStream(filename);
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder domBuilder = null;
         domBuilder = domFactory.newDocumentBuilder();
@@ -59,7 +69,7 @@ public class CarRepository {
     }
 
     private void importCar(Element parentItem) throws IOException {
-        String bitmap = null;
+        File bitmap = null;
         List<Tileset> tilesets = null;
         double acceleration = 0;
         double mass = 0;
@@ -72,7 +82,7 @@ public class CarRepository {
             if(carNodes.item(i) instanceof Element) {
                 Element carProperty = (Element) carNodes.item(i);
                 if(carProperty.getNodeName().equals("bitmap"))
-                    bitmap = carProperty.getTextContent();
+                    bitmap = new File(bitmapsPath, carProperty.getTextContent());
                 else if(carProperty.getNodeName().equals("tilesets"))
                     tilesets = importAssociatedTilesets(carProperty);
                 else if(carProperty.getNodeName().equals("acceleration"))

@@ -1,5 +1,7 @@
 package de.jacavi.appl.controller;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,6 +15,8 @@ import org.eclipse.swt.SWT;
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.controller.agent.DrivingAgentController;
 import de.jacavi.appl.controller.agent.ScriptController;
+import de.jacavi.appl.controller.agent.impl.GroovyScriptController;
+import de.jacavi.appl.controller.agent.impl.JythonScriptController;
 import de.jacavi.appl.controller.agent.impl.XmlRpcController;
 import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.controller.device.impl.GameControllerDevice;
@@ -39,7 +43,9 @@ public class CarControllerManager {
 
     private WiimoteDeviceManager wiimoteDeviceManager;
 
-    public CarControllerManager() {
+    private final File agentsPath;
+
+    public CarControllerManager(String agentsPath) {
         // TODO: should be read from configuration, just inserting some for testing here
         KeyboardDevice k1 = new KeyboardDevice("Keyboard (up/down/ctrl/del)", new KeyboardLayout(SWT.ARROW_UP,
                 SWT.ARROW_DOWN, SWT.CONTROL, 'y', 'x', SWT.DEL));
@@ -79,6 +85,16 @@ public class CarControllerManager {
                     e);
             wiimoteDeviceManager = null;
         }
+
+        // make sure the base path for the agents exists
+        this.agentsPath = new File(agentsPath);
+        if(!this.agentsPath.exists())
+            try {
+                throw new IllegalArgumentException("The specified base path for the agents does not exist: "
+                        + this.agentsPath.getCanonicalPath());
+            } catch(IOException e) {
+                throw new IllegalArgumentException(e);
+            }
 
         // also find out which driving agents are installed
         redetectAgents();
@@ -298,21 +314,19 @@ public class CarControllerManager {
      * Redetects all available agents (script files).
      */
     public void redetectAgents() {
-    // removeControllersByType(ScriptController.class);
-    //
-    // // FIXME: should be made more flexible and not rely on a hardcoded path and hardcoded file extensions
-    // File agentsDir = new File("agents/");
-    // for(File agentFile: agentsDir.listFiles()) {
-    // if(agentFile.getName().endsWith(".py")) {
-    // addController(new JythonScriptController(agentFile.getName().substring(0,
-    // agentFile.getName().length() - 3)
-    // + " (Jython)", agentFile));
-    // } else if(agentFile.getName().endsWith(".groovy")) {
-    // addController(new GroovyScriptController(agentFile.getName().substring(0,
-    // agentFile.getName().length() - 7)
-    // + " (Groovy)", agentFile));
-    // }
-    // }
+        removeControllersByType(ScriptController.class);
+
+        for(File agentFile: agentsPath.listFiles()) {
+            if(agentFile.getName().endsWith(".py")) {
+                addController(new JythonScriptController(agentFile.getName().substring(0,
+                        agentFile.getName().length() - 3)
+                        + " (Jython)", agentFile));
+            } else if(agentFile.getName().endsWith(".groovy")) {
+                addController(new GroovyScriptController(agentFile.getName().substring(0,
+                        agentFile.getName().length() - 7)
+                        + " (Groovy)", agentFile));
+            }
+        }
     }
 
     public CarController getDevice(UUID id) {

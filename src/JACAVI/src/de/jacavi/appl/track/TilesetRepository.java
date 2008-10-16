@@ -1,5 +1,7 @@
 package de.jacavi.appl.track;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,8 +20,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import de.jacavi.rcp.Activator;
-
 
 
 public class TilesetRepository {
@@ -37,8 +37,18 @@ public class TilesetRepository {
 
     private final Map<String, Tileset> tilesets = new HashMap<String, Tileset>();
 
-    public TilesetRepository(String configurationFile) throws TilesetRepositoryInitializationFailedException {
+    private final File bitmapsBasePath;
+
+    public TilesetRepository(String configurationFile, String bitmapsBasePath)
+            throws TilesetRepositoryInitializationFailedException {
         try {
+            // make sure the base path for the bitmaps exists
+            this.bitmapsBasePath = new File(bitmapsBasePath);
+            if(!this.bitmapsBasePath.exists())
+                throw new TilesetRepositoryInitializationFailedException(
+                        "The specified base path for the tile bitmaps does not exist: "
+                                + this.bitmapsBasePath.getCanonicalPath());
+
             // parse the XML file
             Document document = parseConfigurationFile(configurationFile);
 
@@ -46,6 +56,8 @@ public class TilesetRepository {
             NodeList tilesets = document.getElementsByTagName("tileset");
             for(int i = 0; i < tilesets.getLength(); i++)
                 importTileset((Element) tilesets.item(i));
+        } catch(TilesetRepositoryInitializationFailedException e) {
+            throw e;
         } catch(Exception e) {
             throw new TilesetRepositoryInitializationFailedException(e);
         }
@@ -53,7 +65,7 @@ public class TilesetRepository {
 
     private Document parseConfigurationFile(String filename) throws ParserConfigurationException, SAXException,
             IOException {
-        InputStream is = Activator.getResourceAsStream(filename);
+        InputStream is = new FileInputStream(filename);
         DocumentBuilderFactory domFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder domBuilder = null;
         domBuilder = domFactory.newDocumentBuilder();
@@ -83,7 +95,7 @@ public class TilesetRepository {
         String tileName = tileElement.getAttribute("name");
         boolean isInitial = tileElement.hasAttribute("isInitial")
                 && tileElement.getAttribute("isInitial").equals("true");
-        String filename = null;
+        File file = null;
         Point entryPoint = null;
         Point exitPoint = null;
         int entryToExitAngle = 0;
@@ -96,7 +108,7 @@ public class TilesetRepository {
             if(tileDataNodes.item(i).getNodeType() == Node.ELEMENT_NODE) {
                 Element tileDataElement = (Element) tileDataNodes.item(i);
                 if(tileDataElement.getNodeName().equals("filename")) {
-                    filename = "/tiles/" + tileset.getId() + "/" + tileDataElement.getTextContent();
+                    file = new File(new File(bitmapsBasePath, tileset.getId()), tileDataElement.getTextContent());
                 } else if(tileDataElement.getNodeName().equals("entryPoint")) {
                     entryPoint = new Point(Integer.valueOf(tileDataElement.getAttribute("x")), Integer
                             .valueOf(tileDataElement.getAttribute("y")));
@@ -123,10 +135,8 @@ public class TilesetRepository {
             }
         }
 
-        tileset.add(tileID,
-                new Tile(tileID, filename, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, lanes
-                        .toArray(new Lane[lanes.size()]), startingPoints.toArray(new StartingPoint[startingPoints
-                        .size()])));
+        tileset.add(tileID, new Tile(tileID, file, tileName, isInitial, entryPoint, exitPoint, entryToExitAngle, lanes
+                .toArray(new Lane[lanes.size()]), startingPoints.toArray(new StartingPoint[startingPoints.size()])));
     }
 
     private Lane importLane(Tileset tileset, Element tileDataElement, int laneIndex)

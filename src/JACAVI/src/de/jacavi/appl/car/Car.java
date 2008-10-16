@@ -1,20 +1,23 @@
 package de.jacavi.appl.car;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
 
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
+
 import de.jacavi.appl.track.Tileset;
-import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.MultiStyleImage;
 
 
 
 public class Car {
-    private final String CAR_BITMAP_PATH_PREFIX = "/cars/";
 
     private final String name;
 
-    private final String filename;
+    private final File bitmapFile;
 
     private final List<Tileset> tilesets;
 
@@ -30,28 +33,28 @@ public class Car {
 
     private final org.eclipse.swt.graphics.Image swtImage;
 
-    public Car(String name, String filename, List<Tileset> tilesets, double acceleration, double mass, double topSpeed,
+    public Car(String name, File bitmapFile, List<Tileset> tilesets, double acceleration, double mass, double topSpeed,
             double inertia) throws IOException {
         this.name = name;
-        this.filename = filename;
+        this.bitmapFile = bitmapFile;
         this.tilesets = tilesets;
         this.acceleration = acceleration;
         this.inertia = inertia;
         this.mass = mass;
         this.topSpeed = topSpeed;
 
-        image = new MultiStyleImage(CAR_BITMAP_PATH_PREFIX + filename);
+        image = new MultiStyleImage(bitmapFile);
 
         // FIXME: this image is never disposed again!
-        swtImage = Activator.getImageDescriptor(CAR_BITMAP_PATH_PREFIX + filename).createImage();
+        swtImage = new Image(Display.getDefault(), new FileInputStream(bitmapFile));
     }
 
     public String getName() {
         return name;
     }
 
-    public String getFilename() {
-        return filename;
+    public File getBitmapFile() {
+        return bitmapFile;
     }
 
     public List<Tileset> getTilesets() {
