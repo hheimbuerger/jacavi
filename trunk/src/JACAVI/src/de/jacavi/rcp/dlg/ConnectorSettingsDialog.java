@@ -73,8 +73,8 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
                 .createImage());
         imageManager.put("imageAnalogue", Activator.getImageDescriptor("/images/connectors/analogue_64x64.png")
                 .createImage());
-        imageManager
-                .put("icon", Activator.getImageDescriptor("/images/famfamfam-silk/connect_16x16.png").createImage());
+        imageManager.put("icon", Activator.getImageDescriptor("/images/actions/configure_connectors_16x16.png")
+                .createImage());
     }
 
     @Override

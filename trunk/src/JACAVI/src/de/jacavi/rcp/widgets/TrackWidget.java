@@ -52,7 +52,6 @@ import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.CarController;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.appl.racelogic.RaceEngine;
 import de.jacavi.appl.track.Angle;
 import de.jacavi.appl.track.CarScreenPosition;
 import de.jacavi.appl.track.Checkpoint;
@@ -126,17 +125,17 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
     /** The maximum zoom level ("zoomed all in"). */
     private static final double ZOOM_MAX = 5.0;
 
-    private static final String ICON_ROTATION_CLOCKWISE = "/images/famfamfam-silk/arrow_rotate_clockwise_16x16.png";
+    private static final String ICON_ROTATION_CLOCKWISE = "/images/widget_buttons/rotate_clockwise_16x16.png";
 
-    private static final String ICON_ROTATION_COUNTER_CLOCKWISE = "/images/famfamfam-silk/arrow_rotate_anticlockwise_16x16.png";
+    private static final String ICON_ROTATION_COUNTER_CLOCKWISE = "/images/widget_buttons/rotate_anticlockwise_16x16.png";
 
-    private static final String ICON_ROTATION_RESET = "/images/famfamfam-silk/house_16x16.png";
+    private static final String ICON_ROTATION_RESET = "/images/widget_buttons/reset_16x16.png";
 
-    private static final String ICON_ZOOM_IN = "/images/famfamfam-silk/arrow_in_16x16.png";
+    private static final String ICON_ZOOM_IN = "/images/widget_buttons/zoom_in_16x16.png";
 
-    private static final String ICON_ZOOM_OUT = "/images/famfamfam-silk/arrow_out_16x16.png";
+    private static final String ICON_ZOOM_OUT = "/images/widget_buttons/zoom_out_16x16.png";
 
-    private static final String ICON_ZOOM_RESET = "/images/famfamfam-silk/house_16x16.png";
+    private static final String ICON_ZOOM_RESET = "/images/widget_buttons/reset_16x16.png";
 
     /** Logger for this class */
     private static final Logger logger = Logger.getLogger(TrackWidget.class);

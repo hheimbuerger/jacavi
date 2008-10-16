@@ -108,7 +108,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.AgentSettingsAction"
-               icon="images/famfamfam-silk/vcard_16x16.png"
+               icon="images/actions/configure_agents_16x16.png"
                id="JACAVI.AgentSettingsAction"
                label="Configure Driving Agents..."
                menubarPath="settingsMenu/settingsGroup"
@@ -117,7 +117,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.OpenConnectorSettingsAction"
-               icon="images/famfamfam-silk/connect_16x16.png"
+               icon="images/actions/configure_connectors_16x16.png"
                id="JACAVI.OpenConnectorSettingsDialog"
                label="Configure Connectors..."
                menubarPath="settingsMenu/settingsGroup"
@@ -126,7 +126,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.OpenInputDeviceSettingsAction"
-               icon="images/famfamfam-silk/controller_16x16.png"
+               icon="images/actions/configure_controllers_16x16.png"
                id="JACAVI.OpenInputDeviceSettingsAction"
                label="Configure Input Devices..."
                menubarPath="settingsMenu/settingsGroup"
@@ -135,7 +135,7 @@
          </action>
          <action
                class="de.jacavi.rcp.actions.PlayerSettingsAction"
-               icon="images/famfamfam-silk/user_16x16.png"
+               icon="images/actions/configure_players_16x16.png"
                id="JACAVI.PlayerSettingsAction"
                label="Configure Players..."
                menubarPath="settingsMenu/settingsGroup"
