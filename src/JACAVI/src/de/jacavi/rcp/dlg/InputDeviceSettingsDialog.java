@@ -109,18 +109,14 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
         carControllerManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
 
         // prepare the images
-        imageManager.put("imageKeyboard", Activator.getImageDescriptor("/images/controller/keyboard_64x64.png")
-                .createImage());
-        imageManager
-                .put("imageMouse", Activator.getImageDescriptor("/images/controller/mouse_64x64.png").createImage());
-        imageManager.put("imageGameController", Activator.getImageDescriptor(
-                "/images/controller/game_controller_64x64.png").createImage());
-        imageManager.put("imageWiimote", Activator.getImageDescriptor("/images/controller/wiimote_64x64.png")
-                .createImage());
-        imageManager.put("imageWiimoteButtons", Activator.getImageDescriptor("/images/misc/wiimote_buttons_72x29.png")
-                .createImage());
-        imageManager.put("icon", Activator.getImageDescriptor("/images/actions/configure_controllers_16x16.png")
-                .createImage());
+        imageRegistry.put("imageKeyboard", Activator.getImageDescriptor("/images/controller/keyboard_64x64.png"));
+        imageRegistry.put("imageMouse", Activator.getImageDescriptor("/images/controller/mouse_64x64.png"));
+        imageRegistry.put("imageGameController", Activator
+                .getImageDescriptor("/images/controller/game_controller_64x64.png"));
+        imageRegistry.put("imageWiimote", Activator.getImageDescriptor("/images/controller/wiimote_64x64.png"));
+        imageRegistry
+                .put("imageWiimoteButtons", Activator.getImageDescriptor("/images/misc/wiimote_buttons_72x29.png"));
+        imageRegistry.put("icon", Activator.getImageDescriptor("/images/actions/configure_controllers_16x16.png"));
     }
 
     @Override
@@ -141,11 +137,11 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
 
     @Override
     protected void createTabItems(CTabFolder tabFolder) {
-        createKeyboardSection(prepareTabItem("Keyboard", imageManager.get("icon"), imageManager.get("imageKeyboard")));
-        createMouseSection(prepareTabItem("Mouse", imageManager.get("icon"), imageManager.get("imageMouse")));
-        createGameControllerSection(prepareTabItem("Game Controller", imageManager.get("icon"), imageManager
+        createKeyboardSection(prepareTabItem("Keyboard", imageRegistry.get("icon"), imageRegistry.get("imageKeyboard")));
+        createMouseSection(prepareTabItem("Mouse", imageRegistry.get("icon"), imageRegistry.get("imageMouse")));
+        createGameControllerSection(prepareTabItem("Game Controller", imageRegistry.get("icon"), imageRegistry
                 .get("imageGameController")));
-        createWiimoteSection(prepareTabItem("Wiimote", imageManager.get("icon"), imageManager.get("imageWiimote")));
+        createWiimoteSection(prepareTabItem("Wiimote", imageRegistry.get("icon"), imageRegistry.get("imageWiimote")));
     }
 
     private void createKeyboardSection(Composite c) {
@@ -452,7 +448,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
             fd8.top = new FormAttachment(labelWiimoteInfo1, 5);
             fd8.left = new FormAttachment(listConnectedWiimotes, 0, SWT.CENTER);
             labelWiimoteButtons.setLayoutData(fd8);
-            labelWiimoteButtons.setImage(imageManager.get("imageWiimoteButtons"));
+            labelWiimoteButtons.setImage(imageRegistry.get("imageWiimoteButtons"));
 
             // create the label describing the setup process (part 2)
             Label labelWiimoteInfo2 = new Label(c, SWT.WRAP);

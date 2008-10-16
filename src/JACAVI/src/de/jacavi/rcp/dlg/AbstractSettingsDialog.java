@@ -1,10 +1,8 @@
 package de.jacavi.rcp.dlg;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -49,7 +47,7 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
 
     protected final Font headingFont;
 
-    protected Map<String, Image> imageManager = new HashMap<String, Image>();
+    protected ImageRegistry imageRegistry = new ImageRegistry();
 
     private CTabFolder tabFolder;
 
@@ -71,8 +69,7 @@ public abstract class AbstractSettingsDialog extends TitleAreaDialog {
 
     @Override
     public boolean close() {
-        for(Image i: imageManager.values())
-            i.dispose();
+        imageRegistry.dispose();
         headingFont.dispose();
         colorDarkWhite.dispose();
         colorLightBlue.dispose();

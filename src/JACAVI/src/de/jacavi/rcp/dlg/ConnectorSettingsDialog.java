@@ -67,14 +67,10 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
         // get the connectorFactory
         connectorFactory = (ConnectorFactory) ContextLoader.getBean("slotCarSystemConnectorFactory");
         // prepare the images
-        imageManager
-                .put("imageLib42", Activator.getImageDescriptor("/images/connectors/lib42_64x64.png").createImage());
-        imageManager.put("imageBluerider", Activator.getImageDescriptor("/images/connectors/bluerider_64x64.png")
-                .createImage());
-        imageManager.put("imageAnalogue", Activator.getImageDescriptor("/images/connectors/analogue_64x64.png")
-                .createImage());
-        imageManager.put("icon", Activator.getImageDescriptor("/images/actions/configure_connectors_16x16.png")
-                .createImage());
+        imageRegistry.put("imageLib42", Activator.getImageDescriptor("/images/connectors/lib42_64x64.png"));
+        imageRegistry.put("imageBluerider", Activator.getImageDescriptor("/images/connectors/bluerider_64x64.png"));
+        imageRegistry.put("imageAnalogue", Activator.getImageDescriptor("/images/connectors/analogue_64x64.png"));
+        imageRegistry.put("icon", Activator.getImageDescriptor("/images/actions/configure_connectors_16x16.png"));
     }
 
     @Override
@@ -87,9 +83,9 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
 
     @Override
     protected void createTabItems(CTabFolder tabFolder) {
-        createLib42Tab(prepareTabItem("Lib42", imageManager.get("icon"), imageManager.get("imageLib42")));
-        createBlueRiderTab(prepareTabItem("Bluerider", imageManager.get("icon"), imageManager.get("imageBluerider")));
-        createAnalogueTab(prepareTabItem("Analogue", imageManager.get("icon"), imageManager.get("imageAnalogue")));
+        createLib42Tab(prepareTabItem("Lib42", imageRegistry.get("icon"), imageRegistry.get("imageLib42")));
+        createBlueRiderTab(prepareTabItem("Bluerider", imageRegistry.get("icon"), imageRegistry.get("imageBluerider")));
+        createAnalogueTab(prepareTabItem("Analogue", imageRegistry.get("icon"), imageRegistry.get("imageAnalogue")));
     }
 
     private void createLib42Tab(Composite parent) {
