@@ -29,27 +29,27 @@
          point="org.eclipse.ui.views">
       <view
             class="de.jacavi.rcp.views.LapView"
-            icon="images/views/clock-16x16.png"
+            icon="images/views/laps_16x16.png"
             id="JACAVI.lapView"
             name="Lap View">
       </view>
       <view
             allowMultiple="false"
             class="de.jacavi.rcp.views.RaceView"
-            icon="images/cars-16x16.png"
+            icon="images/misc/placeholder_16x16.png"
             id="JACAVI.trackView"
             name="Track View">
       </view>
       <view
             class="de.jacavi.rcp.views.TileExplorer"
-            icon="images/views/explorer_16x16.gif"
+            icon="images/views/explorer_16x16.png"
             id="JACAVI.tileExplorerView"
             name="Tile Explorer"
             restorable="true">
       </view>
       <view
             class="de.jacavi.rcp.views.TrackOutline"
-            icon="images/views/outline_16x16.gif"
+            icon="images/views/outline_16x16.png"
             id="JACAVI.trackOutline"
             name="Track Outline"
             restorable="true">
@@ -74,7 +74,7 @@
             label="Editor Action Set">
          <action
                class="de.jacavi.rcp.actions.OpenTrackFileAction"
-               icon="images/actions/import_wiz_16x16.gif"
+               icon="images/actions/open_track_16x16.png"
                id="JACAVI.loadTrackAction"
                label="Open Track..."
                menubarPath="trackMenu/trackGroup"
@@ -99,7 +99,7 @@
          </menu>
          <action
                class="de.jacavi.rcp.actions.StartRaceAction"
-               icon="images/actions/checkered-flag-icon_16x16.gif"
+               icon="images/actions/start_race_16x16.png"
                id="JACAVI.StartRaceAction"
                label="&amp;Start Race"
                menubarPath="raceMenu/raceGroup"
@@ -154,7 +154,7 @@
          </menu>
          <action
                class="de.jacavi.rcp.actions.StopRaceAction"
-               icon="images/actions/progress_stop_16x16.gif"
+               icon="images/actions/stop_race_16x16.png"
                id="JACAVI.stopRace"
                label="Stop Race"
                menubarPath="raceMenu2/raceGroup2"
