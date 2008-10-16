@@ -58,7 +58,7 @@ public class TrafficLightsDialog {
 
             @Override
             public void run() {
-                for(ImageData imageData: imageDatas) {
+                for(@SuppressWarnings("unused") ImageData imageData: imageDatas) {
 
                     frameIndex %= imageDatas.length;
 
@@ -85,12 +85,15 @@ public class TrafficLightsDialog {
                 }
                 display.asyncExec(new Runnable() {
                     public void run() {
-                        if(!shell.isDisposed())
+                        if(!shell.isDisposed()) {
                             shell.dispose();
-                        if(!image.isDisposed())
+                        }
+                        if(!image.isDisposed()) {
                             image.dispose();
-                        if(!gc.isDisposed())
+                        }
+                        if(!gc.isDisposed()) {
                             gc.dispose();
+                        }
                     }
                 });
             }
