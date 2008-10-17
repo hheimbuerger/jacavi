@@ -237,7 +237,7 @@
          </property>
          <property
                name="aboutImage"
-               value="images/logo/JaCaVi_Logo_250x123.png">
+               value="images/logo/about_banner_250x123.png">
          </property>
          <property
                name="startupForegroundColor"
