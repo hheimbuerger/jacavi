@@ -88,7 +88,7 @@ public class OpenTrackFileAction implements IWorkbenchWindowActionDelegate {
 		log.error("Load failed", e);
 
 		// Create the required Status object
-		Status status = new Status(IStatus.ERROR, "JACAVI", e.getMessage(), e);
+		Status status = new Status(IStatus.ERROR, "JaCaVi", e.getMessage(), e);
 
 		// Display the dialog
 		ErrorDialog

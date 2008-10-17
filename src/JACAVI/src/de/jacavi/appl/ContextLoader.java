@@ -18,7 +18,7 @@ public class ContextLoader {
     private static ApplicationContext factory = null;
 
     static {
-        log.info("Initializing JACAVI Spring Context");
+        log.info("Initializing JaCaVi Spring Context");
         factory = new ClassPathXmlApplicationContext("applicationContext.xml");
     }
 

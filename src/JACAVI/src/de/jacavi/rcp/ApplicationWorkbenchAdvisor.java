@@ -114,7 +114,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
         log.error("Unhandled event loop exception", exception);
         // and we show an dialogue
         StatusManager.getManager().handle(
-                new Status(IStatus.ERROR, "JACAVI", "Unhandled event loop exception", exception), StatusManager.SHOW);
+                new Status(IStatus.ERROR, "JaCaVi", "Unhandled event loop exception", exception), StatusManager.SHOW);
     }
 
     @Override
