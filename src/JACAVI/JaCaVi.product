@@ -4,7 +4,7 @@
 <product name="JaCaVi" id="JACAVI.product" application="JACAVI.application" version="1.0.0" useFeatures="false">
 
    <aboutInfo>
-      <image path="/JACAVI/images/logo/JaCaVi_Logo_250x123.png"/>
+      <image path="/JACAVI/images/logo/about_banner_250x123.png"/>
       <text>
          JaCaVi
 
@@ -47,6 +47,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
          <bmp/>
       </win>
    </launcher>
+
 
    <vm>
    </vm>
