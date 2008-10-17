@@ -19,11 +19,18 @@ public class Application implements IApplication {
 
     public Object start(IApplicationContext context) {
 
-        log.info("JACAVI Application starting up...");
+        log.info("JaCaVi Application starting up...");
         Display display = PlatformUI.createDisplay();
 
-        //
-        System.loadLibrary("wiiuse.dll");
+        // pre-load the native wiiuse library, as it will later on be loaded from native code, effectively circumventing
+        // the OSGi class loader -- loading it here means it will also be in the process and the call from the native
+        // code will succeed
+        log.info("Preloading native wiiuse library.");
+        try {
+        	System.loadLibrary("wiiuse");
+        } catch(UnsatisfiedLinkError e) {
+        	log.warn("Preloading the native wiiuse library failed! This most likely indicates an error on Windows and Linux platforms and is expected behaviour on all other platforms (as no wiiuse library is available for those).", e);
+        }
 
         try {
             int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
@@ -33,7 +40,7 @@ public class Application implements IApplication {
             return IApplication.EXIT_OK;
         } finally {
             display.dispose();
-            log.info("JACAVI Application shut down!");
+            log.info("JaCaVi Application shut down!");
         }
     }
 
