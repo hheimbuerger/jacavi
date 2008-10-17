@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="JaCaVi" id="JACAVI.product" application="JACAVI.application" version="1.0.0" useFeatures="false">
+<product name="JaCaVi" id="JaCaVi.product" application="JaCaVi.application" version="1.0.0" useFeatures="false">
 
    <aboutInfo>
       <image path="/JACAVI/images/logo/about_banner_250x123.png"/>
@@ -37,7 +37,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
    <windowImages i16="/JACAVI/images/icon/jacavi_logo_16x16.png"/>
 
    <splash
-      location="JACAVI"
+      location="JaCaVi"
       startupProgressRect="5,275,445,15"
       startupMessageRect="7,252,445,20"
       startupForegroundColor="000000" />
@@ -53,7 +53,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
    </vm>
 
    <plugins>
-      <plugin id="JACAVI"/>
+      <plugin id="JaCaVi"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="javax.servlet"/>
       <plugin id="org.eclipse.ant.core"/>

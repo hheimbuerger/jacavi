@@ -221,7 +221,7 @@
          id="product"
          point="org.eclipse.core.runtime.products">
       <product
-            application="JACAVI.application"
+            application="JaCaVi.application"
             name="JaCaVi">
          <property
                name="appName"
