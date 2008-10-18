@@ -16,6 +16,12 @@
   
   !define REGKEY_INSTDIR "Software\${APPLICATION_SHORT}"
 
+  !ifdef OUTPUT_FILE
+    !define APPLICATION_INSTALLER_FILENAME "${OUTPUT_FILE}"
+  !else
+    !define APPLICATION_INSTALLER_FILENAME "${APPLICATION_SHORT}_v${APPLICATION_VERSION}_manual_build.exe"
+  !endif
+
 ;--------------------------------
 ;Include Modern UI
 
@@ -26,7 +32,7 @@
 
   ;Name and file
   Name "${APPLICATION_SHORT} v${APPLICATION_VERSION}"
-  OutFile "${APPLICATION_SHORT}_v${APPLICATION_VERSION}.exe"
+  OutFile "${APPLICATION_INSTALLER_FILENAME}"
 
   ;Default installation folder
   InstallDir "$PROGRAMFILES\${APPLICATION_SHORT} ${APPLICATION_VERSION}"
@@ -103,7 +109,8 @@ Section "!JaCaVi Core" SectionCore
   SetOutPath "$INSTDIR"
   
   ;Files to install
-  File /r bin\*
+  File /r bin\win32.win32.x86\jacavi\*
+  File jacavi.ico
   File readme.txt
   
   ;Store installation folder
@@ -159,6 +166,11 @@ Section "Uninstall"
   RMDir /r "$INSTDIR\plugins"
   ;FIXME: really delete workspace?
   RMDir /r "$INSTDIR\workspace"
+  RMDir /r "$INSTDIR\libs"
+  RMDir /r "$INSTDIR\agents"
+  RMDir /r "$INSTDIR\cars"
+  RMDir /r "$INSTDIR\tiles"
+  RMDir /r "$INSTDIR\tracks"
   Delete "$INSTDIR\.eclipseproduct"
   Delete "$INSTDIR\JaCaVi.exe"
   Delete "$INSTDIR\jacavi.ico"
