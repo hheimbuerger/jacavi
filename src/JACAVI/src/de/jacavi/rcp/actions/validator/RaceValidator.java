@@ -31,7 +31,7 @@ public class RaceValidator {
         errorMessages = new ArrayList<String>();
     }
 
-    @ValidatationDesription("Validating number of players...")
+    @ValidationDescription("Validating number of players...")
     public boolean validateNumberOfPlayer(List<Player> players) {
         boolean valid = true;
 
@@ -40,7 +40,7 @@ public class RaceValidator {
                 .getActivePage().getActiveEditor();
 
         if(activeEditor == null) {
-            errorMessages.add("Invalid track! Please create a new or import an existing track.");
+            errorMessages.add("Invalid track! Please create a new or open an existing track.");
             return false;
         }
 
@@ -48,17 +48,18 @@ public class RaceValidator {
 
         if(players.size() == 0) {
             valid = false;
-            errorMessages.add("No Players available! Please check your player settings.");
+            errorMessages.add("No players available! Please check your player settings.");
         }
-        if(activeTrack.getStartingPoints().length < players.size()) {
+        if(players.size() > activeTrack.getStartingPoints().size()) {
             valid = false;
-            errorMessages.add("The active track is only for " + activeTrack.getStartingPoints().length + " players.");
+            errorMessages.add("The active track has starting points for only " + activeTrack.getStartingPoints().size()
+                    + " players. Remove some players or add additional starting points to the track.");
         }
 
         return valid;
     }
 
-    @ValidatationDesription("Validating players name...")
+    @ValidationDescription("Validating player names...")
     public boolean validatePlayerNames(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0) {
@@ -67,14 +68,14 @@ public class RaceValidator {
 
         for(int i = 0; i < players.size(); i++) {
             if(players.get(i).getName() == null || players.get(i).getName().trim().length() == 0) {
-                errorMessages.add("Player No. " + (i + 1) + " has an invalid name! Please check your player settings.");
+                errorMessages.add("Player no. " + (i + 1) + " has an invalid name! Please check your player settings.");
                 valid = false;
             }
         }
         return valid;
     }
 
-    @ValidatationDesription("Validating players controller...")
+    @ValidationDescription("Validating player controllers...")
     public boolean validatePlayerController(List<Player> players) {
         CarControllerManager deviceManager = (CarControllerManager) ContextLoader.getBean("carControllerManagerBean");
         boolean valid = true;
@@ -86,7 +87,7 @@ public class RaceValidator {
             CarController carController = players.get(i).getController();
             if(carController == null || carController.getId() == null
                     || !deviceManager.isIdValid(carController.getId())) {
-                errorMessages.add("Player No. " + (i + 1)
+                errorMessages.add("Player no. " + (i + 1)
                         + " has an invalid controller! Please check your player and input device settings.");
                 valid = false;
             }
@@ -108,7 +109,7 @@ public class RaceValidator {
                 }
             }
             if(cntEqual > 1) {
-                errorMessages.add("Player No. " + (i + 1) + " has not an unique car controller.");
+                errorMessages.add("Player no. " + (i + 1) + " does not have a unique car controller.");
                 valid = false;
             }
 
@@ -134,7 +135,7 @@ public class RaceValidator {
      * @param players
      * @return true if its valid otherwise false
      */
-    @ValidatationDesription("Validating players connector...")
+    @ValidationDescription("Validating player connectors...")
     public boolean validatePlayersConnectorAgainstTrack(List<Player> players) {
         boolean valid = true;
         if(players.size() == 0) {
@@ -165,13 +166,15 @@ public class RaceValidator {
             // check if the id of the connector is valid and if its not null
             if(systemConnector == null) {
                 valid = false;
-                errorMessages.add("Player No. " + (i + 1) + " has no connector selected.");
+                errorMessages.add("Player no. " + (i + 1) + " has no connector selected.");
                 continue;
             }
             if(!connectionManager.isIdValid(systemConnector.getId())) {
                 valid = false;
-                errorMessages.add("Player No. " + (i + 1)
-                        + " has an invalid connector. The UUID of the connector has expired.");
+                errorMessages
+                        .add("Player no. "
+                                + (i + 1)
+                                + " has an invalid connector. The previously selected connector was modified and no longer valid.");
                 continue;
             }
 
@@ -188,18 +191,18 @@ public class RaceValidator {
             if(currentTrackType.equals("digital")) {
                 if(interfaces.contains(BlueriderDriveConnector.class)) {
                     valid = false;
-                    errorMessages.add("Player No. " + (i + 1)
+                    errorMessages.add("Player no. " + (i + 1)
                             + " has an invalid connector. Can not combine BlueriderConnector with digital track.");
                 } else if(interfaces.contains(AnalogueDriveConnector.class)) {
                     valid = false;
-                    errorMessages.add("Player No. " + (i + 1)
+                    errorMessages.add("Player no. " + (i + 1)
                             + " has an invalid connector. Can not combine AnalogueConnector with digital track.");
                 }
 
             } else if(currentTrackType.equals("analogue")) {
                 if(interfaces.contains(Lib42DriveConnector.class)) {
                     valid = false;
-                    errorMessages.add("Player No. " + (i + 1)
+                    errorMessages.add("Player no. " + (i + 1)
                             + " has an invalid connector. Can not combine Lib42Connector with analogue track.");
                 }
             }
@@ -222,14 +225,14 @@ public class RaceValidator {
                 }
             }
             if(cntEqual > 1) {
-                errorMessages.add("Player No. " + (i + 1) + " has not an unique connector.");
+                errorMessages.add("Player no. " + (i + 1) + " does not have a unique connector.");
                 valid = false;
             }
         }
         return valid;
     }
 
-    @ValidatationDesription("Validating car's track...")
+    @ValidationDescription("Validating cars and track...")
     public boolean validateCarsTrack(List<Player> players) {
         boolean valid = true;
 
@@ -256,12 +259,12 @@ public class RaceValidator {
             if(currentTrackType.equals("analogue")) {
                 if(!tilesetIDs.contains("analogue")) {
                     valid = false;
-                    errorMessages.add("Player No. " + (i + 1) + " has an incompatible car for this track.");
+                    errorMessages.add("Player no. " + (i + 1) + " has an incompatible car for this track.");
                 }
             } else if(currentTrackType.equals("digital")) {
                 if(!tilesetIDs.contains("digital")) {
                     valid = false;
-                    errorMessages.add("Player No. " + (i + 1) + " has an incompatible car for this track.");
+                    errorMessages.add("Player no. " + (i + 1) + " has an incompatible car for this track.");
                 }
             }
         }
