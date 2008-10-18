@@ -22,7 +22,7 @@ import org.eclipse.swt.widgets.Shell;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.actions.validator.RaceValidator;
-import de.jacavi.rcp.actions.validator.ValidatationDesription;
+import de.jacavi.rcp.actions.validator.ValidationDescription;
 import de.jacavi.rcp.util.ExceptionHandler;
 
 
@@ -87,7 +87,7 @@ public class RaceValidationDialog extends TitleAreaDialog {
             }
 
             CLabel validationTask = new CLabel(group, SWT.NONE);
-            validationTask.setText(validationMethod.getAnnotation(ValidatationDesription.class).value());
+            validationTask.setText(validationMethod.getAnnotation(ValidationDescription.class).value());
 
             try {
                 Boolean valid = (Boolean) validationMethod.invoke(validator, players);
