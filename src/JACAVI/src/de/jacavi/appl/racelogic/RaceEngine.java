@@ -74,12 +74,12 @@ public class RaceEngine {
             // get the tda injector factory
             TDAInjectorFactory tdaInjector = (TDAInjectorFactory) ContextLoader.getBean("tdaInjectorFactory");
 
-            // TODO: assign all cars to their starting position
+            // assign all cars to their starting position
             int i = 0;
-            StartingPoint[] startingPoints = track.getStartingPoints();
+            List<StartingPoint> startingPoints = track.getStartingPoints();
             for(Player player: players) {
                 // reset players positions
-                player.getPosition().reset(startingPoints[i++]);
+                player.getPosition().reset(startingPoints.get(i++));
                 // inject each player with an specific tda and give activeTrack
                 tdaInjector.initializeTDA(player, track, raceTimerInterval);
                 // prepare devices
@@ -114,7 +114,6 @@ public class RaceEngine {
                 player.setRaceStatistic(new Statistics());
                 player.getPosition().lap = 0;
             }
-
         } else {
             logger.error("RaceEngine.stopRace() was invoked but timer was not running. Race was *not* stopped!");
         }
@@ -186,7 +185,7 @@ public class RaceEngine {
                         // reset the tda
                         tda.reset();
                         // reset the car to starting position
-                        player.getPosition().reset(track.getStartingPoints()[i]);
+                        player.getPosition().reset(track.getStartingPoints().get(i));
                     }
                 }
                 // repaint the RaceView
