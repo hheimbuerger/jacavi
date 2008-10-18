@@ -15,8 +15,8 @@
             </lane>
             <startingPoint lane="0" steps="800" />
             <startingPoint lane="1" steps="600" />
-            <startingPoint lane="0" steps="400" />
-            <startingPoint lane="1" steps="200" />
+            <!-- <startingPoint lane="0" steps="400" />
+            <startingPoint lane="1" steps="200" /> -->
         </tile>
         <tile id="straight" name="straight">
             <filename>straight.png</filename>
@@ -31,6 +31,22 @@
                 <line length="500" x1="-26" y1="5" x2="26" y2="5" />
                 <checkpoint id="cp2" steps="250" x="-26" y="8" />
             </lane>
+        </tile>
+        <tile id="straight_start_extension" name="straight (start extension)">
+            <filename>straight.png</filename>
+            <entryPoint x="-26" y="0" />
+            <exitPoint x="26" y="0" />
+            <entryToExitAngle>0</entryToExitAngle>
+            <lane>
+                <line length="500" x1="-26" y1="-5" x2="26" y2="-5" />
+                <checkpoint id="cp1" steps="250" x="-26" y="-8" />
+            </lane>
+            <lane>
+                <line length="500" x1="-26" y1="5" x2="26" y2="5" />
+                <checkpoint id="cp2" steps="250" x="-26" y="8" />
+            </lane>
+            <startingPoint lane="0" steps="400" />
+            <startingPoint lane="1" steps="200" />
         </tile>
         <tile id="crossover" name="crossover">
             <filename>crossover.png</filename>
