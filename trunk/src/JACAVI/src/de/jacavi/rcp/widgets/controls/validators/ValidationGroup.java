@@ -62,10 +62,9 @@ public class ValidationGroup extends Composite {
                         f.setAccessible(true);
                         vc = (ValidationControl) f.get(o);
                     } catch(IllegalArgumentException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                     } catch(IllegalAccessException e) {
-                        // TODO Auto-generated catch block
+                        de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                     }
                     if(!vc.isValid()) {
                         retVal = false;

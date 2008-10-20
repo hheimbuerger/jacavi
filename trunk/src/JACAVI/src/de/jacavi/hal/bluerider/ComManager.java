@@ -108,8 +108,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                 try {
                     Thread.sleep(70);
                 } catch(InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                 }
 
                 if(i % 2 == 0) // Licht einschalten
@@ -119,8 +118,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                     try {
                         cm.sendMessage(m, ComManager.MSG_0);
                     } catch(ComException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
+                        de.jacavi.rcp.util.ExceptionHandler.handleException(this, e1, false);
                     }
                 } else // Licht ausschalten
                 {
@@ -129,8 +127,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                     try {
                         cm.sendMessage(m, ComManager.MSG_0);
                     } catch(ComException e1) {
-                        // TODO Auto-generated catch block
-                        // e1.printStackTrace();
+                        de.jacavi.rcp.util.ExceptionHandler.handleException(this, e1, false);
                     }
                 }
             }
@@ -141,15 +138,13 @@ public class ComManager implements SerialPortEventListener, Runnable {
                 try {
                     cm.sendMessage(m, ComManager.MSG_0);
                 } catch(ComException e1) {
-                    // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    de.jacavi.rcp.util.ExceptionHandler.handleException(this, e1, false);
                 }
             } else {
                 try {
                     cm.sendMessage(msg, ComManager.MSG_0);
                 } catch(ComException e1) {
-                    // TODO Auto-generated catch block
-                    // e1.printStackTrace();
+                    de.jacavi.rcp.util.ExceptionHandler.handleException(this, e1, false);
                 }
             }
             isActive = false;
@@ -237,10 +232,9 @@ public class ComManager implements SerialPortEventListener, Runnable {
                     }
                 }
             } catch(IOException e) {
-                // e.printStackTrace();
+                de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
             } catch(InterruptedException e) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
+                de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
             }
         }
 
@@ -302,14 +296,12 @@ public class ComManager implements SerialPortEventListener, Runnable {
                             try {
                                 out.close();
                             } catch(IOException e) {
-                                // TODO Auto-generated catch block
-                                // e.printStackTrace();
+                                de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                             }
                             return;
                         }
                     } catch(InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        // e.printStackTrace();
+                        de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                     }
                 }
                 if(!myCMM.rx.isAlive()) // falls der Empfänger Thread tot ist begehe auch Selbstmord
@@ -317,8 +309,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                     try {
                         out.close();
                     } catch(IOException e) {
-                        // TODO Auto-generated catch block
-                        // e.printStackTrace();
+                        de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                     }
                     return;
                 }
@@ -329,8 +320,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                     myCMM.time = System.currentTimeMillis();
 
                 } catch(IOException e) {
-                    // TODO Auto-generated catch block
-                    // e.printStackTrace();
+                    de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
                 }
 
             }
@@ -681,8 +671,7 @@ public class ComManager implements SerialPortEventListener, Runnable {
                 }
 
             } catch(Exception e) {
-                // TODO Auto-generated catch block
-                // e.printStackTrace();
+                de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
             }
         }
 

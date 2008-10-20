@@ -103,7 +103,9 @@ abstract public class TrackDataApproximator {
                 }
 
                 if(currentSection.getLane(laneIndex).hasCheckpoints()) {
-                    // TODO: i sai that there is only one checkpoint do it for all
+                    // TODO: [ticket #171] Do the following for all checkpoints on same lane on same section.
+                    // This is only needed if there is a section with more than one checkpoints on the same lane
+
                     // start counting steps
                     if(currentSection.getLane(laneIndex).getCheckpoints().get(0).getId().equals(checkpoint.getId())) {
                         // start the step count here
@@ -131,9 +133,7 @@ abstract public class TrackDataApproximator {
     }
 
     /**
-     * Resets the TDA
-     * <p>
-     * Currently used if the a crashed car gets a reset ControllerSignal
+     * Resets the TDA <p> Currently used if the a crashed car gets a reset ControllerSignal
      */
     public void reset() {
         speed = 0;

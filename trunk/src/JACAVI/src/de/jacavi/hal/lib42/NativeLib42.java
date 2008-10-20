@@ -1,9 +1,7 @@
 package de.jacavi.hal.lib42;
 
 /**
- * @author fro
- *         <p>
- *         Gives the interface on the native Clib42 library and loads it. Singelton
+ * @author fro <p> Gives the interface on the native Clib42 library and loads it. Singelton
  */
 public class NativeLib42 {
 
@@ -58,8 +56,7 @@ public class NativeLib42 {
     public native int initLib42(int mode);
 
     /**
-     * Releases the native lib. ! Dont call this from outside ! TODO: Make this function protected or private. This will
-     * effect an new generation of jni header etc.
+     * Releases the native lib. ! Dont call this from outside !
      * 
      * @param mode
      * @return

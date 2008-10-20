@@ -19,8 +19,7 @@ public class StopRaceAction extends RaceControlAction {
         try {
             PlatformUI.getWorkbench().showPerspective(EditorPerspective.ID, window);
         } catch(WorkbenchException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            de.jacavi.rcp.util.ExceptionHandler.handleException(this, e, false);
         }
     }
 

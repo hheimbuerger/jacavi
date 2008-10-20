@@ -14,7 +14,7 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnect
     private static Log log = LogFactory.getLog(BlueriderDriveConnectorAdapter.class);
 
     public TestBlueriderDriveConnectorAdapter(String comPort) {
-    // TODO Auto-generated constructor stub
+
     }
 
     @Override

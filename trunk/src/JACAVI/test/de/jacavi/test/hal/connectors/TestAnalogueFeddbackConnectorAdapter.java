@@ -9,16 +9,12 @@ import de.jacavi.hal.SlotCarFeedbackConnector;
 
 public class TestAnalogueFeddbackConnectorAdapter implements SlotCarFeedbackConnector {
 
-    public TestAnalogueFeddbackConnectorAdapter(InetSocketAddress analogueDeviceAdress, int lane) {
-    // TODO Auto-generated constructor stub
-    }
+    public TestAnalogueFeddbackConnectorAdapter(InetSocketAddress analogueDeviceAdress, int lane) {}
 
     @Override
     public FeedbackSignal pollFeedback() {
-        // TODO Auto-generated method stub
+
         return null;
     }
-    /**
-     * @author Florian Roth
-     */
+
 }

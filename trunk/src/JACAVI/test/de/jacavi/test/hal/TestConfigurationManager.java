@@ -65,8 +65,7 @@ public class TestConfigurationManager {
             connectorManager.getConnector(id);
             Assert.fail("UUID: " + id + " was removed and should not be there");
         } catch(Exception e) {
-
-            // TODO: handle exception
+            // handle exception
         }
     }
 

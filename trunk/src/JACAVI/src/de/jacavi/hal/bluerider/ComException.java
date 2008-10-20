@@ -16,7 +16,7 @@ public class ComException extends Exception {
 
     public ComException(int reason) {
         this.reason = reason;
-        // TODO Auto-generated constructor stub
+
     }
 
     public int getReason() {
