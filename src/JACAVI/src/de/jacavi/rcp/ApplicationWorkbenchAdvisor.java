@@ -34,6 +34,7 @@ import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.editors.TrackDesignerInput;
 import de.jacavi.rcp.perspectives.EditorPerspective;
+import de.jacavi.rcp.util.ExceptionHandler;
 import de.jacavi.rcp.util.JacaviErrorHandler;
 
 
@@ -80,13 +81,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
             active.setFocus();
 
         } catch(PartInitException e) {
-            // TODO: handle exception
+            ExceptionHandler.handleException(this, e, true);
         } catch(FileNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            ExceptionHandler.handleException(this, e1, true);
         } catch(TrackLoadingException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            ExceptionHandler.handleException(this, e1, true);
         }
 
         // add a player to simplify testing

@@ -4,6 +4,9 @@ import java.net.InetSocketAddress;
 
 
 
+/**
+ * TODO: [ticket #10] Implement this
+ */
 public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
 
     @Override

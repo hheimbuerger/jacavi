@@ -382,7 +382,7 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
                     .getSelectionIndex() + 1, new InetSocketAddress(textHostAnalogue.getText(), Integer
                     .valueOf(textPortAnalogue.getText())));
 
-            // TODO: connect analogue devices
+            // TODO: [ticket #10] connect to analogue embedded devices here
 
             connectorManager.addConnector(analogueConnector);
             // connectorManager.testSystemConnector(analogueConnector);

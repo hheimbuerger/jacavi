@@ -5,21 +5,13 @@ import de.jacavi.rcp.util.Check;
 
 
 /**
- * @author Florian Roth
- *         <p>
- *         loads the lib42 sensordetection lib and maps its functionality
+ * @author Florian Roth <p> loads the lib42 sensordetection lib and maps its functionality
  */
 public class NativeCsdLib {
 
     private static Lib42FeedbackManager feedbackManager = null;
 
     private static NativeCsdLib instance = null;
-
-    /*
-    static {
-        System.loadLibrary("CsdLib");
-    }
-    */
 
     /**
      * @param feedbackManager
@@ -48,8 +40,6 @@ public class NativeCsdLib {
 
     /**
      * Initialize the native sensor detection library
-     * <p>
-     * TODO: Make private or protected (effects new creation of jni interface etc.)
      * 
      * @return
      */
@@ -57,15 +47,11 @@ public class NativeCsdLib {
 
     /**
      * Release the native sensor detection library
-     * <p>
-     * TODO: Make this private or protected
      */
     public native void releaseSensorDetection();
 
     /**
      * This function is called by the csdlib (Sensordetection Library) when a sensor is detected
-     * <p>
-     * TODO: make this protected
      * 
      * @param carID
      * @param sensorID
