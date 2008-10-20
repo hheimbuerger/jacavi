@@ -1,5 +1,7 @@
 package de.jacavi.appl.controller.agent.impl;
 
+import java.util.List;
+
 import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.server.PropertyHandlerMapping;
@@ -10,6 +12,8 @@ import org.apache.xmlrpc.webserver.WebServer;
 
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.agent.ExternalController;
+import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.util.ExceptionHandler;
 
 
@@ -76,7 +80,7 @@ public class XmlRpcController extends ExternalController {
     }
 
     @Override
-    public void activate() {
+    public void activate(Track track, List<Player> players) {
         assert webServer == null: "activate() was invoked, but there's still a reference to an existing webServer!";
 
         controllerSignal = new ControllerSignal();
@@ -141,6 +145,7 @@ public class XmlRpcController extends ExternalController {
         if(webServer != null)
             webServer.shutdown();
         webServer = null;
+        controllerSignal = null;
     }
 
     @Override
@@ -150,6 +155,11 @@ public class XmlRpcController extends ExternalController {
 
     @Override
     public ControllerSignal poll() {
+        return controllerSignal;
+    }
+
+    @Override
+    public ControllerSignal getLastSignal() {
         return controllerSignal;
     }
 

@@ -36,13 +36,11 @@ public class RaceEngine {
 
     private int raceTimerInterval = 0;
 
-    boolean isTimerRunning = false;
+    private boolean isTimerRunning = false;
 
     private Track track;
 
     private List<Player> players;
-
-    private RaceEngine() {}
 
     public void setPlayers(List<Player> players) {
         this.players = players;
@@ -83,7 +81,7 @@ public class RaceEngine {
                 // inject each player with an specific tda and give activeTrack
                 tdaInjector.initializeTDA(player, track, raceTimerInterval);
                 // prepare devices
-                player.getController().activate();
+                player.getController().activate(track, players);
             }
 
             // set running flag

@@ -1,5 +1,7 @@
 package de.jacavi.appl.controller.device.impl;
 
+import java.util.List;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -7,6 +9,8 @@ import org.eclipse.swt.widgets.Listener;
 
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
+import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Track;
 
 
 
@@ -32,7 +36,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public void activate() {
+    public void activate(Track track, List<Player> players) {
         currentControllerSignal = new ControllerSignal();
         Display.getCurrent().addFilter(SWT.KeyDown, this);
         Display.getCurrent().addFilter(SWT.KeyUp, this);

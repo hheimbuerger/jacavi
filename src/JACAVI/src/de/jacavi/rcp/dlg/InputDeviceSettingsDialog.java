@@ -544,7 +544,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                     .getInputDevicesByType(KeyboardDevice.class);
             if(selectionIndex >= 0 && selectionIndex <= keyboardDevices.size()) {
                 currentKeyboardLayout = (KeyboardDevice) keyboardDevices.get(selectionIndex);
-                currentKeyboardLayout.activate();
+                currentKeyboardLayout.activate(null, null);
                 previewUpdater = new Timer("previewUpdater");
                 previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, currentKeyboardLayout.getId(),
                         keyboardThrustGauge), 50, 50);
@@ -569,7 +569,7 @@ public class InputDeviceSettingsDialog extends AbstractSettingsDialog {
                     .getInputDevicesByType(MouseKeyboardDeviceAdapter.class);
             if(mouseDevices.size() > 0) {
                 currentMouse = (MouseKeyboardDeviceAdapter) mouseDevices.get(0);
-                currentMouse.activate();
+                currentMouse.activate(null, null);
                 previewUpdater = new Timer("previewUpdater");
                 previewUpdater.schedule(new DevicePreviewUpdater(carControllerManager, currentMouse.getId(),
                         mouseThrustGauge), 50, 50);
