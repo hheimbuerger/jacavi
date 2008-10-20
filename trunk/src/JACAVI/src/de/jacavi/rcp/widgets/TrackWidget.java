@@ -1046,7 +1046,7 @@ public class TrackWidget extends J2DCanvas implements IPaintable, TrackModificat
             boolean isOnTrack = p.getPosition().isOnTrack;
             CarController dc = p.getController();
             String name = p.getName();
-            ControllerSignal signal = dc.poll();
+            ControllerSignal signal = dc.getLastSignal();
             if(signal != null) {
                 int thrust = isOnTrack ? signal.getThrust() : 100;
                 boolean isTriggered = isOnTrack ? signal.isTrigger() : false;

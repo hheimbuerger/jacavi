@@ -1,5 +1,7 @@
 package de.jacavi.appl.controller.device.impl;
 
+import java.util.List;
+
 import org.apache.log4j.Logger;
 
 import wiiusej.Wiimote;
@@ -18,6 +20,8 @@ import wiiusej.wiiusejevents.wiiuseapievents.NunchukRemovedEvent;
 import wiiusej.wiiusejevents.wiiuseapievents.StatusEvent;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
+import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.util.Check;
 
 
@@ -41,7 +45,7 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
     }
 
     @Override
-    public void activate() {
+    public void activate(Track track, List<Player> players) {
         currentControllerSignal = new ControllerSignal();
     }
 

@@ -1,7 +1,11 @@
 package de.jacavi.appl.controller.device.impl;
 
+import java.util.List;
+
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.controller.device.DeviceController;
+import de.jacavi.appl.racelogic.Player;
+import de.jacavi.appl.track.Track;
 
 
 
@@ -17,9 +21,9 @@ public class MouseKeyboardDeviceAdapter extends DeviceController {
     }
 
     @Override
-    public void activate() {
-        mouseDevice.activate();
-        keyboardDevice.activate();
+    public void activate(Track track, List<Player> players) {
+        mouseDevice.activate(track, players);
+        keyboardDevice.activate(track, players);
     }
 
     @Override
