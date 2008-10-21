@@ -5,7 +5,7 @@
          id="application"
          point="org.eclipse.core.runtime.applications">
       <application
-            icon="images/icon/jacavi_logo_16x16.png"
+            icon="images/icon/jacavi_icon_16x16.png"
             visible="true">
          <run
                class="de.jacavi.rcp.Application">
@@ -229,7 +229,7 @@
          </property>
          <property
                name="windowImages"
-               value="images/icon/jacavi_logo_16x16.png">
+               value="images/icon/jacavi_icon_16x16.png,images/icon/jacavi_icon_32x32.png,images/icon/jacavi_icon_48x48.png,images/icon/jacavi_icon_64x64.png,images/icon/jacavi_icon_128x128.png">
          </property>
          <property
                name="preferenceCustomization"
@@ -253,7 +253,7 @@
          </property>
          <property
                name="aboutText"
-               value="JaCaVi&#x0A;&#x0A;Version: 1.0.0&#x0A;&#x0A;(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.&#x0A;Visit http://www.jacavi.de&#x0A;&#x0A;This product includes software developed by the&#x0A;Apache Software Foundation http://www.apache.org/&#x0A;&#x0A;Developers: &#x0A;Stefanos Papadopoulos (elgreco_04@hotmail.com)&#x0A;Henrik Heimbuerger (henrik@heimbuerger.de)&#x0A;Fabian Rohn (fabrohn@htwg-konstanz.de)&#x0A;Florian Roth (froth@htwg-konstnz.de)&#x0A;&#x0A;Expression of thanks to: Lib42 Team, BlueRider Team, ...">
+               value="JaCaVi v1.0.0&#x0A;&#x0A;(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.&#x0A;Visit http://www.jacavi.de&#x0A;&#x0A;This product includes software developed by the&#x0A;Apache Software Foundation http://www.apache.org/&#x0A;&#x0A;Developers: &#x0A;Stefanos Papadopoulos (elgreco_04@hotmail.com)&#x0A;Henrik Heimbuerger (henrik@heimbuerger.de)&#x0A;Fabian Rohn (fabrohn@htwg-konstanz.de)&#x0A;Florian Roth (froth@htwg-konstnz.de)&#x0A;&#x0A;Expression of thanks to: Lib42 Team, BlueRider Team, ...">
          </property>
       </product>
    </extension>
