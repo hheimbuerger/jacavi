@@ -37,8 +37,8 @@
             allowMultiple="false"
             class="de.jacavi.rcp.views.RaceView"
             icon="images/misc/placeholder_16x16.png"
-            id="JACAVI.trackView"
-            name="Track View">
+            id="JACAVI.raceView"
+            name="Race View">
       </view>
       <view
             class="de.jacavi.rcp.views.TileExplorer"
