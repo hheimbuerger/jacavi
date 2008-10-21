@@ -73,25 +73,22 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
 
         tableViewer = new TableViewer(parent, SWT.SINGLE | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL
                 | SWT.FULL_SELECTION | SWT.HIDE_SELECTION);
-        // // Set up the table
+        // Set up the table
         final Table playerTable = tableViewer.getTable();
         playerTable.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         playerTable.setHeaderVisible(true);
         playerTable.setLinesVisible(true);
-        tableViewer.setColumnProperties(PlayerLabelProvider.COLUMNNNAMES);
         tableViewer.setLabelProvider(new PlayerLabelProvider());
         tableViewer.setContentProvider(new PlayerContentProvider());
         tableViewer.setInput(model);
 
-        String[] colNames = PlayerLabelProvider.COLUMNNNAMES;
         TableColumn tc = null;
-        for(String colName: colNames) {
+        for(int i = 0; i < PlayerLabelProvider.COLUMN_NAMES.length; i++) {
             tc = new TableColumn(playerTable, SWT.LEFT);
-            tc.setText(colName);
-            tc.setWidth(100);
+            tc.setText(PlayerLabelProvider.COLUMN_NAMES[i]);
+            tc.setWidth(PlayerLabelProvider.COLUMN_WIDTHS[i]);
         }
-        playerTable.getColumns()[2].setWidth(180);
 
         playerTable.addSelectionListener(new SelectionAdapter() {});
         playerTable.addMouseListener(new MouseAdapter() {
@@ -205,7 +202,7 @@ public class PlayerOverviewDialog extends TitleAreaDialog {
 
     @Override
     protected Point getInitialSize() {
-        return new Point(500, 400);
+        return new Point(600, 400);
     }
 
     public ArrayList<Player> getPlayer() {
