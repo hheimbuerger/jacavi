@@ -6,9 +6,7 @@
    <aboutInfo>
       <image path="/JACAVI/images/logo/about_banner_250x123.png"/>
       <text>
-         JaCaVi
-
-Version: 1.0.0
+         JaCaVi v1.0.0
 
 (c) Copyright JaCaVi contributors and others 2008.  All rights reserved.
 Visit http://www.jacavi.de
@@ -34,7 +32,7 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/JACAVI/images/icon/jacavi_logo_16x16.png"/>
+   <windowImages i16="/JACAVI/images/icon/jacavi_icon_16x16.png" i32="/JACAVI/images/icon/jacavi_icon_32x32.png" i48="/JACAVI/images/icon/jacavi_icon_48x48.png" i64="/JACAVI/images/icon/jacavi_icon_64x64.png" i128="/JACAVI/images/icon/jacavi_icon_128x128.png"/>
 
    <splash
       location="JaCaVi"
@@ -42,8 +40,11 @@ Expression of thanks to: Lib42 Team, BlueRider Team, ...
       startupMessageRect="7,252,445,20"
       startupForegroundColor="000000" />
    <launcher name="JaCaVi">
+      <linux icon="/JACAVI/images/icon/jacavi_icon_linux.xpm"/>
+      <macosx icon="/JACAVI/images/icon/jacavi_icon_macos.icns"/>
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="/JACAVI/images/icon/jacavi_icon_windows.ico"/>
          <bmp/>
       </win>
    </launcher>
