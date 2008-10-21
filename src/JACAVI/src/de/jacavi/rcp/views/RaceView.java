@@ -25,7 +25,7 @@ public class RaceView extends ViewPart implements IPerspectiveListener {
 
     private static Log log = LogFactory.getLog(RaceView.class);
 
-    public static final String ID = "JACAVI.trackView";
+    public static final String ID = "JACAVI.raceView";
 
     private final Track currentTrack;
 
