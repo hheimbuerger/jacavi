@@ -17,7 +17,9 @@ import de.jacavi.rcp.Activator;
 
 public class PlayerLabelProvider implements ITableLabelProvider {
 
-    public static String[] COLUMNNNAMES = { "Player Name", "Controller", "Connector", "Car" };
+    public static final String[] COLUMN_NAMES = { "Player Name", "Controller", "Connector", "Car" };
+
+    public static final int[] COLUMN_WIDTHS = { 120, 160, 120, 180 };
 
     private final Map<String, Image> usedImages = new HashMap<String, Image>();
 
