@@ -7,6 +7,9 @@ import de.jacavi.hal.SlotCarFeedbackConnector;
 
 
 
+/**
+ * TODO: [ticket #10] implement me.
+ */
 public class AnalogueFeedbackConnectorAdapter implements SlotCarFeedbackConnector {
 
     public AnalogueFeedbackConnectorAdapter(InetSocketAddress adress) {
@@ -15,7 +18,6 @@ public class AnalogueFeedbackConnectorAdapter implements SlotCarFeedbackConnecto
 
     @Override
     public FeedbackSignal pollFeedback() {
-        // TODO Auto-generated method stub
         return new FeedbackSignal(null, "not implemented");
     }
 

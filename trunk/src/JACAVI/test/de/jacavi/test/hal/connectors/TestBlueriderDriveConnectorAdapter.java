@@ -19,19 +19,16 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnect
 
     @Override
     public void fullBreak() {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public int getThrust() {
-        // TODO Auto-generated method stub
         return 0;
     }
 
     @Override
     public boolean getSwitch() {
-        // TODO Auto-generated method stub
         return false;
     }
 
@@ -44,43 +41,36 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnect
 
     @Override
     public boolean toggleSwitch() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean connectBlueRider() {
-        // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isConnected() {
-        // TODO Auto-generated method stub
         return true;
     }
 
     @Override
     public boolean isBackLightOn() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public boolean isFrontLightOn() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     @Override
     public void switchBackLight() {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void switchFrontLight() {
-    // TODO Auto-generated method stub
 
     }
 }

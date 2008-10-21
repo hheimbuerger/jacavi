@@ -157,25 +157,24 @@ public class Lib42DriveConnectorAdapter implements Lib42DriveConnector {
 
     @Override
     public void switchBackLight() {
-    // TODO Auto-generated method stub
+    // currently not available for lib42
 
     }
 
     @Override
     public void switchFrontLight() {
-    // TODO Auto-generated method stub
-
+    // currently not available for lib42
     }
 
     @Override
     public boolean isBackLightOn() {
-        // TODO Auto-generated method stub
+        // currently not available for lib42 return false;
         return false;
     }
 
     @Override
     public boolean isFrontLightOn() {
-        // TODO Auto-generated method stub
+        // currently not available for lib42
         return false;
     }
 

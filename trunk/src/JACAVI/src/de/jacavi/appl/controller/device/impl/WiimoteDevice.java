@@ -104,62 +104,52 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     @Override
     public void onClassicControllerInsertedEvent(ClassicControllerInsertedEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onClassicControllerRemovedEvent(ClassicControllerRemovedEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onDisconnectionEvent(DisconnectionEvent arg0) {
-        // TODO Auto-generated method stub
+        // TODO [ticket #74] handle wiiremote disconnection
         log.warn("Wiiremote " + arg0.getWiimoteId() + " is disconnected and no longer available.");
     }
 
     @Override
     public void onExpansionEvent(ExpansionEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onGuitarHeroInsertedEvent(GuitarHeroInsertedEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onGuitarHeroRemovedEvent(GuitarHeroRemovedEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onIrEvent(IREvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onNunchukInsertedEvent(NunchukInsertedEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onNunchukRemovedEvent(NunchukRemovedEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onStatusEvent(StatusEvent arg0) {
-    // TODO Auto-generated method stub
 
     }
-
 }
