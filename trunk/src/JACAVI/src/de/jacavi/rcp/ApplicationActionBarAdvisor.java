@@ -55,12 +55,15 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
         register(saveTrackAction);
 
         preferencesAction = ActionFactory.PREFERENCES.create(window);
+        preferencesAction.setImageDescriptor(Activator.getImageDescriptor("/images/actions/preferences_16x16.png"));
         register(preferencesAction);
 
         aboutAction = ActionFactory.ABOUT.create(window);
+        aboutAction.setImageDescriptor(Activator.getImageDescriptor("/images/icon/jacavi_icon_16x16.png"));
         register(aboutAction);
 
         exitAction = ActionFactory.QUIT.create(window);
+        exitAction.setImageDescriptor(Activator.getImageDescriptor("/images/actions/exit_16x16.png"));
         register(exitAction);
     }
 
