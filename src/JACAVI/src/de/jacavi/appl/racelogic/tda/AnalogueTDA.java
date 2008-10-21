@@ -17,10 +17,12 @@ public class AnalogueTDA extends TrackDataApproximator {
         this.raceTimerInterval = racetimerInterval;
     }
 
+    /**
+     * TODO [ticket #174] implement me if there is analogue hal support available
+     */
     @Override
     public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
             FeedbackSignal feedbackSignal) {
-    // TODO Auto-generated method stub
 
     }
 }

@@ -9,11 +9,9 @@ import de.jacavi.rcp.util.Check;
 
 
 /**
- * @author flo
- *         <p>
- *         The BlueriderFeedbackConnectorAdapter includes an AnalogueFeedbackConnector to get sensor information of the
- *         analogue course. Gforce information from bluerider is given by subscribing it as ComListener on the gForce
- *         ports.
+ * @author flo <p> The BlueriderFeedbackConnectorAdapter includes an AnalogueFeedbackConnector to get sensor information
+ *         of the analogue course. Gforce information from bluerider is given by subscribing it as ComListener on the
+ *         gForce ports.
  */
 public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnector, ComListener {
 
@@ -57,7 +55,6 @@ public class BlueriderFeedbackConnectorAdapter implements SlotCarFeedbackConnect
 
     @Override
     public void msgReceived(Message m, int index) {
-    // TODO Auto-generated method stub
 
     }
 }
