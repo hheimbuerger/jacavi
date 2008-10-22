@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg;
+package de.jacavi.rcp.dialogs;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;

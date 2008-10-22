@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg;
+package de.jacavi.rcp.dialogs;
 
 import java.util.ArrayList;
 
@@ -25,8 +25,8 @@ import org.eclipse.swt.widgets.TableColumn;
 
 import de.jacavi.appl.ContextLoader;
 import de.jacavi.appl.racelogic.Player;
-import de.jacavi.rcp.dlg.provider.PlayerContentProvider;
-import de.jacavi.rcp.dlg.provider.PlayerLabelProvider;
+import de.jacavi.rcp.dialogs.provider.PlayerContentProvider;
+import de.jacavi.rcp.dialogs.provider.PlayerLabelProvider;
 
 
 

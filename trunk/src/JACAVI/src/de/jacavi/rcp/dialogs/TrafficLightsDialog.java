@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg;
+package de.jacavi.rcp.dialogs;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
