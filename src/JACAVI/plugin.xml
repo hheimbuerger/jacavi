@@ -41,17 +41,17 @@
             name="Race View">
       </view>
       <view
-            class="de.jacavi.rcp.views.TileExplorer"
+            class="de.jacavi.rcp.views.TileExplorerView"
             icon="images/views/explorer_16x16.png"
             id="JACAVI.tileExplorerView"
-            name="Tile Explorer"
+            name="Tile Explorer View"
             restorable="true">
       </view>
       <view
-            class="de.jacavi.rcp.views.TrackOutline"
+            class="de.jacavi.rcp.views.TrackOutlineView"
             icon="images/views/outline_16x16.png"
-            id="JACAVI.trackOutline"
-            name="Track Outline"
+            id="JACAVI.trackOutlineView"
+            name="Track Outline View"
             restorable="true">
       </view>
    </extension>
