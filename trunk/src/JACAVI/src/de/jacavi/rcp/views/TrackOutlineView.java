@@ -34,11 +34,11 @@ import de.jacavi.rcp.editors.TrackDesigner;
 
 
 
-public class TrackOutline extends ViewPart implements IPartListener2, IPropertyListener {
+public class TrackOutlineView extends ViewPart implements IPartListener2, IPropertyListener {
 
-    private static Log log = LogFactory.getLog(TrackOutline.class);
+    private static Log log = LogFactory.getLog(TrackOutlineView.class);
 
-    public static final String ID = "JACAVI.trackOutline";
+    public static final String ID = "JACAVI.trackOutlineView";
 
     private TrackDesigner activeEditor;
 
@@ -48,7 +48,7 @@ public class TrackOutline extends ViewPart implements IPartListener2, IPropertyL
 
     private final ImageRegistry imageRegistry;
 
-    public TrackOutline() {
+    public TrackOutlineView() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         window.getPartService().addPartListener(this);
         imageRegistry = new ImageRegistry();

@@ -31,9 +31,9 @@ import de.jacavi.rcp.util.ExceptionHandler;
 
 
 
-public class TileExplorer extends ViewPart implements IPartListener2 {
+public class TileExplorerView extends ViewPart implements IPartListener2 {
 
-    private static Log log = LogFactory.getLog(TileExplorer.class);
+    private static Log log = LogFactory.getLog(TileExplorerView.class);
 
     public static final String ID = "JACAVI.tileExplorerView";
 
@@ -47,7 +47,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
 
     private TrackDesigner activeEditor;
 
-    public TileExplorer() {
+    public TileExplorerView() {
         IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
         window.getPartService().addPartListener(this);
         // this.addListenerObject(this);
@@ -107,7 +107,7 @@ public class TileExplorer extends ViewPart implements IPartListener2 {
             }
             innerComposite.pack();
             scrolledComposite.setContent(innerComposite);
-            log.debug("TileExplorer refreshed!");
+            log.debug("TileExplorerView refreshed!");
         }
     }
 
