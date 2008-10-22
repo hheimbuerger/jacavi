@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg;
+package de.jacavi.rcp.dialogs;
 
 import java.util.Timer;
 import java.util.TimerTask;

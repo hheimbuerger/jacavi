@@ -28,7 +28,7 @@ import de.jacavi.appl.Messages;
 import de.jacavi.appl.racelogic.LapCompletionListener;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.appl.racelogic.RaceStatisticsManager;
-import de.jacavi.rcp.dlg.provider.PlayerContentProvider;
+import de.jacavi.rcp.dialogs.provider.PlayerContentProvider;
 
 
 

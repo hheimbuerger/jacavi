@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg.provider;
+package de.jacavi.rcp.dialogs.provider;
 
 import java.util.ArrayList;
 

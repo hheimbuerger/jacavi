@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg;
+package de.jacavi.rcp.dialogs;
 
 import java.io.BufferedReader;
 import java.io.File;

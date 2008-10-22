@@ -9,7 +9,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import de.jacavi.rcp.dlg.Validate;
+import de.jacavi.rcp.dialogs.Validate;
 
 
 

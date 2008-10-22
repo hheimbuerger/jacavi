@@ -6,7 +6,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import de.jacavi.rcp.dlg.AgentSettingsDialog;
+import de.jacavi.rcp.dialogs.AgentSettingsDialog;
 
 
 

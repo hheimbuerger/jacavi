@@ -6,7 +6,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-import de.jacavi.rcp.dlg.InputDeviceSettingsDialog;
+import de.jacavi.rcp.dialogs.InputDeviceSettingsDialog;
 
 
 

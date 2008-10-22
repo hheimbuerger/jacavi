@@ -23,7 +23,7 @@ import org.eclipse.ui.part.EditorPart;
 import de.jacavi.appl.track.Tile;
 import de.jacavi.appl.track.Track;
 import de.jacavi.appl.track.Track.InitialTileMayNotBeRemoved;
-import de.jacavi.rcp.dlg.SafeSaveDialog;
+import de.jacavi.rcp.dialogs.SafeSaveDialog;
 import de.jacavi.rcp.util.ExceptionHandler;
 import de.jacavi.rcp.widgets.TrackWidget;
 import de.jacavi.rcp.widgets.TrackWidget.TrackWidgetMode;

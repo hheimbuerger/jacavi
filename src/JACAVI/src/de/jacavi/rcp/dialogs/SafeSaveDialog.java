@@ -1,4 +1,4 @@
-package de.jacavi.rcp.dlg;
+package de.jacavi.rcp.dialogs;
 
 //Send questions, comments, bug reports, etc. to the authors:
 

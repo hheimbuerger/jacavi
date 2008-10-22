@@ -8,7 +8,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import de.jacavi.appl.track.Track;
-import de.jacavi.rcp.dlg.RaceValidationDialog;
+import de.jacavi.rcp.dialogs.RaceValidationDialog;
 import de.jacavi.rcp.editors.TrackDesigner;
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.ExceptionHandler;
