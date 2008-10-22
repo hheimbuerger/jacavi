@@ -6,6 +6,7 @@ import java.util.List;
 import wiiusej.WiiUseApiManager;
 import wiiusej.Wiimote;
 import de.jacavi.rcp.util.Check;
+import de.jacavi.rcp.util.OSResolverUtil;
 
 
 
@@ -25,7 +26,10 @@ public class WiimoteDeviceManager {
      */
     public int scanForWiimotes() {
         // first shutdown to remove all existing
-        WiiUseApiManager.shutdown();
+        // FIXME: [ticket #59] WiiUseJ problem under Linux
+        if(OSResolverUtil.isWindowsOs())
+            WiiUseApiManager.shutdown();
+
         // get all wiimotes max 6
         Wiimote[] wiiremotes = WiiUseApiManager.getWiimotes(6, true, WiiUseApiManager.WIIUSE_STACK_UNKNOWN);
         // convert the array in the list
