@@ -24,9 +24,9 @@ import de.jacavi.hal.ConnectorFactory;
 import de.jacavi.hal.SlotCarSystemConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.rcp.Activator;
-import de.jacavi.rcp.widgets.controls.validators.IPV4ValidatedText;
-import de.jacavi.rcp.widgets.controls.validators.RangeValidatedText;
-import de.jacavi.rcp.widgets.controls.validators.ValidationGroup;
+import de.jacavi.rcp.util.validators.IPV4ValidatedText;
+import de.jacavi.rcp.util.validators.RangeValidatedText;
+import de.jacavi.rcp.util.validators.ValidationGroup;
 
 
 

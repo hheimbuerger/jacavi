@@ -1,6 +1,4 @@
-package de.jacavi.rcp.widgets.controls.validators;
-
-import java.util.StringTokenizer;
+package de.jacavi.rcp.util.validators;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
@@ -13,27 +11,32 @@ import org.eclipse.swt.widgets.Text;
 
 
 
-public class IPV4ValidatedText extends Composite implements ValidationControl {
+public class RangeValidatedText extends Composite implements ValidationControl {
     private Text innerText = null;
 
     private boolean isValid = false;
 
+    private int from;
+
+    private int to;
+
     // #fb6c69
     private Color bgColor = null;
 
-    public IPV4ValidatedText(Composite parent, int style) {
+    public RangeValidatedText(Composite parent, int style, int from, int to) {
+
         super(parent, SWT.NONE);
         setLayout(new FillLayout());
         innerText = new Text(this, style);
         bgColor = new Color(null, new RGB(251, 108, 105));
+        this.from = from;
+        this.to = to;
 
         innerText.addModifyListener(new ModifyListener() {
-
             @Override
             public void modifyText(ModifyEvent e) {
-                IPV4ValidatedText.this.validateText(e);
+                RangeValidatedText.this.validateText(e);
             }
-
         });
     }
 
@@ -46,31 +49,18 @@ public class IPV4ValidatedText extends Composite implements ValidationControl {
         isValid = false;
         Text t = (Text) event.widget;
         String input = t.getText();
-        StringTokenizer tokenizer = new StringTokenizer(input, ".");
 
-        if(tokenizer.countTokens() == 4) {
-            while(tokenizer.hasMoreTokens()) {
-                String curToken = tokenizer.nextToken();
-                if(curToken.length() > 0) {
-                    try {
-                        int token = Integer.valueOf(curToken);
-                        if(token >= 0 && token <= 255)
-                            isValid = true;
-                        else
-                            isValid = false;
-                    } catch(NumberFormatException e) {
-                        isValid = false;
-                        break;
-                    }
-                }
-            }
+        try {
+            int in = Integer.valueOf(input);
+            if(in >= from && in <= to)
+                isValid = true;
+        } catch(NumberFormatException e) {
+
         }
-
         if(isValid)
             t.setBackground(new Color(null, new RGB(255, 255, 255)));
         else
             t.setBackground(bgColor);
-
     }
 
     public void setText(String string) {

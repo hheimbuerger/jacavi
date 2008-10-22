@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Seidel      - enhancements for image-handling
  *******************************************************************************/
-package de.jacavi.rcp.widgets.controls;
+package de.jacavi.rcp.util;
 
 import java.util.Arrays;
 

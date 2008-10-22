@@ -32,7 +32,7 @@ import de.jacavi.appl.controller.device.DeviceController;
 import de.jacavi.appl.racelogic.Player;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.SlotCarSystemConnector;
-import de.jacavi.rcp.widgets.controls.ImageCombo;
+import de.jacavi.rcp.util.ImageCombo;
 
 
 
