@@ -4,6 +4,18 @@ import sys
 import shutil
 
 
+if len(sys.argv) < 3:
+    print "Syntax: python deploy.py <version string> <build number>"
+    print "Example: python deploy.py 1.0.0 666"
+    sys.exit(1)
+
+version = sys.argv[1]
+buildNumber = sys.argv[2]
+
+print "Deploying with version number '%s' and build number '%s'." % (version, buildNumber)
+print
+
+
 def backtickThis(command):
     output = os.popen(command).readlines()
     #print "".join(output)
@@ -16,37 +28,46 @@ def rmtreeSilently(path):
     if(os.path.exists(path)):
         shutil.rmtree(path)
 
+def tarGzipIt(path, temp, deploy):
+    shutil.copyfile("7z.exe", path + "7z.exe")
+    shutil.copyfile("7z.dll", path + "7z.dll")
+    workingDir = os.getcwd()
+    os.chdir(path)
+    backtickThis("7z a -x!7z.* -ttar %s *" % temp)
+    backtickThis("7z a -x!7z.* -tgzip ../../../deploy/%s %s" % (deploy, temp))
+    os.chdir(workingDir)
+    os.unlink(path + "7z.exe")
+    os.unlink(path + "7z.dll")
 
-buildNumber = sys.argv[1]
-linuxTemp = "JaCaVi_linux-gtk-x86_v1.0_r%s.tar" % buildNumber
-linuxDeploy = "JaCaVi_linux-gtk-x86_v1.0_r%s.tgz" % buildNumber
-windowsDeploy = "JaCaVi_win32-win32-x86_v1.0_r%s.exe" % buildNumber
 
-print "Removing old files"
+linuxTemp = "JaCaVi_linux-gtk-x86_v%s_r%s.tar" % (version, buildNumber)
+linuxDeploy = "JaCaVi_linux-gtk-x86_v%s_r%s.tgz" % (version, buildNumber)
+windowsDeploy = "JaCaVi_win32-win32-x86_v%s_r%s.exe" % (version, buildNumber)
+macosTemp = "JaCaVi_macosx-carbon-x86_v%s_r%s.tar" % (version, buildNumber)
+macosDeploy = "JaCaVi_macosx-carbon-x86_v%s_r%s.tgz" % (version, buildNumber)
+
+print "Step 1: Removing old files"
 deleteSilently("bin/linux.gtk.x86/jacavi/" + linuxTemp)
 deleteSilently("deploy/" + linuxDeploy)
 deleteSilently("deploy/" + windowsDeploy)
+deleteSilently("bin/macosx.carbon.x86/jacavi/" + macosTemp)
+deleteSilently("deploy/" + macosDeploy)
 
-print "Collecting data files"
-for platformDir in ["bin/linux.gtk.x86/jacavi/", "bin/win32.win32.x86/jacavi/"]:
+print "Step 2: Collecting data files"
+for platformDir in ["bin/linux.gtk.x86/jacavi/", "bin/win32.win32.x86/jacavi/", "bin/macosx.carbon.x86/jacavi/"]:
     for dataDir in ["agents", "cars", "tiles", "tracks"]:
         rmtreeSilently(platformDir + dataDir)
         backtickThis("svn export ../src/JACAVI/%s %s%s" % (dataDir, platformDir, dataDir))
+    shutil.copy("readme.txt", platformDir)
 
-print "Creating archives"
+print "Step 3: Creating archives"
 print "  - Linux (tar/gz)"
-shutil.copyfile("7z.exe", "bin/linux.gtk.x86/jacavi/7z.exe")
-shutil.copyfile("7z.dll", "bin/linux.gtk.x86/jacavi/7z.dll")
-workingDir = os.getcwd()
-os.chdir("bin/linux.gtk.x86/jacavi/")
-backtickThis("7z a -x!7z.* -ttar %s *" % linuxTemp)
-backtickThis("7z a -x!7z.* -tgzip ../../../deploy/%s %s" % (linuxDeploy, linuxTemp))
-os.chdir(workingDir)
-os.unlink("bin/linux.gtk.x86/jacavi/7z.exe")
-os.unlink("bin/linux.gtk.x86/jacavi/7z.dll")
+tarGzipIt("bin/linux.gtk.x86/jacavi/", linuxTemp, linuxDeploy)
 print "  - Windows (NSIS installer)"
 backtickThis('makensis /DOUTPUT_FILE="deploy/%s" "JaCaVi Windows Installer.nsi"' % windowsDeploy)
-print "  - MacOS (???)"
+print "  - MacOS (tar/gz)"
+tarGzipIt("bin/macosx.carbon.x86/jacavi/", macosTemp, macosDeploy)
 
-print "Cleaning up"
+print "Step 4: Cleaning up"
 deleteSilently("bin/linux.gtk.x86/jacavi/" + linuxTemp)
+deleteSilently("bin/macosx.carbon.x86/jacavi/" + macosTemp)

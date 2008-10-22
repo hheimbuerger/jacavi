@@ -1,18 +1,14 @@
-;JaCaVi v1.0 Windows Installation script
+;JaCaVi v1.0.0 Windows Installation script
 ;
-;using NSIS 2.40 (http://nsis.sourceforge.net/)
-
-;To Do:
-; - store start menu folder and uninstall the right one, not the default one
-; - ask user whether to keep modifications (cars, tiles, tracks, etc.)
+;compile using NSIS 2.40 (http://nsis.sourceforge.net/) with Modern UI 2 installed
 
 ;--------------------------------
 ;Constants
 
   !define APPLICATION_LONG "Java Carrera Visualization"
   !define APPLICATION_SHORT "JaCaVi"
-  !define APPLICATION_VERSION "1.0"
-  !define APPLICATION_DESCRIPTION "JaCaVi is a ..."
+  !define APPLICATION_VERSION "1.0.0"
+  !define APPLICATION_DESCRIPTION "JaCaVi is a slot car control and visualization application.$\r$\n$\r$\nPlease visit http://www.jacavi.de/ for more in-depth information and updates."
   
   !define REGKEY_INSTDIR "Software\${APPLICATION_SHORT}"
 
@@ -92,6 +88,7 @@
 ;Uninstaller Pages
   
   !insertmacro MUI_UNPAGE_WELCOME
+  !insertmacro MUI_UNPAGE_COMPONENTS
   !insertmacro MUI_UNPAGE_CONFIRM
   !insertmacro MUI_UNPAGE_INSTFILES
   !insertmacro MUI_UNPAGE_FINISH
@@ -106,12 +103,19 @@
 
 Section "!JaCaVi Core" SectionCore
 
+  SectionIn RO    ; make this section mandatory
   SetOutPath "$INSTDIR"
   
-  ;Files to install
-  File /r bin\win32.win32.x86\jacavi\*
-  File jacavi.ico
-  File readme.txt
+  ; files to install
+  File bin\win32.win32.x86\jacavi\*
+  File /r bin\win32.win32.x86\jacavi\configuration
+  File /r bin\win32.win32.x86\jacavi\plugins
+  
+  ; data files
+  CreateDirectory $INSTDIR\agents
+  File /r bin\win32.win32.x86\jacavi\cars
+  File /r bin\win32.win32.x86\jacavi\tiles
+  File /r bin\win32.win32.x86\jacavi\tracks
   
   ;Store installation folder
   WriteRegStr HKCU "${REGKEY_INSTDIR}" "" $INSTDIR
@@ -119,13 +123,12 @@ Section "!JaCaVi Core" SectionCore
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
   
-  
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\JaCaVi.lnk" "$INSTDIR\JaCaVi.exe" "" "$INSTDIR\JaCaVi.ico"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\JaCaVi v1.0.lnk" "$INSTDIR\JaCaVi.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -133,11 +136,9 @@ SectionEnd
 
 Section "Sample driving agents" SectionAgents
 
-  AddSize 20
-
   SetOutPath "$INSTDIR"
-  
-  ;ADD YOUR OWN FILES HERE...
+
+  File /r bin\win32.win32.x86\jacavi\agents
 
 SectionEnd
 
@@ -149,39 +150,23 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SectionAgents} "Some sample driving agents written in Jython and Groovy."
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-;  ;Language strings
-;  LangString DESC_SecDummy ${LANG_ENGLISH} "A test section."
-;
-;  ;Assign language strings to sections
-;  !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
-;    !insertmacro MUI_DESCRIPTION_TEXT ${SecDummy} $(DESC_SecDummy)
-;  !insertmacro MUI_FUNCTION_DESCRIPTION_END
- 
 ;--------------------------------
 ;Uninstaller Section
 
-Section "Uninstall"
+Section "!un.JaCaVi Core" UnsectionCore
+
+  SectionIn RO    ; make this section mandatory
 
   RMDir /r "$INSTDIR\configuration"
   RMDir /r "$INSTDIR\plugins"
-  ;FIXME: really delete workspace?
   RMDir /r "$INSTDIR\workspace"
   RMDir /r "$INSTDIR\libs"
-  RMDir /r "$INSTDIR\agents"
-  RMDir /r "$INSTDIR\cars"
-  RMDir /r "$INSTDIR\tiles"
-  RMDir /r "$INSTDIR\tracks"
   Delete "$INSTDIR\.eclipseproduct"
   Delete "$INSTDIR\JaCaVi.exe"
-  Delete "$INSTDIR\jacavi.ico"
   Delete "$INSTDIR\JaCaVi.ini"
   Delete "$INSTDIR\jacavi.log"
   Delete "$INSTDIR\readme.txt"
 
-  Delete "$INSTDIR\Uninstall.exe"
-
-  RMDir "$INSTDIR"
-  
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
   Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
@@ -191,3 +176,28 @@ Section "Uninstall"
   DeleteRegKey /ifempty HKCU "${REGKEY_INSTDIR}"
 
 SectionEnd
+
+Section /o "un.User Data" UnsectionUserData
+
+  RMDir /r "$INSTDIR\agents"
+  RMDir /r "$INSTDIR\cars"
+  RMDir /r "$INSTDIR\tiles"
+  RMDir /r "$INSTDIR\tracks"
+
+SectionEnd
+
+Section "-un.Uninstall"
+
+  Delete "$INSTDIR\Uninstall.exe"
+
+  RMDir "$INSTDIR"
+  
+SectionEnd
+
+;--------------------------------
+;Descriptions
+
+!insertmacro MUI_UNFUNCTION_DESCRIPTION_BEGIN
+  !insertmacro MUI_DESCRIPTION_TEXT ${UnsectionCore} "The JaCaVi executable and the core files."
+  !insertmacro MUI_DESCRIPTION_TEXT ${UnsectionUserData} "Data that could have been modified by the user. (/agents, /cars, /tiles and /tracks)"
+!insertmacro MUI_UNFUNCTION_DESCRIPTION_END
