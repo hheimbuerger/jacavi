@@ -1,4 +1,4 @@
-package de.jacavi.rcp.widgets.controls.validators;
+package de.jacavi.rcp.util.validators;
 
 public interface ValidationControl {
     boolean isValid();
