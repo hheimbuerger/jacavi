@@ -58,8 +58,9 @@ public class RaceEngine {
      *            The focused Track the race should start at
      * @param raceView
      *            The RaceView the race is shown in
+     * @throws Exception
      */
-    public void startRace(Track activeTrack, RaceView raceView) {
+    public void startRace(Track activeTrack, RaceView raceView) throws Exception {
         Check.Require(activeTrack != null, "activeTrack may not be null");
         Check.Require(raceView != null, "raceView may not be null");
         ((RaceStatisticsManager) ContextLoader.getBean("statisticsRegistryBean")).init();

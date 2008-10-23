@@ -10,6 +10,7 @@ import org.eclipse.ui.WorkbenchException;
 import de.jacavi.appl.track.Track;
 import de.jacavi.rcp.dialogs.RaceValidationDialog;
 import de.jacavi.rcp.editors.TrackDesigner;
+import de.jacavi.rcp.perspectives.EditorPerspective;
 import de.jacavi.rcp.perspectives.RacePerspective;
 import de.jacavi.rcp.util.ExceptionHandler;
 import de.jacavi.rcp.util.PartFromIDResolver;
@@ -63,6 +64,16 @@ public class StartRaceAction extends RaceControlAction {
 
         // tell the RaceEngine to start the race
         log.debug("Starting RaceEngine");
-        raceEngine.startRace(activeTrack, raceView);
+        try {
+            raceEngine.startRace(activeTrack, raceView);
+        } catch(Exception ex) {
+            ExceptionHandler.handleException(this, ex, true);
+            try {
+                PlatformUI.getWorkbench().showPerspective(EditorPerspective.ID, window);
+            } catch(WorkbenchException e) {
+                ExceptionHandler.handleException(this, e, true);
+            }
+
+        }
     }
 }

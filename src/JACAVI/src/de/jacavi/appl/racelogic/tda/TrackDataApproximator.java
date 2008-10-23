@@ -3,6 +3,8 @@ package de.jacavi.appl.racelogic.tda;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.management.modelmbean.XMLParseException;
+
 import de.jacavi.appl.car.Car;
 import de.jacavi.appl.controller.ControllerSignal;
 import de.jacavi.appl.racelogic.Player;
@@ -41,8 +43,9 @@ abstract public class TrackDataApproximator {
      * Build the CheckpointMap of the track. Do this in your TDA in the constructor if you need.
      * 
      * @param track
+     * @throws Exception
      */
-    protected void initializeCheckpointMap() {
+    protected void initializeCheckpointMap() throws Exception {
 
         for(int trackSectionIndex = 0; trackSectionIndex < track.getSections().size(); trackSectionIndex++) {
             TrackSection section = track.getSections().get(trackSectionIndex);
@@ -78,8 +81,9 @@ abstract public class TrackDataApproximator {
      * 
      * @param checkpoint
      * @return the steps
+     * @throws Exception
      */
-    protected int getStepsToNextCheckpoint(CheckpointData checkpoint) {
+    protected int getStepsToNextCheckpoint(CheckpointData checkpoint) throws Exception {
         int result = 0;
 
         // get the next Checkpoint on this lane
@@ -105,9 +109,11 @@ abstract public class TrackDataApproximator {
                 if(currentSection.getLane(laneIndex).hasCheckpoints()) {
                     // TODO: [ticket #171] Do the following for all checkpoints on same lane on same section.
                     // This is only needed if there is a section with more than one checkpoints on the same lane
-
                     // start counting steps
                     if(currentSection.getLane(laneIndex).getCheckpoints().get(0).getId().equals(checkpoint.getId())) {
+                        if(count)
+                            throw new XMLParseException(
+                                    "Error occured in TrackDataApproximator.getStepsToNextCheckpoint, affected of an wrong xml deffinition in your tileset. Check your tileset.");
                         // start the step count here
                         count = true;
                         // add to result lanesteps - checkpoint steps
@@ -133,7 +139,9 @@ abstract public class TrackDataApproximator {
     }
 
     /**
-     * Resets the TDA <p> Currently used if the a crashed car gets a reset ControllerSignal
+     * Resets the TDA
+     * <p>
+     * Currently used if the a crashed car gets a reset ControllerSignal
      */
     public void reset() {
         speed = 0;

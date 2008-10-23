@@ -21,7 +21,7 @@ public class Lib42TDA extends TrackDataApproximator {
 
     private int lapsOnLastCheckpoint = 0;
 
-    public Lib42TDA(Player player, Track track, int racetimerIntreval) {
+    public Lib42TDA(Player player, Track track, int racetimerIntreval) throws Exception {
         this.player = player;
         this.track = track;
         this.raceTimerInterval = racetimerIntreval;
