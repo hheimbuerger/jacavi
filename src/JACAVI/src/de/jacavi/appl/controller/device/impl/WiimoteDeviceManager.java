@@ -26,7 +26,7 @@ public class WiimoteDeviceManager {
      */
     public int scanForWiimotes() {
         // first shutdown to remove all existing
-        // FIXME: [ticket #59] WiiUseJ problem under Linux
+        // TODO: [ticket #59] WiiUseJ problem under Linux
         if(OSResolverUtil.isWindowsOs())
             WiiUseApiManager.shutdown();
 

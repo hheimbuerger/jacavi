@@ -333,9 +333,9 @@ public class Track {
     }
 
     public List<StartingPoint> getStartingPoints() {
-        // FIXME: kinda ugly solution, as new starting points (data objects) are generated each time this method is
-        // invoked and there are currently two 'variants' of StartingPoint -- the generic (belongs to tile/tileset) one
-        // and the concrete (belongs to track) one
+        // TODO: [ticket #180] Kinda ugly solution, as new starting points (data objects) are generated each time this
+        // method is invoked and there are currently two 'variants' of StartingPoint -- the generic (belongs to
+        // tile/tileset) one and the concrete (belongs to track) one
         List<StartingPoint> startingPoints = new ArrayList<StartingPoint>();
         for(int i = sections.size() - 1; i >= 0; i--) {
             Tile tile = sections.get(i).getTile();

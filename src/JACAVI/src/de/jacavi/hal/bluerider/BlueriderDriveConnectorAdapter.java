@@ -87,7 +87,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
 
     @Override
     public boolean getSwitch() {
-        // TODO [ticket #173] Implement me if analogue track supports switching lane
+        // TODO: [ticket #173] Implement me if analogue track supports switching lane
         return false;
     }
 
@@ -111,7 +111,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
 
     @Override
     public boolean toggleSwitch() {
-        // TODO [ticket #173] Implement me if analogue track supports switching lane
+        // TODO: [ticket #173] Implement me if analogue track supports switching lane
         return false;
     }
 
