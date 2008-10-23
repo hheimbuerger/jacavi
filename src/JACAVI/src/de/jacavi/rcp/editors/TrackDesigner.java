@@ -1,5 +1,6 @@
 package de.jacavi.rcp.editors;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
@@ -62,12 +63,36 @@ public class TrackDesigner extends EditorPart {
     @Override
     public void doSave(IProgressMonitor monitor) {
         monitor.beginTask("Save", IProgressMonitor.UNKNOWN);
-        SafeSaveDialog dlg = new SafeSaveDialog(getSite().getShell());
 
+        if(!new File(((TrackDesignerInput) getEditorInput()).getFilename()).exists())
+            doSaveAs();
+        else {
+            String selected = ((TrackDesignerInput) getEditorInput()).getFilename();
+            try {
+                if(selected != null) {
+                    currentTrack.saveToXml(selected);
+                    log.info("Track saved to " + selected);
+                    isDirty = false;
+                    firePropertyChange(IEditorPart.PROP_DIRTY);
+                }
+            } catch(FileNotFoundException e) {
+                ExceptionHandler.handleException(this, e, true);
+            } catch(Exception e) {
+                ExceptionHandler.handleException(this, e, true);
+            }
+
+        }
+        monitor.done();
+    }
+
+    @Override
+    public void doSaveAs() {
+        SafeSaveDialog dlg = new SafeSaveDialog(getSite().getShell());
         dlg.setText("Save");
         String[] filterExt = { "*" + Track.FILE_EXTENSION };
         dlg.setFilterExtensions(filterExt);
         String selected = dlg.open();
+
         try {
             if(selected != null) {
                 ((TrackDesignerInput) getEditorInput()).setFilename(selected);
@@ -76,26 +101,20 @@ public class TrackDesigner extends EditorPart {
                 log.info("Track saved to " + selected);
                 isDirty = false;
                 firePropertyChange(IEditorPart.PROP_DIRTY);
+                fireEditorNameModified();
             }
         } catch(FileNotFoundException e) {
             ExceptionHandler.handleException(this, e, true);
         } catch(Exception e) {
             ExceptionHandler.handleException(this, e, true);
         }
-
-        monitor.done();
-
     }
-
-    @Override
-    public void doSaveAs() {}
 
     @Override
     public void init(IEditorSite site, IEditorInput input) throws PartInitException {
         setSite(site);
         setInput(input);
         setPartName(input.getName());
-
     }
 
     @Override
@@ -171,6 +190,11 @@ public class TrackDesigner extends EditorPart {
         isDirty = true;
         firePropertyChange(PROP_DIRTY);
         firePropertyChange(PROP_TRACK_CHANGED);
+    }
+
+    public void fireEditorNameModified() {
+        setPartName(getEditorInput().getName());
+        firePropertyChange(PROP_INPUT);
     }
 
     public TrackWidget getTrackWidget() {
