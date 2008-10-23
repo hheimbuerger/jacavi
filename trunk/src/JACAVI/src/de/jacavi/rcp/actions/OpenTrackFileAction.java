@@ -32,8 +32,6 @@ public class OpenTrackFileAction implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -65,7 +63,6 @@ public class OpenTrackFileAction implements IWorkbenchWindowActionDelegate {
 
 	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
-		// TODO Auto-generated method stub
 	}
 
 	private void openEditor(File file) throws FileNotFoundException,

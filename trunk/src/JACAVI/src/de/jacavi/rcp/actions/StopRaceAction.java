@@ -13,7 +13,6 @@ public class StopRaceAction extends RaceControlAction {
     @Override
     public void run(IAction action) {
 
-        // TODO: Do Cleanup stuff here
         cleanup();
 
         try {

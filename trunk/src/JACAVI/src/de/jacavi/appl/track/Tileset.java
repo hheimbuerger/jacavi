@@ -80,7 +80,7 @@ public class Tileset {
      * different directions.
      */
     public Map<String, Tile> getUsableTiles() {
-        // TODO: implement returning inverted tiles
+        // TODO: [#37] Allow tiles to be used from both sides - implement returning inverted tiles
         SortedMap<String, Tile> result = new TreeMap<String, Tile>(tiles);
 
         // remove the initial tile

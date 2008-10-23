@@ -29,7 +29,7 @@ public class OpenInputDeviceSettingsAction implements IWorkbenchWindowActionDele
     public void run(IAction action) {
         InputDeviceSettingsDialog dlg = new InputDeviceSettingsDialog(window.getShell());
         if(dlg.open() == Window.OK) {
-            // TODO: do something here
+
         }
     }
 
