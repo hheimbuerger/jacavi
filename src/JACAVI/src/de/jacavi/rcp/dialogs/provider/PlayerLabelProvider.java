@@ -95,12 +95,9 @@ public class PlayerLabelProvider implements ITableLabelProvider {
     }
 
     public void addListener(ILabelProviderListener listener) {
-    // TODO Auto-generated method stub
-
     }
 
     public void dispose() {
-    // TODO Auto-generated method stub
     }
 
     public boolean isLabelProperty(Object element, String property) {
