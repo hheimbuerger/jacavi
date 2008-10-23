@@ -11,4 +11,7 @@ public interface AnalogueDriveConnector extends SlotCarDriveConnector {
     int getLane();
 
     InetSocketAddress getAdress();
+
+    boolean connect();
+    
 }

@@ -10,8 +10,19 @@ public class TestAnalogueDriveConnectorAdapter implements AnalogueDriveConnector
 
     private int lane;
 
+    
+    
+    
     public TestAnalogueDriveConnectorAdapter(InetSocketAddress analogueDeviceAdress, int lane) {
         this.lane = lane;
+    }
+
+    
+    
+    @Override
+    public boolean connect()
+    {
+    return true;	
     }
 
     @Override
