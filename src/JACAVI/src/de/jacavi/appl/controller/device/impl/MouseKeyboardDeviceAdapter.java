@@ -47,7 +47,7 @@ public class MouseKeyboardDeviceAdapter extends DeviceController {
     }
 
     @Override
-    public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
+    public int normaliseThrust(float deviceSpecificInputSpeedSignal) {
         // do nothing here this is done in mouse
         return 0;
     }

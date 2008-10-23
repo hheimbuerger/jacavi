@@ -62,7 +62,7 @@ public class KeyboardDevice extends DeviceController implements Listener {
     }
 
     @Override
-    public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
+    public int normaliseThrust(float deviceSpecificInputSpeedSignal) {
         return 0;
     }
 

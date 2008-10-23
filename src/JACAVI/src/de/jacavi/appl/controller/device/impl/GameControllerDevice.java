@@ -24,7 +24,7 @@ public class GameControllerDevice extends DeviceController {
     public ControllerSignal poll() {
         device.poll();
 
-        int speed = normaliseSpeedSignal(device.getY());
+        int speed = normaliseThrust(device.getY());
         boolean mainButtonDown = device.isButtonDown(Joystick.BUTTON1);
         boolean frontLightButton = device.isButtonDown(Joystick.BUTTON2);
         boolean backLighButton = device.isButtonDown(Joystick.BUTTON3);
@@ -33,7 +33,7 @@ public class GameControllerDevice extends DeviceController {
     }
 
     @Override
-    public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
+    public int normaliseThrust(float deviceSpecificInputSpeedSignal) {
         if(deviceSpecificInputSpeedSignal >= -1.0 && deviceSpecificInputSpeedSignal <= 0.0)
             return new Float(deviceSpecificInputSpeedSignal * -100).intValue();
         else
