@@ -7,7 +7,7 @@ package de.jacavi.hal;
  */
 public interface SlotCarDriveConnector {
 
-    void setThrust(int speed);
+    void setThrust(int thrust);
 
     int getThrust();
 
