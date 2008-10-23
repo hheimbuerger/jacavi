@@ -72,6 +72,10 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
                 if(filename.equals("")) {
                     break;
                 }
+                else if(!new File(filename).exists()){
+                    i++;
+                    continue;
+                }
                 editorInput = new TrackDesignerInput(filename, new Track(new File(filename)));
                 page.openEditor(editorInput, TrackDesigner.ID);
                 i++;
