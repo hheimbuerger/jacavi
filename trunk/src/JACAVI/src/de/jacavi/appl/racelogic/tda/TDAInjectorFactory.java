@@ -24,8 +24,9 @@ public class TDAInjectorFactory {
      * 
      * @param player
      *            The player who gets the specific TDA injected
+     * @throws Exception
      */
-    public void initializeTDA(Player player, Track currentTrack, int raceTimerInterval) {
+    public void initializeTDA(Player player, Track currentTrack, int raceTimerInterval) throws Exception {
         SlotCarDriveConnector driveConnector = player.getSlotCarSystemConnector().getDriveConnector();
         List<Class<?>> interfaces = Arrays.asList(driveConnector.getClass().getInterfaces());
         if(interfaces.contains(Lib42DriveConnector.class)) {
