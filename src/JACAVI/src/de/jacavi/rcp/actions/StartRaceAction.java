@@ -3,7 +3,6 @@ package de.jacavi.rcp.actions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -38,15 +37,6 @@ public class StartRaceAction extends RaceControlAction {
 
     public void run(IAction action) {
 
-        // determine the current track from the active editor
-        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
-        if(activeEditor.isDirty()) {
-            MessageDialog.openWarning(window.getShell(), "Track not saved",
-                    "Please save your track before starting a race on it.");
-            return;
-        }
-
         // show the RaceValidationDialog (which will automatically do the actual validation)
         if(new RaceValidationDialog(window.getShell(), players).open() == Window.OK) {
             log.debug("Race validated successfull");
@@ -54,6 +44,9 @@ public class StartRaceAction extends RaceControlAction {
             return;
         }
 
+        // determine the current track from the active editor
+        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+        .getActivePage().getActiveEditor();
         Track activeTrack = activeEditor.getTrack();
 
         // switch to the race perspective

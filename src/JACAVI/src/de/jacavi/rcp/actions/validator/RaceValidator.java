@@ -43,6 +43,10 @@ public class RaceValidator {
             errorMessages.add("Invalid track! Please create a new or open an existing track.");
             return false;
         }
+        if(activeEditor.isDirty()) {
+            errorMessages.add("Invalid track! Please save your track before starting a race on it.");
+            return false;
+        }
 
         Track activeTrack = activeEditor.getTrack();
 
@@ -88,7 +92,7 @@ public class RaceValidator {
             if(carController == null || carController.getId() == null
                     || !deviceManager.isIdValid(carController.getId())) {
                 errorMessages.add("Player no. " + (i + 1)
-                        + " has an invalid controller! Please check your player and input device settings.");
+                        + " has an invalid controller! Please check your player and input device or driving agents settings.");
                 valid = false;
             }
         }
