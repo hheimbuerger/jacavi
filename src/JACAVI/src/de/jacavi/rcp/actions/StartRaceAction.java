@@ -3,6 +3,7 @@ package de.jacavi.rcp.actions;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -22,19 +23,29 @@ import de.jacavi.rcp.views.RaceView;
  * Class that represents an action that leads through following steps:
  * <p>
  * <ul>
+ * <li>check whether the current track has been saved
  * <li>validate race settings
  * <li>switch to race perspective
  * <li>show traffic lights
  * <li>start race engine
  * </ul>
  * 
- * @author Fabian
+ * @author Fabian Rohn
  */
 public class StartRaceAction extends RaceControlAction {
 
     private static Log log = LogFactory.getLog(StartRaceAction.class);
 
     public void run(IAction action) {
+
+        // determine the current track from the active editor
+        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+                .getActivePage().getActiveEditor();
+        if(activeEditor.isDirty()) {
+            MessageDialog.openWarning(window.getShell(), "Track not saved",
+                    "Please save your track before starting a race on it.");
+            return;
+        }
 
         // show the RaceValidationDialog (which will automatically do the actual validation)
         if(new RaceValidationDialog(window.getShell(), players).open() == Window.OK) {
@@ -43,9 +54,6 @@ public class StartRaceAction extends RaceControlAction {
             return;
         }
 
-        // determine the current track from the active editor
-        TrackDesigner activeEditor = (TrackDesigner) PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-                .getActivePage().getActiveEditor();
         Track activeTrack = activeEditor.getTrack();
 
         // switch to the race perspective

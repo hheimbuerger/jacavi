@@ -35,6 +35,8 @@ public class OpenTrackDesignerAction extends Action {
 
             IWorkbenchPart active = page.getActivePart();
             active.setFocus();
+            
+            ((TrackDesigner)page.getActivePart()).fireTrackModified();
 
         } catch(PartInitException e) {
             // TODO: handle exception
