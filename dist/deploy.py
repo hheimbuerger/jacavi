@@ -1,3 +1,8 @@
+# Prerequisites:
+#   - only tested on Windows
+#   - NSIS 2.40 (or compatible) is installed and the makensis.exe is in the system PATH
+
+
 import os
 import os.path
 import sys
@@ -59,6 +64,9 @@ for platformDir in ["bin/linux.gtk.x86/jacavi/", "bin/win32.win32.x86/jacavi/", 
         rmtreeSilently(platformDir + dataDir)
         backtickThis("svn export ../src/JACAVI/%s %s%s" % (dataDir, platformDir, dataDir))
     shutil.copy("readme.txt", platformDir)
+# special case, Linux needs the libwiiuse.so separately
+os.mkdir("bin/linux.gtk.x86/jacavi/libs/")
+shutil.copy("../src/JACAVI/libs/libwiiuse.so", "bin/linux.gtk.x86/jacavi/libs/")
 
 print "Step 3: Creating archives"
 print "  - Linux (tar/gz)"
