@@ -46,7 +46,8 @@ public class CarControllerManager {
     private final File agentsPath;
 
     public CarControllerManager(String agentsPath) {
-        // TODO: should be read from configuration, just inserting some for testing here
+        // TODO: [ticket #129] Implement UI for modifying keyboard layouts - this should be read from configuration, just
+        // inserting some for testing here
         KeyboardDevice k1 = new KeyboardDevice("Keyboard (up/down/ctrl/del)", new KeyboardLayout(SWT.ARROW_UP,
                 SWT.ARROW_DOWN, SWT.CONTROL, 'y', 'x', SWT.DEL));
         KeyboardDevice k2 = new KeyboardDevice("Keyboard (w/s/shift/q)", new KeyboardLayout('w', 's', SWT.SHIFT, 'e',
@@ -104,7 +105,7 @@ public class CarControllerManager {
      * Adds a new controller to the internal list.
      * 
      * @param controller
-     *            the controller to add
+     *      the controller to add
      */
     public void addController(CarController controller) {
         controllers.put(controller.getId(), controller);
@@ -131,7 +132,7 @@ public class CarControllerManager {
      * player==null you will get all unused devices if player!=null you will get all+ the players one
      * 
      * @param player
-     *            the except player
+     *      the except player
      * @return a sorted list of configured unused input devices
      */
     @SuppressWarnings("unchecked")
@@ -185,7 +186,7 @@ public class CarControllerManager {
      * Returns a sorted list of all connected input devices of a certain type (XyzDevice).
      * 
      * @param type
-     *            the class of devices to return
+     *      the class of devices to return
      * @return a sorted list of all connected input devices of the given type
      */
     public List<DeviceController> getInputDevicesByType(Class<?> type) {
@@ -210,7 +211,7 @@ public class CarControllerManager {
      * Removes an input device from the internal list after deactivating it.
      * 
      * @param id
-     *            the ID of the device to remove
+     *      the ID of the device to remove
      */
     public void removeInputDevice(UUID id) {
         if(controllers.containsKey(id)) {
@@ -225,7 +226,7 @@ public class CarControllerManager {
      * Removes all input devices of a given type.
      * 
      * @param type
-     *            the class of input devices to remove (XyzDevice)
+     *      the class of input devices to remove (XyzDevice)
      */
     public void removeControllersByType(Class<?> type) {
         List<UUID> toRemove = new ArrayList<UUID>();
@@ -248,7 +249,7 @@ public class CarControllerManager {
      * Returns true if the given ID is valid (corresponds to an available input device), false otherwise.
      * 
      * @param id
-     *            the ID to check
+     *      the ID to check
      * @return true if the given ID is valid (corresponds to an available input device), false otherwise
      */
     public boolean isIdValid(UUID id) {
