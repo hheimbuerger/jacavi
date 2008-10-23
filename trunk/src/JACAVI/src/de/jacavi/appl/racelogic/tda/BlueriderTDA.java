@@ -18,7 +18,7 @@ public class BlueriderTDA extends TrackDataApproximator {
     }
 
     /**
-     * TODO [ticket #175] implement me.
+     * TODO: [ticket #175] implement me.
      */
     @Override
     public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,

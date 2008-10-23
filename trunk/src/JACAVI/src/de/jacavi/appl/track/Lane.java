@@ -132,7 +132,8 @@ public class Lane {
             currentPos += ls.length;
             currentAngle.turn(ls.entryToExitAngle);
         }
-        // FIXME: this is almost the same loop, just over a different iterable -- clean up necessary
+
+        // this is almost the same loop, just over a different iterable
         for(LaneSection ls: position.isOnLaneChange ? laneSectionsChange : laneSectionsRegular) {
             if(position.stepsOnTile < currentPos + ls.length) {
                 DirectedPoint stepPoint = ls.getStepPoint(position.stepsOnTile - currentPos);

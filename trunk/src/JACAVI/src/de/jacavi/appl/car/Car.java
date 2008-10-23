@@ -45,7 +45,7 @@ public class Car {
 
         image = new MultiStyleImage(bitmapFile);
 
-        // FIXME: this image is never disposed again!
+        // TODO: [ticket #161] this image is never disposed again!
         swtImage = new Image(Display.getDefault(), new FileInputStream(bitmapFile));
     }
 

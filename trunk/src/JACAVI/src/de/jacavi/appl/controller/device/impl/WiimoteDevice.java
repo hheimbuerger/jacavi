@@ -114,7 +114,7 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     @Override
     public void onDisconnectionEvent(DisconnectionEvent arg0) {
-        // TODO [ticket #74] handle wiiremote disconnection
+        // TODO: [ticket #74] handle wiiremote disconnection
         log.warn("Wiiremote " + arg0.getWiimoteId() + " is disconnected and no longer available.");
     }
 

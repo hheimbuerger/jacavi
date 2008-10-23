@@ -18,7 +18,7 @@ public class AnalogueTDA extends TrackDataApproximator {
     }
 
     /**
-     * TODO [ticket #174] implement me if there is analogue hal support available
+     * TODO: [ticket #174] implement me if there is analogue hal support available
      */
     @Override
     public void updatePosition(CarPosition carPosition, int gametick, Car car, ControllerSignal controllerSignal,
