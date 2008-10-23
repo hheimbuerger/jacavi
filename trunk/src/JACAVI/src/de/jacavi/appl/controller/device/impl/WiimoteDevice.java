@@ -69,12 +69,12 @@ public class WiimoteDevice extends DeviceController implements WiimoteListener {
 
     @Override
     public void onMotionSensingEvent(MotionSensingEvent arg0) {
-        int speed = normaliseSpeedSignal((int) arg0.getOrientation().getPitch());
+        int speed = normaliseThrust((int) arg0.getOrientation().getPitch());
         currentControllerSignal.setThrust(speed);
     }
 
     @Override
-    public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal) {
+    public int normaliseThrust(float deviceSpecificInputSpeedSignal) {
         int retVal = 0;
         float tmpPitch = (deviceSpecificInputSpeedSignal + 90);
 

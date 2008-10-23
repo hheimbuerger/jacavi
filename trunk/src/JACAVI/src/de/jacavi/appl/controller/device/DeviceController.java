@@ -31,6 +31,6 @@ public abstract class DeviceController extends CarController {
      * 
      * @return int normalised speed
      */
-    abstract public int normaliseSpeedSignal(float deviceSpecificInputSpeedSignal);
+    abstract public int normaliseThrust(float deviceSpecificInputSpeedSignal);
 
 }
