@@ -3,7 +3,7 @@ package de.jacavi.test.hal.connectors;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.jacavi.hal.SlotCarSpeedAdjuster;
+import de.jacavi.hal.SlotCarThrustAdjuster;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 
@@ -35,7 +35,7 @@ public class TestBlueriderDriveConnectorAdapter implements BlueriderDriveConnect
     @Override
     public void setThrust(int speed) {
         log.debug("Bluerider in speed: " + speed);
-        int adjustedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, 255);
+        int adjustedSpeed = SlotCarThrustAdjuster.normalizeThrust(speed, 255);
         log.debug("Bluerider adjusted speed: " + adjustedSpeed);
     }
 
