@@ -134,8 +134,7 @@ public class TrackDesigner extends EditorPart {
         try {
             trackWidget = new TrackWidget(parent, currentTrack, TrackWidgetMode.DESIGN_MODE);
         } catch(IOException e) {
-            // TODO: do proper error handling here and report to the user
-            throw new RuntimeException("Couldn't create widget. [TODO: do proper error handling here]");
+            throw new RuntimeException(e);
         }
         trackWidget.setLayoutData(new GridData(GridData.FILL_BOTH));
         trackWidget.addKeyListener(new KeyAdapter() {

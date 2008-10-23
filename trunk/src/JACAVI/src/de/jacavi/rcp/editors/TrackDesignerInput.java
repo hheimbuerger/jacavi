@@ -22,22 +22,18 @@ public class TrackDesignerInput implements IEditorInput {
     }
 
     public boolean exists() {
-        // TODO Auto-generated method stub
         return false;
     }
 
     public ImageDescriptor getImageDescriptor() {
-        // TODO Auto-generated method stub
         return null;
     }
 
     public String getName() {
-        // TODO Auto-generated method stub
         return new File(filename).getName().split(Track.FILE_EXTENSION)[0];
     }
 
     public IPersistableElement getPersistable() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -47,7 +43,6 @@ public class TrackDesignerInput implements IEditorInput {
 
     @SuppressWarnings("unchecked")
     public Object getAdapter(Class adapter) {
-        // TODO Auto-generated method stub
         return null;
     }
 
