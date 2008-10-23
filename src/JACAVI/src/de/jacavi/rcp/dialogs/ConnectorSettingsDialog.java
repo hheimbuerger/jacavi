@@ -22,6 +22,7 @@ import de.jacavi.appl.ContextLoader;
 import de.jacavi.hal.ConnectorConfigurationManager;
 import de.jacavi.hal.ConnectorFactory;
 import de.jacavi.hal.SlotCarSystemConnector;
+import de.jacavi.hal.analogue.AnalogueDriveConnector;
 import de.jacavi.hal.bluerider.BlueriderDriveConnector;
 import de.jacavi.rcp.Activator;
 import de.jacavi.rcp.util.validators.IPV4ValidatedText;
@@ -383,9 +384,15 @@ public class ConnectorSettingsDialog extends AbstractSettingsDialog {
                     .valueOf(textPortAnalogue.getText())));
 
             // TODO: [ticket #10] connect to analogue embedded devices here
-
-            connectorManager.addConnector(analogueConnector);
-            // connectorManager.testSystemConnector(analogueConnector);
+            if(((AnalogueDriveConnector)analogueConnector.getDriveConnector()).connect())
+            {
+            	connectorManager.addConnector(analogueConnector);
+                // connectorManager.testSystemConnector(analogueConnector);	
+            }
+            else
+            {
+            	analogueValidationGroup.setText("Analogue Connector not implemented yet.");
+            }
         }
         updateDeviceList();
     }

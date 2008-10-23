@@ -2,6 +2,7 @@ package de.jacavi.hal;
 
 import java.net.InetSocketAddress;
 
+import de.jacavi.hal.analogue.AnalogueDriveConnectorAdapter;
 import de.jacavi.hal.analogue.AnalogueFeedbackConnectorAdapter;
 import de.jacavi.hal.bluerider.BlueriderDriveConnectorAdapter;
 import de.jacavi.hal.bluerider.BlueriderFeedbackConnectorAdapter;
@@ -41,7 +42,7 @@ public class SlotCarSystemConnectorFactory implements ConnectorFactory {
      * AnalogueDriveConnectorAdapter and AnalogueFeedbackConnectorAdapter Currently this function returns always null.
      */
     public SlotCarSystemConnector createAnalogueConnector(String name, int lane, InetSocketAddress analogueDeviceAdress) {
-        return null;
+        return new SlotCarSystemConnector(name,new AnalogueDriveConnectorAdapter(lane,analogueDeviceAdress),new AnalogueFeedbackConnectorAdapter(analogueDeviceAdress));
     }
 
     /**

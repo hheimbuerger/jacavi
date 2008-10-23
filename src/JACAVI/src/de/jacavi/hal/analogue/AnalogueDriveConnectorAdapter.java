@@ -9,7 +9,23 @@ import java.net.InetSocketAddress;
  */
 public class AnalogueDriveConnectorAdapter implements AnalogueDriveConnector {
 
-    @Override
+    
+	
+	public AnalogueDriveConnectorAdapter(int lane,InetSocketAddress adress)
+	{
+		
+	}
+	
+	
+	@Override
+	public boolean connect()
+	{
+		//TODO: [ticket #10] connect to analogue embedded devices here
+		return false;
+	}
+	
+	
+	@Override
     public void fullBreak() {
         throw new RuntimeException("TODO: [ticket #10] implement me.");
     }
