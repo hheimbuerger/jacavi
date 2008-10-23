@@ -132,7 +132,6 @@ public class TileExplorerView extends ViewPart implements IPartListener2 {
             activeEditor = (TrackDesigner) partRef.getPage().getActiveEditor();
             if(activeEditor == null) {
                 scrolledComposite.getContent().dispose();
-                scrolledComposite.dispose();
             }
         }
     }
