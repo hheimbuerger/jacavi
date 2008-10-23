@@ -9,7 +9,7 @@ import de.jacavi.rcp.util.Check;
  * 
  * @author fro
  */
-public class SlotCarSpeedAdjuster {
+public class SlotCarThrustAdjuster {
 
     /**
      * use this to adjust the speed given from the DeviceContoller (0-100) to an HAL specific speed
@@ -20,7 +20,7 @@ public class SlotCarSpeedAdjuster {
      *            the max speed on the specific Hardware
      * @return int the hardware adjusted speed to set to the hardware
      */
-    public static int normalizeSpeed(int deviceAdjustedSpeed, int maxHALSpeed) {
+    public static int normalizeThrust(int deviceAdjustedSpeed, int maxHALSpeed) {
         Check.Require(deviceAdjustedSpeed >= 0 && deviceAdjustedSpeed <= 100,
                 "speed may be between (included) 0 and 100");
         double retVal;
@@ -39,7 +39,7 @@ public class SlotCarSpeedAdjuster {
      *            the max speed on the specific Hardware
      * @return int the 0-100 adjusted speed
      */
-    public static int denormalizeSpeed(int specificHardwareAdjustedSpeed, int maxHALSpeed) {
+    public static int denormalizeThrust(int specificHardwareAdjustedSpeed, int maxHALSpeed) {
         Check.Require(maxHALSpeed > 0, "maxHALSpeed may be greater that 0");
         double retVal;
         double tmpSpecificSpeed = specificHardwareAdjustedSpeed;

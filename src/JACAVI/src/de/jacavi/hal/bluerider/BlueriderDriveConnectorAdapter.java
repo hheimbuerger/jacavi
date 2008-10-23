@@ -3,7 +3,7 @@ package de.jacavi.hal.bluerider;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import de.jacavi.hal.SlotCarSpeedAdjuster;
+import de.jacavi.hal.SlotCarThrustAdjuster;
 import de.jacavi.rcp.util.Check;
 
 
@@ -82,7 +82,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
     @Override
     public int getThrust() {
         Check.Ensure(currentSpeed >= 0 && currentSpeed <= maxHALSpeed, "currentSpeed is in the wrong Range");
-        return SlotCarSpeedAdjuster.denormalizeSpeed(currentSpeed, maxHALSpeed);
+        return SlotCarThrustAdjuster.denormalizeThrust(currentSpeed, maxHALSpeed);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class BlueriderDriveConnectorAdapter implements BlueriderDriveConnector, 
     @Override
     public void setThrust(int speed) {
         log.debug("Bluerider speed in: " + speed);
-        int normalizedSpeed = SlotCarSpeedAdjuster.normalizeSpeed(speed, maxHALSpeed);
+        int normalizedSpeed = SlotCarThrustAdjuster.normalizeThrust(speed, maxHALSpeed);
         Check.Require(normalizedSpeed >= 0 && normalizedSpeed <= maxHALSpeed, "Speed is int the wrong range");
 
         log.debug("Bluerider adjusted speed: " + normalizedSpeed);
