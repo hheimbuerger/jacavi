@@ -1,5 +1,7 @@
 package de.jacavi.rcp.editors;
 
+import java.io.File;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
@@ -31,7 +33,7 @@ public class TrackDesignerInput implements IEditorInput {
 
     public String getName() {
         // TODO Auto-generated method stub
-        return track.getTrackName();
+        return new File(filename).getName().split(Track.FILE_EXTENSION)[0];
     }
 
     public IPersistableElement getPersistable() {

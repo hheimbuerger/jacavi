@@ -30,6 +30,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
     private MenuManager infoMenu;
 
     private IWorkbenchAction saveTrackAction;
+    
+    private IWorkbenchAction saveAsTrackAction;
 
     private IWorkbenchAction newTrackAction;
 
@@ -53,6 +55,10 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
         saveTrackAction = ActionFactory.SAVE.create(window);
         saveTrackAction.setText("Save");
         register(saveTrackAction);
+        
+        saveAsTrackAction = ActionFactory.SAVE_AS.create(window);
+        saveAsTrackAction.setText("Save As...");
+        register(saveAsTrackAction);
 
         preferencesAction = ActionFactory.PREFERENCES.create(window);
         preferencesAction.setImageDescriptor(Activator.getImageDescriptor("/images/actions/preferences_16x16.png"));
@@ -81,6 +87,7 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor implements IPe
         trackMenu.add(new GroupMarker("trackGroup"));
         trackMenu.add(new Separator());
         trackMenu.add(saveTrackAction);
+        trackMenu.add(saveAsTrackAction);
 
         // Group marker for other Actions, see plugin.xml
         otherGroup = new GroupMarker("other");
