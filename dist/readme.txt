@@ -19,7 +19,16 @@ Florian Roth (froth@htwg-konstanz.de)
 
 
 ------------------------------------------------------------
-Known Bugs and Reporting Problems
+Common Issues
+------------------------------------------------------------
+
+If you want Wiimote support in the Linux version of JaCaVi, please add
+the /libs subdirectory of your JaCaVi root directory to your
+LD_LIBRARY_PATH.
+
+
+------------------------------------------------------------
+Reporting Problems
 ------------------------------------------------------------
 
 Please refer to the issue tracking system at http://www.jacavi.de/ for
