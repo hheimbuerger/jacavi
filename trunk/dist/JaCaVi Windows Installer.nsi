@@ -122,13 +122,21 @@ Section "!JaCaVi Core" SectionCore
   
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "DisplayName" "${APPLICATION_SHORT} v${APPLICATION_VERSION}"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "DisplayVersion" "${APPLICATION_VERSION}"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "NoModify" "1"
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "NoRepair" "1"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "Publisher" "JaCaVi Team"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "URLUpdateInfo" "http://www.jacavi.de/"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}" "URLInfoAbout" "http://www.jacavi.de/"
   
   !insertmacro MUI_STARTMENU_WRITE_BEGIN Application
     
     ;Create shortcuts
     CreateDirectory "$SMPROGRAMS\$StartMenuFolder"
     CreateShortCut "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\JaCaVi v1.0.lnk" "$INSTDIR\JaCaVi.exe"
+    CreateShortCut "$SMPROGRAMS\$StartMenuFolder\${APPLICATION_SHORT} v${APPLICATION_VERSION}.lnk" "$INSTDIR\JaCaVi.exe"
   
   !insertmacro MUI_STARTMENU_WRITE_END
 
@@ -170,7 +178,7 @@ Section "!un.JaCaVi Core" UnsectionCore
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
   Delete "$SMPROGRAMS\$StartMenuFolder\Uninstall.lnk"
-  Delete "$SMPROGRAMS\$StartMenuFolder\JaCaVi.lnk"
+  Delete "$SMPROGRAMS\$StartMenuFolder\${APPLICATION_SHORT} v${APPLICATION_VERSION}.lnk"
   RMDir "$SMPROGRAMS\$StartMenuFolder"
   
   DeleteRegKey /ifempty HKCU "${REGKEY_INSTDIR}"
@@ -189,7 +197,8 @@ SectionEnd
 Section "-un.Uninstall"
 
   Delete "$INSTDIR\Uninstall.exe"
-
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${APPLICATION_SHORT}"
+ 
   RMDir "$INSTDIR"
   
 SectionEnd
