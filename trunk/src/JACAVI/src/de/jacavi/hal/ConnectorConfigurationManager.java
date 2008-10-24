@@ -20,9 +20,10 @@ import de.jacavi.hal.simulation.SimulationDriveConnector;
 
 
 /**
- * Represents the management of configured {@link SlotCarSystemConnector}s. <p> Every by
- * {@link SlotCarSystemConnectorFactory} created {@link SlotCarSystemConnector} will be managed here drung his life
- * time.
+ * Represents the management of configured {@link SlotCarSystemConnector}s.
+ * <p>
+ * Every by {@link SlotCarSystemConnectorFactory} created {@link SlotCarSystemConnector} will be managed here drung his
+ * life time.
  */
 public class ConnectorConfigurationManager {
     /**
@@ -67,10 +68,12 @@ public class ConnectorConfigurationManager {
     }
 
     /**
-     * Initialize default connectors here. <p> On spring bean creation this method is called
+     * Initialize default connectors here.
+     * <p>
+     * On spring bean creation this method is called
      */
     protected void createDefaultConnectors() {
-        // create one simulated connector (dummy)
+        // create connectors without GUI support here
         for(int i = 1; i <= numberOfSimulatedConnectors; i++) {
             SlotCarSystemConnector simulatedConnector = connectorFactory.createSimulatedConnector("Simulation " + i);
             addConnector(simulatedConnector);
@@ -93,7 +96,8 @@ public class ConnectorConfigurationManager {
      * player==null you will get all unused if player!=null you will get all unused + the one of the player
      * 
      * @param player
-     *            the except player <p>
+     *            the except player
+     *            <p>
      * @return a sorted list of SlotCarSystemConnectors
      */
     @SuppressWarnings("unchecked")
