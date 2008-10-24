@@ -65,7 +65,8 @@ for platformDir in ["bin/linux.gtk.x86/jacavi/", "bin/win32.win32.x86/jacavi/", 
         backtickThis("svn export ../src/JACAVI/%s %s%s" % (dataDir, platformDir, dataDir))
     shutil.copy("readme.txt", platformDir)
 # special case, Linux needs the libwiiuse.so separately
-os.mkdir("bin/linux.gtk.x86/jacavi/libs/")
+if not os.path.exists("bin/linux.gtk.x86/jacavi/libs/"):
+    os.mkdir("bin/linux.gtk.x86/jacavi/libs/")
 shutil.copy("../src/JACAVI/libs/libwiiuse.so", "bin/linux.gtk.x86/jacavi/libs/")
 
 print "Step 3: Creating archives"
