@@ -74,7 +74,7 @@ print "Step 3: Creating archives"
 print "  - Linux (tar/gz)"
 tarGzipIt("bin/linux.gtk.x86/jacavi/", linuxTemp, linuxDeploy)
 print "  - Windows (NSIS installer)"
-backtickThis('makensis /DOUTPUT_FILE="deploy/%s" "JaCaVi Windows Installer.nsi"' % windowsDeploy)
+backtickThis('makensis /DVERSION="%s" /DOUTPUT_FILE="deploy/%s" "JaCaVi Windows Installer.nsi"' % (version, windowsDeploy))
 print "  - MacOS (tar/gz)"
 tarGzipIt("bin/macosx.carbon.x86/jacavi/", macosTemp, macosDeploy)
 

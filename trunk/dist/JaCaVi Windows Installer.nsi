@@ -1,13 +1,18 @@
-;JaCaVi v1.0.0 Windows Installation script
+;JaCaVi Windows Installation script
 ;
 ;compile using NSIS 2.40 (http://nsis.sourceforge.net/) with Modern UI 2 installed
 
 ;--------------------------------
 ;Constants
 
+  !ifdef VERSION
+    !define APPLICATION_VERSION ${VERSION}
+  !else
+    !define APPLICATION_VERSION "beta"
+  !endif
+
   !define APPLICATION_LONG "Java Carrera Visualization"
   !define APPLICATION_SHORT "JaCaVi"
-  !define APPLICATION_VERSION "1.0.0"
   !define APPLICATION_DESCRIPTION "JaCaVi is a slot car control and visualization application.$\r$\n$\r$\nPlease visit http://www.jacavi.de/ for more in-depth information and updates."
   
   !define REGKEY_INSTDIR "Software\${APPLICATION_SHORT}"
@@ -15,7 +20,7 @@
   !ifdef OUTPUT_FILE
     !define APPLICATION_INSTALLER_FILENAME "${OUTPUT_FILE}"
   !else
-    !define APPLICATION_INSTALLER_FILENAME "${APPLICATION_SHORT}_v${APPLICATION_VERSION}_manual_build.exe"
+    !define APPLICATION_INSTALLER_FILENAME "${APPLICATION_SHORT}_manual_build.exe"
   !endif
 
 ;--------------------------------
