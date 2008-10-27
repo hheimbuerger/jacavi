@@ -2,7 +2,7 @@ JaCaVi -- Java Carrera Visualization
 
 A slot car control and visualization application. 
 
-Version 1.0.0, released 2008-10-24
+Version 1.0.1, released 2008-10-27
 
 == http://www.jacavi.de/ ==
 
@@ -19,6 +19,25 @@ Florian Roth (froth@htwg-konstanz.de)
 
 
 ------------------------------------------------------------
+License
+------------------------------------------------------------
+
+JaCaVi is licensed under the Eclipse Public License 1.0, an OSI-approved
+open source license.
+
+
+------------------------------------------------------------
+History
+------------------------------------------------------------
+
+Version 1.0.1 (released 2008-10-27):
+  • JaCaVi has been open-sourced under the Eclipse Public License 1.0.
+
+Version 1.0.0 (released 2008-10-24):
+  • First public version.
+
+
+------------------------------------------------------------
 Common Issues
 ------------------------------------------------------------
 
@@ -32,8 +51,8 @@ Reporting Problems
 ------------------------------------------------------------
 
 Please refer to the issue tracking system at http://www.jacavi.de/ for
-known issues and to report problems. You might even find the latest
-version there.
+known issues, to report problems and to retrieve a binary build of the
+latest version.
 
 
 ------------------------------------------------------------
@@ -84,6 +103,6 @@ Icons are provided by:
 Special Thanks
 ------------------------------------------------------------
 
-Special thanks to the Lib42 Team and the Bluerider Team for creating the slot car system connectors this application is based on.
+Special thanks to the Team42 and the Bluerider Team for creating the slot car system connectors this application is based on.
 
 Special thanks to juckto, MrChaos, ImmortalZ and Being from IRC for discussing various aspects of the drawing algorithms with us.
