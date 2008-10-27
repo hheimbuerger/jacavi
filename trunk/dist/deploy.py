@@ -63,7 +63,8 @@ for platformDir in ["bin/linux.gtk.x86/jacavi/", "bin/win32.win32.x86/jacavi/", 
     for dataDir in ["agents", "cars", "tiles", "tracks"]:
         rmtreeSilently(platformDir + dataDir)
         backtickThis("svn export ../src/JACAVI/%s %s%s" % (dataDir, platformDir, dataDir))
-    shutil.copy("readme.txt", platformDir)
+    shutil.copy("../src/JACAVI/readme.txt", platformDir)
+    shutil.copy("../src/JACAVI/epl-v10.html", platformDir)
 # special case, Linux needs the libwiiuse.so separately
 if not os.path.exists("bin/linux.gtk.x86/jacavi/libs/"):
     os.mkdir("bin/linux.gtk.x86/jacavi/libs/")
