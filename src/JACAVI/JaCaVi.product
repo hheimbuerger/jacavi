@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.4"?>
 
-<product name="JaCaVi" id="JaCaVi.product" application="JaCaVi.application" version="1.0.0" useFeatures="false">
+<product name="JaCaVi" id="JaCaVi.product" application="JaCaVi.application" version="1.0.1" useFeatures="false">
 
    <aboutInfo>
       <image path="/JACAVI/images/logo/about_banner_250x123.png"/>
