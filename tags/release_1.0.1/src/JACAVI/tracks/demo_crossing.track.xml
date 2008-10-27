@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<track name="demo_crossing" tileset="debug">
+    <section id="finishingStraight"/>
+    <section id="straight_start_extension"/>
+    <section id="cloverleaf"/>
+    <section id="turn90deg"/>
+    <section id="straight"/>
+    <section id="straight"/>
+    <section id="turn90deg"/>
+    <section id="straight"/>
+    <section id="lane_change_lr"/>
+    <section id="straight"/>
+    <section id="straight"/>
+    <section id="crossover"/>
+    <section id="straight"/>
+    <section id="turn90deg"/>
+    <section id="straight"/>
+    <section id="lane_change_rl"/>
+    <section id="straight"/>
+    <section id="straight"/>
+    <section id="turn30deg"/>
+    <section id="turn90deg"/>
+    <section id="turn90deg"/>
+    <section id="straight"/>
+    <section id="straight"/>
+    <section id="turn30deg"/>
+    <section id="turn30deg"/>
+    <section id="turn90deg"/>
+    <section id="turn90deg"/>
+    <section id="straight"/>
+    <section id="straight"/>
+</track>

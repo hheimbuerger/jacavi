@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?pde version="3.4"?>
+
+<product name="JaCaVi" id="JaCaVi.product" application="JaCaVi.application" version="1.0.1" useFeatures="false">
+
+   <aboutInfo>
+      <image path="/JACAVI/images/logo/about_banner_250x123.png"/>
+      <text>
+         JaCaVi v1.0.1
+http://www.jacavi.de/
+Released 2008-10-27
+
+(c) Copyright JaCaVi contributors and others 2008.  All rights reserved.
+
+JaCaVi is licensed under the Eclipse Public License 1.0, an OSI-approved
+open source license.
+
+The following open source libraries are used in this application:
+• Java2D for SWT 2.3.0
+   http://www.holongate.org/holongate-2.0/
+   Eclipse Public License
+• JavaJoystick 0.7
+   http://sourceforge.net/projects/javajoystick/
+   Artistic License
+• WiiuseJ 0.12
+   http://code.google.com/p/wiiusej/
+   GNU General Public License v3
+• RXTXcomm
+   http://users.frii.com/jarvi/rxtx/
+   RXTX License v 2.1
+• Apache XML-RPC 3.1
+   http://ws.apache.org/xmlrpc/
+   Apache License, Version 2.0
+• Jython 2.2.1
+   http://www.jython.org/
+   Jython License
+• Groovy 1.5.6
+   http://groovy.codehaus.org/
+   Apache License, Version 2.0
+• Spring Framework 2.5.5
+   http://www.springframework.org/
+   Apache License, Version 2.0
+• log4j 1.2.15
+   http://logging.apache.org/log4j/
+   Apache License, Version 2.0
+
+Icons are provided by:
+• The fantastic famfamfam &apos;Silk&apos; icon set
+   http://www.famfamfam.com/lab/icons/silk/
+   Creative Commons Attribution 2.5 License
+• The KDE Icon Theme by Futurosoft
+   http://kde-look.org/content/show.php/Futurosoft+Icons+?content=50667
+   GNU General Public License
+
+Developers: 
+Stefanos Papadopoulos (elgreco_04@hotmail.com)
+Henrik Heimbuerger (henrik@heimbuerger.de)
+Fabian Rohn (fabrohn@htwg-konstanz.de)
+Florian Roth (froth@htwg-konstanz.de)
+
+Special thanks to the Team42 and the Bluerider Team for creating the slot car system connectors this application is based on.
+
+Special thanks to juckto, MrChaos, ImmortalZ and Being from IRC for discussing various aspects of the drawing algorithms with us.
+      </text>
+   </aboutInfo>
+
+   <configIni use="default">
+   </configIni>
+
+   <launcherArgs>
+      <vmArgs>-enableassertions -Xmx256M</vmArgs>
+      <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
+   </launcherArgs>
+
+   <windowImages i16="/JACAVI/images/icon/jacavi_icon_16x16.png" i32="/JACAVI/images/icon/jacavi_icon_32x32.png" i48="/JACAVI/images/icon/jacavi_icon_48x48.png" i64="/JACAVI/images/icon/jacavi_icon_64x64.png" i128="/JACAVI/images/icon/jacavi_icon_128x128.png"/>
+
+   <splash
+      location="JaCaVi"
+      startupProgressRect="5,275,445,15"
+      startupMessageRect="7,252,445,20"
+      startupForegroundColor="000000" />
+   <launcher name="JaCaVi">
+      <linux icon="/JACAVI/images/icon/jacavi_icon_linux.xpm"/>
+      <macosx icon="/JACAVI/images/icon/jacavi_icon_macos.icns"/>
+      <solaris/>
+      <win useIco="true">
+         <ico path="/JACAVI/images/icon/jacavi_icon_windows.ico"/>
+         <bmp/>
+      </win>
+   </launcher>
+
+
+   <vm>
+   </vm>
+
+   <plugins>
+      <plugin id="JaCaVi"/>
+      <plugin id="com.ibm.icu"/>
+      <plugin id="javax.servlet"/>
+      <plugin id="org.eclipse.ant.core"/>
+      <plugin id="org.eclipse.core.commands"/>
+      <plugin id="org.eclipse.core.contenttype"/>
+      <plugin id="org.eclipse.core.databinding"/>
+      <plugin id="org.eclipse.core.expressions"/>
+      <plugin id="org.eclipse.core.filesystem"/>
+      <plugin id="org.eclipse.core.filesystem.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.macosx" fragment="true"/>
+      <plugin id="org.eclipse.core.filesystem.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.jobs"/>
+      <plugin id="org.eclipse.core.resources"/>
+      <plugin id="org.eclipse.core.resources.compatibility" fragment="true"/>
+      <plugin id="org.eclipse.core.resources.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.core.runtime"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
+      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
+      <plugin id="org.eclipse.core.variables"/>
+      <plugin id="org.eclipse.draw2d"/>
+      <plugin id="org.eclipse.equinox.app"/>
+      <plugin id="org.eclipse.equinox.common"/>
+      <plugin id="org.eclipse.equinox.preferences"/>
+      <plugin id="org.eclipse.equinox.registry"/>
+      <plugin id="org.eclipse.gef"/>
+      <plugin id="org.eclipse.help"/>
+      <plugin id="org.eclipse.jface"/>
+      <plugin id="org.eclipse.jface.databinding"/>
+      <plugin id="org.eclipse.osgi"/>
+      <plugin id="org.eclipse.osgi.services"/>
+      <plugin id="org.eclipse.swt"/>
+      <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
+      <plugin id="org.eclipse.swt.gtk.linux.x86" fragment="true"/>
+      <plugin id="org.eclipse.swt.win32.win32.x86" fragment="true"/>
+      <plugin id="org.eclipse.ui"/>
+      <plugin id="org.eclipse.ui.views"/>
+      <plugin id="org.eclipse.ui.workbench"/>
+      <plugin id="org.junit4"/>
+   </plugins>
+
+</product>

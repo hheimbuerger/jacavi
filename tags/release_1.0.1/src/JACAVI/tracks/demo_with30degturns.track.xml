@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<track name="demo_with30degturns" tileset="debug">
+    <section id="finishingStraight" />
+    <section id="straight" />
+    <section id="turn30deg" />
+    <section id="straight" />
+    <section id="turn90deg" />
+    <section id="turn30deg" />
+    <section id="straight" />
+    <section id="turn30deg" />
+    <section id="straight" />
+    <section id="straight" />
+    <section id="straight" />
+    <section id="straight" />
+    <section id="turn90deg" />
+    <section id="straight" />
+    <section id="turn90deg" />
+    <section id="straight" />
+</track>
