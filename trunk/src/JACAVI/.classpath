@@ -17,5 +17,6 @@
 	<classpathentry kind="src" path="test"/>
 	<classpathentry exported="true" kind="lib" path="libs/log4j-1.2.15.jar" sourcepath="JACAVIsrc.zip"/>
 	<classpathentry kind="lib" path="libs/RXTXcomm.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
