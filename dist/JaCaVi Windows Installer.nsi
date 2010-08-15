@@ -179,6 +179,7 @@ Section "!un.JaCaVi Core" UnsectionCore
   Delete "$INSTDIR\JaCaVi.ini"
   Delete "$INSTDIR\jacavi.log"
   Delete "$INSTDIR\readme.txt"
+  Delete "$INSTDIR\epl-v10.html"
 
   !insertmacro MUI_STARTMENU_GETFOLDER Application $StartMenuFolder
 
