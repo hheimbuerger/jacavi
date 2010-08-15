@@ -2,7 +2,7 @@ JaCaVi -- Java Carrera Visualization
 
 A slot car control and visualization application. 
 
-Version 1.0.1, released 2008-10-27
+Version 1.0.2, released 2010-08-15
 
 == http://www.jacavi.de/ ==
 
@@ -29,6 +29,10 @@ open source license.
 ------------------------------------------------------------
 History
 ------------------------------------------------------------
+
+Version 1.0.2 (released 2010-08-15):
+  • Fixed various configuration problems that prevented launching on
+    certain platforms.
 
 Version 1.0.1 (released 2008-10-27):
   • JaCaVi has been open-sourced under the Eclipse Public License 1.0.
