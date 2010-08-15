@@ -30,7 +30,7 @@ public class TrackDesignerInput implements IEditorInput {
     }
 
     public String getName() {
-        return new File(filename).getName().split(Track.FILE_EXTENSION)[0];
+        return new File(this.filename).getName().split(Track.FILE_EXTENSION)[0];
     }
 
     public IPersistableElement getPersistable() {
@@ -41,8 +41,7 @@ public class TrackDesignerInput implements IEditorInput {
         return "Track Editor";
     }
 
-    @SuppressWarnings("unchecked")
-    public Object getAdapter(Class adapter) {
+    public Object getAdapter(@SuppressWarnings("rawtypes") Class adapter) {
         return null;
     }
 
@@ -53,7 +52,7 @@ public class TrackDesignerInput implements IEditorInput {
         }
 
         if(obj instanceof TrackDesignerInput) {
-            return track.getTrackName().equals(((TrackDesignerInput) obj).getName());
+            return this.track.getTrackName().equals(((TrackDesignerInput) obj).getName());
         }
         return false;
 
@@ -61,7 +60,7 @@ public class TrackDesignerInput implements IEditorInput {
 
     @Override
     public int hashCode() {
-        return track.getTrackName().hashCode();
+        return this.track.getTrackName().hashCode();
     }
 
     public void setTrack(Track track) {
@@ -69,11 +68,11 @@ public class TrackDesignerInput implements IEditorInput {
     }
 
     public Track getTrack() {
-        return track;
+        return this.track;
     }
 
     public String getFilename() {
-        return filename;
+        return this.filename;
     }
 
     public void setFilename(String filename) {
